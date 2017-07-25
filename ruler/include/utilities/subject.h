@@ -14,15 +14,14 @@
 
 namespace utilities
 {
-
 template <typename T> class Subject
 {
 public:
   virtual ~Subject();
-  void registerObserver(Observer<T>* observer);
-  void unregisterObserver(Observer<T>* observer);
 
 protected:
+  void registerObserver(Observer<T>* observer);
+  void unregisterObserver(Observer<T>* observer);
   void notify(T* notification);
   void notify(const T& notification);
 
@@ -46,7 +45,7 @@ void Subject<T>::unregisterObserver(Observer<T>* observer)
 
 template <typename T> void Subject<T>::notify(T* notification)
 {
-  std::list<Observer<T>*>::iterator it(observers_.begin());
+  typename std::list<Observer<T>*>::iterator it(observers_.begin());
   while (it != observers_.end())
   {
     Observer<T>* observer = *it;
@@ -57,7 +56,7 @@ template <typename T> void Subject<T>::notify(T* notification)
 
 template <typename T> void Subject<T>::notify(const T& notification)
 {
-  std::list<Observer<T>*>::iterator it(observers_.begin());
+  typename std::list<Observer<T>*>::iterator it(observers_.begin());
   while (it != observers_.end())
   {
     Observer<T>* observer = *it;

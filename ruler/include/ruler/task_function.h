@@ -5,8 +5,8 @@
  *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)
  */
 
-#ifndef _RESOURCE_CONTROL_TASK_FUNCTION_H_
-#define _RESOURCE_CONTROL_TASK_FUNCTION_H_
+#ifndef _RULER_TASK_FUNCTION_H_
+#define _RULER_TASK_FUNCTION_H_
 
 #include <list>
 #include <ros/time.h>
@@ -17,40 +17,20 @@
 
 namespace ruler
 {
-template <typename T> class TaskFunction : public utilities::Observer<Event<T> >
+class TaskFunction : public utilities::Observer<Event>
 {
 public:
   TaskFunction(Task* task, utilities::Function* quantity_function);
   virtual ~TaskFunction();
   double estimate(ros::Time t) const;
+  virtual void update(Event* notification);
+  virtual void update(const Event& notification);
 
 private:
   Task* task_;
-  std::list<Event<T>*> events_;
+  std::list<Event*> events_;
   utilities::Function* quantity_;
 };
-
-template <typename T>
-TaskFunction<T>::TaskFunction(Task* task,
-                              utilities::Function* quantity_function)
-    : task_(task), quantity_(quantity_function)
-{
 }
 
-template <typename T> TaskFunction<T>::~TaskFunction() { task_ = NULL; }
-
-template <typename T> double TaskFunction<T>::estimate(ros::Time t) const
-{
-  /*double level(0.0);
-  std::list<Event<T>*>::const_iterator it(events_.begin());
-  while (it != events_.end())
-  {
-    Event<T>* event = *it;
-    level += quantity_->getValue(task_->getDuration(t));
-    it++;
-  }*/
-  return quantity_->getValue(task_->getDuration(t));
-}
-}
-
-#endif // _RESOURCE_CONTROL_TASK_FUNCTION_H_
+#endif // _RULER_TASK_FUNCTION_H_

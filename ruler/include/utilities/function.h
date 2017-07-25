@@ -1,29 +1,36 @@
 /**
- * This header file defines the MathManipulator helper class.
+ * This header file defines the Function class.
  *
  *  Author: Adriano Henrique Rossette Leite (adrianohrl@unifei.edu.br)
  *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)
  */
 
-#ifndef _UTILITIES_EXCEPTION_H_
-#define _UTILITIES_EXCEPTION_H_
+#ifndef _UTILITIES_FUNCTION_H_
+#define _UTILITIES_FUNCTION_H_
 
 #include <string>
 #include <exception>
 
 namespace utilities
 {
-
-class Exception : public std::exception
+class Function
 {
 public:
-  Exception(std::string message);
-  Exception(const char* message);
-  virtual const char* what() const throw();
+  Function(double d0, double df, double q0, double qf, bool ascending = false);
+  virtual ~Function();
+  double getValue(double d) const;
+  void setAscending(bool ascending);
+
+protected:
+  double d0_;
+  double df_;
+  double q0_;
+  double qf_;
 
 private:
-  const char* message_;
+  bool ascending_;
+  virtual double calculate(double d) const = 0;
 };
 }
 
-#endif // _UTILITIES_EXCEPTION_H_
+#endif // _UTILITIES_FUNCTION_H_

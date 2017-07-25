@@ -3,9 +3,6 @@
  *  whenever an oriented-object programming ROS Node class is created
  *  to enhance this one.
  *
- *  Version: 1.4.1
- *  Created on: 05/10/2016
- *  Modified on: 21/03/2017
  *  Author: Adriano Henrique Rossette Leite (adrianohrl@unifei.edu.br)
  *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)
  */

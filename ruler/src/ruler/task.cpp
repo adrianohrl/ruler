@@ -1,11 +1,18 @@
+/**
+ *  This header file implements the Task class.
+ *
+ *  Author: Adriano Henrique Rossette Leite (adrianohrl@unifei.edu.br)
+ *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)
+ */
+
 #include "ruler/task.h"
 
 namespace ruler
 {
-
 Task::Task(std::string id, std::string name, std::string description,
            bool preemptive)
-    : id_(id), name_(name), description_(description), preemptive_(preemptive)
+    : id_(id), name_(name), description_(description), preemptive_(preemptive),
+      start_time_bounds_(NULL), end_time_bounds_(NULL)
 {
 }
 
@@ -88,6 +95,16 @@ ros::Time Task::getEndTime() const { return end_time_; }
 void Task::setDescription(std::string description)
 {
   description_ = description;
+}
+
+void Task::addResource(Resource *resource)
+{
+  utilities::Subject<Event>::registerObserver(resource);
+}
+
+void Task::removeResource(const Resource &resource)
+{
+  utilities::Subject<Event>::unregisterObserver(resource);
 }
 
 std::string Task::str() const { return id_; }

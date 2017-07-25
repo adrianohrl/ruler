@@ -5,8 +5,8 @@
  *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)
  */
 
-#ifndef _RESOURCE_PROFILE_H_
-#define _RESOURCE_PROFILE_H_
+#ifndef _RULER_RESOURCE_PROFILE_H_
+#define _RULER_RESOURCE_PROFILE_H_
 
 #include <list>
 #include <ros/time.h>
@@ -16,18 +16,18 @@
 namespace ruler
 {
 template<typename T>
-class Profile : public utilities::Observer<Event<T> >
+class Profile : public utilities::Observer<Event>
 {
 public:
   Profile();
   Profile(const Profile<T>& profile);
   virtual ~Profile();
   T estimate(ros::Time t = ros::Time::now()) const;
-  virtual void update(Event<T>* notification);
-  virtual void update(const Event<T>& notification);
+  virtual void update(Event* notification);
+  virtual void update(const Event& notification);
 
 private:
-  std::list<TaskFunction<T>*> task_functions_;
+  std::list<TaskFunction*> task_functions_;
 };
 
 template<typename T>
@@ -64,12 +64,25 @@ T Profile<T>::estimate(ros::Time t) const
   std::list<TaskFunction*>::const_iterator it(task_functions_.begin());
   while (it != task_functions_.end())
   {
-    level += it->estimate(t);
+    TaskFunction* task_function = *it;
+    level += task_function->estimate(t);
     it++;
   }
   return level;
 }
 
+template<typename T>
+void Profile<T>::update(Event *notification)
+{
+
 }
 
-#endif // _RESOURCE_PROFILE_H_
+template<typename T>
+void Profile<T>::update(const Event &notification)
+{
+
+}
+
+}
+
+#endif // _RULER_RESOURCE_PROFILE_H_

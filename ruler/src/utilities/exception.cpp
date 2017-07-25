@@ -9,7 +9,6 @@
 
 namespace utilities
 {
-
 /**
  * @brief Exception::Exception
  * @param message

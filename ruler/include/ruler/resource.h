@@ -5,29 +5,30 @@
  *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)
  */
 
-#ifndef _RESOURCE_CONTROL_RESOURCE_H_
-#define _RESOURCE_CONTROL_RESOURCE_H_
+#ifndef _RULER_RESOURCE_H_
+#define _RULER_RESOURCE_H_
 
 #include <string>
 #include <ros/duration.h>
-#include "utilities/observer.h"
 #include "ruler/profile.h"
+#include "utilities/observer.h"
+#include "utilities/exception.h"
 
 namespace ruler
 {
-template <typename T> class Resource : public utilities::Observer<Event<T> >
+template <typename T> class Resource : public utilities::Observer<Event>
 {
 public:
   virtual ~Resource();
-  virtual void update(Event<T>* notification);
-  virtual void update(const Event<T>& notification);
+  virtual void update(Event* notification);
+  virtual void update(const Event& notification);
   std::string getType() const;
   std::string getName() const;
   T getCapacity() const;
   T getInitialLevel() const;
   T getLevel() const;
   ros::Duration getLatence() const;
-  Profile* getProfile() const;
+  Profile<T>* getProfile() const;
   void setCapacity(T capacity);
   std::string str() const;
   const char* c_str() const;
@@ -37,13 +38,16 @@ public:
   void operator-(const T& level);
 
 protected:
-  Resource(const Resource<T>& resource);
   Resource(std::string type, std::string name, T capacity, T initial_level,
            ros::Duration latence = ros::Duration(0.0));
+  Resource(const Resource<T>& resource);
 
 private:
-  std::string type_, name_;
-  T capacity_, level_, initial_level_;
+  std::string type_;
+  std::string name_;
+  T capacity_;
+  T level_;
+  T initial_level_;
   ros::Duration latence_;
   Profile<T>* profile_;
 };
@@ -57,13 +61,32 @@ Resource<T>::Resource(std::string type, std::string name, T capacity,
 {
 }
 
-template <typename T> Resource::~Resource()
+template <typename T>
+Resource<T>::Resource(const Resource<T> &resource)
+  : type_(resource.type_), name_(resource.name_), capacity_(resource.capacity_),
+    level_(resource.level_), initial_level_(resource.initial_level_),
+    latence_(resource.latence_), profile_(resource.profile_)
+{
+
+}
+
+template <typename T> Resource<T>::~Resource()
 {
   if (profile_)
   {
     delete profile_;
     profile_ = NULL;
   }
+}
+
+template <typename T> void Resource<T>::update(Event* notification)
+{
+  profile_->update(notification);
+}
+
+template <typename T> void Resource<T>::update(const Event& notification)
+{
+  profile_->update(notification);
 }
 
 template <typename T> std::string Resource<T>::getType() const { return type_; }
@@ -84,7 +107,7 @@ template <typename T> ros::Duration Resource<T>::getLatence() const
   return latence_;
 }
 
-template <typename T> Profile* Resource<T>::getProfile() const
+template <typename T> Profile<T>* Resource<T>::getProfile() const
 {
   return profile_;
 }
@@ -130,4 +153,4 @@ template <typename T> void Resource<T>::operator-(const T& level)
 }
 }
 
-#endif // _RESOURCE_CONTROL_RESOURCE_H_
+#endif // _RULER_RESOURCE_H_

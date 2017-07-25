@@ -6,21 +6,20 @@
  *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)
  */
 
-#include "ruler/event_type.h"
+#include "ruler/event_types.h"
 
 namespace ruler
 {
-
-EventTypes::EventTypes(EventTypeEnum enumarated) : EnumConverter(enumarated) {}
+EventTypes::EventTypes(EventType enumarated) : EnumConverter(enumarated) {}
 
 EventTypes::~EventTypes() {}
 
-EventTypeEnum EventTypes::getEnumerated(int code) const
+EventType EventTypes::getEnumerated(int code) const
 {
   return EventTypes::toEnumerated(code);
 }
 
-EventTypeEnum EventTypes::getEnumerated(std::string name) const
+EventType EventTypes::getEnumerated(std::string name) const
 {
   return EventTypes::toEnumerated(name);
 }
@@ -30,21 +29,21 @@ int EventTypes::getCode(std::string name) const
   return EventTypes::toCode(EventTypes::toEnumerated(name));
 }
 
-int EventTypes::getCode(EventTypeEnum enumerated) const
+int EventTypes::getCode(EventType enumerated) const
 {
   return EventTypes::toCode(enumerated);
 }
 
-std::string EventTypes::str(EventTypeEnum enumerated) const
+std::string EventTypes::str(EventType enumerated) const
 {
   return EventTypes::toString(enumerated);
 }
 
-const char* EventTypes::c_str(EventTypeEnum enumerated) const {}
+const char* EventTypes::c_str(EventType enumerated) const {}
 
-EventTypeEnum EventTypes::toEnumerated(int code)
+EventType EventTypes::toEnumerated(int code)
 {
-  EventTypeEnum enumerated;
+  EventType enumerated;
   switch (code)
   {
   case 0:
@@ -65,9 +64,9 @@ EventTypeEnum EventTypes::toEnumerated(int code)
   return enumerated;
 }
 
-EventTypeEnum EventTypes::toEnumerated(std::string name)
+EventType EventTypes::toEnumerated(std::string name)
 {
-  EventTypeEnum enumerated;
+  EventType enumerated;
   if (name == "STARTED" || name == "Started" || name == "started")
   {
     enumerated = types::STARTED;
@@ -92,7 +91,7 @@ EventTypeEnum EventTypes::toEnumerated(std::string name)
   return enumerated;
 }
 
-int EventTypes::toCode(EventTypeEnum enumerated)
+int EventTypes::toCode(EventType enumerated)
 {
   int code;
   switch (enumerated)
@@ -115,7 +114,7 @@ int EventTypes::toCode(EventTypeEnum enumerated)
   return code;
 }
 
-std::string EventTypes::toString(EventTypeEnum enumerated)
+std::string EventTypes::toString(EventType enumerated)
 {
   std::string name;
   switch (enumerated)
@@ -138,16 +137,16 @@ std::string EventTypes::toString(EventTypeEnum enumerated)
   return name;
 }
 
-const char* EventTypes::toCString(EventTypeEnum enumerated)
+const char* EventTypes::toCString(EventType enumerated)
 {
   return EventTypes::toString(enumerated).c_str();
 }
 
-EventTypeEnum EventTypes::getDefault() { return types::STARTED; }
+EventType EventTypes::getDefault() { return types::STARTED; }
 
-std::vector<EventTypeEnum> EventTypes::getAll()
+std::vector<EventType> EventTypes::getAll()
 {
-  std::vector<EventTypeEnum> types;
+  std::vector<EventType> types;
   types.push_back(types::STARTED);
   types.push_back(types::INTERRUPTED);
   types.push_back(types::RESUMED);

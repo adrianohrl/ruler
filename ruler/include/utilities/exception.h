@@ -1,5 +1,5 @@
 /**
- * This header file defines the MathManipulator helper class.
+ * This header file defines the Exception class.
  *
  *  Author: Adriano Henrique Rossette Leite (adrianohrl@unifei.edu.br)
  *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)
@@ -13,7 +13,6 @@
 
 namespace utilities
 {
-
 class Exception : public std::exception
 {
 public:

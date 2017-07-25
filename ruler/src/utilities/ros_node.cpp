@@ -1,9 +1,6 @@
 /**
  *  This source file implements the ROSNode class.
  *
- *  Version: 1.4.1
- *  Created on: 05/10/2016
- *  Modified on: 21/03/2017
  *  Author: Adriano Henrique Rossette Leite (adrianohrl@unifei.edu.br)
  *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)
  */
@@ -12,7 +9,6 @@
 
 namespace utilities
 {
-
 /**
  * @brief ROSNode::Node builds an ROSNode object given a ROS NodeHandle
  * and also its desired spin rate.

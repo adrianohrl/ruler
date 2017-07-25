@@ -13,7 +13,6 @@
 
 namespace utilities
 {
-
 template <typename E> class EnumConverter
 {
 public:

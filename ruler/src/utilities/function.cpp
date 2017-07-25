@@ -9,7 +9,6 @@
 
 namespace utilities
 {
-
 Function::Function(double d0, double df, double q0, double qf, bool ascending)
     : d0_(d0), df_(df), q0_(q0), qf_(qf), ascending_(ascending)
 {
