@@ -1,5 +1,6 @@
 /**
- *  This header file defines the UnarySignalType interface.
+ *  This header file defines the UnarySignalType class, which is based on the
+ *SignalType abstract class.
  *
  *  Author: Adriano Henrique Rossette Leite (adrianohrl@unifei.edu.br)
  *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)
@@ -15,7 +16,11 @@ namespace utilities
 class UnarySignalType : public SignalType<bool>
 {
 public:
-  virtual bool getValue() const;
+  UnarySignalType(bool value);
+  UnarySignalType(const UnarySignalType& signal_type);
+  virtual ~UnarySignalType();
+  virtual std::string str() const;
+  virtual bool operator!() const;
 };
 }
 

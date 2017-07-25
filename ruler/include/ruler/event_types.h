@@ -36,7 +36,6 @@ public:
   virtual int getCode(std::string name) const;
   virtual int getCode(EventType enumerated) const;
   virtual std::string str(EventType enumerated) const;
-  virtual const char* c_str(EventType enumerated) const;
 
   static EventType toEnumerated(int code);
   static EventType toEnumerated(std::string name);

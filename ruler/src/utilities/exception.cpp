@@ -5,6 +5,7 @@
  *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)
  */
 
+#include <ros/common.h>
 #include "utilities/exception.h"
 
 namespace utilities
@@ -15,7 +16,9 @@ namespace utilities
  */
 Exception::Exception(std::string message)
   : message_(message.c_str())
-{}
+{
+  ROS_FATAL(message.c_str());
+}
 
 /**
  * @brief Exception::Exception
@@ -23,7 +26,9 @@ Exception::Exception(std::string message)
  */
 Exception::Exception(const char *message)
   : message_(message)
-{}
+{
+  ROS_FATAL(message);
+}
 
 /**
  * @brief Exception::what

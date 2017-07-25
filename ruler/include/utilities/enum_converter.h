@@ -26,7 +26,7 @@ public:
   std::string str() const;
   virtual std::string str(E enumerated) const = 0;
   const char* c_str() const;
-  virtual const char* c_str(E enumerated) const = 0;
+  const char* c_str(E enumerated) const;
   void operator=(int code);
   void operator=(std::string nome);
   void operator=(E enumerated);
@@ -71,7 +71,7 @@ template <typename E> E EnumConverter<E>::getEnumerated() const
  */
 template <typename E> int EnumConverter<E>::getCode() const
 {
-  return getId(enumerated_);
+  return getCode(enumerated_);
 }
 
 /**
@@ -88,6 +88,14 @@ template <typename E> std::string EnumConverter<E>::str() const
 template <typename E> const char* EnumConverter<E>::c_str() const
 {
   return str().c_str();
+}
+
+/**
+ *
+ */
+template <typename E> const char* EnumConverter<E>::c_str(E enumerated) const
+{
+  return str(enumerated).c_str();
 }
 
 /**

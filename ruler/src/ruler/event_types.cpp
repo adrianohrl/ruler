@@ -39,8 +39,6 @@ std::string EventTypes::str(EventType enumerated) const
   return EventTypes::toString(enumerated);
 }
 
-const char* EventTypes::c_str(EventType enumerated) const {}
-
 EventType EventTypes::toEnumerated(int code)
 {
   EventType enumerated;

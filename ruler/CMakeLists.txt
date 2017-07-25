@@ -31,6 +31,7 @@ set(H_FILES
   include/ruler/profile.h
   include/ruler/resource.h
   include/ruler/reusable_resource.h
+  include/ruler/ruler.h
   include/ruler/task.h
   include/ruler/task_function.h
   include/ruler/unary_consumable_resource.h
@@ -43,12 +44,14 @@ set(H_FILES
   include/utilities/function.h
   include/utilities/interval.h
   include/utilities/linear_function.h
+  include/utilities/non_unary_signal_type.h
   include/utilities/observer.h
   include/utilities/ros_node.h
   include/utilities/signal_type.h
   include/utilities/step_function.h
   include/utilities/subject.h
   include/utilities/unary_signal_type.h
+  include/utilities/utilities.h
 )
 
 set(CPP_FILES
@@ -62,12 +65,15 @@ set(CPP_FILES
   src/ruler/task_function.cpp
   src/ruler/unary_consumable_resource.cpp
   src/ruler/unary_reusable_resource.cpp
+  src/utilities/continuous_signal_type.cpp
+  src/utilities/discrete_signal_type.cpp
   src/utilities/exception.cpp
   src/utilities/exponential_function.cpp
   src/utilities/function.cpp
   src/utilities/linear_function.cpp
   src/utilities/ros_node.cpp
   src/utilities/step_function.cpp
+  src/utilities/unary_signal_type.cpp
 )
 
 add_library(${PROJECT_NAME}

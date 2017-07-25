@@ -11,39 +11,29 @@
 #include <list>
 #include <ros/time.h>
 #include "ruler/task_function.h"
-#include "utilities/observer.h"
 
 namespace ruler
 {
-template<typename T>
-class Profile : public utilities::Observer<Event>
+template <typename T> class Profile : public utilities::Observer<Event>
 {
 public:
   Profile();
   Profile(const Profile<T>& profile);
   virtual ~Profile();
-  T estimate(ros::Time t = ros::Time::now()) const;
+  double estimate(ros::Time t = ros::Time::now()) const;
   virtual void update(Event* notification);
   virtual void update(const Event& notification);
+  virtual std::string str() const;
 
 private:
   std::list<TaskFunction*> task_functions_;
 };
 
-template<typename T>
-Profile<T>::Profile()
-{
+template <typename T> Profile<T>::Profile() {}
 
-}
+template <typename T> Profile<T>::Profile(const Profile<T>& profile) {}
 
-template<typename T>
-Profile<T>::Profile(const Profile<T> &profile)
-{
-
-}
-
-template<typename T>
-Profile<T>::~Profile()
+template <typename T> Profile<T>::~Profile()
 {
   std::list<TaskFunction*>::iterator it(task_functions_.begin());
   while (it != task_functions_.end())
@@ -57,8 +47,7 @@ Profile<T>::~Profile()
   }
 }
 
-template<typename T>
-T Profile<T>::estimate(ros::Time t) const
+template <typename T> double Profile<T>::estimate(ros::Time t) const
 {
   double level(0.0);
   std::list<TaskFunction*>::const_iterator it(task_functions_.begin());
@@ -71,18 +60,14 @@ T Profile<T>::estimate(ros::Time t) const
   return level;
 }
 
-template<typename T>
-void Profile<T>::update(Event *notification)
+template <typename T> void Profile<T>::update(Event* notification) {}
+
+template <typename T> void Profile<T>::update(const Event& notification) {}
+
+template <typename T> std::string Profile<T>::str() const
 {
-
+  return "";
 }
-
-template<typename T>
-void Profile<T>::update(const Event &notification)
-{
-
-}
-
 }
 
 #endif // _RULER_RESOURCE_PROFILE_H_

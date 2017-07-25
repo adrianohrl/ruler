@@ -50,13 +50,55 @@ Task::~Task()
   }
 }
 
-void Task::start() { start_time_ = ros::Time::now(); }
+void Task::start()
+{
+  if (!start_time_.isZero())
+  {
+    throw utilities::Exception(id_ + " has already started.");
+  }
+  // check other possible errors
+  start_time_ = ros::Time::now();
+  utilities::Subject<Event>::notify(Event(types::STARTED));
+  ROS_INFO("%s has just started.", id_.c_str());
+}
 
-void Task::interrupt() {}
+void Task::interrupt()
+{
+  if (start_time_.isZero())
+  {
+    throw utilities::Exception(id_ + " has not started yet.");
+  }
+  // check other possible errors
+  // interrupt properly
+  utilities::Subject<Event>::notify(Event(types::INTERRUPTED));
+  ROS_INFO("%s has just interruped.", id_.c_str());
+}
 
-void Task::resume() {}
+void Task::resume()
+{
+  if (start_time_.isZero())
+  {
+    throw utilities::Exception(id_ + " has not started yet.");
+  }
+  // check other possible errors
+  // resume properly
+  utilities::Subject<Event>::notify(Event(types::RESUMED));
+  ROS_INFO("%s has just resumed.", id_.c_str());
+}
 
-void Task::finish() { end_time_ = ros::Time::now(); }
+void Task::finish()
+{
+  if (start_time_.isZero())
+  {
+    throw utilities::Exception(id_ + " has not started yet.");
+  }
+  // check other possible errors
+  end_time_ = ros::Time::now();
+  utilities::Subject<Event>::notify(Event(types::FINISHED));
+  ROS_INFO("%s has just finished.", id_.c_str());
+}
+
+void Task::clearResources() { utilities::Subject<Event>::clearObservers(); }
 
 double Task::getDuration(ros::Time t) const
 {
@@ -97,19 +139,7 @@ void Task::setDescription(std::string description)
   description_ = description;
 }
 
-void Task::addResource(Resource *resource)
-{
-  utilities::Subject<Event>::registerObserver(resource);
-}
-
-void Task::removeResource(const Resource &resource)
-{
-  utilities::Subject<Event>::unregisterObserver(resource);
-}
-
 std::string Task::str() const { return id_; }
-
-const char* Task::c_str() const { return str().c_str(); }
 
 bool Task::operator==(const Task& task) const { return id_ == task.id_; }
 

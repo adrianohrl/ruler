@@ -5,18 +5,14 @@
  *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)
  */
 
-#include <iostream>
-#include "ruler/continuous_consumable_resource.h"
-#include "ruler/continuous_reusable_resource.h"
-#include "ruler/discrete_consumable_resource.h"
-#include "ruler/discrete_reusable_resource.h"
-#include "ruler/task.h"
-#include "ruler/unary_consumable_resource.h"
-#include "ruler/unary_reusable_resource.h"
+#include <ros/ros.h>
+#include <ruler/ruler.h>
 
 int main(int argc, char** argv)
 {
-  std::cout << "Testing ruler library ..." << std::endl;
+  ros::init(argc, argv, "ruler_test_node");
+  ros::NodeHandle nh;
+  ROS_INFO("Testing ruler library ...");
   ruler::ContinuousConsumableResource* r1 =
       new ruler::ContinuousConsumableResource("type1", "r1", 10.5);
   ruler::ContinuousReusableResource* r2 =
@@ -30,6 +26,17 @@ int main(int argc, char** argv)
   ruler::UnaryReusableResource* r6 =
       new ruler::UnaryReusableResource("type6", "r6", false);
   ruler::Task* t1 = new ruler::Task("task1", "t1");
+  t1->addResource(r1);
+  t1->addResource(r3);
+  t1->addResource(r5);
+  t1->start();
+  t1->interrupt();
+  t1->resume();
+  t1->interrupt();
+  t1->resume();
+  t1->interrupt();
+  t1->resume();
+  t1->finish();
   ruler::Task* t2 = new ruler::Task("task2", "t2");
   delete r1;
   r1 = NULL;

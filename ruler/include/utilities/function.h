@@ -9,7 +9,7 @@
 #define _UTILITIES_FUNCTION_H_
 
 #include <string>
-#include <exception>
+#include "utilities/exception.h"
 
 namespace utilities
 {

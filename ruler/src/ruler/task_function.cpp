@@ -5,6 +5,7 @@
  *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)
  */
 
+#include "ruler/task.h"
 #include "ruler/task_function.h"
 
 namespace ruler
@@ -14,7 +15,14 @@ TaskFunction::TaskFunction(Task* task, utilities::Function* quantity_function)
 {
 }
 
-TaskFunction::~TaskFunction() { task_ = NULL; }
+TaskFunction::~TaskFunction() {
+  task_ = NULL;
+  if (quantity_)
+  {
+    delete quantity_;
+    quantity_ = NULL;
+  }
+}
 
 double TaskFunction::estimate(ros::Time t) const
 {
@@ -29,13 +37,18 @@ double TaskFunction::estimate(ros::Time t) const
   return quantity_->getValue(task_->getDuration(t));
 }
 
-void TaskFunction::update(Event *notification)
+void TaskFunction::update(Event* notification)
 {
-
+  events_.push_back(*notification);
 }
 
-void TaskFunction::update(const Event &notification)
+void TaskFunction::update(const Event& notification)
 {
+  events_.push_back(notification);
+}
 
+std::string TaskFunction::str() const
+{
+  return "";
 }
 }

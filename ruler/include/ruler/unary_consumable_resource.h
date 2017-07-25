@@ -22,7 +22,6 @@ public:
                           bool initial_level = true,
                           ros::Duration latence = ros::Duration(0.0));
   UnaryConsumableResource(std::string type, std::string name,
-                          utilities::UnarySignalType capacity,
                           utilities::UnarySignalType initial_level,
                           ros::Duration latence = ros::Duration(0.0));
   UnaryConsumableResource(const UnaryConsumableResource& resource);

@@ -11,7 +11,6 @@
 #include <string>
 #include <ros/duration.h>
 #include "ruler/profile.h"
-#include "utilities/observer.h"
 #include "utilities/exception.h"
 
 namespace ruler
@@ -31,7 +30,6 @@ public:
   Profile<T>* getProfile() const;
   void setCapacity(T capacity);
   std::string str() const;
-  const char* c_str() const;
   bool operator==(const Resource<T>& resource) const;
   bool operator!=(const Resource<T>& resource) const;
   void operator+(const T& level);
@@ -118,11 +116,6 @@ template <typename T> void Resource<T>::setCapacity(T capacity)
 }
 
 template <typename T> std::string Resource<T>::str() const { return name_; }
-
-template <typename T> const char* Resource<T>::c_str() const
-{
-  return str().c_str();
-}
 
 template <typename T>
 bool Resource<T>::operator==(const Resource<T>& resource) const

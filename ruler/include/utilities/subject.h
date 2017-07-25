@@ -10,6 +10,7 @@
 #define _UTILITIES_SUBJECT_H_
 
 #include <list>
+#include <ros/common.h>
 #include "utilities/observer.h"
 
 namespace utilities
@@ -18,10 +19,13 @@ template <typename T> class Subject
 {
 public:
   virtual ~Subject();
+  virtual std::string str() const = 0;
+  const char* c_str() const;
 
 protected:
   void registerObserver(Observer<T>* observer);
   void unregisterObserver(Observer<T>* observer);
+  void clearObservers();
   void notify(T* notification);
   void notify(const T& notification);
 
@@ -31,17 +35,23 @@ private:
 
 template <typename T> Subject<T>::~Subject() {}
 
-template <typename T>
-void Subject<T>::registerObserver(Observer<T>* observer)
+template <typename T> const char* Subject<T>::c_str() const
 {
-  observers_.push_back(observers_);
+  return str().c_str();
 }
 
-template <typename T>
-void Subject<T>::unregisterObserver(Observer<T>* observer)
+template <typename T> void Subject<T>::registerObserver(Observer<T>* observer)
+{
+  observers_.push_back(observer);
+  ROS_DEBUG("Registered observer (%s) to subject (%s): ", observer->c_str(), c_str());
+}
+
+template <typename T> void Subject<T>::unregisterObserver(Observer<T>* observer)
 {
   observers_.remove(observer);
 }
+
+template <typename T> void Subject<T>::clearObservers() { observers_.clear(); }
 
 template <typename T> void Subject<T>::notify(T* notification)
 {

@@ -29,6 +29,9 @@ public:
   void interrupt();
   void resume();
   void finish();
+  template <typename T> void addResource(Resource<T>* resource);
+  template <typename T> void removeResource(const Resource<T>& resource);
+  void clearResources();
   double getDuration(ros::Time t = ros::Time::now()) const;
   std::string getId() const;
   std::string getName() const;
@@ -37,12 +40,7 @@ public:
   ros::Time getStartTime() const;
   ros::Time getEndTime() const;
   void setDescription(std::string description);
-  bool empty();
-  void clear();
-  void addResource(Resource* resource);
-  void removeResource(const Resource& resource);
   std::string str() const;
-  const char* c_str() const;
   bool operator==(const Task& task) const;
   bool operator!=(const Task& task) const;
 
@@ -57,6 +55,16 @@ private:
   utilities::Interval<ros::Time>* end_time_bounds_;
   std::list<utilities::Interval<ros::Time>*> executed_intervals_;
 };
+
+template <typename T> void Task::addResource(Resource<T>* resource)
+{
+  utilities::Subject<Event>::registerObserver(resource);
+}
+
+template <typename T> void Task::removeResource(const Resource<T>& resource)
+{
+  utilities::Subject<Event>::unregisterObserver(resource);
+}
 }
 
 #endif // _RULER_TASK_H_
