@@ -26,18 +26,46 @@ int main(int argc, char** argv)
   ruler::UnaryReusableResource* r6 =
       new ruler::UnaryReusableResource("type6", "r6", false);
   ruler::Task* t1 = new ruler::Task("task1", "t1");
+  ruler::Task* t2 = new ruler::Task("task2", "t2");
   t1->addResource(r1);
   t1->addResource(r3);
   t1->addResource(r5);
-  t1->start();
-  t1->interrupt();
-  t1->resume();
-  t1->interrupt();
-  t1->resume();
-  t1->interrupt();
-  t1->resume();
-  t1->finish();
-  ruler::Task* t2 = new ruler::Task("task2", "t2");
+  ros::Duration d(5);
+  try
+  {
+    t1->start();
+    d.sleep();
+    ROS_INFO("Duration after started: %lf [s].", t1->getDuration());
+    d.sleep();
+    t1->interrupt();
+    d.sleep();
+    ROS_INFO("Duration after interrupted 1: %lf [s].", t1->getDuration());
+    d.sleep();
+    t1->resume();
+    d.sleep();
+    ROS_INFO("Duration after resumed 1: %lf [s].", t1->getDuration());
+    d.sleep();
+    t1->interrupt();
+    d.sleep();
+    ROS_INFO("Duration after interrupted 2: %lf [s].", t1->getDuration());
+    d.sleep();
+    t1->resume();
+    d.sleep();
+    ROS_INFO("Duration after resumed 2: %lf [s].", t1->getDuration());
+    d.sleep();
+    t1->interrupt();
+    d.sleep();
+    ROS_INFO("Duration after interrupted 3: %lf [s].", t1->getDuration());
+    d.sleep();
+    t1->finish();
+    d.sleep();
+    ROS_INFO("Duration after finished: %lf [s].", t1->getDuration());
+  }
+  catch (utilities::Exception e) {}
+  delete t1;
+  t1 = NULL;
+  delete t2;
+  t2 = NULL;
   delete r1;
   r1 = NULL;
   delete r2;

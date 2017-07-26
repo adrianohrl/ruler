@@ -17,7 +17,7 @@ namespace utilities
 Exception::Exception(std::string message)
   : message_(message.c_str())
 {
-  ROS_FATAL(message.c_str());
+  ROS_FATAL("%s", message.c_str());
 }
 
 /**
@@ -27,7 +27,7 @@ Exception::Exception(std::string message)
 Exception::Exception(const char *message)
   : message_(message)
 {
-  ROS_FATAL(message);
+  ROS_FATAL("%s", message);
 }
 
 /**

@@ -33,7 +33,16 @@ private:
   std::list<Observer<T>*> observers_;
 };
 
-template <typename T> Subject<T>::~Subject() {}
+template <typename T> Subject<T>::~Subject()
+{
+  typename std::list<Observer<T>*>::iterator it(observers_.begin());
+  while (it != observers_.end())
+  {
+    *it = NULL;
+    it++;
+  }
+  observers_.clear();
+}
 
 template <typename T> const char* Subject<T>::c_str() const
 {
@@ -43,7 +52,8 @@ template <typename T> const char* Subject<T>::c_str() const
 template <typename T> void Subject<T>::registerObserver(Observer<T>* observer)
 {
   observers_.push_back(observer);
-  ROS_DEBUG("Registered observer (%s) to subject (%s): ", observer->c_str(), c_str());
+  ROS_DEBUG("Registered observer (%s) to subject (%s): ", observer->c_str(),
+            c_str());
 }
 
 template <typename T> void Subject<T>::unregisterObserver(Observer<T>* observer)

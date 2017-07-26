@@ -37,8 +37,8 @@ public:
   std::string getName() const;
   std::string getDescription() const;
   bool isPreemptive() const;
-  ros::Time getStartTime() const;
-  ros::Time getEndTime() const;
+  ros::Time getStartTimestamp() const;
+  ros::Time getEndTimestamp() const;
   void setDescription(std::string description);
   std::string str() const;
   bool operator==(const Task& task) const;
@@ -49,11 +49,12 @@ private:
   std::string name_;
   std::string description_;
   bool preemptive_;
-  ros::Time start_time_;
-  ros::Time end_time_;
-  utilities::Interval<ros::Time>* start_time_bounds_;
-  utilities::Interval<ros::Time>* end_time_bounds_;
-  std::list<utilities::Interval<ros::Time>*> executed_intervals_;
+  ros::Time start_timestamp_;
+  ros::Time last_interruption_timestamp_;
+  ros::Time end_timestamp_;
+  utilities::Interval<ros::Time>* start_timestamp_bounds_;
+  utilities::Interval<ros::Time>* end_timestamp_bounds_;
+  std::list<utilities::Interval<ros::Time>*> interruption_intervals_;
 };
 
 template <typename T> void Task::addResource(Resource<T>* resource)

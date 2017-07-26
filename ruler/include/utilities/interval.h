@@ -20,10 +20,12 @@ public:
   T getValid(const T& value) const;
   T getMin() const;
   T getMax() const;
+  void setMin(const T& min);
+  void setMax(const T& max);
 
 private:
-  const T min_;
-  const T max_;
+  T min_;
+  T max_;
   bool including_min_;
   bool inculding_max_;
 };
@@ -53,6 +55,22 @@ template <typename T> T Interval<T>::getValid(const T& value) const
 template <typename T> T Interval<T>::getMin() const { return min_; }
 
 template <typename T> T Interval<T>::getMax() const { return max_; }
+
+template <typename T> void Interval<T>::setMin(const T &min)
+{
+  if (min <= max_)
+  {
+    min_ = min;
+  }
+}
+
+template <typename T> void Interval<T>::setMax(const T &max)
+{
+  if (max >= min_)
+  {
+    max_ = max;
+  }
+}
 }
 
 #endif // _UTILITIES_INTERVAL_H_

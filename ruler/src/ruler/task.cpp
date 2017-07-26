@@ -12,34 +12,35 @@ namespace ruler
 Task::Task(std::string id, std::string name, std::string description,
            bool preemptive)
     : id_(id), name_(name), description_(description), preemptive_(preemptive),
-      start_time_bounds_(NULL), end_time_bounds_(NULL)
+      start_timestamp_bounds_(NULL), end_timestamp_bounds_(NULL)
 {
 }
 
 Task::Task(const Task& task)
     : id_(task.id_), name_(task.name_), description_(task.description_),
-      preemptive_(task.preemptive_), start_time_(task.start_time_),
-      end_time_(task.end_time_), start_time_bounds_(task.start_time_bounds_),
-      end_time_bounds_(task.end_time_bounds_),
-      executed_intervals_(task.executed_intervals_)
+      preemptive_(task.preemptive_), start_timestamp_(task.start_timestamp_),
+      end_timestamp_(task.end_timestamp_),
+      start_timestamp_bounds_(task.start_timestamp_bounds_),
+      end_timestamp_bounds_(task.end_timestamp_bounds_),
+      interruption_intervals_(task.interruption_intervals_)
 {
 }
 
 Task::~Task()
 {
-  if (start_time_bounds_)
+  if (start_timestamp_bounds_)
   {
-    delete start_time_bounds_;
-    start_time_bounds_ = NULL;
+    delete start_timestamp_bounds_;
+    start_timestamp_bounds_ = NULL;
   }
-  if (end_time_bounds_)
+  if (end_timestamp_bounds_)
   {
-    delete end_time_bounds_;
-    end_time_bounds_ = NULL;
+    delete end_timestamp_bounds_;
+    end_timestamp_bounds_ = NULL;
   }
   std::list<utilities::Interval<ros::Time>*>::iterator it(
-      executed_intervals_.begin());
-  while (it != executed_intervals_.end())
+      interruption_intervals_.begin());
+  while (it != interruption_intervals_.end())
   {
     if (*it)
     {
@@ -52,48 +53,71 @@ Task::~Task()
 
 void Task::start()
 {
-  if (!start_time_.isZero())
+  if (!start_timestamp_.isZero())
   {
-    throw utilities::Exception(id_ + " has already started.");
+    throw utilities::Exception(id_ + " has already been started.");
   }
-  // check other possible errors
-  start_time_ = ros::Time::now();
+  start_timestamp_ = ros::Time::now();
   utilities::Subject<Event>::notify(Event(types::STARTED));
   ROS_INFO("%s has just started.", id_.c_str());
 }
 
 void Task::interrupt()
 {
-  if (start_time_.isZero())
+  if (start_timestamp_.isZero())
   {
-    throw utilities::Exception(id_ + " has not started yet.");
+    throw utilities::Exception(id_ + " has not been started yet.");
   }
-  // check other possible errors
-  // interrupt properly
+  if (!end_timestamp_.isZero())
+  {
+    throw utilities::Exception(id_ + " has already been finished.");
+  }
+  if (!last_interruption_timestamp_.isZero())
+  {
+    throw utilities::Exception(id_ + " has already been interrupted.");
+  }
+  last_interruption_timestamp_ = ros::Time::now();
   utilities::Subject<Event>::notify(Event(types::INTERRUPTED));
   ROS_INFO("%s has just interruped.", id_.c_str());
 }
 
 void Task::resume()
 {
-  if (start_time_.isZero())
+  if (start_timestamp_.isZero())
   {
     throw utilities::Exception(id_ + " has not started yet.");
   }
-  // check other possible errors
-  // resume properly
+  if (!end_timestamp_.isZero())
+  {
+    throw utilities::Exception(id_ + " has already been finished.");
+  }
+  if (last_interruption_timestamp_.isZero())
+  {
+    throw utilities::Exception(id_ + " is already resuming.");
+  }
+  interruption_intervals_.push_back(new utilities::Interval<ros::Time>(
+      last_interruption_timestamp_, ros::Time::now()));
+  last_interruption_timestamp_ = ros::Time();
   utilities::Subject<Event>::notify(Event(types::RESUMED));
   ROS_INFO("%s has just resumed.", id_.c_str());
 }
 
 void Task::finish()
 {
-  if (start_time_.isZero())
+  if (start_timestamp_.isZero())
   {
     throw utilities::Exception(id_ + " has not started yet.");
   }
-  // check other possible errors
-  end_time_ = ros::Time::now();
+  if (!end_timestamp_.isZero())
+  {
+    throw utilities::Exception(id_ + " has already been finished.");
+  }
+  end_timestamp_ = ros::Time::now();
+  if (!last_interruption_timestamp_.isZero())
+  {
+    interruption_intervals_.push_back(new utilities::Interval<ros::Time>(
+        last_interruption_timestamp_, end_timestamp_));
+  }
   utilities::Subject<Event>::notify(Event(types::FINISHED));
   ROS_INFO("%s has just finished.", id_.c_str());
 }
@@ -102,22 +126,28 @@ void Task::clearResources() { utilities::Subject<Event>::clearObservers(); }
 
 double Task::getDuration(ros::Time t) const
 {
-  double duration(((t > end_time_ ? end_time_ : t) - start_time_).toSec());
+  double duration(
+      ((!end_timestamp_.isZero() && t > end_timestamp_ ? end_timestamp_ : t) -
+       start_timestamp_).toSec());
   std::list<utilities::Interval<ros::Time>*>::const_iterator it(
-      executed_intervals_.begin());
-  while (it != executed_intervals_.end())
+      interruption_intervals_.begin());
+  while (it != interruption_intervals_.end())
   {
-    utilities::Interval<ros::Time>* interval = *it;
-    if (t > interval->getMax())
+    utilities::Interval<ros::Time>* interruption_interval = *it;
+    if (t > interruption_interval->getMax())
     {
-      duration -= (interval->getMax() - interval->getMin()).toSec();
+      duration -= (interruption_interval->getMax() -
+                   interruption_interval->getMin()).toSec();
     }
-    else if (interval->belongs(t))
+    else if (interruption_interval->belongs(t))
     {
-      duration -= (t - interval->getMin()).toSec();
+      duration -= (t - interruption_interval->getMin()).toSec();
     }
-    // se essa lista for ordenada, pode colocar um break aki dentro.
     it++;
+  }
+  if (end_timestamp_.isZero() && !last_interruption_timestamp_.isZero())
+  {
+    duration -= (t - last_interruption_timestamp_).toSec();
   }
   return duration;
 }
@@ -130,9 +160,9 @@ std::string Task::getDescription() const { return description_; }
 
 bool Task::isPreemptive() const { return preemptive_; }
 
-ros::Time Task::getStartTime() const { return start_time_; }
+ros::Time Task::getStartTimestamp() const { return start_timestamp_; }
 
-ros::Time Task::getEndTime() const { return end_time_; }
+ros::Time Task::getEndTimestamp() const { return end_timestamp_; }
 
 void Task::setDescription(std::string description)
 {
