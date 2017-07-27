@@ -36,7 +36,7 @@ UnaryReusableResource::~UnaryReusableResource() {}
 
 void UnaryReusableResource::require(Task *task)
 {
-  ReusableResource<utilities::UnarySignalType>::require(
-      task, new utilities::StepFunction());
+  /*ReusableResource<utilities::UnarySignalType>::require(
+      task, new utilities::StepFunction());*/
 }
 }

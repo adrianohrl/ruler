@@ -15,6 +15,8 @@ namespace utilities
 template <typename T> class SignalType
 {
 public:
+  SignalType(const T& value);
+  SignalType(const SignalType<T>& signal_type);
   virtual ~SignalType();
   T getValue() const;
   void setValue(const T& value);
@@ -26,14 +28,13 @@ public:
   virtual bool operator!=(const SignalType<T>& signal_type) const;
   virtual SignalType<T>& operator=(const T& value);
   virtual SignalType<T>& operator=(const SignalType<T>& signal_type);
+  virtual SignalType<T>& operator+=(const SignalType<T>& signal_type);
   virtual bool operator>(const SignalType<T>& signal_type) const;
   template <typename U>
   friend std::ostream& operator<<(std::ostream& out,
                                   const SignalType<U>& signal_type);
 
 protected:
-  SignalType(const T& value);
-  SignalType(const SignalType<T>& signal_type);
   T value_;
 };
 
@@ -100,6 +101,13 @@ template <typename T>
 SignalType<T>& SignalType<T>::operator=(const SignalType<T>& signal_type)
 {
   value_ = signal_type.value_;
+  return *this;
+}
+
+template <typename T>
+SignalType<T>& SignalType<T>::operator+=(const SignalType<T> &signal_type)
+{
+  value_ += signal_type.value_;
   return *this;
 }
 

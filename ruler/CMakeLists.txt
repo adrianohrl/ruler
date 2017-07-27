@@ -90,3 +90,16 @@ add_dependencies(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
 )
+
+catkin_add_gtest(utest
+  test/utest.cpp
+  ${CPP_FILES}
+)
+
+add_dependencies(utest
+  ${catkin_EXPORTED_TARGETS}
+)
+
+target_link_libraries(utest
+  ${catkin_LIBRARIES}
+)

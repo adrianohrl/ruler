@@ -24,8 +24,12 @@ Function::~Function() {}
 
 double Function::getValue(double d) const
 {
-  double q(q0_);
-  if (d >= d0_)
+  double q;
+  if (d < d0_)
+  {
+    q = q0_;
+  }
+  else if (d <= df_)
   {
     q = calculate(d);
     if (q < q0_)
@@ -37,7 +41,11 @@ double Function::getValue(double d) const
       q = qf_;
     }
   }
-  return ascending_ ? q : qf_ - q;
+  else
+  {
+    q = qf_;
+  }
+  return ascending_ ? q : qf_ - q + q0_;
 }
 
 void Function::setAscending(bool ascending) { ascending_ = ascending; }

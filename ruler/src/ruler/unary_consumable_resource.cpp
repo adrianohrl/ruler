@@ -40,13 +40,13 @@ UnaryConsumableResource::~UnaryConsumableResource() {}
 
 void UnaryConsumableResource::consume(Task* task)
 {
-  ConsumableResource<utilities::UnarySignalType>::consume(
-      task, new utilities::StepFunction());
+  /*ConsumableResource<utilities::UnarySignalType>::consume(
+      task, new utilities::StepFunction());*/
 }
 
 void UnaryConsumableResource::produce(Task* task)
 {
-  ConsumableResource<utilities::UnarySignalType>::produce(
-      task, new utilities::StepFunction());
+  /*ConsumableResource<utilities::UnarySignalType>::produce(
+      task, new utilities::StepFunction());*/
 }
 }
