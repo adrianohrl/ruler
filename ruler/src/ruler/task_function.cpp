@@ -43,5 +43,10 @@ double TaskFunction::getLevel(ros::Time t) const
   return quantity_function_->getValue(task_->getDuration(t));
 }
 
+double TaskFunction::getLevel(double d) const
+{
+  return quantity_function_->getValue(d);
+}
+
 Task* TaskFunction::getTask() const { return task_; }
 }
