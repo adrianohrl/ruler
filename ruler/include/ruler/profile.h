@@ -24,7 +24,6 @@ public:
   T getCapacity() const;
   T getInitialLevel() const;
   T getLevel(ros::Time t = ros::Time::now()) const;
-  double getLevel(double d, double initial) const;
   void update(const TaskEvent& notification);
   void addTaskFunction(TaskFunction* task_function);
   void removeTaskFunction(Task* task);
@@ -75,32 +74,16 @@ template <typename T> T Profile<T>::getInitialLevel() const
 template <typename T> T Profile<T>::getLevel(ros::Time t) const
 {
   T level(initial_level_);
-  //ROS_WARN_STREAM("[PROFILE] initial level: " << level);
+  ROS_WARN_STREAM("[PROFILE] initial level: " << level);
   std::list<TaskFunction*>::const_iterator it(task_functions_.begin());
   while (it != task_functions_.end())
   {
     TaskFunction* task_function = *it;
     level += task_function->getLevel(t);
-    //ROS_WARN_STREAM("[PROFILE] level: " << level);
+    ROS_WARN_STREAM("[PROFILE] level: " << level);
     it++;
   }
-  //ROS_WARN_STREAM("[PROFILE] final level: " << level);
-  return level;
-}
-
-template <typename T> double Profile<T>::getLevel(double d, double initial_level) const
-{
-  double level(initial_level);
-  //ROS_WARN_STREAM("[PROFILE] initial level: " << level);
-  std::list<TaskFunction*>::const_iterator it(task_functions_.begin());
-  while (it != task_functions_.end())
-  {
-    TaskFunction* task_function = *it;
-    level += task_function->getLevel(d);
-    //ROS_WARN_STREAM("[PROFILE] level: " << level);
-    it++;
-  }
-  //ROS_WARN_STREAM("[PROFILE] final level: " << level);
+  ROS_WARN_STREAM("[PROFILE] final level: " << level);
   return level;
 }
 

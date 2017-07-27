@@ -19,6 +19,8 @@ public:
   DiscreteSignalType(long value);
   DiscreteSignalType(const DiscreteSignalType& signal_type);
   virtual ~DiscreteSignalType();
+  using SignalType<long>::operator-;
+  virtual DiscreteSignalType& operator-();
   virtual DiscreteSignalType& operator++();
   virtual DiscreteSignalType& operator++(int);
   virtual DiscreteSignalType operator--();

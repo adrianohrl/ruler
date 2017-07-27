@@ -27,6 +27,7 @@ protected:
   void unregisterObserver(Observer<T>* observer);
   void clearObservers();
   void notify(const T& notification);
+  bool empty() const;
 
 private:
   std::list<Observer<T>*> observers_;
@@ -82,6 +83,11 @@ template <typename T> void Subject<T>::notify(const T& notification)
                                  << ").");
     it++;
   }
+}
+
+template <typename T> bool Subject<T>::empty() const
+{
+  return observers_.empty();
 }
 }
 

@@ -24,7 +24,6 @@ public:
   virtual ~TaskFunction();
   void update(const TaskEvent& notification);
   double getLevel(ros::Time t) const;
-  double getLevel(double d) const;
   Task* getTask() const;
 
 private:

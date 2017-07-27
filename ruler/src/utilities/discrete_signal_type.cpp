@@ -23,6 +23,11 @@ DiscreteSignalType::DiscreteSignalType(const DiscreteSignalType& signal_type)
 
 DiscreteSignalType::~DiscreteSignalType() {}
 
+DiscreteSignalType &DiscreteSignalType::operator-()
+{
+  value_ = -value_;
+}
+
 DiscreteSignalType& DiscreteSignalType::operator++()
 {
   value_++;

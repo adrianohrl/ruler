@@ -10,15 +10,18 @@
 #define _UTILITIES_CONTINUOUS_SIGNAL_TYPE_H_
 
 #include "utilities/non_unary_signal_type.h"
+#include "utilities/discrete_signal_type.h"
 
 namespace utilities
 {
-class ContinuousSignalType : public NonUnarySignalType<double>
+class ContinuousSignalType : public SignalType<double>
 {
 public:
   ContinuousSignalType(double value);
   ContinuousSignalType(const ContinuousSignalType& signal_type);
   virtual ~ContinuousSignalType();
+  using SignalType<double>::operator-;
+  virtual ContinuousSignalType& operator-();
 };
 }
 

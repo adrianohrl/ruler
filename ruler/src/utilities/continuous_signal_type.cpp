@@ -12,15 +12,21 @@ namespace utilities
 {
 
 ContinuousSignalType::ContinuousSignalType(double value)
-    : NonUnarySignalType<double>::NonUnarySignalType(value)
+    : SignalType<double>::SignalType(value)
 {
 }
 
 ContinuousSignalType::ContinuousSignalType(
     const ContinuousSignalType& signal_type)
-    : NonUnarySignalType<double>::NonUnarySignalType(signal_type)
+    : SignalType<double>::SignalType(signal_type)
 {
 }
 
 ContinuousSignalType::~ContinuousSignalType() {}
+
+ContinuousSignalType& ContinuousSignalType::operator-()
+{
+  value_ = -value_;
+  return *this;
+}
 }

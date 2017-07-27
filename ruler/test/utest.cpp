@@ -57,24 +57,24 @@ TEST(Functions, exponential)
   exponential->setAscending(true);
   for (int i(0); i < d.size(); i++)
   {
-    EXPECT_GE(tolerance, fabs(q_exponential_asc[d[i]] - exponential->getValue(d[i])));
+    EXPECT_GE(tolerance,
+              fabs(q_exponential_asc[d[i]] - exponential->getValue(d[i])));
   }
   exponential->setAscending(false);
   for (int i(0); i < d.size(); i++)
   {
-    EXPECT_GE(tolerance, fabs(q_exponential_des[d[i]] - exponential->getValue(d[i])));
+    EXPECT_GE(tolerance,
+              fabs(q_exponential_des[d[i]] - exponential->getValue(d[i])));
   }
 }
 
-TEST(Profiles, continuous)
+TEST(Task, start)
 {
-  ruler::Profile<utilities::ContinuousSignalType>* p1;
+  ruler::Task* task = new ruler::Task("t", "task");
   try
   {
-    p1 = new ruler::Profile<utilities::ContinuousSignalType>(10.3, 12.1);
-    delete p1;
-    p1 = NULL;
-    ADD_FAILURE() << "Didn't throw exception as expected";
+    task->start();
+    ADD_FAILURE() << "Didn't throw exception as expected.";
   }
   catch (utilities::Exception e)
   {
@@ -84,101 +84,338 @@ TEST(Profiles, continuous)
   {
     FAIL() << "Uncaught exception.";
   }
-  double c(1000.0), l0(300.0);
-  p1 = new ruler::Profile<utilities::ContinuousSignalType>(c, l0);
-  p1->addTaskFunction(new ruler::TaskFunction(NULL, step));
-  p1->addTaskFunction(new ruler::TaskFunction(NULL, linear));
-  p1->addTaskFunction(new ruler::TaskFunction(NULL, exponential));
+  ruler::UnaryConsumableResource* resource =
+      new ruler::UnaryConsumableResource("r", "resource");
+  task->addResource(resource);
+  task->start();
+  task->interrupt();
+  try
+  {
+    task->start();
+    ADD_FAILURE() << "Didn't throw exception as expected.";
+  }
+  catch (utilities::Exception e)
+  {
+    SUCCEED();
+  }
+  catch (...)
+  {
+    FAIL() << "Uncaught exception.";
+  }
+  task->resume();
+  try
+  {
+    task->start();
+    ADD_FAILURE() << "Didn't throw exception as expected.";
+  }
+  catch (utilities::Exception e)
+  {
+    SUCCEED();
+  }
+  catch (...)
+  {
+    FAIL() << "Uncaught exception.";
+  }
+  task->finish();
+  try
+  {
+    task->start();
+    ADD_FAILURE() << "Didn't throw exception as expected.";
+  }
+  catch (utilities::Exception e)
+  {
+    SUCCEED();
+  }
+  catch (...)
+  {
+    FAIL() << "Uncaught exception.";
+  }
+  delete resource;
+  resource = NULL;
+}
+
+TEST(Task, interrupt)
+{
+  ruler::Task* task = new ruler::Task("t", "task");
+  try
+  {
+    task->interrupt();
+    ADD_FAILURE() << "Didn't throw exception as expected.";
+  }
+  catch (utilities::Exception e)
+  {
+    SUCCEED();
+  }
+  catch (...)
+  {
+    FAIL() << "Uncaught exception.";
+  }
+  ruler::UnaryConsumableResource* resource =
+      new ruler::UnaryConsumableResource("r", "resource");
+  task->addResource(resource);
+  task->start();
+  task->interrupt();
+  try
+  {
+    task->interrupt();
+    ADD_FAILURE() << "Didn't throw exception as expected.";
+  }
+  catch (utilities::Exception e)
+  {
+    SUCCEED();
+  }
+  catch (...)
+  {
+    FAIL() << "Uncaught exception.";
+  }
+  task->finish();
+  try
+  {
+    task->interrupt();
+    ADD_FAILURE() << "Didn't throw exception as expected.";
+  }
+  catch (utilities::Exception e)
+  {
+    SUCCEED();
+  }
+  catch (...)
+  {
+    FAIL() << "Uncaught exception.";
+  }
+  delete task;
+  task = NULL;
+  delete resource;
+  resource = NULL;
+}
+
+TEST(Task, resume)
+{
+  ruler::Task* task = new ruler::Task("t", "task");
+  try
+  {
+    task->resume();
+    ADD_FAILURE() << "Didn't throw exception as expected.";
+  }
+  catch (utilities::Exception e)
+  {
+    SUCCEED();
+  }
+  catch (...)
+  {
+    FAIL() << "Uncaught exception.";
+  }
+  ruler::UnaryConsumableResource* resource =
+      new ruler::UnaryConsumableResource("r", "resource");
+  task->addResource(resource);
+  task->start();
+  try
+  {
+    task->resume();
+    ADD_FAILURE() << "Didn't throw exception as expected.";
+  }
+  catch (utilities::Exception e)
+  {
+    SUCCEED();
+  }
+  catch (...)
+  {
+    FAIL() << "Uncaught exception.";
+  }
+  task->interrupt();
+  task->resume();
+  try
+  {
+    task->resume();
+    ADD_FAILURE() << "Didn't throw exception as expected.";
+  }
+  catch (utilities::Exception e)
+  {
+    SUCCEED();
+  }
+  catch (...)
+  {
+    FAIL() << "Uncaught exception.";
+  }
+  task->finish();
+  try
+  {
+    task->resume();
+    ADD_FAILURE() << "Didn't throw exception as expected.";
+  }
+  catch (utilities::Exception e)
+  {
+    SUCCEED();
+  }
+  catch (...)
+  {
+    FAIL() << "Uncaught exception.";
+  }
+  delete task;
+  task = NULL;
+  delete resource;
+  resource = NULL;
+}
+
+TEST(Task, finish)
+{
+  ruler::Task* task = new ruler::Task("t", "task");
+  try
+  {
+    task->finish();
+    ADD_FAILURE() << "Didn't throw exception as expected.";
+  }
+  catch (utilities::Exception e)
+  {
+    SUCCEED();
+  }
+  catch (...)
+  {
+    FAIL() << "Uncaught exception.";
+  }
+  ruler::UnaryConsumableResource* resource =
+      new ruler::UnaryConsumableResource("r", "resource");
+  task->addResource(resource);
+  task->start();
+  task->finish();
+  try
+  {
+    task->finish();
+    ADD_FAILURE() << "Didn't throw exception as expected.";
+  }
+  catch (utilities::Exception e)
+  {
+    SUCCEED();
+  }
+  catch (...)
+  {
+    FAIL() << "Uncaught exception.";
+  }
+  delete task;
+  task = NULL;
+  delete resource;
+  resource = NULL;
+}
+
+TEST(Profiles, continuous)
+{
+  ruler::Profile<utilities::ContinuousSignalType>* profile;
+  try
+  {
+    profile = new ruler::Profile<utilities::ContinuousSignalType>(10.3, 12.1);
+    delete profile;
+    profile = NULL;
+    ADD_FAILURE() << "Didn't throw exception as expected.";
+  }
+  catch (utilities::Exception e)
+  {
+    SUCCEED();
+  }
+  catch (...)
+  {
+    FAIL() << "Uncaught exception.";
+  }
+  ruler::Task* task = new ruler::Task("t", "task");
+  ruler::UnaryConsumableResource* resource =
+      new ruler::UnaryConsumableResource("r", "resource");
+  task->addResource(resource);
+  task->start();
+  ros::Time t(task->getStartTimestamp());
+  double c(1000), l0(300);
+  profile = new ruler::Profile<utilities::ContinuousSignalType>(c, l0);
+  profile->addTaskFunction(new ruler::TaskFunction(task, step));
+  profile->addTaskFunction(new ruler::TaskFunction(task, linear));
+  profile->addTaskFunction(new ruler::TaskFunction(task, exponential));
   step->setAscending(true);
   linear->setAscending(true);
   exponential->setAscending(true);
+  utilities::ContinuousSignalType el(0.0), l(0.0);
   for (int i(0); i < d.size(); i++)
   {
-    double el(l0 + q_step_asc[d[i]] + q_linear_asc[d[i]] + q_exponential_asc[d[i]]);
-    double l(p1->getLevel(d[i], l0));
+    el = l0 + q_step_asc[d[i]] + q_linear_asc[d[i]] + q_exponential_asc[d[i]];
+    l = profile->getLevel(t + ros::Duration(d[i]));
     EXPECT_GE(tolerance, fabs(el - l));
     EXPECT_GE(l, 0.0);
-    EXPECT_GE(c, l);
+    EXPECT_LE(l, c);
   }
   step->setAscending(true);
   linear->setAscending(true);
   exponential->setAscending(false);
   for (int i(0); i < d.size(); i++)
   {
-    double el(l0 + q_step_asc[d[i]] + q_linear_asc[d[i]] + q_exponential_des[d[i]]);
-    double l(p1->getLevel(d[i], l0));
+    el = l0 + q_step_asc[d[i]] + q_linear_asc[d[i]] + q_exponential_des[d[i]];
+    l = profile->getLevel(t + ros::Duration(d[i]));
     EXPECT_GE(tolerance, fabs(el - l));
     EXPECT_GE(l, 0.0);
-    EXPECT_GE(c, l);
+    EXPECT_LE(l, c);
   }
   step->setAscending(true);
   linear->setAscending(false);
   exponential->setAscending(true);
   for (int i(0); i < d.size(); i++)
   {
-    double el(l0 + q_step_asc[d[i]] + q_linear_des[d[i]] + q_exponential_asc[d[i]]);
-    double l(p1->getLevel(d[i], l0));
+    el = l0 + q_step_asc[d[i]] + q_linear_des[d[i]] + q_exponential_asc[d[i]];
+    l = profile->getLevel(t + ros::Duration(d[i]));
     EXPECT_GE(tolerance, fabs(el - l));
     EXPECT_GE(l, 0.0);
-    EXPECT_GE(c, l);
+    EXPECT_LE(l, c);
   }
   step->setAscending(true);
   linear->setAscending(false);
   exponential->setAscending(false);
   for (int i(0); i < d.size(); i++)
   {
-    double el(l0 + q_step_asc[d[i]] + q_linear_des[d[i]] + q_exponential_des[d[i]]);
-    double l(p1->getLevel(d[i], l0));
+    el = l0 + q_step_asc[d[i]] + q_linear_des[d[i]] + q_exponential_des[d[i]];
+    l = profile->getLevel(t + ros::Duration(d[i]));
     EXPECT_GE(tolerance, fabs(el - l));
     EXPECT_GE(l, 0.0);
-    EXPECT_GE(c, l);
+    EXPECT_LE(l, c);
   }
   step->setAscending(false);
   linear->setAscending(true);
   exponential->setAscending(true);
   for (int i(0); i < d.size(); i++)
   {
-    double el(l0 + q_step_des[d[i]] + q_linear_asc[d[i]] + q_exponential_asc[d[i]]);
-    double l(p1->getLevel(d[i], l0));
+    el = l0 + q_step_des[d[i]] + q_linear_asc[d[i]] + q_exponential_asc[d[i]];
+    l = profile->getLevel(t + ros::Duration(d[i]));
     EXPECT_GE(tolerance, fabs(el - l));
     EXPECT_GE(l, 0.0);
-    EXPECT_GE(c, l);
+    EXPECT_LE(l, c);
   }
   step->setAscending(false);
   linear->setAscending(true);
   exponential->setAscending(false);
   for (int i(0); i < d.size(); i++)
   {
-    double el(l0 + q_step_des[d[i]] + q_linear_asc[d[i]] + q_exponential_des[d[i]]);
-    double l(p1->getLevel(d[i], l0));
+    el = l0 + q_step_des[d[i]] + q_linear_asc[d[i]] + q_exponential_des[d[i]];
+    l = profile->getLevel(t + ros::Duration(d[i]));
     EXPECT_GE(tolerance, fabs(el - l));
     EXPECT_GE(l, 0.0);
-    EXPECT_GE(c, l);
+    EXPECT_LE(l, c);
   }
   step->setAscending(false);
   linear->setAscending(false);
   exponential->setAscending(true);
   for (int i(0); i < d.size(); i++)
   {
-    double el(l0 + q_step_des[d[i]] + q_linear_des[d[i]] + q_exponential_asc[d[i]]);
-    double l(p1->getLevel(d[i], l0));
+    el = l0 + q_step_des[d[i]] + q_linear_des[d[i]] + q_exponential_asc[d[i]];
+    l = profile->getLevel(t + ros::Duration(d[i]));
     EXPECT_GE(tolerance, fabs(el - l));
     EXPECT_GE(l, 0.0);
-    EXPECT_GE(c, l);
+    EXPECT_LE(l, c);
   }
   step->setAscending(false);
   linear->setAscending(false);
   exponential->setAscending(false);
   for (int i(0); i < d.size(); i++)
   {
-    double el(l0 + q_step_des[d[i]] + q_linear_des[d[i]] + q_exponential_des[d[i]]);
-    double l(p1->getLevel(d[i], l0));
+    el = l0 + q_step_des[d[i]] + q_linear_des[d[i]] + q_exponential_des[d[i]];
+    l = profile->getLevel(t + ros::Duration(d[i]));
     EXPECT_GE(tolerance, fabs(el - l));
     EXPECT_GE(l, 0.0);
-    EXPECT_GE(c, l);
+    EXPECT_LE(l, c);
   }
-  delete p1;
-  p1 = NULL;
+  delete profile;
+  profile = NULL;
 }
 
 /*TEST(Resources, reusable)
@@ -257,7 +494,10 @@ void init()
   exponential = new utilities::ExponentialFunction(d0, df, q0, qf);
 }
 
-int main(int argc, char **argv){
+int main(int argc, char** argv)
+{
+  ros::init(argc, argv, "ruler_test_node");
+  ros::NodeHandle nh;
   init();
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

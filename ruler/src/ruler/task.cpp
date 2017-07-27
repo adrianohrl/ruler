@@ -57,9 +57,13 @@ void Task::start()
   {
     throw utilities::Exception(str() + " has already been started.");
   }
+  if (utilities::Subject<TaskEvent>::empty())
+  {
+    throw utilities::Exception(str() + " does not have any resource registered yet.");
+  }
   start_timestamp_ = ros::Time::now();
   utilities::Subject<TaskEvent>::notify(TaskEvent(this, types::STARTED));
-  ROS_INFO("%s has just started.", c_str());
+  ROS_DEBUG_STREAM(*this << " has just started.");
 }
 
 void Task::interrupt()
@@ -78,7 +82,7 @@ void Task::interrupt()
   }
   last_interruption_timestamp_ = ros::Time::now();
   utilities::Subject<TaskEvent>::notify(TaskEvent(this, types::INTERRUPTED));
-  ROS_INFO("%s has just interruped.", c_str());
+  ROS_DEBUG_STREAM(*this << " has just interruped.");
 }
 
 void Task::resume()
@@ -99,7 +103,7 @@ void Task::resume()
       last_interruption_timestamp_, ros::Time::now()));
   last_interruption_timestamp_ = ros::Time();
   utilities::Subject<TaskEvent>::notify(TaskEvent(this, types::RESUMED));
-  ROS_INFO("%s has just resumed.", c_str());
+  ROS_DEBUG_STREAM(*this << " has just resumed.");
 }
 
 void Task::finish()
@@ -119,7 +123,8 @@ void Task::finish()
         last_interruption_timestamp_, end_timestamp_));
   }
   utilities::Subject<TaskEvent>::notify(TaskEvent(this, types::FINISHED));
-  ROS_INFO("%s has just finished.", c_str());
+  utilities::Subject<TaskEvent>::clearObservers();
+  ROS_DEBUG_STREAM(*this << " has just finished.");
 }
 
 void Task::clearResources() { utilities::Subject<TaskEvent>::clearObservers(); }
