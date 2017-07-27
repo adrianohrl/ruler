@@ -18,15 +18,17 @@ class DiscreteReusableResource
     : public ReusableResource<utilities::DiscreteSignalType>
 {
 public:
-  DiscreteReusableResource(std::string type, std::string name,
+  DiscreteReusableResource(std::string id, std::string name,
                            long capacity, long initial_level = 0,
                            ros::Duration latence = ros::Duration(0.0));
-  DiscreteReusableResource(std::string type, std::string name,
+  DiscreteReusableResource(std::string id, std::string name,
                            utilities::DiscreteSignalType capacity,
                            utilities::DiscreteSignalType initial_level,
                            ros::Duration latence = ros::Duration(0.0));
   DiscreteReusableResource(const DiscreteReusableResource& resource);
   virtual ~DiscreteReusableResource();
+  using ReusableResource<utilities::DiscreteSignalType>::require;
+  virtual void require(Task *task, long quantity);
 };
 }
 

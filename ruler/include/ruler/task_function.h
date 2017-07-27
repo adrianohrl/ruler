@@ -10,28 +10,26 @@
 
 #include <list>
 #include <ros/time.h>
-#include "ruler/event.h"
+#include "ruler/task_event.h"
 #include "utilities/function.h"
-#include "utilities/observer.h"
 
 namespace ruler
 {
 class Task;
 
-class TaskFunction : public utilities::Observer<Event>
+class TaskFunction
 {
 public:
   TaskFunction(Task* task, utilities::Function* quantity_function);
   virtual ~TaskFunction();
-  double estimate(ros::Time t) const;
-  virtual void update(Event* notification);
-  virtual void update(const Event& notification);
-  virtual std::string str() const;
+  void update(const TaskEvent& notification);
+  double getLevel(ros::Time t) const;
+  Task* getTask() const;
 
 private:
   Task* task_;
-  std::list<Event> events_;
-  utilities::Function* quantity_;
+  std::list<TaskEvent> events_;
+  utilities::Function* quantity_function_;
 };
 }
 

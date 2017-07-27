@@ -12,7 +12,12 @@ namespace utilities
 {
 LinearFunction::LinearFunction(double d0, double df, double q0, double qf,
                                bool ascending)
-    : Function(d0, df, q0, qf, ascending)
+    : Function::Function(d0, df, q0, qf, ascending)
+{
+}
+
+LinearFunction::LinearFunction(const LinearFunction& function)
+    : Function::Function(function)
 {
 }
 

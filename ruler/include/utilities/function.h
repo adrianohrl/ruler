@@ -16,12 +16,13 @@ namespace utilities
 class Function
 {
 public:
-  Function(double d0, double df, double q0, double qf, bool ascending = false);
   virtual ~Function();
   double getValue(double d) const;
   void setAscending(bool ascending);
 
 protected:
+  Function(double d0, double df, double q0, double qf, bool ascending = false);
+  Function(const Function& function);
   double d0_;
   double df_;
   double q0_;

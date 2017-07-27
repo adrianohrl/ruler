@@ -9,24 +9,34 @@
 #ifndef _UTILITIES_OBSERVER_H_
 #define _UTILITIES_OBSERVER_H_
 
-#include <string>
+#include "utilities/has_id.h"
 
 namespace utilities
 {
-template <typename T> class Observer
+template <typename T> class Observer : public HasId<std::string, T>
 {
 public:
-  virtual void update(T* notification) = 0;
+  virtual ~Observer();
   virtual void update(const T& notification) = 0;
-  virtual std::string str() const = 0;
-  virtual const char* c_str() const;
+
+protected:
+  Observer(std::string id);
+  Observer(const Observer<T>& observer);
 };
 
-template <typename T> const char *Observer<T>::c_str() const
+template <typename T>
+Observer<T>::Observer(std::string id)
+    : HasId<std::string, T>::HasId(id)
 {
-  return str().c_str();
 }
 
+template <typename T>
+Observer<T>::Observer(const Observer<T>& observer)
+    : HasId<std::string, T>::HasId(observer)
+{
+}
+
+template <typename T> Observer<T>::~Observer() {}
 }
 
 #endif // _UTILITIES_OBSERVER_H_

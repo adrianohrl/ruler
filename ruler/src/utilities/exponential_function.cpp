@@ -13,7 +13,12 @@ namespace utilities
 ExponentialFunction::ExponentialFunction(double d0, double df, double q0,
                                          double qf, bool ascending, double k,
                                          double base)
-    : Function(d0, df, q0, qf, ascending), base_(base), k_(k)
+    : Function::Function(d0, df, q0, qf, ascending), base_(base), k_(k)
+{
+}
+
+ExponentialFunction::ExponentialFunction(const ExponentialFunction& function)
+    : Function::Function(function)
 {
 }
 

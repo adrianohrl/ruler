@@ -7,24 +7,25 @@
  */
 
 #include "ruler/unary_consumable_resource.h"
+#include "utilities/step_function.h"
 
 namespace ruler
 {
-UnaryConsumableResource::UnaryConsumableResource(std::string type,
+UnaryConsumableResource::UnaryConsumableResource(std::string id,
                                                  std::string name,
                                                  bool initial_level,
                                                  ros::Duration latence)
     : ConsumableResource<utilities::UnarySignalType>::ConsumableResource(
-          type, name, utilities::UnarySignalType(true),
+          id, name, utilities::UnarySignalType(true),
           utilities::UnarySignalType(initial_level), latence)
 {
 }
 
 UnaryConsumableResource::UnaryConsumableResource(
-    std::string type, std::string name,
-    utilities::UnarySignalType initial_level, ros::Duration latence)
+    std::string id, std::string name, utilities::UnarySignalType initial_level,
+    ros::Duration latence)
     : ConsumableResource<utilities::UnarySignalType>::ConsumableResource(
-          type, name, utilities::UnarySignalType(true), initial_level, latence)
+          id, name, utilities::UnarySignalType(true), initial_level, latence)
 {
 }
 
@@ -36,4 +37,16 @@ UnaryConsumableResource::UnaryConsumableResource(
 }
 
 UnaryConsumableResource::~UnaryConsumableResource() {}
+
+void UnaryConsumableResource::consume(Task* task)
+{
+  ConsumableResource<utilities::UnarySignalType>::consume(
+      task, new utilities::StepFunction());
+}
+
+void UnaryConsumableResource::produce(Task* task)
+{
+  ConsumableResource<utilities::UnarySignalType>::produce(
+      task, new utilities::StepFunction());
+}
 }

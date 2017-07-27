@@ -11,20 +11,19 @@
 namespace ruler
 {
 ContinuousConsumableResource::ContinuousConsumableResource(
-    std::string type, std::string name, double capacity, double initial_level,
+    std::string id, std::string name, double capacity, double initial_level,
     ros::Duration latence)
     : ConsumableResource<utilities::ContinuousSignalType>::ConsumableResource(
-          type, name, utilities::ContinuousSignalType(capacity),
+          id, name, utilities::ContinuousSignalType(capacity),
           utilities::ContinuousSignalType(initial_level), latence)
 {
 }
 
-ContinuousConsumableResource::ContinuousConsumableResource(
-    std::string type, std::string name,
+ContinuousConsumableResource::ContinuousConsumableResource(std::string id, std::string name,
     utilities::ContinuousSignalType capacity,
     utilities::ContinuousSignalType initial_level, ros::Duration latence)
     : ConsumableResource<utilities::ContinuousSignalType>::ConsumableResource(
-          type, name, capacity, initial_level, latence)
+          id, name, capacity, initial_level, latence)
 {
 }
 

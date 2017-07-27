@@ -26,6 +26,10 @@ public:
   virtual bool operator!=(const SignalType<T>& signal_type) const;
   virtual SignalType<T>& operator=(const T& value);
   virtual SignalType<T>& operator=(const SignalType<T>& signal_type);
+  virtual bool operator>(const SignalType<T>& signal_type) const;
+  template <typename U>
+  friend std::ostream& operator<<(std::ostream& out,
+                                  const SignalType<U>& signal_type);
 
 protected:
   SignalType(const T& value);
@@ -43,8 +47,7 @@ SignalType<T>::SignalType(const SignalType<T>& signal_type)
 {
 }
 
-template <typename T>
-SignalType<T>::~SignalType() {}
+template <typename T> SignalType<T>::~SignalType() {}
 
 template <typename T> T SignalType<T>::getValue() const { return value_; }
 
@@ -53,16 +56,14 @@ template <typename T> void SignalType<T>::setValue(const T& value)
   value_ = value;
 }
 
-template <typename T>
-std::string SignalType<T>::str() const
+template <typename T> std::string SignalType<T>::str() const
 {
   std::stringstream ss;
   ss << value_;
   return ss.str();
 }
 
-template <typename T>
-const char* SignalType<T>::c_str() const
+template <typename T> const char* SignalType<T>::c_str() const
 {
   return str().c_str();
 }
@@ -100,6 +101,19 @@ SignalType<T>& SignalType<T>::operator=(const SignalType<T>& signal_type)
 {
   value_ = signal_type.value_;
   return *this;
+}
+
+template <typename T>
+bool SignalType<T>::operator>(const SignalType<T> &signal_type) const
+{
+  return value_ > signal_type.value_;
+}
+
+template <typename T>
+std::ostream& operator<<(std::ostream& out, const SignalType<T>& signal_type)
+{
+  out << signal_type.getValue();
+  return out;
 }
 }
 

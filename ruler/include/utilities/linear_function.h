@@ -13,11 +13,12 @@
 
 namespace utilities
 {
-class LinearFunction : Function
+class LinearFunction : public Function
 {
 public:
   LinearFunction(double d0, double df, double q0, double qf,
                  bool ascending = false);
+  LinearFunction(const LinearFunction& function);
   virtual ~LinearFunction();
 
 private:

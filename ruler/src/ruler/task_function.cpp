@@ -11,20 +11,26 @@
 namespace ruler
 {
 TaskFunction::TaskFunction(Task* task, utilities::Function* quantity_function)
-    : task_(task), quantity_(quantity_function)
+    : task_(task), quantity_function_(quantity_function)
 {
 }
 
-TaskFunction::~TaskFunction() {
+TaskFunction::~TaskFunction()
+{
   task_ = NULL;
-  if (quantity_)
+  if (quantity_function_)
   {
-    delete quantity_;
-    quantity_ = NULL;
+    delete quantity_function_;
+    quantity_function_ = NULL;
   }
 }
 
-double TaskFunction::estimate(ros::Time t) const
+void TaskFunction::update(const TaskEvent& notification)
+{
+  events_.push_back(notification);
+}
+
+double TaskFunction::getLevel(ros::Time t) const
 {
   /*double level(0.0);
   std::list<Event*>::const_iterator it(events_.begin());
@@ -34,21 +40,8 @@ double TaskFunction::estimate(ros::Time t) const
     level += quantity_->getValue(task_->getDuration(t));
     it++;
   }*/
-  return quantity_->getValue(task_->getDuration(t));
+  return quantity_function_->getValue(task_->getDuration(t));
 }
 
-void TaskFunction::update(Event* notification)
-{
-  events_.push_back(*notification);
-}
-
-void TaskFunction::update(const Event& notification)
-{
-  events_.push_back(notification);
-}
-
-std::string TaskFunction::str() const
-{
-  return "";
-}
+Task* TaskFunction::getTask() const { return task_; }
 }

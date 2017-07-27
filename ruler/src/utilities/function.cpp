@@ -14,6 +14,12 @@ Function::Function(double d0, double df, double q0, double qf, bool ascending)
 {
 }
 
+Function::Function(const Function& function)
+    : d0_(function.d0_), df_(function.df_), q0_(function.q0_),
+      qf_(function.qf_), ascending_(function.ascending_)
+{
+}
+
 Function::~Function() {}
 
 double Function::getValue(double d) const

@@ -9,15 +9,15 @@
 
 namespace ruler
 {
-Task::Task(std::string id, std::string name, std::string description,
-           bool preemptive)
-    : id_(id), name_(name), description_(description), preemptive_(preemptive),
-      start_timestamp_bounds_(NULL), end_timestamp_bounds_(NULL)
+Task::Task(std::string id, std::string name, bool preemptive)
+    : utilities::Subject<TaskEvent>::Subject(id), name_(name),
+      preemptive_(preemptive), start_timestamp_bounds_(NULL),
+      end_timestamp_bounds_(NULL)
 {
 }
 
 Task::Task(const Task& task)
-    : id_(task.id_), name_(task.name_), description_(task.description_),
+    : utilities::Subject<TaskEvent>::Subject(task), name_(task.name_),
       preemptive_(task.preemptive_), start_timestamp_(task.start_timestamp_),
       end_timestamp_(task.end_timestamp_),
       start_timestamp_bounds_(task.start_timestamp_bounds_),
@@ -55,62 +55,62 @@ void Task::start()
 {
   if (!start_timestamp_.isZero())
   {
-    throw utilities::Exception(id_ + " has already been started.");
+    throw utilities::Exception(str() + " has already been started.");
   }
   start_timestamp_ = ros::Time::now();
-  utilities::Subject<Event>::notify(Event(types::STARTED));
-  ROS_INFO("%s has just started.", id_.c_str());
+  utilities::Subject<TaskEvent>::notify(TaskEvent(this, types::STARTED));
+  ROS_INFO("%s has just started.", c_str());
 }
 
 void Task::interrupt()
 {
   if (start_timestamp_.isZero())
   {
-    throw utilities::Exception(id_ + " has not been started yet.");
+    throw utilities::Exception(str() + " has not been started yet.");
   }
   if (!end_timestamp_.isZero())
   {
-    throw utilities::Exception(id_ + " has already been finished.");
+    throw utilities::Exception(str() + " has already been finished.");
   }
   if (!last_interruption_timestamp_.isZero())
   {
-    throw utilities::Exception(id_ + " has already been interrupted.");
+    throw utilities::Exception(str() + " has already been interrupted.");
   }
   last_interruption_timestamp_ = ros::Time::now();
-  utilities::Subject<Event>::notify(Event(types::INTERRUPTED));
-  ROS_INFO("%s has just interruped.", id_.c_str());
+  utilities::Subject<TaskEvent>::notify(TaskEvent(this, types::INTERRUPTED));
+  ROS_INFO("%s has just interruped.", c_str());
 }
 
 void Task::resume()
 {
   if (start_timestamp_.isZero())
   {
-    throw utilities::Exception(id_ + " has not started yet.");
+    throw utilities::Exception(str() + " has not started yet.");
   }
   if (!end_timestamp_.isZero())
   {
-    throw utilities::Exception(id_ + " has already been finished.");
+    throw utilities::Exception(str() + " has already been finished.");
   }
   if (last_interruption_timestamp_.isZero())
   {
-    throw utilities::Exception(id_ + " is already resuming.");
+    throw utilities::Exception(str() + " is already resuming.");
   }
   interruption_intervals_.push_back(new utilities::Interval<ros::Time>(
       last_interruption_timestamp_, ros::Time::now()));
   last_interruption_timestamp_ = ros::Time();
-  utilities::Subject<Event>::notify(Event(types::RESUMED));
-  ROS_INFO("%s has just resumed.", id_.c_str());
+  utilities::Subject<TaskEvent>::notify(TaskEvent(this, types::RESUMED));
+  ROS_INFO("%s has just resumed.", c_str());
 }
 
 void Task::finish()
 {
   if (start_timestamp_.isZero())
   {
-    throw utilities::Exception(id_ + " has not started yet.");
+    throw utilities::Exception(str() + " has not started yet.");
   }
   if (!end_timestamp_.isZero())
   {
-    throw utilities::Exception(id_ + " has already been finished.");
+    throw utilities::Exception(str() + " has already been finished.");
   }
   end_timestamp_ = ros::Time::now();
   if (!last_interruption_timestamp_.isZero())
@@ -118,11 +118,11 @@ void Task::finish()
     interruption_intervals_.push_back(new utilities::Interval<ros::Time>(
         last_interruption_timestamp_, end_timestamp_));
   }
-  utilities::Subject<Event>::notify(Event(types::FINISHED));
-  ROS_INFO("%s has just finished.", id_.c_str());
+  utilities::Subject<TaskEvent>::notify(TaskEvent(this, types::FINISHED));
+  ROS_INFO("%s has just finished.", c_str());
 }
 
-void Task::clearResources() { utilities::Subject<Event>::clearObservers(); }
+void Task::clearResources() { utilities::Subject<TaskEvent>::clearObservers(); }
 
 double Task::getDuration(ros::Time t) const
 {
@@ -152,26 +152,11 @@ double Task::getDuration(ros::Time t) const
   return duration;
 }
 
-std::string Task::getId() const { return id_; }
-
 std::string Task::getName() const { return name_; }
-
-std::string Task::getDescription() const { return description_; }
 
 bool Task::isPreemptive() const { return preemptive_; }
 
 ros::Time Task::getStartTimestamp() const { return start_timestamp_; }
 
 ros::Time Task::getEndTimestamp() const { return end_timestamp_; }
-
-void Task::setDescription(std::string description)
-{
-  description_ = description;
-}
-
-std::string Task::str() const { return id_; }
-
-bool Task::operator==(const Task& task) const { return id_ == task.id_; }
-
-bool Task::operator!=(const Task& task) const { return id_ != task.id_; }
 }

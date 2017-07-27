@@ -5,6 +5,7 @@
  *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)
  */
 
+#include <ros/common.h>
 #include "ruler/event.h"
 
 namespace ruler

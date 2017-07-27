@@ -18,21 +18,21 @@ template <typename T> class ConsumableResource : public Resource<T>
 {
 public:
   virtual ~ConsumableResource();
-  void consume(Task* task, utilities::Function* quantity);
-  void produce(Task* task, utilities::Function* quantity);
+  virtual void consume(Task* task, utilities::Function* quantity_function);
+  virtual void produce(Task* task, utilities::Function* quantity_function);
 
 protected:
-  ConsumableResource(const ConsumableResource<T>& resource);
-  ConsumableResource(std::string type, std::string name, T capacity,
+  ConsumableResource(std::string id, std::string name, T capacity,
                      T initial_level,
                      ros::Duration latence = ros::Duration(0.0));
+  ConsumableResource(const ConsumableResource<T>& resource);
 };
 
 template <typename T>
-ConsumableResource<T>::ConsumableResource(std::string type, std::string name,
+ConsumableResource<T>::ConsumableResource(std::string id, std::string name,
                                           T capacity, T initial_level,
                                           ros::Duration latence)
-    : Resource<T>::Resource(type, name, capacity, initial_level, latence)
+    : Resource<T>::Resource(id, true, name, capacity, initial_level, latence)
 {
 }
 
@@ -45,13 +45,21 @@ ConsumableResource<T>::ConsumableResource(const ConsumableResource<T>& resource)
 template <typename T> ConsumableResource<T>::~ConsumableResource() {}
 
 template <typename T>
-void ConsumableResource<T>::consume(Task* task, utilities::Function* quantity)
+void ConsumableResource<T>::consume(Task* task,
+                                    utilities::Function* quantity_function)
 {
+  quantity_function->setAscending(false);
+  Resource<T>::profile_->addTaskFunction(
+      new TaskFunction(task, quantity_function));
 }
 
 template <typename T>
-void ConsumableResource<T>::produce(Task* task, utilities::Function* quantity)
+void ConsumableResource<T>::produce(Task* task,
+                                    utilities::Function* quantity_function)
 {
+  quantity_function->setAscending(true);
+  Resource<T>::profile_->addTaskFunction(
+      new TaskFunction(task, quantity_function));
 }
 }
 

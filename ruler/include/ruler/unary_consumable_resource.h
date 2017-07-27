@@ -18,14 +18,16 @@ class UnaryConsumableResource
     : public ConsumableResource<utilities::UnarySignalType>
 {
 public:
-  UnaryConsumableResource(std::string type, std::string name,
+  UnaryConsumableResource(std::string id, std::string name,
                           bool initial_level = true,
                           ros::Duration latence = ros::Duration(0.0));
-  UnaryConsumableResource(std::string type, std::string name,
+  UnaryConsumableResource(std::string id, std::string name,
                           utilities::UnarySignalType initial_level,
                           ros::Duration latence = ros::Duration(0.0));
   UnaryConsumableResource(const UnaryConsumableResource& resource);
   virtual ~UnaryConsumableResource();
+  virtual void consume(Task* task);
+  virtual void produce(Task* task);
 };
 }
 

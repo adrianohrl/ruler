@@ -15,23 +15,34 @@
 
 namespace utilities
 {
-template <typename T> class Subject
+template <typename T> class Subject : public HasId<std::string, T>
 {
 public:
   virtual ~Subject();
-  virtual std::string str() const = 0;
-  const char* c_str() const;
 
 protected:
+  Subject(std::string id);
+  Subject(const Subject<T>& subject);
   void registerObserver(Observer<T>* observer);
   void unregisterObserver(Observer<T>* observer);
   void clearObservers();
-  void notify(T* notification);
   void notify(const T& notification);
 
 private:
   std::list<Observer<T>*> observers_;
 };
+
+template <typename T>
+Subject<T>::Subject(std::string id)
+    : HasId<std::string, T>::HasId(id)
+{
+}
+
+template <typename T>
+Subject<T>::Subject(const Subject<T>& subject)
+    : HasId<std::string, T>::HasId(subject)
+{
+}
 
 template <typename T> Subject<T>::~Subject()
 {
@@ -44,35 +55,21 @@ template <typename T> Subject<T>::~Subject()
   observers_.clear();
 }
 
-template <typename T> const char* Subject<T>::c_str() const
-{
-  return str().c_str();
-}
-
 template <typename T> void Subject<T>::registerObserver(Observer<T>* observer)
 {
   observers_.push_back(observer);
-  ROS_DEBUG("Registered observer (%s) to subject (%s): ", observer->c_str(),
-            c_str());
+  ROS_DEBUG_STREAM("Registered observer (" << observer << ") to subject ("
+                                           << *this << ").");
 }
 
 template <typename T> void Subject<T>::unregisterObserver(Observer<T>* observer)
 {
   observers_.remove(observer);
+  ROS_DEBUG_STREAM("Unregistered observer (" << observer << ") to subject ("
+                                             << *this << ").");
 }
 
 template <typename T> void Subject<T>::clearObservers() { observers_.clear(); }
-
-template <typename T> void Subject<T>::notify(T* notification)
-{
-  typename std::list<Observer<T>*>::iterator it(observers_.begin());
-  while (it != observers_.end())
-  {
-    Observer<T>* observer = *it;
-    observer->update(notification);
-    it++;
-  }
-}
 
 template <typename T> void Subject<T>::notify(const T& notification)
 {
@@ -81,6 +78,8 @@ template <typename T> void Subject<T>::notify(const T& notification)
   {
     Observer<T>* observer = *it;
     observer->update(notification);
+    ROS_DEBUG_STREAM("Subject (" << *this << ") notified observer (" << observer
+                                 << ").");
     it++;
   }
 }

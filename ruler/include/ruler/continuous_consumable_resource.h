@@ -18,10 +18,10 @@ class ContinuousConsumableResource
     : public ConsumableResource<utilities::ContinuousSignalType>
 {
 public:
-  ContinuousConsumableResource(std::string type, std::string name,
+  ContinuousConsumableResource(std::string id, std::string name,
                                double capacity, double initial_level = 0.0,
                                ros::Duration latence = ros::Duration(0.0));
-  ContinuousConsumableResource(std::string type, std::string name,
+  ContinuousConsumableResource(std::string id, std::string name,
                                utilities::ContinuousSignalType capacity,
                                utilities::ContinuousSignalType initial_level,
                                ros::Duration latence = ros::Duration(0.0));

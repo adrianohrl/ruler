@@ -13,11 +13,12 @@
 
 namespace utilities
 {
-class StepFunction : Function
+class StepFunction : public Function
 {
 public:
   StepFunction(double d0, double df, double q0, double qf,
                bool ascending = false);
+  StepFunction(const StepFunction& function);
   virtual ~StepFunction();
 
 private:

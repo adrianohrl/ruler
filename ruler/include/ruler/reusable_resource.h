@@ -10,6 +10,7 @@
 #define _RULER_REUSABLE_RESOURCE_H_
 
 #include "ruler/resource.h"
+#include "utilities/step_function.h"
 
 namespace ruler
 {
@@ -17,31 +18,37 @@ template <typename T> class ReusableResource : public Resource<T>
 {
 public:
   virtual ~ReusableResource();
-  void require(Task* task, T quantity);
+  virtual void require(Task* task, T quantity);
 
 protected:
-  ReusableResource(const ReusableResource<T>& resource);
-  ReusableResource(std::string type, std::string name, T capacity,
+  ReusableResource(std::string id, std::string name, T capacity,
                    T initial_level, ros::Duration latence = ros::Duration(0.0));
+  ReusableResource(const ReusableResource<T>& resource);
+  virtual void require(Task* task, utilities::Function* quantity_function);
 };
 
 template <typename T>
-ReusableResource<T>::ReusableResource(std::string type, std::string name,
+ReusableResource<T>::ReusableResource(std::string id, std::string name,
                                       T capacity, T initial_level,
                                       ros::Duration latence)
-  : Resource<T>::Resource(type, name, capacity, initial_level, latence)
+    : Resource<T>::Resource(id, false, name, capacity, initial_level, latence)
 {
 }
 
 template <typename T>
 ReusableResource<T>::ReusableResource(const ReusableResource<T>& resource)
-  : Resource<T>::Resource(resource)
+    : Resource<T>::Resource(resource)
 {
 }
 
 template <typename T> ReusableResource<T>::~ReusableResource() {}
 
 template <typename T> void ReusableResource<T>::require(Task* task, T quantity)
+{
+}
+
+template <typename T>
+void ReusableResource<T>::require(Task* task, utilities::Function *quantity_function)
 {
 }
 }

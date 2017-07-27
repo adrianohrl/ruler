@@ -18,10 +18,10 @@ class DiscreteConsumableResource
     : public ConsumableResource<utilities::DiscreteSignalType>
 {
 public:
-  DiscreteConsumableResource(std::string type, std::string name,
+  DiscreteConsumableResource(std::string id, std::string name,
                              long capacity, long initial_level = 0,
                              ros::Duration latence = ros::Duration(0.0));
-  DiscreteConsumableResource(std::string type, std::string name,
+  DiscreteConsumableResource(std::string id, std::string name,
                              utilities::DiscreteSignalType capacity,
                              utilities::DiscreteSignalType initial_level,
                              ros::Duration latence = ros::Duration(0.0));

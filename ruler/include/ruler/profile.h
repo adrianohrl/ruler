@@ -9,29 +9,47 @@
 #define _RULER_RESOURCE_PROFILE_H_
 
 #include <list>
+#include <ros/common.h>
 #include <ros/time.h>
 #include "ruler/task_function.h"
 
 namespace ruler
 {
-template <typename T> class Profile : public utilities::Observer<Event>
+template <typename T> class Profile
 {
 public:
-  Profile();
+  Profile(T capacity, T initial_level);
   Profile(const Profile<T>& profile);
   virtual ~Profile();
-  double estimate(ros::Time t = ros::Time::now()) const;
-  virtual void update(Event* notification);
-  virtual void update(const Event& notification);
-  virtual std::string str() const;
+  T getCapacity() const;
+  T getInitialLevel() const;
+  T getLevel(ros::Time t = ros::Time::now()) const;
+  void update(const TaskEvent& notification);
+  void addTaskFunction(TaskFunction* task_function);
+  void removeTaskFunction(Task* task);
 
 private:
+  T capacity_;
+  T initial_level_;
   std::list<TaskFunction*> task_functions_;
 };
 
-template <typename T> Profile<T>::Profile() {}
+template <typename T>
+Profile<T>::Profile(T capacity, T initial_level)
+    : capacity_(capacity), initial_level_(initial_level)
+{
+  ROS_ERROR_STREAM("[PROFILE][CONSTRUCTOR] initial level: " << initial_level_);
+  if (initial_level_ > capacity_)
+  {
+    throw utilities::Exception("Initial level must be less than or equal to the resource capacity.");
+  }
+}
 
-template <typename T> Profile<T>::Profile(const Profile<T>& profile) {}
+template <typename T>
+Profile<T>::Profile(const Profile<T>& profile)
+    : capacity_(profile.capacity_), initial_level_(profile.initial_level_)
+{
+}
 
 template <typename T> Profile<T>::~Profile()
 {
@@ -47,26 +65,64 @@ template <typename T> Profile<T>::~Profile()
   }
 }
 
-template <typename T> double Profile<T>::estimate(ros::Time t) const
+template <typename T> T Profile<T>::getCapacity() const { return capacity_; }
+
+template <typename T> T Profile<T>::getInitialLevel() const
 {
-  double level(0.0);
+  return initial_level_;
+}
+
+template <typename T> T Profile<T>::getLevel(ros::Time t) const
+{
+  T level(initial_level_);
+  ROS_WARN_STREAM("[PROFILE] initial level: " << level);
   std::list<TaskFunction*>::const_iterator it(task_functions_.begin());
   while (it != task_functions_.end())
   {
     TaskFunction* task_function = *it;
-    level += task_function->estimate(t);
+    level += task_function->getLevel(t);
+    ROS_WARN_STREAM("[PROFILE] level: " << level);
     it++;
   }
+  ROS_WARN_STREAM("[PROFILE] final level: " << level);
   return level;
 }
 
-template <typename T> void Profile<T>::update(Event* notification) {}
-
-template <typename T> void Profile<T>::update(const Event& notification) {}
-
-template <typename T> std::string Profile<T>::str() const
+template <typename T> void Profile<T>::update(const TaskEvent& notification)
 {
-  return "";
+  std::list<TaskFunction*>::iterator it(task_functions_.begin());
+  while (it != task_functions_.end())
+  {
+    TaskFunction* task_function = *it;
+    if (task_function->getTask() == notification.getTask())
+    {
+      task_function->update(notification);
+    }
+    it++;
+  }
+}
+
+template <typename T>
+void Profile<T>::addTaskFunction(TaskFunction* task_function)
+{
+  task_functions_.push_back(task_function);
+}
+
+template <typename T>
+void Profile<T>::removeTaskFunction(Task* task)
+{
+  std::list<TaskFunction*>::iterator it(task_functions_.begin());
+  while (it != task_functions_.end())
+  {
+    TaskFunction* task_function = *it;
+    if (task_function->getTask() == task)
+    {
+      delete *it;
+      *it = NULL;
+      task_functions_.erase(it);
+    }
+    it++;
+  }
 }
 }
 

@@ -33,6 +33,7 @@ set(H_FILES
   include/ruler/reusable_resource.h
   include/ruler/ruler.h
   include/ruler/task.h
+  include/ruler/task_event.h
   include/ruler/task_function.h
   include/ruler/unary_consumable_resource.h
   include/ruler/unary_reusable_resource.h
@@ -42,6 +43,7 @@ set(H_FILES
   include/utilities/exception.h
   include/utilities/exponential_function.h
   include/utilities/function.h
+  include/utilities/has_id.h
   include/utilities/interval.h
   include/utilities/linear_function.h
   include/utilities/non_unary_signal_type.h
@@ -62,6 +64,7 @@ set(CPP_FILES
   src/ruler/event.cpp
   src/ruler/event_types.cpp
   src/ruler/task.cpp
+  src/ruler/task_event.cpp
   src/ruler/task_function.cpp
   src/ruler/unary_consumable_resource.cpp
   src/ruler/unary_reusable_resource.cpp

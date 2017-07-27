@@ -10,22 +10,21 @@
 
 namespace ruler
 {
-ContinuousReusableResource::ContinuousReusableResource(std::string type,
+ContinuousReusableResource::ContinuousReusableResource(std::string id,
                                                        std::string name,
                                                        double capacity,
                                                        double initial_level,
                                                        ros::Duration latence)
     : ReusableResource<utilities::ContinuousSignalType>::ReusableResource(
-          type, name, utilities::ContinuousSignalType(capacity),
+          id, name, utilities::ContinuousSignalType(capacity),
           utilities::ContinuousSignalType(initial_level), latence)
 {
 }
 ContinuousReusableResource::ContinuousReusableResource(
-    std::string type, std::string name,
-    utilities::ContinuousSignalType capacity,
+    std::string id, std::string name, utilities::ContinuousSignalType capacity,
     utilities::ContinuousSignalType initial_level, ros::Duration latence)
     : ReusableResource<utilities::ContinuousSignalType>::ReusableResource(
-          type, name, capacity, initial_level, latence)
+          id, name, capacity, initial_level, latence)
 {
 }
 
@@ -37,4 +36,10 @@ ContinuousReusableResource::ContinuousReusableResource(
 }
 
 ContinuousReusableResource::~ContinuousReusableResource() {}
+
+void ContinuousReusableResource::require(Task* task, double quantity)
+{
+  ReusableResource<utilities::ContinuousSignalType>::require(
+      task, utilities::ContinuousSignalType(quantity));
+}
 }

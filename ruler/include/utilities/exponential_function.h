@@ -14,11 +14,12 @@
 
 namespace utilities
 {
-class ExponentialFunction : Function
+class ExponentialFunction : public Function
 {
 public:
   ExponentialFunction(double d0, double df, double q0, double qf,
                       bool ascending = false, double k = 5, double base = M_E);
+  ExponentialFunction(const ExponentialFunction& function);
   virtual ~ExponentialFunction();
 
 private:
