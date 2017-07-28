@@ -26,13 +26,13 @@ int main(int argc, char** argv)
       new ruler::UnaryConsumableResource("type5", "r5");
   ruler::UnaryReusableResource* r6 =
       new ruler::UnaryReusableResource("type6", "r6", false);
-  ruler::Task* t1 = new ruler::Task("task1", "t1");
-  ruler::Task* t2 = new ruler::Task("task2", "t2");
+  ruler::Task* t1 = new ruler::Task("t1", "task 1", ros::Duration(10));
+  ruler::Task* t2 = new ruler::Task("t2", "task 2", ros::Duration(20));
   ros::Duration d(1.0);
-  utilities::Function* f1 =
-      new utilities::StepFunction(0.0, 5 * d.toSec(), 0.0, 10.0);
-  utilities::Function* f2 =
-      new utilities::StepFunction(0.5, 2.5 * d.toSec(), 0.0, 4.0);
+  utilities::Function<utilities::ContinuousSignalType>* f1 =
+      new utilities::StepFunction<utilities::ContinuousSignalType>(0.0, 5 * d.toSec(), 0.0, 10.0);
+  utilities::Function<utilities::DiscreteSignalType>* f2 =
+      new utilities::StepFunction<utilities::DiscreteSignalType>(0.5, 2.5 * d.toSec(), 0.0, 4.0);
   t1->addResource(r1);
   t1->addResource(r2);
   t1->addResource(r3);

@@ -10,22 +10,4 @@
 
 namespace utilities
 {
-LinearFunction::LinearFunction(double d0, double df, double q0, double qf,
-                               bool ascending)
-    : Function::Function(d0, df, q0, qf, ascending)
-{
-}
-
-LinearFunction::LinearFunction(const LinearFunction& function)
-    : Function::Function(function)
-{
-}
-
-LinearFunction::~LinearFunction() {}
-
-double LinearFunction::calculate(double d) const
-{
-  double rate((qf_ - q0_) / (df_ - d0_));
-  return rate * (d - d0_) + q0_;
-}
 }

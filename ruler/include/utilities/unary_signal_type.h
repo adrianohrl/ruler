@@ -16,7 +16,7 @@ namespace utilities
 class UnarySignalType : public SignalType<bool>
 {
 public:
-  UnarySignalType(bool value);
+  UnarySignalType(bool value = false);
   UnarySignalType(const UnarySignalType& signal_type);
   virtual ~UnarySignalType();
   virtual std::string str() const;

@@ -6,8 +6,8 @@
  *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)
  */
 
-#include "ruler/task_event.h"
 #include "ruler/task.h"
+#include "ruler/task_event.h"
 
 namespace ruler
 {

@@ -9,15 +9,14 @@
 #ifndef _UTILITIES_CONTINUOUS_SIGNAL_TYPE_H_
 #define _UTILITIES_CONTINUOUS_SIGNAL_TYPE_H_
 
-#include "utilities/non_unary_signal_type.h"
-#include "utilities/discrete_signal_type.h"
+#include "utilities/signal_type.h"
 
 namespace utilities
 {
 class ContinuousSignalType : public SignalType<double>
 {
 public:
-  ContinuousSignalType(double value);
+  ContinuousSignalType(double value = 0.0);
   ContinuousSignalType(const ContinuousSignalType& signal_type);
   virtual ~ContinuousSignalType();
   using SignalType<double>::operator-;

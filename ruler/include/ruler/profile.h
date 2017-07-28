@@ -25,13 +25,13 @@ public:
   T getInitialLevel() const;
   T getLevel(ros::Time t = ros::Time::now()) const;
   void update(const TaskEvent& notification);
-  void addTaskFunction(TaskFunction* task_function);
+  void addTaskFunction(TaskFunction<T>* task_function);
   void removeTaskFunction(Task* task);
 
 private:
   T capacity_;
   T initial_level_;
-  std::list<TaskFunction*> task_functions_;
+  std::list<TaskFunction<T>*> task_functions_;
 };
 
 template <typename T>
@@ -40,7 +40,8 @@ Profile<T>::Profile(T capacity, T initial_level)
 {
   if (initial_level_ > capacity_)
   {
-    throw utilities::Exception("Initial level must be less than or equal to the resource capacity.");
+    throw utilities::Exception(
+        "Initial level must be less than or equal to the resource capacity.");
   }
 }
 
@@ -52,7 +53,7 @@ Profile<T>::Profile(const Profile<T>& profile)
 
 template <typename T> Profile<T>::~Profile()
 {
-  std::list<TaskFunction*>::iterator it(task_functions_.begin());
+  typename std::list<TaskFunction<T>*>::iterator it(task_functions_.begin());
   while (it != task_functions_.end())
   {
     if (*it)
@@ -74,25 +75,22 @@ template <typename T> T Profile<T>::getInitialLevel() const
 template <typename T> T Profile<T>::getLevel(ros::Time t) const
 {
   T level(initial_level_);
-  ROS_WARN_STREAM("[PROFILE] initial level: " << level);
-  std::list<TaskFunction*>::const_iterator it(task_functions_.begin());
+  typename std::list<TaskFunction<T>*>::const_iterator it(task_functions_.begin());
   while (it != task_functions_.end())
   {
-    TaskFunction* task_function = *it;
+    TaskFunction<T>* task_function = *it;
     level += task_function->getLevel(t);
-    ROS_WARN_STREAM("[PROFILE] level: " << level);
     it++;
   }
-  ROS_WARN_STREAM("[PROFILE] final level: " << level);
   return level;
 }
 
 template <typename T> void Profile<T>::update(const TaskEvent& notification)
 {
-  std::list<TaskFunction*>::iterator it(task_functions_.begin());
+  typename std::list<TaskFunction<T>*>::iterator it(task_functions_.begin());
   while (it != task_functions_.end())
   {
-    TaskFunction* task_function = *it;
+    TaskFunction<T>* task_function = *it;
     if (task_function->getTask() == notification.getTask())
     {
       task_function->update(notification);
@@ -102,18 +100,17 @@ template <typename T> void Profile<T>::update(const TaskEvent& notification)
 }
 
 template <typename T>
-void Profile<T>::addTaskFunction(TaskFunction* task_function)
+void Profile<T>::addTaskFunction(TaskFunction<T>* task_function)
 {
   task_functions_.push_back(task_function);
 }
 
-template <typename T>
-void Profile<T>::removeTaskFunction(Task* task)
+template <typename T> void Profile<T>::removeTaskFunction(Task* task)
 {
-  std::list<TaskFunction*>::iterator it(task_functions_.begin());
+  typename std::list<TaskFunction<T>*>::iterator it(task_functions_.begin());
   while (it != task_functions_.end())
   {
-    TaskFunction* task_function = *it;
+    TaskFunction<T>* task_function = *it;
     if (task_function->getTask() == task)
     {
       delete *it;

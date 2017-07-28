@@ -18,8 +18,8 @@ template <typename T> class ConsumableResource : public Resource<T>
 {
 public:
   virtual ~ConsumableResource();
-  virtual void consume(Task* task, utilities::Function* quantity_function);
-  virtual void produce(Task* task, utilities::Function* quantity_function);
+  virtual void consume(Task* task, utilities::Function<T>* quantity_function);
+  virtual void produce(Task* task, utilities::Function<T>* quantity_function);
 
 protected:
   ConsumableResource(std::string id, std::string name, T capacity,
@@ -46,20 +46,20 @@ template <typename T> ConsumableResource<T>::~ConsumableResource() {}
 
 template <typename T>
 void ConsumableResource<T>::consume(Task* task,
-                                    utilities::Function* quantity_function)
+                                    utilities::Function<T>* quantity_function)
 {
   quantity_function->setAscending(false);
   Resource<T>::profile_->addTaskFunction(
-      new TaskFunction(task, quantity_function));
+      new TaskFunction<T>(task, quantity_function));
 }
 
 template <typename T>
 void ConsumableResource<T>::produce(Task* task,
-                                    utilities::Function* quantity_function)
+                                    utilities::Function<T>* quantity_function)
 {
   quantity_function->setAscending(true);
   Resource<T>::profile_->addTaskFunction(
-      new TaskFunction(task, quantity_function));
+      new TaskFunction<T>(task, quantity_function));
 }
 }
 

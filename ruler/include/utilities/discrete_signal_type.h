@@ -9,14 +9,14 @@
 #ifndef _UTILITIES_DISCRETE_SIGNAL_TYPE_H_
 #define _UTILITIES_DISCRETE_SIGNAL_TYPE_H_
 
-#include "utilities/non_unary_signal_type.h"
+#include "utilities/signal_type.h"
 
 namespace utilities
 {
-class DiscreteSignalType : public NonUnarySignalType<long>
+class DiscreteSignalType : public SignalType<long>
 {
 public:
-  DiscreteSignalType(long value);
+  DiscreteSignalType(long value = 0l);
   DiscreteSignalType(const DiscreteSignalType& signal_type);
   virtual ~DiscreteSignalType();
   using SignalType<long>::operator-;

@@ -9,15 +9,17 @@
 
 namespace ruler
 {
-Task::Task(std::string id, std::string name, bool preemptive)
+Task::Task(std::string id, std::string name, ros::Duration expected_duration,
+           bool preemptive)
     : utilities::Subject<TaskEvent>::Subject(id), name_(name),
-      preemptive_(preemptive), start_timestamp_bounds_(NULL),
-      end_timestamp_bounds_(NULL)
+      expected_duration_(expected_duration), preemptive_(preemptive),
+      start_timestamp_bounds_(NULL), end_timestamp_bounds_(NULL)
 {
 }
 
 Task::Task(const Task& task)
     : utilities::Subject<TaskEvent>::Subject(task), name_(task.name_),
+      expected_duration_(task.expected_duration_),
       preemptive_(task.preemptive_), start_timestamp_(task.start_timestamp_),
       end_timestamp_(task.end_timestamp_),
       start_timestamp_bounds_(task.start_timestamp_bounds_),
@@ -59,7 +61,8 @@ void Task::start()
   }
   if (utilities::Subject<TaskEvent>::empty())
   {
-    throw utilities::Exception(str() + " does not have any resource registered yet.");
+    throw utilities::Exception(str() +
+                               " does not have any resource registered yet.");
   }
   start_timestamp_ = ros::Time::now();
   utilities::Subject<TaskEvent>::notify(TaskEvent(this, types::STARTED));
@@ -158,6 +161,8 @@ double Task::getDuration(ros::Time t) const
 }
 
 std::string Task::getName() const { return name_; }
+
+ros::Duration Task::getExpectedDuration() const { return expected_duration_; }
 
 bool Task::isPreemptive() const { return preemptive_; }
 

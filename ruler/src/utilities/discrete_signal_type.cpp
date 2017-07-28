@@ -12,21 +12,18 @@ namespace utilities
 {
 
 DiscreteSignalType::DiscreteSignalType(long value)
-    : NonUnarySignalType<long>::NonUnarySignalType(value)
+    : SignalType<long>::SignalType(value)
 {
 }
 
 DiscreteSignalType::DiscreteSignalType(const DiscreteSignalType& signal_type)
-    : NonUnarySignalType<long>::NonUnarySignalType(signal_type)
+    : SignalType<long>::SignalType(signal_type)
 {
 }
 
 DiscreteSignalType::~DiscreteSignalType() {}
 
-DiscreteSignalType &DiscreteSignalType::operator-()
-{
-  value_ = -value_;
-}
+DiscreteSignalType& DiscreteSignalType::operator-() { value_ = -value_; }
 
 DiscreteSignalType& DiscreteSignalType::operator++()
 {

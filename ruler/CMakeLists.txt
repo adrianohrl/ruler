@@ -65,17 +65,12 @@ set(CPP_FILES
   src/ruler/event_types.cpp
   src/ruler/task.cpp
   src/ruler/task_event.cpp
-  src/ruler/task_function.cpp
   src/ruler/unary_consumable_resource.cpp
   src/ruler/unary_reusable_resource.cpp
   src/utilities/continuous_signal_type.cpp
   src/utilities/discrete_signal_type.cpp
   src/utilities/exception.cpp
-  src/utilities/exponential_function.cpp
-  src/utilities/function.cpp
-  src/utilities/linear_function.cpp
   src/utilities/ros_node.cpp
-  src/utilities/step_function.cpp
   src/utilities/unary_signal_type.cpp
 )
 

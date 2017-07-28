@@ -24,7 +24,6 @@ protected:
   ReusableResource(std::string id, std::string name, T capacity,
                    T initial_level, ros::Duration latence = ros::Duration(0.0));
   ReusableResource(const ReusableResource<T>& resource);
-  virtual void require(Task* task, utilities::Function* quantity_function);
 };
 
 template <typename T>
@@ -45,11 +44,9 @@ template <typename T> ReusableResource<T>::~ReusableResource() {}
 
 template <typename T> void ReusableResource<T>::require(Task* task, T quantity)
 {
-}
-
-template <typename T>
-void ReusableResource<T>::require(Task* task, utilities::Function *quantity_function)
-{
+  utilities::Function<T>* quantity_function = new utilities::StepFunction<T>(quantity);
+  Resource<T>::profile_->addTaskFunction(
+      new TaskFunction<T>(task, quantity_function));
 }
 }
 

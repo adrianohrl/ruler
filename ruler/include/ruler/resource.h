@@ -23,9 +23,8 @@ public:
   virtual void update(const TaskEvent& notification);
   bool isConsumable() const;
   std::string getName() const;
-  T getLevel() const;
+  T getLevel(ros::Time timestamp = ros::Time::now()) const;
   ros::Duration getLatence() const;
-  Profile<T>* getProfile() const;
 
 protected:
   Profile<T>* profile_;
@@ -77,19 +76,14 @@ template <typename T> bool Resource<T>::isConsumable() const
 
 template <typename T> std::string Resource<T>::getName() const { return name_; }
 
-template <typename T> T Resource<T>::getLevel() const
+template <typename T> T Resource<T>::getLevel(ros::Time timestamp) const
 {
-  return profile_->getLevel();
+  return profile_->getLevel(timestamp);
 }
 
 template <typename T> ros::Duration Resource<T>::getLatence() const
 {
   return latence_;
-}
-
-template <typename T> Profile<T>* Resource<T>::getProfile() const
-{
-  return profile_;
 }
 }
 
