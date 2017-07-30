@@ -81,7 +81,7 @@ TEST(Functions, discrete_step)
   discrete_step->setAscending(false);
   for (int i(0); i < d.size(); i++)
   {
-    EXPECT_EQ(round(q_step_asc[d[i]]), discrete_step->getValue(d[i]));
+    EXPECT_EQ(round(q_step_des[d[i]]), discrete_step->getValue(d[i]));
   }
 }
 
@@ -90,12 +90,12 @@ TEST(Functions, discrete_linear)
   discrete_linear->setAscending(true);
   for (int i(0); i < d.size(); i++)
   {
-    EXPECT_EQ(round(q_step_asc[d[i]]), discrete_step->getValue(d[i]));
+    EXPECT_EQ(round(q_linear_asc[d[i]]), discrete_linear->getValue(d[i]));
   }
   discrete_linear->setAscending(false);
   for (int i(0); i < d.size(); i++)
   {
-    EXPECT_EQ(round(q_step_asc[d[i]]), discrete_step->getValue(d[i]));
+    EXPECT_EQ(round(q_linear_des[d[i]]), discrete_linear->getValue(d[i]));
   }
 }
 
@@ -104,12 +104,12 @@ TEST(Functions, discrete_exponential)
   discrete_exponential->setAscending(true);
   for (int i(0); i < d.size(); i++)
   {
-    EXPECT_EQ(round(q_step_asc[d[i]]), discrete_step->getValue(d[i]));
+    EXPECT_EQ(round(q_exponential_asc[d[i]]), discrete_exponential->getValue(d[i]));
   }
   discrete_exponential->setAscending(false);
   for (int i(0); i < d.size(); i++)
   {
-    EXPECT_EQ(round(q_step_asc[d[i]]), discrete_step->getValue(d[i]));
+    EXPECT_EQ(round(q_exponential_des[d[i]]), discrete_exponential->getValue(d[i]));
   }
 }
 
@@ -373,7 +373,7 @@ TEST(Profiles, continuous)
   continuous_step->setAscending(true);
   continuous_linear->setAscending(true);
   continuous_exponential->setAscending(true);
-  utilities::ContinuousSignalType el(0.0), l(0.0);
+  utilities::ContinuousSignalType el, l;
   for (int i(0); i < d.size(); i++)
   {
     el = q_step_asc[d[i]] + q_linear_asc[d[i]] + q_exponential_asc[d[i]];
@@ -484,10 +484,10 @@ TEST(Profiles, discrete)
   discrete_step->setAscending(true);
   discrete_linear->setAscending(true);
   discrete_exponential->setAscending(true);
-  utilities::DiscreteSignalType el(0), l(0);
+  utilities::DiscreteSignalType el, l;
   for (int i(0); i < d.size(); i++)
   {
-    el = round(q_step_asc[d[i]] + q_linear_asc[d[i]] + q_exponential_asc[d[i]]);
+    el = round(q_step_asc[d[i]]) + round(q_linear_asc[d[i]]) + round(q_exponential_asc[d[i]]);
     l = profile->getLevel(timestamp + ros::Duration(d[i]));
     EXPECT_EQ(l0 + el, l);
     EXPECT_GE(l, 0l);
@@ -498,7 +498,7 @@ TEST(Profiles, discrete)
   discrete_exponential->setAscending(false);
   for (int i(0); i < d.size(); i++)
   {
-    el = round(q_step_asc[d[i]] + q_linear_asc[d[i]] + q_exponential_asc[d[i]]);
+    el = round(q_step_asc[d[i]]) + round(q_linear_asc[d[i]]) + round(q_exponential_des[d[i]]);
     l = profile->getLevel(timestamp + ros::Duration(d[i]));
     EXPECT_EQ(l0 + el, l);
     EXPECT_GE(l, 0l);
@@ -509,7 +509,7 @@ TEST(Profiles, discrete)
   discrete_exponential->setAscending(true);
   for (int i(0); i < d.size(); i++)
   {
-    el = round(q_step_asc[d[i]] + q_linear_asc[d[i]] + q_exponential_asc[d[i]]);
+    el = round(q_step_asc[d[i]] + q_linear_des[d[i]] + q_exponential_asc[d[i]]);
     l = profile->getLevel(timestamp + ros::Duration(d[i]));
     EXPECT_EQ(l0 + el, l);
     EXPECT_GE(l, 0l);
@@ -520,8 +520,8 @@ TEST(Profiles, discrete)
   discrete_exponential->setAscending(false);
   for (int i(0); i < d.size(); i++)
   {
-    el = round(q_step_asc[d[i]]) + round(q_linear_asc[d[i]]) +
-         round(q_exponential_asc[d[i]]);
+    el = round(q_step_asc[d[i]]) + round(q_linear_des[d[i]]) +
+         round(q_exponential_des[d[i]]);
     l = profile->getLevel(timestamp + ros::Duration(d[i]));
     EXPECT_EQ(l0 + el, l);
     EXPECT_GE(l, 0l);
@@ -532,7 +532,7 @@ TEST(Profiles, discrete)
   discrete_exponential->setAscending(true);
   for (int i(0); i < d.size(); i++)
   {
-    el = round(q_step_asc[d[i]]) + round(q_linear_asc[d[i]]) +
+    el = round(q_step_des[d[i]]) + round(q_linear_asc[d[i]]) +
          round(q_exponential_asc[d[i]]);
     l = profile->getLevel(timestamp + ros::Duration(d[i]));
     EXPECT_EQ(l0 + el, l);
@@ -544,8 +544,8 @@ TEST(Profiles, discrete)
   discrete_exponential->setAscending(false);
   for (int i(0); i < d.size(); i++)
   {
-    el = round(q_step_asc[d[i]]) + round(q_linear_asc[d[i]]) +
-         round(q_exponential_asc[d[i]]);
+    el = round(q_step_des[d[i]]) + round(q_linear_asc[d[i]]) +
+         round(q_exponential_des[d[i]]);
     l = profile->getLevel(timestamp + ros::Duration(d[i]));
     EXPECT_EQ(l0 + el, l);
     EXPECT_GE(l, 0l);
@@ -556,7 +556,7 @@ TEST(Profiles, discrete)
   discrete_exponential->setAscending(true);
   for (int i(0); i < d.size(); i++)
   {
-    el = round(q_step_asc[d[i]]) + round(q_linear_asc[d[i]]) +
+    el = round(q_step_des[d[i]]) + round(q_linear_des[d[i]]) +
          round(q_exponential_asc[d[i]]);
     l = profile->getLevel(timestamp + ros::Duration(d[i]));
     EXPECT_EQ(l0 + el, l);
@@ -568,8 +568,8 @@ TEST(Profiles, discrete)
   discrete_exponential->setAscending(false);
   for (int i(0); i < d.size(); i++)
   {
-    el = round(q_step_asc[d[i]]) + round(q_linear_asc[d[i]]) +
-         round(q_exponential_asc[d[i]]);
+    el = round(q_step_des[d[i]]) + round(q_linear_des[d[i]]) +
+         round(q_exponential_des[d[i]]);
     l = profile->getLevel(timestamp + ros::Duration(d[i]));
     EXPECT_EQ(l0 + el, l);
     EXPECT_GE(l, 0l);

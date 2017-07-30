@@ -6,6 +6,7 @@
  *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)
  */
 
+#include <cmath>
 #include "utilities/discrete_signal_type.h"
 
 namespace utilities
@@ -13,6 +14,16 @@ namespace utilities
 
 DiscreteSignalType::DiscreteSignalType(long value)
     : SignalType<long>::SignalType(value)
+{
+}
+
+DiscreteSignalType::DiscreteSignalType(float value)
+    : SignalType<long>::SignalType(round(value))
+{
+}
+
+DiscreteSignalType::DiscreteSignalType(double value)
+    : SignalType<long>::SignalType(round(value))
 {
 }
 

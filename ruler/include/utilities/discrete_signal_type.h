@@ -17,6 +17,8 @@ class DiscreteSignalType : public SignalType<long>
 {
 public:
   DiscreteSignalType(long value = 0l);
+  DiscreteSignalType(float value);
+  DiscreteSignalType(double value);
   DiscreteSignalType(const DiscreteSignalType& signal_type);
   virtual ~DiscreteSignalType();
   using SignalType<long>::operator-;

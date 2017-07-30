@@ -17,9 +17,9 @@ namespace utilities
 template <typename T> class ExponentialFunction : public Function<T>
 {
 public:
-  ExponentialFunction(double d0, double df, T q0, T qf, bool ascending = false,
-                      double k = 5, double base = M_E);
-  ExponentialFunction(ros::Duration d0, ros::Duration df, T q0, T qf,
+  ExponentialFunction(double d0, double df, double q0, double qf,
+                      bool ascending = false, double k = 5, double base = M_E);
+  ExponentialFunction(ros::Duration d0, ros::Duration df, double q0, double qf,
                       bool ascending = false, double k = 5, double base = M_E);
   ExponentialFunction(const ExponentialFunction<T>& function);
   virtual ~ExponentialFunction();
@@ -27,12 +27,12 @@ public:
 private:
   double base_;
   double k_;
-  virtual T calculate(double d) const;
+  virtual double calculate(double d) const;
 };
 
 template <typename T>
-ExponentialFunction<T>::ExponentialFunction(double d0, double df, T q0, T qf,
-                                            bool ascending, double k,
+ExponentialFunction<T>::ExponentialFunction(double d0, double df, double q0,
+                                            double qf, bool ascending, double k,
                                             double base)
     : Function<T>::Function(d0, df, q0, qf, ascending), base_(base), k_(fabs(k))
 {
@@ -40,8 +40,9 @@ ExponentialFunction<T>::ExponentialFunction(double d0, double df, T q0, T qf,
 
 template <typename T>
 ExponentialFunction<T>::ExponentialFunction(ros::Duration d0, ros::Duration df,
-                                            T q0, T qf, bool ascending,
-                                            double k, double base)
+                                            double q0, double qf,
+                                            bool ascending, double k,
+                                            double base)
     : Function<T>::Function(d0, df, q0, qf, ascending), base_(base), k_(fabs(k))
 {
 }
@@ -55,12 +56,12 @@ ExponentialFunction<T>::ExponentialFunction(
 
 template <typename T> ExponentialFunction<T>::~ExponentialFunction() {}
 
-template <typename T> T ExponentialFunction<T>::calculate(double d) const
+template <typename T> double ExponentialFunction<T>::calculate(double d) const
 {
   double rate(-k_ / (Function<T>::df_ - Function<T>::d0_));
-  return (T)(Function<T>::qf_ -
-             (Function<T>::qf_ - Function<T>::q0_) *
-                 pow(base_, rate * (d - Function<T>::d0_)));
+  return Function<T>::qf_ -
+         (Function<T>::qf_ - Function<T>::q0_) *
+             pow(base_, rate * (d - Function<T>::d0_));
 }
 }
 
