@@ -16,21 +16,23 @@ namespace utilities
 template <typename T> class StepFunction : public Function<T>
 {
 public:
-  StepFunction(double qf);
+  StepFunction(double qf, bool ascending = false);
+  virtual ~StepFunction();
+
+protected:
   StepFunction(double d0, double df, double q0, double qf,
                bool ascending = false);
   StepFunction(ros::Duration d0, ros::Duration df, double q0, double qf,
                bool ascending = false);
   StepFunction(const StepFunction<T>& function);
-  virtual ~StepFunction();
 
 private:
   virtual double calculate(double d) const;
 };
 
 template <typename T>
-StepFunction<T>::StepFunction(double qf)
-    : Function<T>::Function(0.0, INFINITY, 0.0, qf, true)
+StepFunction<T>::StepFunction(double qf, bool ascending)
+    : Function<T>::Function(0.0, INFINITY, 0.0, qf, ascending)
 {
 }
 

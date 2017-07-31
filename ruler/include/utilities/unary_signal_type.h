@@ -21,6 +21,8 @@ public:
   virtual ~UnarySignalType();
   virtual std::string str() const;
   virtual bool operator!() const;
+  virtual bool operator&&(const UnarySignalType& signal_type) const;
+  virtual bool operator||(const UnarySignalType& signal_type) const;
 };
 }
 

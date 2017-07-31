@@ -1,5 +1,5 @@
 /**
- *  This header file implements the ContinuousSignalType class, which is based
+ *  This source file implements the ContinuousSignalType class, which is based
  *on the NonUnarySignalType abstract class.
  *
  *  Author: Adriano Henrique Rossette Leite (adrianohrl@unifei.edu.br)

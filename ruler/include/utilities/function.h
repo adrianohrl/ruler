@@ -22,9 +22,10 @@ public:
   void setAscending(bool ascending);
 
 protected:
-  Function(double d0, double df, double q0, double qf, bool ascending = false);
+  Function(double d0, double df, double q0, double qf, bool ascending = false,
+           bool saturate_end = true);
   Function(ros::Duration d0, ros::Duration df, double q0, double qf,
-           bool ascending = false);
+           bool ascending = false, bool saturate_end = true);
   Function(const Function<T>& function);
   double d0_;
   double df_;
@@ -33,26 +34,31 @@ protected:
 
 private:
   bool ascending_;
+  bool saturate_end_;
   virtual double calculate(double d) const = 0;
 };
 
 template <typename T>
-Function<T>::Function(double d0, double df, double q0, double qf, bool ascending)
-    : d0_(d0), df_(df), q0_(q0), qf_(qf), ascending_(ascending)
+Function<T>::Function(double d0, double df, double q0, double qf,
+                      bool ascending, bool saturate_end)
+    : d0_(d0), df_(df), q0_(q0), qf_(qf), ascending_(ascending),
+      saturate_end_(saturate_end)
 {
 }
 
 template <typename T>
 Function<T>::Function(ros::Duration d0, ros::Duration df, double q0, double qf,
-                      bool ascending)
-    : d0_(d0.toSec()), df_(df.toSec()), q0_(q0), qf_(qf), ascending_(ascending)
+                      bool ascending, bool saturate_end)
+    : d0_(d0.toSec()), df_(df.toSec()), q0_(q0), qf_(qf), ascending_(ascending),
+      saturate_end_(saturate_end)
 {
 }
 
 template <typename T>
 Function<T>::Function(const Function<T>& function)
     : d0_(function.d0_), df_(function.df_), q0_(function.q0_),
-      qf_(function.qf_), ascending_(function.ascending_)
+      qf_(function.qf_), ascending_(function.ascending_),
+      saturate_end_(function.saturate_end_)
 {
 }
 
@@ -65,7 +71,7 @@ template <typename T> T Function<T>::getValue(double d) const
   {
     q = q0_;
   }
-  else if (d <= df_)
+  else
   {
     q = calculate(d);
     if (q < q0_)
@@ -77,7 +83,7 @@ template <typename T> T Function<T>::getValue(double d) const
       q = qf_;
     }
   }
-  else
+  if (saturate_end_ && d > df_)
   {
     q = qf_;
   }

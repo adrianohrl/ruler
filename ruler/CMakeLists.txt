@@ -37,8 +37,15 @@ set(H_FILES
   include/ruler/task_function.h
   include/ruler/unary_consumable_resource.h
   include/ruler/unary_reusable_resource.h
+  include/utilities/continuous_exponential_function.h
+  include/utilities/continuous_linear_function.h
   include/utilities/continuous_signal_type.h
+  include/utilities/continuous_step_function.h
+  include/utilities/discrete_exponential_function.h
+  include/utilities/discrete_linear_function.h
+  include/utilities/discrete_pulse_function.h
   include/utilities/discrete_signal_type.h
+  include/utilities/discrete_step_function.h
   include/utilities/enum_converter.h
   include/utilities/exception.h
   include/utilities/exponential_function.h
@@ -48,11 +55,14 @@ set(H_FILES
   include/utilities/linear_function.h
   include/utilities/non_unary_signal_type.h
   include/utilities/observer.h
+  include/utilities/pulse_function.h
   include/utilities/ros_node.h
   include/utilities/signal_type.h
   include/utilities/step_function.h
   include/utilities/subject.h
+  include/utilities/unary_pulse_function.h
   include/utilities/unary_signal_type.h
+  include/utilities/unary_step_function.h
   include/utilities/utilities.h
 )
 
@@ -67,11 +77,20 @@ set(CPP_FILES
   src/ruler/task_event.cpp
   src/ruler/unary_consumable_resource.cpp
   src/ruler/unary_reusable_resource.cpp
+  src/utilities/continuous_exponential_function.cpp
+  src/utilities/continuous_linear_function.cpp
   src/utilities/continuous_signal_type.cpp
+  src/utilities/continuous_step_function.cpp
+  src/utilities/discrete_exponential_function.cpp
+  src/utilities/discrete_linear_function.cpp
+  src/utilities/discrete_pulse_function.cpp
   src/utilities/discrete_signal_type.cpp
+  src/utilities/discrete_step_function.cpp
   src/utilities/exception.cpp
   src/utilities/ros_node.cpp
+  src/utilities/unary_pulse_function.cpp
   src/utilities/unary_signal_type.cpp
+  src/utilities/unary_step_function.cpp
 )
 
 add_library(${PROJECT_NAME}

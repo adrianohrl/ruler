@@ -1,5 +1,5 @@
 /**
- *  This header file implements the DiscreteSignalType class, which is based on
+ *  This source file implements the DiscreteSignalType class, which is based on
  *the NonUnarySignalType abstract class.
  *
  *  Author: Adriano Henrique Rossette Leite (adrianohrl@unifei.edu.br)

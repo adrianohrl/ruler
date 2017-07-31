@@ -14,12 +14,14 @@
 
 double tolerance(1e-4);
 std::vector<double> d;
-utilities::Function<utilities::ContinuousSignalType>* continuous_step;
-utilities::Function<utilities::ContinuousSignalType>* continuous_linear;
-utilities::Function<utilities::ContinuousSignalType>* continuous_exponential;
-utilities::Function<utilities::DiscreteSignalType>* discrete_step;
-utilities::Function<utilities::DiscreteSignalType>* discrete_linear;
-utilities::Function<utilities::DiscreteSignalType>* discrete_exponential;
+utilities::ContinuousStepFunction* continuous_step;
+utilities::ContinuousLinearFunction* continuous_linear;
+utilities::ContinuousExponentialFunction* continuous_exponential;
+utilities::DiscreteStepFunction* discrete_step;
+utilities::DiscreteLinearFunction* discrete_linear;
+utilities::DiscreteExponentialFunction* discrete_exponential;
+utilities::UnaryPulseFunction* unary_pulse;
+utilities::UnaryStepFunction* unary_step;
 std::map<double, double> q_step_asc;
 std::map<double, double> q_step_des;
 std::map<double, double> q_linear_asc;
@@ -32,12 +34,14 @@ TEST(Functions, continuous_step)
   continuous_step->setAscending(true);
   for (int i(0); i < d.size(); i++)
   {
-    EXPECT_GE(tolerance, fabs(q_step_asc[d[i]] - continuous_step->getValue(d[i])));
+    EXPECT_GE(tolerance,
+              fabs(q_step_asc[d[i]] - continuous_step->getValue(d[i])));
   }
   continuous_step->setAscending(false);
   for (int i(0); i < d.size(); i++)
   {
-    EXPECT_GE(tolerance, fabs(q_step_des[d[i]] - continuous_step->getValue(d[i])));
+    EXPECT_GE(tolerance,
+              fabs(q_step_des[d[i]] - continuous_step->getValue(d[i])));
   }
 }
 
@@ -46,12 +50,14 @@ TEST(Functions, continuous_linear)
   continuous_linear->setAscending(true);
   for (int i(0); i < d.size(); i++)
   {
-    EXPECT_GE(tolerance, fabs(q_linear_asc[d[i]] - continuous_linear->getValue(d[i])));
+    EXPECT_GE(tolerance,
+              fabs(q_linear_asc[d[i]] - continuous_linear->getValue(d[i])));
   }
   continuous_linear->setAscending(false);
   for (int i(0); i < d.size(); i++)
   {
-    EXPECT_GE(tolerance, fabs(q_linear_des[d[i]] - continuous_linear->getValue(d[i])));
+    EXPECT_GE(tolerance,
+              fabs(q_linear_des[d[i]] - continuous_linear->getValue(d[i])));
   }
 }
 
@@ -60,14 +66,14 @@ TEST(Functions, continuous_exponential)
   continuous_exponential->setAscending(true);
   for (int i(0); i < d.size(); i++)
   {
-    EXPECT_GE(tolerance,
-              fabs(q_exponential_asc[d[i]] - continuous_exponential->getValue(d[i])));
+    EXPECT_GE(tolerance, fabs(q_exponential_asc[d[i]] -
+                              continuous_exponential->getValue(d[i])));
   }
   continuous_exponential->setAscending(false);
   for (int i(0); i < d.size(); i++)
   {
-    EXPECT_GE(tolerance,
-              fabs(q_exponential_des[d[i]] - continuous_exponential->getValue(d[i])));
+    EXPECT_GE(tolerance, fabs(q_exponential_des[d[i]] -
+                              continuous_exponential->getValue(d[i])));
   }
 }
 
@@ -104,13 +110,47 @@ TEST(Functions, discrete_exponential)
   discrete_exponential->setAscending(true);
   for (int i(0); i < d.size(); i++)
   {
-    EXPECT_EQ(round(q_exponential_asc[d[i]]), discrete_exponential->getValue(d[i]));
+    EXPECT_EQ(round(q_exponential_asc[d[i]]),
+              discrete_exponential->getValue(d[i]));
   }
   discrete_exponential->setAscending(false);
   for (int i(0); i < d.size(); i++)
   {
-    EXPECT_EQ(round(q_exponential_des[d[i]]), discrete_exponential->getValue(d[i]));
+    EXPECT_EQ(round(q_exponential_des[d[i]]),
+              discrete_exponential->getValue(d[i]));
   }
+}
+
+TEST(Functions, unary_step)
+{
+  unary_step->setAscending(true);
+  EXPECT_FALSE(unary_step->getValue(0.0));
+  EXPECT_TRUE(unary_step->getValue(0.25));
+  EXPECT_TRUE(unary_step->getValue(0.5));
+  EXPECT_TRUE(unary_step->getValue(1.0));
+  unary_step->setAscending(false);
+  EXPECT_TRUE(unary_step->getValue(0.0));
+  EXPECT_FALSE(unary_step->getValue(0.25));
+  EXPECT_FALSE(unary_step->getValue(0.5));
+  EXPECT_FALSE(unary_step->getValue(1.0));
+}
+
+TEST(Functions, unary_pulse)
+{
+  unary_pulse->setAscending(true);
+  EXPECT_FALSE(unary_pulse->getValue(0.0));
+  EXPECT_TRUE(unary_pulse->getValue(1.0));
+  EXPECT_TRUE(unary_pulse->getValue(1.25));
+  EXPECT_TRUE(unary_pulse->getValue(1.5));
+  EXPECT_FALSE(unary_pulse->getValue(1.75));
+  EXPECT_FALSE(unary_pulse->getValue(2.0));
+  unary_pulse->setAscending(false);
+  EXPECT_TRUE(unary_pulse->getValue(0.0));
+  EXPECT_FALSE(unary_pulse->getValue(1.0));
+  EXPECT_FALSE(unary_pulse->getValue(1.25));
+  EXPECT_FALSE(unary_pulse->getValue(1.5));
+  EXPECT_TRUE(unary_pulse->getValue(1.75));
+  EXPECT_TRUE(unary_pulse->getValue(2.0));
 }
 
 TEST(Task, start)
@@ -367,9 +407,15 @@ TEST(Profiles, continuous)
   task->start();
   ros::Time timestamp(task->getStartTimestamp());
   profile = new ruler::Profile<utilities::ContinuousSignalType>(c, l0);
-  profile->addTaskFunction(new ruler::TaskFunction<utilities::ContinuousSignalType>(task, continuous_step));
-  profile->addTaskFunction(new ruler::TaskFunction<utilities::ContinuousSignalType>(task, continuous_linear));
-  profile->addTaskFunction(new ruler::TaskFunction<utilities::ContinuousSignalType>(task, continuous_exponential));
+  profile->addTaskFunction(
+      new ruler::TaskFunction<utilities::ContinuousSignalType>(
+          task, continuous_step));
+  profile->addTaskFunction(
+      new ruler::TaskFunction<utilities::ContinuousSignalType>(
+          task, continuous_linear));
+  profile->addTaskFunction(
+      new ruler::TaskFunction<utilities::ContinuousSignalType>(
+          task, continuous_exponential));
   continuous_step->setAscending(true);
   continuous_linear->setAscending(true);
   continuous_exponential->setAscending(true);
@@ -478,16 +524,23 @@ TEST(Profiles, discrete)
   ros::Time timestamp(task->getStartTimestamp());
   ruler::Profile<utilities::DiscreteSignalType>* profile =
       new ruler::Profile<utilities::DiscreteSignalType>(c, l0);
-  profile->addTaskFunction(new ruler::TaskFunction<utilities::DiscreteSignalType>(task, discrete_step));
-  profile->addTaskFunction(new ruler::TaskFunction<utilities::DiscreteSignalType>(task, discrete_linear));
-  profile->addTaskFunction(new ruler::TaskFunction<utilities::DiscreteSignalType>(task, discrete_exponential));
+  profile->addTaskFunction(
+      new ruler::TaskFunction<utilities::DiscreteSignalType>(task,
+                                                             discrete_step));
+  profile->addTaskFunction(
+      new ruler::TaskFunction<utilities::DiscreteSignalType>(task,
+                                                             discrete_linear));
+  profile->addTaskFunction(
+      new ruler::TaskFunction<utilities::DiscreteSignalType>(
+          task, discrete_exponential));
   discrete_step->setAscending(true);
   discrete_linear->setAscending(true);
   discrete_exponential->setAscending(true);
   utilities::DiscreteSignalType el, l;
   for (int i(0); i < d.size(); i++)
   {
-    el = round(q_step_asc[d[i]]) + round(q_linear_asc[d[i]]) + round(q_exponential_asc[d[i]]);
+    el = round(q_step_asc[d[i]]) + round(q_linear_asc[d[i]]) +
+         round(q_exponential_asc[d[i]]);
     l = profile->getLevel(timestamp + ros::Duration(d[i]));
     EXPECT_EQ(l0 + el, l);
     EXPECT_GE(l, 0l);
@@ -498,7 +551,8 @@ TEST(Profiles, discrete)
   discrete_exponential->setAscending(false);
   for (int i(0); i < d.size(); i++)
   {
-    el = round(q_step_asc[d[i]]) + round(q_linear_asc[d[i]]) + round(q_exponential_des[d[i]]);
+    el = round(q_step_asc[d[i]]) + round(q_linear_asc[d[i]]) +
+         round(q_exponential_des[d[i]]);
     l = profile->getLevel(timestamp + ros::Duration(d[i]));
     EXPECT_EQ(l0 + el, l);
     EXPECT_GE(l, 0l);
@@ -509,7 +563,8 @@ TEST(Profiles, discrete)
   discrete_exponential->setAscending(true);
   for (int i(0); i < d.size(); i++)
   {
-    el = round(q_step_asc[d[i]] + q_linear_des[d[i]] + q_exponential_asc[d[i]]);
+    el = round(q_step_asc[d[i]]) + round(q_linear_des[d[i]]) +
+         round(q_exponential_asc[d[i]]);
     l = profile->getLevel(timestamp + ros::Duration(d[i]));
     EXPECT_EQ(l0 + el, l);
     EXPECT_GE(l, 0l);
@@ -575,6 +630,68 @@ TEST(Profiles, discrete)
     EXPECT_GE(l, 0l);
     EXPECT_LE(l, c);
   }
+  delete profile;
+  profile = NULL;
+  delete task;
+  task = NULL;
+  delete resource;
+  resource = NULL;
+}
+
+TEST(Profiles, unary)
+{
+  ruler::Task* task = new ruler::Task("t", "task", ros::Duration(10));
+  ruler::UnaryConsumableResource* resource =
+      new ruler::UnaryConsumableResource("r", "resource");
+  task->addResource(resource);
+  task->start();
+  ros::Time timestamp(task->getStartTimestamp());
+  ruler::Profile<utilities::UnarySignalType>* profile =
+      new ruler::Profile<utilities::UnarySignalType>(true, false);
+  profile->addTaskFunction(
+      new ruler::TaskFunction<utilities::UnarySignalType>(task, unary_pulse));
+  profile->addTaskFunction(new ruler::TaskFunction<utilities::UnarySignalType>(
+      task, unary_step));
+  unary_pulse->setAscending(true);
+  unary_step->setAscending(true);
+  EXPECT_FALSE(profile->getLevel(timestamp + ros::Duration(0.0)));
+  EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(0.25)));
+  EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(0.5)));
+  EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(0.75)));
+  EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(1.0)));
+  EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(1.25)));
+  EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(1.5)));
+  EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(1.75)));
+  unary_pulse->setAscending(true);
+  unary_step->setAscending(false);
+  EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(0.0)));
+  EXPECT_FALSE(profile->getLevel(timestamp + ros::Duration(0.25)));
+  EXPECT_FALSE(profile->getLevel(timestamp + ros::Duration(0.5)));
+  EXPECT_FALSE(profile->getLevel(timestamp + ros::Duration(0.75)));
+  EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(1.0)));
+  EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(1.25)));
+  EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(1.5)));
+  EXPECT_FALSE(profile->getLevel(timestamp + ros::Duration(1.75)));
+  unary_pulse->setAscending(false);
+  unary_step->setAscending(true);
+  EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(0.0)));
+  EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(0.25)));
+  EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(0.5)));
+  EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(0.75)));
+  EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(1.0)));
+  EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(1.25)));
+  EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(1.5)));
+  EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(1.75)));
+  unary_pulse->setAscending(false);
+  unary_step->setAscending(false);
+  EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(0.0)));
+  EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(0.25)));
+  EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(0.5)));
+  EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(0.75)));
+  EXPECT_FALSE(profile->getLevel(timestamp + ros::Duration(1.0)));
+  EXPECT_FALSE(profile->getLevel(timestamp + ros::Duration(1.25)));
+  EXPECT_FALSE(profile->getLevel(timestamp + ros::Duration(1.5)));
+  EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(1.75)));
   delete profile;
   profile = NULL;
   delete task;
@@ -649,20 +766,16 @@ void init()
   q_exponential_des.insert(std::pair<double, double>(d[7], 6.1));
   // functions
   double d0(1.5), df(5.5), q0(6.1), qf(8.1);
-  continuous_step = new utilities::StepFunction<utilities::ContinuousSignalType>(d0, df,
-                                                                      q0, qf);
-  continuous_linear = new utilities::LinearFunction<utilities::ContinuousSignalType>(
-      d0, df, q0, qf);
+  continuous_step = new utilities::ContinuousStepFunction(d0, df, q0, qf);
+  continuous_linear = new utilities::ContinuousLinearFunction(d0, df, q0, qf);
   continuous_exponential =
-      new utilities::ExponentialFunction<utilities::ContinuousSignalType>(
-          d0, df, q0, qf);
-  discrete_step = new utilities::StepFunction<utilities::DiscreteSignalType>(d0, df,
-                                                                      q0, qf);
-  discrete_linear = new utilities::LinearFunction<utilities::DiscreteSignalType>(
-      d0, df, q0, qf);
+      new utilities::ContinuousExponentialFunction(d0, df, q0, qf);
+  discrete_step = new utilities::DiscreteStepFunction(d0, df, q0, qf);
+  discrete_linear = new utilities::DiscreteLinearFunction(d0, df, q0, qf);
   discrete_exponential =
-      new utilities::ExponentialFunction<utilities::DiscreteSignalType>(
-          d0, df, q0, qf);
+      new utilities::DiscreteExponentialFunction(d0, df, q0, qf);
+  unary_pulse = new utilities::UnaryPulseFunction(1.0, 1.5);
+  unary_step = new utilities::UnaryStepFunction(0.25);
 }
 
 int main(int argc, char** argv)

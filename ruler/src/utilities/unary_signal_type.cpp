@@ -1,5 +1,5 @@
 /**
- *  This header file implements the UnarySignalType class, which is based on the
+ *  This source file implements the UnarySignalType class, which is based on the
  *SignalType abstract class.
  *
  *  Author: Adriano Henrique Rossette Leite (adrianohrl@unifei.edu.br)
@@ -26,4 +26,14 @@ UnarySignalType::~UnarySignalType() {}
 std::string UnarySignalType::str() const { return value_ ? "true" : "false"; }
 
 bool UnarySignalType::operator!() const { return !value_; }
+
+bool UnarySignalType::operator&&(const UnarySignalType& signal_type) const
+{
+  return value_ && signal_type.value_;
+}
+
+bool UnarySignalType::operator||(const UnarySignalType& signal_type) const
+{
+  return value_ || signal_type.value_;
+}
 }

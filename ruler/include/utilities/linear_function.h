@@ -16,11 +16,14 @@ namespace utilities
 template <typename T> class LinearFunction : public Function<T>
 {
 public:
-  LinearFunction(double d0, double df, double q0, double qf, bool ascending = false);
+  virtual ~LinearFunction();
+
+protected:
+  LinearFunction(double d0, double df, double q0, double qf,
+                 bool ascending = false);
   LinearFunction(ros::Duration d0, ros::Duration df, double q0, double qf,
                  bool ascending = false);
   LinearFunction(const LinearFunction<T>& function);
-  virtual ~LinearFunction();
 
 private:
   virtual double calculate(double d) const;
