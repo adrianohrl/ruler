@@ -10,9 +10,11 @@
 #define _UTILITIES_DISCRETE_EXPONENTIAL_FUNCTION_H_
 
 #include "utilities/discrete_signal_type.h"
-#include "utilities/exponential_function.h"
+#include "utilities/functions/exponential_function.h"
 
 namespace utilities
+{
+namespace functions
 {
 class DiscreteExponentialFunction
     : public ExponentialFunction<utilities::DiscreteSignalType>
@@ -25,6 +27,7 @@ public:
   DiscreteExponentialFunction(const DiscreteExponentialFunction& function);
   virtual ~DiscreteExponentialFunction();
 };
+}
 }
 
 #endif // _UTILITIES_DISCRETE_EXPONENTIAL_FUNCTION_H_

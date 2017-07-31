@@ -9,9 +9,11 @@
 #ifndef _UTILITIES_STEP_FUNCTION_H_
 #define _UTILITIES_STEP_FUNCTION_H_
 
-#include "utilities/function.h"
+#include "utilities/functions/function.h"
 
 namespace utilities
+{
+namespace functions
 {
 template <typename T> class StepFunction : public Function<T>
 {
@@ -61,6 +63,7 @@ template <typename T> StepFunction<T>::~StepFunction() {}
 template <typename T> double StepFunction<T>::calculate(double d) const
 {
   return Function<T>::qf_;
+}
 }
 }
 

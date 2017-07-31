@@ -7,11 +7,12 @@
  *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)
  */
 
-#include "utilities/continuous_linear_function.h"
+#include "utilities/functions/continuous_linear_function.h"
 
 namespace utilities
 {
-
+namespace functions
+{
 ContinuousLinearFunction::ContinuousLinearFunction(double d0, double df,
                                                    double q0, double qf,
                                                    bool ascending)
@@ -35,4 +36,5 @@ ContinuousLinearFunction::ContinuousLinearFunction(
 }
 
 ContinuousLinearFunction::~ContinuousLinearFunction() {}
+}
 }

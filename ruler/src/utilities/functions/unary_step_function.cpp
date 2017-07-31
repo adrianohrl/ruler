@@ -6,11 +6,12 @@
  *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)
  */
 
-#include "utilities/unary_step_function.h"
+#include "utilities/functions/unary_step_function.h"
 
 namespace utilities
 {
-
+namespace functions
+{
 UnaryStepFunction::UnaryStepFunction(double d0, bool ascending)
     : StepFunction<utilities::UnarySignalType>::StepFunction(
           d0, INFINITY, false, true, ascending)
@@ -29,4 +30,5 @@ UnaryStepFunction::UnaryStepFunction(const UnaryStepFunction& function)
 }
 
 UnaryStepFunction::~UnaryStepFunction() {}
+}
 }

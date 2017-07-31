@@ -6,11 +6,12 @@
  *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)
  */
 
-#include "utilities/unary_pulse_function.h"
+#include "utilities/functions/unary_pulse_function.h"
 
 namespace utilities
 {
-
+namespace functions
+{
 UnaryPulseFunction::UnaryPulseFunction(double d0, double df, bool ascending)
     : PulseFunction<utilities::UnarySignalType>::PulseFunction(d0, df, false,
                                                                true, ascending)
@@ -30,4 +31,5 @@ UnaryPulseFunction::UnaryPulseFunction(const UnaryPulseFunction& function)
 }
 
 UnaryPulseFunction::~UnaryPulseFunction() {}
+}
 }

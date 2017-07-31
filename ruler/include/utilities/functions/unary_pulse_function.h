@@ -10,9 +10,11 @@
 #define _UTILITIES_UNARY_PULSE_FUNCTION_H_
 
 #include "utilities/unary_signal_type.h"
-#include "utilities/pulse_function.h"
+#include "utilities/functions/pulse_function.h"
 
 namespace utilities
+{
+namespace functions
 {
 class UnaryPulseFunction : public PulseFunction<utilities::UnarySignalType>
 {
@@ -23,6 +25,7 @@ public:
   UnaryPulseFunction(const UnaryPulseFunction& function);
   virtual ~UnaryPulseFunction();
 };
+}
 }
 
 #endif // _UTILITIES_UNARY_PULSE_FUNCTION_H_

@@ -10,9 +10,11 @@
 #define _UTILITIES_DISCRETE_LINEAR_FUNCTION_H_
 
 #include "utilities/discrete_signal_type.h"
-#include "utilities/linear_function.h"
+#include "utilities/functions/linear_function.h"
 
 namespace utilities
+{
+namespace functions
 {
 class DiscreteLinearFunction
     : public LinearFunction<utilities::DiscreteSignalType>
@@ -25,6 +27,7 @@ public:
   DiscreteLinearFunction(const DiscreteLinearFunction& function);
   virtual ~DiscreteLinearFunction();
 };
+}
 }
 
 #endif // _UTILITIES_DISCRETE_LINEAR_FUNCTION_H_

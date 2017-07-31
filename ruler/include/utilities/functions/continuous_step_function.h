@@ -10,9 +10,11 @@
 #define _UTILITIES_CONTINUOUS_STEP_FUNCTION_H_
 
 #include "utilities/continuous_signal_type.h"
-#include "utilities/step_function.h"
+#include "utilities/functions/step_function.h"
 
 namespace utilities
+{
+namespace functions
 {
 class ContinuousStepFunction
     : public StepFunction<utilities::ContinuousSignalType>
@@ -26,6 +28,7 @@ public:
   ContinuousStepFunction(const ContinuousStepFunction& function);
   virtual ~ContinuousStepFunction();
 };
+}
 }
 
 #endif // _UTILITIES_CONTINUOUS_STEP_FUNCTION_H_

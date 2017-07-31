@@ -10,9 +10,11 @@
 #define _UTILITIES_UNARY_STEP_FUNCTION_H_
 
 #include "utilities/unary_signal_type.h"
-#include "utilities/step_function.h"
+#include "utilities/functions/step_function.h"
 
 namespace utilities
+{
+namespace functions
 {
 class UnaryStepFunction : public StepFunction<utilities::UnarySignalType>
 {
@@ -22,6 +24,7 @@ public:
   UnaryStepFunction(const UnaryStepFunction& function);
   virtual ~UnaryStepFunction();
 };
+}
 }
 
 #endif // _UTILITIES_UNARY_STEP_FUNCTION_H_

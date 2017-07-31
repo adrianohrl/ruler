@@ -10,9 +10,11 @@
 #define _UTILITIES_DISCRETE_STEP_FUNCTION_H_
 
 #include "utilities/discrete_signal_type.h"
-#include "utilities/step_function.h"
+#include "utilities/functions/step_function.h"
 
 namespace utilities
+{
+namespace functions
 {
 class DiscreteStepFunction : public StepFunction<utilities::DiscreteSignalType>
 {
@@ -25,6 +27,7 @@ public:
   DiscreteStepFunction(const DiscreteStepFunction& function);
   virtual ~DiscreteStepFunction();
 };
+}
 }
 
 #endif // _UTILITIES_DISCRETE_STEP_FUNCTION_H_

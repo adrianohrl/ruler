@@ -10,9 +10,11 @@
 #define _UTILITIES_EXPONENTIAL_FUNCTION_H_
 
 #include <cmath>
-#include "utilities/function.h"
+#include "utilities/functions/function.h"
 
 namespace utilities
+{
+namespace functions
 {
 template <typename T> class ExponentialFunction : public Function<T>
 {
@@ -62,6 +64,7 @@ template <typename T> double ExponentialFunction<T>::calculate(double d) const
   return Function<T>::qf_ -
          (Function<T>::qf_ - Function<T>::q0_) *
              pow(base_, rate * (d - Function<T>::d0_));
+}
 }
 }
 

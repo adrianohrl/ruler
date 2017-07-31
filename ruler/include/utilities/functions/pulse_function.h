@@ -9,9 +9,11 @@
 #ifndef _UTILITIES_PULSE_FUNCTION_H_
 #define _UTILITIES_PULSE_FUNCTION_H_
 
-#include "utilities/function.h"
+#include "utilities/functions/function.h"
 
 namespace utilities
+{
+namespace functions
 {
 template <typename T> class PulseFunction : public Function<T>
 {
@@ -55,6 +57,7 @@ template <typename T> double PulseFunction<T>::calculate(double d) const
 {
   return d < Function<T>::d0_ || d > Function<T>::df_ ? Function<T>::q0_
                                                       : Function<T>::qf_;
+}
 }
 }
 

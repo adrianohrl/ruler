@@ -6,11 +6,12 @@
  *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)
  */
 
-#include "utilities/continuous_step_function.h"
+#include "utilities/functions/continuous_step_function.h"
 
 namespace utilities
 {
-
+namespace functions
+{
 ContinuousStepFunction::ContinuousStepFunction(double qf, bool ascending)
     : StepFunction<utilities::ContinuousSignalType>::StepFunction(qf, ascending)
 {
@@ -38,4 +39,5 @@ ContinuousStepFunction::ContinuousStepFunction(
 }
 
 ContinuousStepFunction::~ContinuousStepFunction() {}
+}
 }

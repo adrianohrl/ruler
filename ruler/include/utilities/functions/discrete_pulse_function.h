@@ -10,9 +10,11 @@
 #define _UTILITIES_DISCRETE_PULSE_FUNCTION_H_
 
 #include "utilities/discrete_signal_type.h"
-#include "utilities/pulse_function.h"
+#include "utilities/functions/pulse_function.h"
 
 namespace utilities
+{
+namespace functions
 {
 class DiscretePulseFunction
     : public PulseFunction<utilities::DiscreteSignalType>
@@ -25,6 +27,7 @@ public:
   DiscretePulseFunction(const DiscretePulseFunction& function);
   virtual ~DiscretePulseFunction();
 };
+}
 }
 
 #endif // _UTILITIES_DISCRETE_PULSE_FUNCTION_H_

@@ -7,7 +7,7 @@
  */
 
 #include "ruler/unary_consumable_resource.h"
-#include "utilities/step_function.h"
+#include "utilities/functions/step_function.h"
 
 namespace ruler
 {

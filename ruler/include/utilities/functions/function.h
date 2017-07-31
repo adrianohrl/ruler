@@ -14,6 +14,8 @@
 
 namespace utilities
 {
+namespace functions
+{
 template <typename T> class Function
 {
 public:
@@ -93,6 +95,7 @@ template <typename T> T Function<T>::getValue(double d) const
 template <typename T> void Function<T>::setAscending(bool ascending)
 {
   ascending_ = ascending;
+}
 }
 }
 

@@ -6,11 +6,12 @@
  *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)
  */
 
-#include "utilities/continuous_exponential_function.h"
+#include "utilities/functions/continuous_exponential_function.h"
 
 namespace utilities
 {
-
+namespace functions
+{
 ContinuousExponentialFunction::ContinuousExponentialFunction(
     double d0, double df, double q0, double qf, bool ascending)
     : ExponentialFunction<utilities::ContinuousSignalType>::ExponentialFunction(
@@ -33,4 +34,5 @@ ContinuousExponentialFunction::ContinuousExponentialFunction(
 }
 
 ContinuousExponentialFunction::~ContinuousExponentialFunction() {}
+}
 }

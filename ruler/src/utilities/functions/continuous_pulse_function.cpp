@@ -6,11 +6,12 @@
  *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)
  */
 
-#include "utilities/continuous_pulse_function.h"
+#include "utilities/functions/continuous_pulse_function.h"
 
 namespace utilities
 {
-
+namespace functions
+{
 ContinuousPulseFunction::ContinuousPulseFunction(
     double d0, double df, double q0, double qf, bool ascending)
     : PulseFunction<utilities::ContinuousSignalType>::PulseFunction(
@@ -32,5 +33,6 @@ ContinuousPulseFunction::ContinuousPulseFunction(
 {
 }
 
-ContinuousExponentialFunction::~ContinuousExponentialFunction() {}
+ContinuousPulseFunction::~ContinuousPulseFunction() {}
+}
 }

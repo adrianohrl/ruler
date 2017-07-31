@@ -11,14 +11,14 @@
 #include <list>
 #include <ros/time.h>
 #include "ruler/task_event.h"
-#include "utilities/function.h"
+#include "utilities/functions/function.h"
 
 namespace ruler
 {
 template <typename T> class TaskFunction
 {
 public:
-  TaskFunction(Task* task, utilities::Function<T>* quantity_function);
+  TaskFunction(Task* task, utilities::functions::Function<T>* quantity_function);
   TaskFunction(const TaskFunction<T>& task_function);
   virtual ~TaskFunction();
   void update(const TaskEvent& notification);
@@ -28,7 +28,7 @@ public:
 private:
   Task* task_;
   std::list<TaskEvent> events_;
-  utilities::Function<T>* quantity_function_;
+  utilities::functions::Function<T>* quantity_function_;
 };
 }
 
@@ -38,7 +38,7 @@ namespace ruler
 {
 template <typename T>
 TaskFunction<T>::TaskFunction(Task* task,
-                              utilities::Function<T>* quantity_function)
+                              utilities::functions::Function<T>* quantity_function)
     : task_(task), quantity_function_(quantity_function)
 {
 }

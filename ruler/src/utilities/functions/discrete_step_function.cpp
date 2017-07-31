@@ -6,11 +6,12 @@
  *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)
  */
 
-#include "utilities/discrete_step_function.h"
+#include "utilities/functions/discrete_step_function.h"
 
 namespace utilities
 {
-
+namespace functions
+{
 DiscreteStepFunction::DiscreteStepFunction(double qf, bool ascending)
     : StepFunction<utilities::DiscreteSignalType>::StepFunction(qf, ascending)
 {
@@ -36,4 +37,5 @@ DiscreteStepFunction::DiscreteStepFunction(const DiscreteStepFunction& function)
 }
 
 DiscreteStepFunction::~DiscreteStepFunction() {}
+}
 }

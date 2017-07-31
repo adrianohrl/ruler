@@ -10,7 +10,7 @@
 #define _RULER_REUSABLE_RESOURCE_H_
 
 #include "ruler/resource.h"
-#include "utilities/step_function.h"
+#include "utilities/functions/step_function.h"
 
 namespace ruler
 {
@@ -44,7 +44,7 @@ template <typename T> ReusableResource<T>::~ReusableResource() {}
 
 template <typename T> void ReusableResource<T>::require(Task* task, T quantity)
 {
-  utilities::Function<T>* quantity_function = new utilities::StepFunction<T>(quantity);
+  utilities::functions::Function<T>* quantity_function = new utilities::functions::StepFunction<T>(quantity);
   Resource<T>::profile_->addTaskFunction(
       new TaskFunction<T>(task, quantity_function));
 }

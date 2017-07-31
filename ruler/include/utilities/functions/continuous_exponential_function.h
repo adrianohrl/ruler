@@ -10,9 +10,11 @@
 #define _UTILITIES_CONTINUOUS_EXPONENTIAL_FUNCTION_H_
 
 #include "utilities/continuous_signal_type.h"
-#include "utilities/exponential_function.h"
+#include "utilities/functions/exponential_function.h"
 
 namespace utilities
+{
+namespace functions
 {
 class ContinuousExponentialFunction
     : public ExponentialFunction<utilities::ContinuousSignalType>
@@ -25,6 +27,7 @@ public:
   ContinuousExponentialFunction(const ContinuousExponentialFunction& function);
   virtual ~ContinuousExponentialFunction();
 };
+}
 }
 
 #endif // _UTILITIES_CONTINUOUS_EXPONENTIAL_FUNCTION_H_

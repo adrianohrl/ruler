@@ -9,9 +9,11 @@
 #ifndef _UTILITIES_LINEAR_FUNCTION_H_
 #define _UTILITIES_LINEAR_FUNCTION_H_
 
-#include "utilities/function.h"
+#include "utilities/functions/function.h"
 
 namespace utilities
+{
+namespace functions
 {
 template <typename T> class LinearFunction : public Function<T>
 {
@@ -56,6 +58,7 @@ template <typename T> double LinearFunction<T>::calculate(double d) const
   double rate((Function<T>::qf_ - Function<T>::q0_) /
               (Function<T>::df_ - Function<T>::d0_));
   return rate * (d - Function<T>::d0_) + Function<T>::q0_;
+}
 }
 }
 

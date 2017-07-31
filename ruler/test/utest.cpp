@@ -14,14 +14,14 @@
 
 double tolerance(1e-4);
 std::vector<double> d;
-utilities::ContinuousStepFunction* continuous_step;
-utilities::ContinuousLinearFunction* continuous_linear;
-utilities::ContinuousExponentialFunction* continuous_exponential;
-utilities::DiscreteStepFunction* discrete_step;
-utilities::DiscreteLinearFunction* discrete_linear;
-utilities::DiscreteExponentialFunction* discrete_exponential;
-utilities::UnaryPulseFunction* unary_pulse;
-utilities::UnaryStepFunction* unary_step;
+utilities::functions::ContinuousStepFunction* continuous_step;
+utilities::functions::ContinuousLinearFunction* continuous_linear;
+utilities::functions::ContinuousExponentialFunction* continuous_exponential;
+utilities::functions::DiscreteStepFunction* discrete_step;
+utilities::functions::DiscreteLinearFunction* discrete_linear;
+utilities::functions::DiscreteExponentialFunction* discrete_exponential;
+utilities::functions::UnaryPulseFunction* unary_pulse;
+utilities::functions::UnaryStepFunction* unary_step;
 std::map<double, double> q_step_asc;
 std::map<double, double> q_step_des;
 std::map<double, double> q_linear_asc;
@@ -766,16 +766,16 @@ void init()
   q_exponential_des.insert(std::pair<double, double>(d[7], 6.1));
   // functions
   double d0(1.5), df(5.5), q0(6.1), qf(8.1);
-  continuous_step = new utilities::ContinuousStepFunction(d0, df, q0, qf);
-  continuous_linear = new utilities::ContinuousLinearFunction(d0, df, q0, qf);
+  continuous_step = new utilities::functions::ContinuousStepFunction(d0, df, q0, qf);
+  continuous_linear = new utilities::functions::ContinuousLinearFunction(d0, df, q0, qf);
   continuous_exponential =
-      new utilities::ContinuousExponentialFunction(d0, df, q0, qf);
-  discrete_step = new utilities::DiscreteStepFunction(d0, df, q0, qf);
-  discrete_linear = new utilities::DiscreteLinearFunction(d0, df, q0, qf);
+      new utilities::functions::ContinuousExponentialFunction(d0, df, q0, qf);
+  discrete_step = new utilities::functions::DiscreteStepFunction(d0, df, q0, qf);
+  discrete_linear = new utilities::functions::DiscreteLinearFunction(d0, df, q0, qf);
   discrete_exponential =
-      new utilities::DiscreteExponentialFunction(d0, df, q0, qf);
-  unary_pulse = new utilities::UnaryPulseFunction(1.0, 1.5);
-  unary_step = new utilities::UnaryStepFunction(0.25);
+      new utilities::functions::DiscreteExponentialFunction(d0, df, q0, qf);
+  unary_pulse = new utilities::functions::UnaryPulseFunction(1.0, 1.5);
+  unary_step = new utilities::functions::UnaryStepFunction(0.25);
 }
 
 int main(int argc, char** argv)

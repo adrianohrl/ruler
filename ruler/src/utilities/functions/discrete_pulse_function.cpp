@@ -6,11 +6,12 @@
  *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)
  */
 
-#include "utilities/discrete_pulse_function.h"
+#include "utilities/functions/discrete_pulse_function.h"
 
 namespace utilities
 {
-
+namespace functions
+{
 DiscretePulseFunction::DiscretePulseFunction(
     double d0, double df, double q0, double qf, bool ascending)
     : PulseFunction<utilities::DiscreteSignalType>::PulseFunction(
@@ -33,4 +34,5 @@ DiscretePulseFunction::DiscretePulseFunction(
 }
 
 DiscretePulseFunction::~DiscretePulseFunction() {}
+}
 }

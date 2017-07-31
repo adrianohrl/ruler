@@ -10,9 +10,11 @@
 #define _UTILITIES_CONTINUOUS_LINEAR_FUNCTION_H_
 
 #include "utilities/continuous_signal_type.h"
-#include "utilities/linear_function.h"
+#include "utilities/functions/linear_function.h"
 
 namespace utilities
+{
+namespace functions
 {
 class ContinuousLinearFunction
     : public LinearFunction<utilities::ContinuousSignalType>
@@ -25,6 +27,7 @@ public:
   ContinuousLinearFunction(const ContinuousLinearFunction& function);
   virtual ~ContinuousLinearFunction();
 };
+}
 }
 
 #endif // _UTILITIES_CONTINUOUS_LINEAR_FUNCTION_H_

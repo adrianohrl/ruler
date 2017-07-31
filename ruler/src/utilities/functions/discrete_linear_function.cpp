@@ -6,11 +6,12 @@
  *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)
  */
 
-#include "utilities/discrete_linear_function.h"
+#include "utilities/functions/discrete_linear_function.h"
 
 namespace utilities
 {
-
+namespace functions
+{
 DiscreteLinearFunction::DiscreteLinearFunction(double d0, double df, double q0,
                                                double qf, bool ascending)
     : LinearFunction<utilities::DiscreteSignalType>::LinearFunction(
@@ -33,4 +34,5 @@ DiscreteLinearFunction::DiscreteLinearFunction(
 }
 
 DiscreteLinearFunction::~DiscreteLinearFunction() {}
+}
 }

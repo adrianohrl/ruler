@@ -6,11 +6,12 @@
  *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)
  */
 
-#include "utilities/discrete_exponential_function.h"
+#include "utilities/functions/discrete_exponential_function.h"
 
 namespace utilities
 {
-
+namespace functions
+{
 DiscreteExponentialFunction::DiscreteExponentialFunction(double d0, double df,
                                                          double q0, double qf,
                                                          bool ascending)
@@ -36,4 +37,5 @@ DiscreteExponentialFunction::DiscreteExponentialFunction(
 }
 
 DiscreteExponentialFunction::~DiscreteExponentialFunction() {}
+}
 }

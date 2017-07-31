@@ -10,9 +10,11 @@
 #define _UTILITIES_CONTINUOUS_PULSE_FUNCTION_H_
 
 #include "utilities/continuous_signal_type.h"
-#include "utilities/pulse_function.h"
+#include "utilities/functions/pulse_function.h"
 
 namespace utilities
+{
+namespace functions
 {
 class ContinuousPulseFunction
     : public PulseFunction<utilities::ContinuousSignalType>
@@ -25,6 +27,7 @@ public:
   ContinuousPulseFunction(const ContinuousPulseFunction& function);
   virtual ~ContinuousPulseFunction();
 };
+}
 }
 
 #endif // _UTILITIES_CONTINUOUS_PULSE_FUNCTION_H_
