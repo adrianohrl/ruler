@@ -34,7 +34,7 @@ UnaryReusableResource::UnaryReusableResource(
 
 UnaryReusableResource::~UnaryReusableResource() {}
 
-void UnaryReusableResource::require(Task *task)
+void UnaryReusableResource::require(Task *task, double d0, double df)
 {
   /*ReusableResource<utilities::UnarySignalType>::require(
       task, new utilities::StepFunction());*/

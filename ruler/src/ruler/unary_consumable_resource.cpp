@@ -7,7 +7,8 @@
  */
 
 #include "ruler/unary_consumable_resource.h"
-#include "utilities/functions/step_function.h"
+#include "utilities/functions/unary_step_function.h"
+#include "utilities/functions/unary_pulse_function.h"
 
 namespace ruler
 {
@@ -38,15 +39,47 @@ UnaryConsumableResource::UnaryConsumableResource(
 
 UnaryConsumableResource::~UnaryConsumableResource() {}
 
-void UnaryConsumableResource::consume(Task* task)
+void UnaryConsumableResource::consume(Task* task, double d0, double df)
 {
-  /*ConsumableResource<utilities::UnarySignalType>::consume(
-      task, new utilities::StepFunction());*/
+  utilities::functions::Function<utilities::UnarySignalType>* quantity_function;
+  if (df == INFINITY)
+  {
+    quantity_function = new utilities::functions::UnaryStepFunction(d0);
+  }
+  else
+  {
+    quantity_function = new utilities::functions::UnaryPulseFunction(d0, df);
+  }
+  consume(task, quantity_function);
 }
 
-void UnaryConsumableResource::produce(Task* task)
+void UnaryConsumableResource::consume(
+    Task* task, utilities::functions::Function<utilities::UnarySignalType>*
+                    quantity_function)
 {
-  /*ConsumableResource<utilities::UnarySignalType>::produce(
-      task, new utilities::StepFunction());*/
+  ConsumableResource<utilities::UnarySignalType>::consume(task,
+                                                          quantity_function);
+}
+
+void UnaryConsumableResource::produce(Task* task, double d0, double df)
+{
+  utilities::functions::Function<utilities::UnarySignalType>* quantity_function;
+  if (df == INFINITY)
+  {
+    quantity_function = new utilities::functions::UnaryStepFunction(d0);
+  }
+  else
+  {
+    quantity_function = new utilities::functions::UnaryPulseFunction(d0, df);
+  }
+  produce(task, quantity_function);
+}
+
+void UnaryConsumableResource::produce(
+    Task* task, utilities::functions::Function<utilities::UnarySignalType>*
+                    quantity_function)
+{
+  ConsumableResource<utilities::UnarySignalType>::produce(task,
+                                                          quantity_function);
 }
 }

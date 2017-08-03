@@ -28,7 +28,7 @@ public:
   ContinuousReusableResource(const ContinuousReusableResource& resource);
   virtual ~ContinuousReusableResource();
   using ReusableResource<utilities::ContinuousSignalType>::require;
-  virtual void require(Task *task, double quantity);
+  virtual void require(Task *task, double quantity, double d0 = 0.0);
 };
 }
 

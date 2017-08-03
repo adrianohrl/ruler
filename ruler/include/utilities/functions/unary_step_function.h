@@ -16,11 +16,13 @@ namespace utilities
 {
 namespace functions
 {
-class UnaryStepFunction : public StepFunction<utilities::UnarySignalType>
+class UnaryStepFunction : public StepFunction<UnarySignalType>
 {
 public:
-  UnaryStepFunction(double d0 = 0.0, bool ascending = false);
-  UnaryStepFunction(ros::Duration d0, bool ascending = false);
+  UnaryStepFunction(double d0 = 0.0, bool ascending = false,
+                    bool negated = false);
+  UnaryStepFunction(ros::Duration d0, bool ascending = false,
+                    bool negated = false);
   UnaryStepFunction(const UnaryStepFunction& function);
   virtual ~UnaryStepFunction();
 };

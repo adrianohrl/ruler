@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-  <arg name="_name" default="adrianohrl"/>
-  <env name="ROSCONSOLE_CONFIG_FILE" value="$(find ruler)/config/rosconsole.conf"/>
-  <group ns="$(arg _name)">
-    <node name="ruler_test_node" pkg="ruler_test" type="ruler_test_node" output="screen">
-    </node>
-  </group>
-</launch>

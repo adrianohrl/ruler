@@ -5,6 +5,7 @@
  *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)
  */
 
+#include "ruler/resource_reservation_request.h"
 #include "ruler/task.h"
 
 namespace ruler
@@ -40,22 +41,46 @@ Task::~Task()
     delete end_timestamp_bounds_;
     end_timestamp_bounds_ = NULL;
   }
-  std::list<utilities::Interval<ros::Time>*>::iterator it(
+  std::list<utilities::Interval<ros::Time>*>::iterator int_it(
       interruption_intervals_.begin());
-  while (it != interruption_intervals_.end())
+  while (int_it != interruption_intervals_.end())
   {
-    if (*it)
+    if (*int_it)
     {
-      delete *it;
-      *it = NULL;
+      delete *int_it;
+      *int_it = NULL;
     }
-    it++;
+    int_it++;
   }
+  std::list<ResourceReservationRequest*>::iterator req_it(
+      resource_reservation_requests_.begin());
+  while (req_it != resource_reservation_requests_.end())
+  {
+    if (*req_it)
+    {
+      delete *req_it;
+      *req_it = NULL;
+    }
+    req_it++;
+  }
+}
+
+void Task::addResourceReservationRequest(ResourceReservationRequest* request)
+{
+  resource_reservation_requests_.push_back(request);
 }
 
 void Task::start()
 {
-  if (!start_timestamp_.isZero())
+  std::list<ResourceReservationRequest*>::iterator it(
+      resource_reservation_requests_.begin());
+  while (it != resource_reservation_requests_.end())
+  {
+    ResourceReservationRequest* resource_reservation_request = *it;
+    resource_reservation_request->request();
+    it++;
+  }
+  if (hasStarted())
   {
     throw utilities::Exception(str() + " has already been started.");
   }
@@ -71,15 +96,15 @@ void Task::start()
 
 void Task::interrupt()
 {
-  if (start_timestamp_.isZero())
+  if (!hasStarted())
   {
     throw utilities::Exception(str() + " has not been started yet.");
   }
-  if (!end_timestamp_.isZero())
+  if (hasFinished())
   {
     throw utilities::Exception(str() + " has already been finished.");
   }
-  if (!last_interruption_timestamp_.isZero())
+  if (isInterrupted())
   {
     throw utilities::Exception(str() + " has already been interrupted.");
   }
@@ -90,15 +115,15 @@ void Task::interrupt()
 
 void Task::resume()
 {
-  if (start_timestamp_.isZero())
+  if (!hasStarted())
   {
     throw utilities::Exception(str() + " has not started yet.");
   }
-  if (!end_timestamp_.isZero())
+  if (hasFinished())
   {
     throw utilities::Exception(str() + " has already been finished.");
   }
-  if (last_interruption_timestamp_.isZero())
+  if (isRunning())
   {
     throw utilities::Exception(str() + " is already resuming.");
   }
@@ -111,11 +136,11 @@ void Task::resume()
 
 void Task::finish()
 {
-  if (start_timestamp_.isZero())
+  if (!hasStarted())
   {
     throw utilities::Exception(str() + " has not started yet.");
   }
-  if (!end_timestamp_.isZero())
+  if (hasFinished())
   {
     throw utilities::Exception(str() + " has already been finished.");
   }
@@ -153,7 +178,7 @@ double Task::getDuration(ros::Time t) const
     }
     it++;
   }
-  if (end_timestamp_.isZero() && !last_interruption_timestamp_.isZero())
+  if (!hasFinished() && isInterrupted())
   {
     duration -= (t - last_interruption_timestamp_).toSec();
   }
@@ -169,4 +194,18 @@ bool Task::isPreemptive() const { return preemptive_; }
 ros::Time Task::getStartTimestamp() const { return start_timestamp_; }
 
 ros::Time Task::getEndTimestamp() const { return end_timestamp_; }
+
+bool Task::hasStarted() const { return !start_timestamp_.isZero(); }
+
+bool Task::isInterrupted() const
+{
+  return hasStarted() && !last_interruption_timestamp_.isZero();
+}
+
+bool Task::isRunning() const
+{
+  return hasStarted() && last_interruption_timestamp_.isZero();
+}
+
+bool Task::hasFinished() const { return !end_timestamp_.isZero(); }
 }

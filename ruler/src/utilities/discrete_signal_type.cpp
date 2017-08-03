@@ -34,6 +34,8 @@ DiscreteSignalType::DiscreteSignalType(const DiscreteSignalType& signal_type)
 
 DiscreteSignalType::~DiscreteSignalType() {}
 
+bool DiscreteSignalType::isDiscrete() const { return true; }
+
 DiscreteSignalType& DiscreteSignalType::operator-() { value_ = -value_; }
 
 DiscreteSignalType& DiscreteSignalType::operator++()

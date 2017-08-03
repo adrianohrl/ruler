@@ -14,18 +14,19 @@ namespace functions
 {
 DiscreteExponentialFunction::DiscreteExponentialFunction(double d0, double df,
                                                          double q0, double qf,
-                                                         bool ascending)
+                                                         double k, double base,
+                                                         bool ascending,
+                                                         bool negated)
     : ExponentialFunction<utilities::DiscreteSignalType>::ExponentialFunction(
-          d0, df, q0, qf, ascending)
+          d0, df, q0, qf, k, base, ascending, negated)
 {
 }
 
-DiscreteExponentialFunction::DiscreteExponentialFunction(ros::Duration d0,
-                                                         ros::Duration df,
-                                                         double q0, double qf,
-                                                         bool ascending)
+DiscreteExponentialFunction::DiscreteExponentialFunction(
+    ros::Duration d0, ros::Duration df, double q0, double qf, double k,
+    double base, bool ascending, bool negated)
     : ExponentialFunction<utilities::DiscreteSignalType>::ExponentialFunction(
-          d0, df, q0, qf, ascending)
+          d0, df, q0, qf, k, base, ascending, negated)
 {
 }
 

@@ -26,8 +26,16 @@ public:
                           ros::Duration latence = ros::Duration(0.0));
   UnaryConsumableResource(const UnaryConsumableResource& resource);
   virtual ~UnaryConsumableResource();
-  virtual void consume(Task* task);
-  virtual void produce(Task* task);
+  virtual void consume(Task* task, double d0 = 0.0, double df = INFINITY);
+  virtual void
+  consume(Task* task,
+          utilities::functions::Function<utilities::UnarySignalType>*
+              quantity_function);
+  virtual void produce(Task* task, double d0 = 0.0, double df = INFINITY);
+  virtual void
+  produce(Task* task,
+          utilities::functions::Function<utilities::UnarySignalType>*
+              quantity_function);
 };
 }
 

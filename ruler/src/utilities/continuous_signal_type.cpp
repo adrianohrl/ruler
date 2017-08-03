@@ -24,6 +24,8 @@ ContinuousSignalType::ContinuousSignalType(
 
 ContinuousSignalType::~ContinuousSignalType() {}
 
+bool ContinuousSignalType::isContinuous() const { return true; }
+
 ContinuousSignalType& ContinuousSignalType::operator-()
 {
   value_ = -value_;

@@ -22,6 +22,7 @@ include_directories(
 
 set(H_FILES
   include/ruler/consumable_resource.h
+  include/ruler/consumable_resource_reservation_request.h
   include/ruler/continuous_consumable_resource.h
   include/ruler/continuous_reusable_resource.h
   include/ruler/discrete_consumable_resource.h
@@ -30,7 +31,9 @@ set(H_FILES
   include/ruler/event_types.h
   include/ruler/profile.h
   include/ruler/resource.h
+  include/ruler/resource_reservation_request.h
   include/ruler/reusable_resource.h
+  include/ruler/reusable_resource_reservation_request.h
   include/ruler/ruler.h
   include/ruler/task.h
   include/ruler/task_event.h
@@ -59,7 +62,6 @@ set(H_FILES
   include/utilities/functions/unary_step_function.h
   include/utilities/has_id.h
   include/utilities/interval.h
-  include/utilities/non_unary_signal_type.h
   include/utilities/observer.h
   include/utilities/ros_node.h
   include/utilities/signal_type.h
@@ -75,6 +77,7 @@ set(CPP_FILES
   src/ruler/discrete_reusable_resource.cpp
   src/ruler/event.cpp
   src/ruler/event_types.cpp
+  src/ruler/resource_reservation_request.cpp
   src/ruler/task.cpp
   src/ruler/task_event.cpp
   src/ruler/unary_consumable_resource.cpp

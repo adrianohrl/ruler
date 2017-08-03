@@ -12,24 +12,40 @@ namespace utilities
 {
 namespace functions
 {
-DiscretePulseFunction::DiscretePulseFunction(
-    double d0, double df, double q0, double qf, bool ascending)
+DiscretePulseFunction::DiscretePulseFunction(double d0, double df, double qf,
+                                             bool ascending, bool negated)
     : PulseFunction<utilities::DiscreteSignalType>::PulseFunction(
-          d0, df, q0, qf, ascending)
+          d0, df, qf, ascending, negated)
 {
 }
 
-DiscretePulseFunction::DiscretePulseFunction(
-    ros::Duration d0, ros::Duration df, double q0, double qf, bool ascending)
+DiscretePulseFunction::DiscretePulseFunction(ros::Duration d0, ros::Duration df,
+                                             double qf, bool ascending,
+                                             bool negated)
     : PulseFunction<utilities::DiscreteSignalType>::PulseFunction(
-          d0, df, q0, qf, ascending)
+          d0, df, qf, ascending, negated)
+{
+}
+
+DiscretePulseFunction::DiscretePulseFunction(double d0, double df, double q0,
+                                             double qf, bool ascending,
+                                             bool negated)
+    : PulseFunction<utilities::DiscreteSignalType>::PulseFunction(
+          d0, df, q0, qf, ascending, negated)
+{
+}
+
+DiscretePulseFunction::DiscretePulseFunction(ros::Duration d0, ros::Duration df,
+                                             double q0, double qf,
+                                             bool ascending, bool negated)
+    : PulseFunction<utilities::DiscreteSignalType>::PulseFunction(
+          d0, df, q0, qf, ascending, negated)
 {
 }
 
 DiscretePulseFunction::DiscretePulseFunction(
     const DiscretePulseFunction& function)
-    : PulseFunction<utilities::DiscreteSignalType>::PulseFunction(
-          function)
+    : PulseFunction<utilities::DiscreteSignalType>::PulseFunction(function)
 {
 }
 

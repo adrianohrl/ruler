@@ -19,11 +19,15 @@ namespace functions
 class DiscreteStepFunction : public StepFunction<utilities::DiscreteSignalType>
 {
 public:
-  DiscreteStepFunction(double qf, bool ascending = false);
-  DiscreteStepFunction(double d0, double df, double q0, double qf,
-                       bool ascending = false);
-  DiscreteStepFunction(ros::Duration d0, ros::Duration df, double q0, double qf,
-                       bool ascending = false);
+  DiscreteStepFunction(double qf, bool ascending = false, bool negated = false);
+  DiscreteStepFunction(double d0, double qf, bool ascending = false,
+                       bool negated = false);
+  DiscreteStepFunction(ros::Duration d0, double qf, bool ascending = false,
+                       bool negated = false);
+  DiscreteStepFunction(double d0, double q0, double qf, bool ascending = false,
+                       bool negated = false);
+  DiscreteStepFunction(ros::Duration d0, double q0, double qf,
+                       bool ascending = false, bool negated = false);
   DiscreteStepFunction(const DiscreteStepFunction& function);
   virtual ~DiscreteStepFunction();
 };

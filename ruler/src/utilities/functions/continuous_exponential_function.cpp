@@ -13,16 +13,18 @@ namespace utilities
 namespace functions
 {
 ContinuousExponentialFunction::ContinuousExponentialFunction(
-    double d0, double df, double q0, double qf, bool ascending)
+    double d0, double df, double q0, double qf, double k, double base,
+    bool ascending, bool negated)
     : ExponentialFunction<utilities::ContinuousSignalType>::ExponentialFunction(
-          d0, df, q0, qf, ascending)
+          d0, df, q0, qf, k, base, ascending, negated)
 {
 }
 
 ContinuousExponentialFunction::ContinuousExponentialFunction(
-    ros::Duration d0, ros::Duration df, double q0, double qf, bool ascending)
+    ros::Duration d0, ros::Duration df, double q0, double qf, double k,
+    double base, bool ascending, bool negated)
     : ExponentialFunction<utilities::ContinuousSignalType>::ExponentialFunction(
-          d0, df, q0, qf, ascending)
+          d0, df, q0, qf, k, base, ascending, negated)
 {
 }
 

@@ -37,9 +37,9 @@ ContinuousReusableResource::ContinuousReusableResource(
 
 ContinuousReusableResource::~ContinuousReusableResource() {}
 
-void ContinuousReusableResource::require(Task* task, double quantity)
+void ContinuousReusableResource::require(Task* task, double quantity, double d0)
 {
   ReusableResource<utilities::ContinuousSignalType>::require(
-      task, utilities::ContinuousSignalType(quantity));
+      task, utilities::ContinuousSignalType(quantity), d0);
 }
 }

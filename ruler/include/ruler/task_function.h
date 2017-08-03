@@ -18,10 +18,12 @@ namespace ruler
 template <typename T> class TaskFunction
 {
 public:
-  TaskFunction(Task* task, utilities::functions::Function<T>* quantity_function);
+  TaskFunction(Task* task,
+               utilities::functions::Function<T>* quantity_function);
   TaskFunction(const TaskFunction<T>& task_function);
   virtual ~TaskFunction();
   void update(const TaskEvent& notification);
+  bool isNegated() const;
   T getLevel(ros::Time t) const;
   Task* getTask() const;
 
@@ -37,8 +39,8 @@ private:
 namespace ruler
 {
 template <typename T>
-TaskFunction<T>::TaskFunction(Task* task,
-                              utilities::functions::Function<T>* quantity_function)
+TaskFunction<T>::TaskFunction(
+    Task* task, utilities::functions::Function<T>* quantity_function)
     : task_(task), quantity_function_(quantity_function)
 {
 }
@@ -66,16 +68,13 @@ void TaskFunction<T>::update(const TaskEvent& notification)
   events_.push_back(notification);
 }
 
+template <typename T> bool TaskFunction<T>::isNegated() const
+{
+  return quantity_function_->isNegated();
+}
+
 template <typename T> T TaskFunction<T>::getLevel(ros::Time t) const
 {
-  /*double level(0.0);
-  std::list<Event*>::const_iterator it(events_.begin());
-  while (it != events_.end())
-  {
-    Event* event = *it;
-    level += quantity_->getValue(task_->getDuration(t));
-    it++;
-  }*/
   return quantity_function_->getValue(task_->getDuration(t));
 }
 

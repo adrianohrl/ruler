@@ -19,6 +19,7 @@ public:
   UnarySignalType(bool value = false);
   UnarySignalType(const UnarySignalType& signal_type);
   virtual ~UnarySignalType();
+  virtual bool isUnary() const;
   virtual std::string str() const;
   virtual bool operator!() const;
   virtual bool operator&&(const UnarySignalType& signal_type) const;

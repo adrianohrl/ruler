@@ -9,6 +9,7 @@
 #define _RULER_H_
 
 #include "ruler/consumable_resource.h"
+#include "ruler/consumable_resource_reservation_request.h"
 #include "ruler/continuous_consumable_resource.h"
 #include "ruler/continuous_reusable_resource.h"
 #include "ruler/discrete_consumable_resource.h"
@@ -17,7 +18,9 @@
 #include "ruler/event_types.h"
 #include "ruler/profile.h"
 #include "ruler/resource.h"
+#include "ruler/resource_reservation_request.h"
 #include "ruler/reusable_resource.h"
+#include "ruler/reusable_resource_reservation_request.h"
 #include "ruler/task.h"
 #include "ruler/task_function.h"
 #include "ruler/unary_consumable_resource.h"

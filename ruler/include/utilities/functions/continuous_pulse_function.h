@@ -20,10 +20,15 @@ class ContinuousPulseFunction
     : public PulseFunction<utilities::ContinuousSignalType>
 {
 public:
+  ContinuousPulseFunction(double d0, double df, double qf,
+                          bool ascending = false, bool negated = false);
+  ContinuousPulseFunction(ros::Duration d0, ros::Duration df, double qf,
+                          bool ascending = false, bool negated = false);
   ContinuousPulseFunction(double d0, double df, double q0, double qf,
-                          bool ascending = false);
+                          bool ascending = false, bool negated = false);
   ContinuousPulseFunction(ros::Duration d0, ros::Duration df, double q0,
-                          double qf, bool ascending = false);
+                          double qf, bool ascending = false,
+                          bool negated = false);
   ContinuousPulseFunction(const ContinuousPulseFunction& function);
   virtual ~ContinuousPulseFunction();
 };

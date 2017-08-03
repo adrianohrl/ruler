@@ -23,6 +23,8 @@ UnarySignalType::UnarySignalType(const UnarySignalType& signal_type)
 
 UnarySignalType::~UnarySignalType() {}
 
+bool UnarySignalType::isUnary() const { return true; }
+
 std::string UnarySignalType::str() const { return value_ ? "true" : "false"; }
 
 bool UnarySignalType::operator!() const { return !value_; }

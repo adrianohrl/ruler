@@ -26,7 +26,7 @@ public:
                         ros::Duration latence = ros::Duration(0.0));
   UnaryReusableResource(const UnaryReusableResource& resource);
   virtual ~UnaryReusableResource();
-  virtual void require(Task* task);
+  virtual void require(Task* task, double d0 = 0.0, double df = INFINITY);
 };
 }
 

@@ -18,13 +18,16 @@ namespace functions
 template <typename T> class PulseFunction : public Function<T>
 {
 public:
+  PulseFunction(double d0, double df, double qf, bool ascending, bool negated);
+  PulseFunction(ros::Duration d0, ros::Duration df, double qf, bool ascending,
+                bool negated);
   virtual ~PulseFunction();
 
 protected:
-  PulseFunction(double d0, double df, double q0, double qf,
-                bool ascending = false);
+  PulseFunction(double d0, double df, double q0, double qf, bool ascending,
+                bool negated);
   PulseFunction(ros::Duration d0, ros::Duration df, double q0, double qf,
-                bool ascending = false);
+                bool ascending, bool negated);
   PulseFunction(const PulseFunction<T>& function);
 
 private:
@@ -32,17 +35,51 @@ private:
 };
 
 template <typename T>
-PulseFunction<T>::PulseFunction(double d0, double df, double q0, double qf,
-                                bool ascending)
-    : Function<T>::Function(d0, df, q0, qf, ascending, false)
+PulseFunction<T>::PulseFunction(double d0, double df, double qf, bool ascending,
+                                bool negated)
+    : Function<T>::Function(d0, df, 0.0, qf, ascending, false, negated)
 {
+  if (d0 == 0.0 || df >= INFINITY)
+  {
+    throw utilities::Exception(
+        "Use the step function instead of the pulse one.");
+  }
+}
+
+template <typename T>
+PulseFunction<T>::PulseFunction(ros::Duration d0, ros::Duration df, double qf,
+                                bool ascending, bool negated)
+    : Function<T>::Function(d0, df, 0.0, qf, ascending, false, negated)
+{
+  if (d0.toSec() == 0.0 || df.toSec() >= INFINITY)
+  {
+    throw utilities::Exception(
+        "Use the step function instead of the pulse one.");
+  }
+}
+
+template <typename T>
+PulseFunction<T>::PulseFunction(double d0, double df, double q0, double qf,
+                                bool ascending, bool negated)
+    : Function<T>::Function(d0, df, q0, qf, ascending, false, negated)
+{
+  if (d0 == 0.0 || df >= INFINITY)
+  {
+    throw utilities::Exception(
+        "Use the step function instead of the pulse one.");
+  }
 }
 
 template <typename T>
 PulseFunction<T>::PulseFunction(ros::Duration d0, ros::Duration df, double q0,
-                                double qf, bool ascending)
-    : Function<T>::Function(d0, df, q0, qf, ascending, false)
+                                double qf, bool ascending, bool negated)
+    : Function<T>::Function(d0, df, q0, qf, ascending, false, negated)
 {
+  if (d0.toSec() == 0.0 || df.toSec() >= INFINITY)
+  {
+    throw utilities::Exception(
+        "Use the step function instead of the pulse one.");
+  }
 }
 
 template <typename T>

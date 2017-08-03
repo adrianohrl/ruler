@@ -18,6 +18,9 @@ public:
   SignalType(const T& value);
   SignalType(const SignalType<T>& signal_type);
   virtual ~SignalType();
+  virtual bool isContinuous() const;
+  virtual bool isDiscrete() const;
+  virtual bool isUnary() const;
   T getValue() const;
   void setValue(const T& value);
   virtual std::string str() const;
@@ -72,6 +75,12 @@ SignalType<T>::SignalType(const SignalType<T>& signal_type)
 }
 
 template <typename T> SignalType<T>::~SignalType() {}
+
+template <typename T> bool SignalType<T>::isContinuous() const { return false; }
+
+template <typename T> bool SignalType<T>::isDiscrete() const { return false; }
+
+template <typename T> bool SignalType<T>::isUnary() const { return false; }
 
 template <typename T> T SignalType<T>::getValue() const { return value_; }
 
@@ -281,11 +290,7 @@ SignalType<T>& SignalType<T>::operator/=(const SignalType<T>& signal_type)
   return *this;
 }
 
-template <typename T>
-SignalType<T>::operator T() const
-{
-  return value_;
-}
+template <typename T> SignalType<T>::operator T() const { return value_; }
 
 template <typename T>
 std::ostream& operator<<(std::ostream& out, const SignalType<T>& signal_type)

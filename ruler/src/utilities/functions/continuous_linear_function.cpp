@@ -15,17 +15,18 @@ namespace functions
 {
 ContinuousLinearFunction::ContinuousLinearFunction(double d0, double df,
                                                    double q0, double qf,
-                                                   bool ascending)
+                                                   bool ascending, bool negated)
     : LinearFunction<utilities::ContinuousSignalType>::LinearFunction(
-          d0, df, q0, qf, ascending)
+          d0, df, q0, qf, ascending, negated)
 {
 }
 
 ContinuousLinearFunction::ContinuousLinearFunction(ros::Duration d0,
                                                    ros::Duration df, double q0,
-                                                   double qf, bool ascending)
+                                                   double qf, bool ascending,
+                                                   bool negated)
     : LinearFunction<utilities::ContinuousSignalType>::LinearFunction(
-          d0, df, q0, qf, ascending)
+          d0, df, q0, qf, ascending, negated)
 {
 }
 

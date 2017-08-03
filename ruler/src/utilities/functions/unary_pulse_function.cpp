@@ -12,16 +12,17 @@ namespace utilities
 {
 namespace functions
 {
-UnaryPulseFunction::UnaryPulseFunction(double d0, double df, bool ascending)
-    : PulseFunction<utilities::UnarySignalType>::PulseFunction(d0, df, false,
-                                                               true, ascending)
+UnaryPulseFunction::UnaryPulseFunction(double d0, double df, bool ascending,
+                                       bool negated)
+    : PulseFunction<utilities::UnarySignalType>::PulseFunction(
+          d0, df, false, true, ascending, negated)
 {
 }
 
 UnaryPulseFunction::UnaryPulseFunction(ros::Duration d0, ros::Duration df,
-                                       bool ascending)
+                                       bool ascending, bool negated)
     : PulseFunction<utilities::UnarySignalType>::PulseFunction(
-          d0.toSec(), df.toSec(), false, true, ascending)
+          d0.toSec(), df.toSec(), false, true, ascending, negated)
 {
 }
 

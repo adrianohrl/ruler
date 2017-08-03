@@ -20,10 +20,15 @@ class DiscretePulseFunction
     : public PulseFunction<utilities::DiscreteSignalType>
 {
 public:
+  DiscretePulseFunction(double d0, double df, double qf, bool ascending = false,
+                        bool negated = false);
+  DiscretePulseFunction(ros::Duration d0, ros::Duration df, double qf,
+                        bool ascending = false, bool negated = false);
   DiscretePulseFunction(double d0, double df, double q0, double qf,
-                          bool ascending = false);
+                        bool ascending = false, bool negated = false);
   DiscretePulseFunction(ros::Duration d0, ros::Duration df, double q0,
-                          double qf, bool ascending = false);
+                        double qf, bool ascending = false,
+                        bool negated = false);
   DiscretePulseFunction(const DiscretePulseFunction& function);
   virtual ~DiscretePulseFunction();
 };

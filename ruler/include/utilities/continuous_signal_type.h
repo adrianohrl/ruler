@@ -19,6 +19,7 @@ public:
   ContinuousSignalType(double value = 0.0);
   ContinuousSignalType(const ContinuousSignalType& signal_type);
   virtual ~ContinuousSignalType();
+  virtual bool isContinuous() const;
   using SignalType<double>::operator-;
   virtual ContinuousSignalType& operator-();
 };

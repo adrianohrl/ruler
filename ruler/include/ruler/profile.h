@@ -9,8 +9,6 @@
 #define _RULER_RESOURCE_PROFILE_H_
 
 #include <list>
-#include <ros/common.h>
-#include <ros/time.h>
 #include "ruler/task_function.h"
 
 namespace ruler
@@ -21,6 +19,9 @@ public:
   Profile(T capacity, T initial_level);
   Profile(const Profile<T>& profile);
   virtual ~Profile();
+  bool isContinuous() const;
+  bool isDiscrete() const;
+  bool isUnary() const;
   T getCapacity() const;
   T getInitialLevel() const;
   T getLevel(ros::Time t = ros::Time::now()) const;
@@ -65,6 +66,21 @@ template <typename T> Profile<T>::~Profile()
   }
 }
 
+template <typename T> bool Profile<T>::isContinuous() const
+{
+  return capacity_.isContinuous();
+}
+
+template <typename T> bool Profile<T>::isDiscrete() const
+{
+  return capacity_.isDiscrete();
+}
+
+template <typename T> bool Profile<T>::isUnary() const
+{
+  return capacity_.isUnary();
+}
+
 template <typename T> T Profile<T>::getCapacity() const { return capacity_; }
 
 template <typename T> T Profile<T>::getInitialLevel() const
@@ -75,11 +91,19 @@ template <typename T> T Profile<T>::getInitialLevel() const
 template <typename T> T Profile<T>::getLevel(ros::Time t) const
 {
   T level(initial_level_);
-  typename std::list<TaskFunction<T>*>::const_iterator it(task_functions_.begin());
+  typename std::list<TaskFunction<T>*>::const_iterator it(
+      task_functions_.begin());
   while (it != task_functions_.end())
   {
     TaskFunction<T>* task_function = *it;
-    level += task_function->getLevel(t);
+    if (task_function->isNegated())
+    {
+      level -= task_function->getLevel(t);
+    }
+    else
+    {
+      level += task_function->getLevel(t);
+    }
     it++;
   }
   return level;

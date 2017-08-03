@@ -20,11 +20,16 @@ class ContinuousStepFunction
     : public StepFunction<utilities::ContinuousSignalType>
 {
 public:
-  ContinuousStepFunction(double qf, bool ascending = false);
-  ContinuousStepFunction(double d0, double df, double q0, double qf,
-                         bool ascending = false);
-  ContinuousStepFunction(ros::Duration d0, ros::Duration df, double q0,
-                         double qf, bool ascending = false);
+  ContinuousStepFunction(double qf, bool ascending = false,
+                         bool negated = false);
+  ContinuousStepFunction(double d0, double qf, bool ascending = false,
+                         bool negated = false);
+  ContinuousStepFunction(ros::Duration d0, double qf, bool ascending = false,
+                         bool negated = false);
+  ContinuousStepFunction(double d0, double q0, double qf,
+                         bool ascending = false, bool negated = false);
+  ContinuousStepFunction(ros::Duration d0, double q0, double qf,
+                         bool ascending = false, bool negated = false);
   ContinuousStepFunction(const ContinuousStepFunction& function);
   virtual ~ContinuousStepFunction();
 };

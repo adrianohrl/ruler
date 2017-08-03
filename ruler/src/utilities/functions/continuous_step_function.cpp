@@ -12,23 +12,38 @@ namespace utilities
 {
 namespace functions
 {
-ContinuousStepFunction::ContinuousStepFunction(double qf, bool ascending)
-    : StepFunction<utilities::ContinuousSignalType>::StepFunction(qf, ascending)
+ContinuousStepFunction::ContinuousStepFunction(double qf, bool ascending,
+                                               bool negated)
+    : StepFunction<utilities::ContinuousSignalType>::StepFunction(
+          0.0, qf, ascending, negated)
+{
+}
+ContinuousStepFunction::ContinuousStepFunction(double d0, double qf,
+                                               bool ascending, bool negated)
+    : StepFunction<utilities::ContinuousSignalType>::StepFunction(
+          d0, qf, ascending, negated)
 {
 }
 
-ContinuousStepFunction::ContinuousStepFunction(double d0, double df, double q0,
-                                               double qf, bool ascending)
-    : StepFunction<utilities::ContinuousSignalType>::StepFunction(d0, df, q0,
-                                                                  qf, ascending)
+ContinuousStepFunction::ContinuousStepFunction(ros::Duration d0, double qf,
+                                               bool ascending, bool negated)
+    : StepFunction<utilities::ContinuousSignalType>::StepFunction(
+          d0, qf, ascending, negated)
 {
 }
 
-ContinuousStepFunction::ContinuousStepFunction(ros::Duration d0,
-                                               ros::Duration df, double q0,
-                                               double qf, bool ascending)
-    : StepFunction<utilities::ContinuousSignalType>::StepFunction(d0, df, q0,
-                                                                  qf, ascending)
+ContinuousStepFunction::ContinuousStepFunction(double d0, double q0, double qf,
+                                               bool ascending, bool negated)
+    : StepFunction<utilities::ContinuousSignalType>::StepFunction(
+          d0, q0, qf, ascending, negated)
+{
+}
+
+ContinuousStepFunction::ContinuousStepFunction(ros::Duration d0, double q0,
+                                               double qf, bool ascending,
+                                               bool negated)
+    : StepFunction<utilities::ContinuousSignalType>::StepFunction(
+          d0, q0, qf, ascending, negated)
 {
 }
 

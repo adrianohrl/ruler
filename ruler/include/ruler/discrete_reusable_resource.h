@@ -28,7 +28,7 @@ public:
   DiscreteReusableResource(const DiscreteReusableResource& resource);
   virtual ~DiscreteReusableResource();
   using ReusableResource<utilities::DiscreteSignalType>::require;
-  virtual void require(Task *task, long quantity);
+  virtual void require(Task *task, long quantity, double d0 = 0.0);
 };
 }
 

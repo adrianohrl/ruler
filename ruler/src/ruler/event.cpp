@@ -10,7 +10,7 @@
 
 namespace ruler
 {
-Event::Event(EventType type) : type_(type), timestamp_(ros::Time::now()) {}
+Event::Event(EventType type, ros::Time timestamp) : type_(type), timestamp_(timestamp) {}
 
 Event::Event(const Event& event)
     : type_(event.type_), timestamp_(event.timestamp_)

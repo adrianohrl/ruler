@@ -15,6 +15,8 @@
 
 namespace ruler
 {
+class ResourceReservationRequest;
+
 template <typename T> class Resource;
 
 class Task : public utilities::Subject<TaskEvent>
@@ -24,12 +26,13 @@ public:
        bool preemptive = false);
   Task(const Task& task);
   virtual ~Task();
+  void addResourceReservationRequest(ResourceReservationRequest* request);
+  template <typename T> void addResource(Resource<T>* resource);
+  template <typename T> void removeResource(const Resource<T>& resource);
   void start();
   void interrupt();
   void resume();
   void finish();
-  template <typename T> void addResource(Resource<T>* resource);
-  template <typename T> void removeResource(const Resource<T>& resource);
   void clearResources();
   double getDuration(ros::Time t = ros::Time::now()) const;
   std::string getName() const;
@@ -37,6 +40,10 @@ public:
   bool isPreemptive() const;
   ros::Time getStartTimestamp() const;
   ros::Time getEndTimestamp() const;
+  bool hasStarted() const;
+  bool isInterrupted() const;
+  bool isRunning() const;
+  bool hasFinished() const;
 
 private:
   std::string name_;
@@ -48,6 +55,7 @@ private:
   utilities::Interval<ros::Time>* start_timestamp_bounds_;
   utilities::Interval<ros::Time>* end_timestamp_bounds_;
   std::list<utilities::Interval<ros::Time>*> interruption_intervals_;
+  std::list<ResourceReservationRequest*> resource_reservation_requests_;
 };
 }
 
@@ -57,11 +65,23 @@ namespace ruler
 {
 template <typename T> void Task::addResource(Resource<T>* resource)
 {
+  if (hasStarted())
+  {
+    throw utilities::Exception("Unable to add the " + resource->str() +
+                               " resource. The " + str() +
+                               " is already running.");
+  }
   utilities::Subject<TaskEvent>::registerObserver(resource);
 }
 
 template <typename T> void Task::removeResource(const Resource<T>& resource)
 {
+  if (hasStarted() && !hasFinished())
+  {
+    throw utilities::Exception("Unable to remove the " + resource->str() +
+                               " resource. The " + str() +
+                               " is still running.");
+  }
   utilities::Subject<TaskEvent>::unregisterObserver(resource);
 }
 }

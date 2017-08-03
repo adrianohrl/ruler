@@ -37,9 +37,9 @@ DiscreteReusableResource::DiscreteReusableResource(
 
 DiscreteReusableResource::~DiscreteReusableResource() {}
 
-void DiscreteReusableResource::require(Task *task, long quantity)
+void DiscreteReusableResource::require(Task *task, long quantity, double d0)
 {
   ReusableResource<utilities::DiscreteSignalType>::require(
-      task, utilities::DiscreteSignalType(quantity));
+      task, utilities::DiscreteSignalType(quantity), d0);
 }
 }

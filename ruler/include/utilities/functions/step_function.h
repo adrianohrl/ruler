@@ -18,14 +18,15 @@ namespace functions
 template <typename T> class StepFunction : public Function<T>
 {
 public:
-  StepFunction(double qf, bool ascending = false);
+  StepFunction(double qf, bool ascending, bool negated);
+  StepFunction(double d0, double qf, bool ascending, bool negated);
+  StepFunction(ros::Duration d0, double qf, bool ascending, bool negated);
   virtual ~StepFunction();
 
 protected:
-  StepFunction(double d0, double df, double q0, double qf,
-               bool ascending = false);
-  StepFunction(ros::Duration d0, ros::Duration df, double q0, double qf,
-               bool ascending = false);
+  StepFunction(double d0, double q0, double qf, bool ascending, bool negated);
+  StepFunction(ros::Duration d0, double q0, double qf, bool ascending,
+               bool negated);
   StepFunction(const StepFunction<T>& function);
 
 private:
@@ -33,22 +34,36 @@ private:
 };
 
 template <typename T>
-StepFunction<T>::StepFunction(double qf, bool ascending)
-    : Function<T>::Function(0.0, INFINITY, 0.0, qf, ascending)
+StepFunction<T>::StepFunction(double qf, bool ascending, bool negated)
+    : Function<T>::Function(0.0, INFINITY, 0.0, qf, ascending, negated)
 {
 }
 
 template <typename T>
-StepFunction<T>::StepFunction(double d0, double df, double q0, double qf,
-                              bool ascending)
-    : Function<T>::Function(d0, df, q0, qf, ascending)
+StepFunction<T>::StepFunction(double d0, double qf, bool ascending,
+                              bool negated)
+    : Function<T>::Function(d0, INFINITY, 0.0, qf, ascending, negated)
 {
 }
 
 template <typename T>
-StepFunction<T>::StepFunction(ros::Duration d0, ros::Duration df, double q0,
-                              double qf, bool ascending)
-    : Function<T>::Function(d0, df, q0, qf, ascending)
+StepFunction<T>::StepFunction(ros::Duration d0, double qf, bool ascending,
+                              bool negated)
+    : Function<T>::Function(d0.toSec(), INFINITY, 0.0, qf, ascending, negated)
+{
+}
+
+template <typename T>
+StepFunction<T>::StepFunction(double d0, double q0, double qf, bool ascending,
+                              bool negated)
+    : Function<T>::Function(d0, INFINITY, q0, qf, ascending, negated)
+{
+}
+
+template <typename T>
+StepFunction<T>::StepFunction(ros::Duration d0, double q0, double qf,
+                              bool ascending, bool negated)
+    : Function<T>::Function(d0.toSec(), INFINITY, q0, qf, ascending, negated)
 {
 }
 

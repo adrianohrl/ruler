@@ -22,6 +22,9 @@ public:
   virtual ~Resource();
   virtual void update(const TaskEvent& notification);
   bool isConsumable() const;
+  bool isContinuous() const;
+  bool isDiscrete() const;
+  bool isUnary() const;
   std::string getName() const;
   T getLevel(ros::Time timestamp = ros::Time::now()) const;
   ros::Duration getLatence() const;
@@ -72,6 +75,24 @@ template <typename T> void Resource<T>::update(const TaskEvent& notification)
 template <typename T> bool Resource<T>::isConsumable() const
 {
   return consumable_;
+}
+
+
+template <typename T> bool Resource<T>::isContinuous() const
+{
+  return profile_->isContinuous();
+}
+
+
+template <typename T> bool Resource<T>::isDiscrete() const
+{
+  return profile_->isDiscrete();
+}
+
+
+template <typename T> bool Resource<T>::isUnary() const
+{
+  return profile_->isUnary();
 }
 
 template <typename T> std::string Resource<T>::getName() const { return name_; }

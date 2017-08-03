@@ -12,8 +12,8 @@
 namespace ruler
 {
 
-TaskEvent::TaskEvent(Task* task, EventType type)
-    : Event::Event(type), task_(task)
+TaskEvent::TaskEvent(Task* task, EventType type, ros::Time timestamp)
+    : Event::Event(type, timestamp), task_(task)
 {
 }
 

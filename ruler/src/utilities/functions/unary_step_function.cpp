@@ -12,15 +12,16 @@ namespace utilities
 {
 namespace functions
 {
-UnaryStepFunction::UnaryStepFunction(double d0, bool ascending)
-    : StepFunction<utilities::UnarySignalType>::StepFunction(
-          d0, INFINITY, false, true, ascending)
+UnaryStepFunction::UnaryStepFunction(double d0, bool ascending, bool negated)
+    : StepFunction<utilities::UnarySignalType>::StepFunction(d0, true,
+                                                             ascending, negated)
 {
 }
 
-UnaryStepFunction::UnaryStepFunction(ros::Duration d0, bool ascending)
-    : StepFunction<utilities::UnarySignalType>::StepFunction(
-          d0.toSec(), INFINITY, false, true, ascending)
+UnaryStepFunction::UnaryStepFunction(ros::Duration d0, bool ascending,
+                                     bool negated)
+    : StepFunction<utilities::UnarySignalType>::StepFunction(d0.toSec(), true,
+                                                             ascending, negated)
 {
 }
 

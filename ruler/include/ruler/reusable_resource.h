@@ -11,6 +11,7 @@
 
 #include "ruler/resource.h"
 #include "utilities/functions/step_function.h"
+#include "utilities/functions/pulse_function.h"
 
 namespace ruler
 {
@@ -18,7 +19,7 @@ template <typename T> class ReusableResource : public Resource<T>
 {
 public:
   virtual ~ReusableResource();
-  virtual void require(Task* task, T quantity);
+  virtual void require(Task* task, T quantity, double d0 = 0.0, double df = INFINITY);
 
 protected:
   ReusableResource(std::string id, std::string name, T capacity,
@@ -42,9 +43,23 @@ ReusableResource<T>::ReusableResource(const ReusableResource<T>& resource)
 
 template <typename T> ReusableResource<T>::~ReusableResource() {}
 
-template <typename T> void ReusableResource<T>::require(Task* task, T quantity)
+template <typename T> void ReusableResource<T>::require(Task* task, T quantity, double d0, double df)
 {
-  utilities::functions::Function<T>* quantity_function = new utilities::functions::StepFunction<T>(quantity);
+  if (task->hasStarted())
+  {
+    throw utilities::Exception("Unable to require the " + Resource<T>::str() +
+                               " resource. The " + task->str() +
+                               " task has already been started.");
+  }
+  utilities::functions::Function<T>* quantity_function;
+  if (df < INFINITY)
+  {
+    quantity_function = new utilities::functions::PulseFunction<T>(d0, df, quantity, true, true);
+  }
+  else
+  {
+    quantity_function = new utilities::functions::StepFunction<T>(d0, quantity, true, true);
+  }
   Resource<T>::profile_->addTaskFunction(
       new TaskFunction<T>(task, quantity_function));
 }

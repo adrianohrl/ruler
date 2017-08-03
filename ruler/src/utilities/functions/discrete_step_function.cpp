@@ -12,22 +12,39 @@ namespace utilities
 {
 namespace functions
 {
-DiscreteStepFunction::DiscreteStepFunction(double qf, bool ascending)
-    : StepFunction<utilities::DiscreteSignalType>::StepFunction(qf, ascending)
+DiscreteStepFunction::DiscreteStepFunction(double qf, bool ascending,
+                                           bool negated)
+    : StepFunction<utilities::DiscreteSignalType>::StepFunction(
+          0.0, qf, ascending, negated)
 {
 }
 
-DiscreteStepFunction::DiscreteStepFunction(double d0, double df, double q0,
-                                           double qf, bool ascending)
-    : StepFunction<utilities::DiscreteSignalType>::StepFunction(d0, df, q0, qf,
-                                                                ascending)
+DiscreteStepFunction::DiscreteStepFunction(double d0, double qf, bool ascending,
+                                           bool negated)
+    : StepFunction<utilities::DiscreteSignalType>::StepFunction(
+          d0, qf, ascending, negated)
 {
 }
 
-DiscreteStepFunction::DiscreteStepFunction(ros::Duration d0, ros::Duration df,
-                                           double q0, double qf, bool ascending)
-    : StepFunction<utilities::DiscreteSignalType>::StepFunction(d0, df, q0, qf,
-                                                                ascending)
+DiscreteStepFunction::DiscreteStepFunction(ros::Duration d0, double qf,
+                                           bool ascending, bool negated)
+    : StepFunction<utilities::DiscreteSignalType>::StepFunction(
+          d0, qf, ascending, negated)
+{
+}
+
+DiscreteStepFunction::DiscreteStepFunction(double d0, double q0, double qf,
+                                           bool ascending, bool negated)
+    : StepFunction<utilities::DiscreteSignalType>::StepFunction(
+          d0, q0, qf, ascending, negated)
+{
+}
+
+DiscreteStepFunction::DiscreteStepFunction(ros::Duration d0, double q0,
+                                           double qf, bool ascending,
+                                           bool negated)
+    : StepFunction<utilities::DiscreteSignalType>::StepFunction(
+          d0, q0, qf, ascending, negated)
 {
 }
 

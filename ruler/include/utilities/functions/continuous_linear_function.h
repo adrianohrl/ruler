@@ -21,9 +21,10 @@ class ContinuousLinearFunction
 {
 public:
   ContinuousLinearFunction(double d0, double df, double q0, double qf,
-                         bool ascending = false);
+                           bool ascending = false, bool negated = false);
   ContinuousLinearFunction(ros::Duration d0, ros::Duration df, double q0,
-                         double qf, bool ascending = false);
+                           double qf, bool ascending = false,
+                           bool negated = false);
   ContinuousLinearFunction(const ContinuousLinearFunction& function);
   virtual ~ContinuousLinearFunction();
 };

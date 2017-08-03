@@ -16,7 +16,7 @@ namespace ruler
 class Event
 {
 public:
-  Event(EventType type);
+  Event(EventType type, ros::Time timestamp = ros::Time::now());
   Event(const Event& event);
   virtual ~Event();
   ros::Time getTimestamp() const;

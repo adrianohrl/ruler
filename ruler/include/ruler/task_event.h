@@ -18,7 +18,7 @@ class Task;
 class TaskEvent : public Event
 {
 public:
-  TaskEvent(Task* task, EventType type);
+  TaskEvent(Task* task, EventType type, ros::Time timestamp = ros::Time::now());
   TaskEvent(const TaskEvent& event);
   virtual ~TaskEvent();
   Task* getTask() const;

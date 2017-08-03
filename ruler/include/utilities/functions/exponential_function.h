@@ -19,10 +19,10 @@ namespace functions
 template <typename T> class ExponentialFunction : public Function<T>
 {
 public:
-  ExponentialFunction(double d0, double df, double q0, double qf,
-                      bool ascending = false, double k = 5, double base = M_E);
+  ExponentialFunction(double d0, double df, double q0, double qf, double k,
+                      double base, bool ascending, bool negated);
   ExponentialFunction(ros::Duration d0, ros::Duration df, double q0, double qf,
-                      bool ascending = false, double k = 5, double base = M_E);
+                      double k, double base, bool ascending, bool negated);
   ExponentialFunction(const ExponentialFunction<T>& function);
   virtual ~ExponentialFunction();
 
@@ -34,18 +34,20 @@ private:
 
 template <typename T>
 ExponentialFunction<T>::ExponentialFunction(double d0, double df, double q0,
-                                            double qf, bool ascending, double k,
-                                            double base)
-    : Function<T>::Function(d0, df, q0, qf, ascending), base_(base), k_(fabs(k))
+                                            double qf, double k, double base,
+                                            bool ascending, bool negated)
+    : Function<T>::Function(d0, df, q0, qf, ascending, negated), base_(base),
+      k_(fabs(k))
 {
 }
 
 template <typename T>
 ExponentialFunction<T>::ExponentialFunction(ros::Duration d0, ros::Duration df,
-                                            double q0, double qf,
-                                            bool ascending, double k,
-                                            double base)
-    : Function<T>::Function(d0, df, q0, qf, ascending), base_(base), k_(fabs(k))
+                                            double q0, double qf, double k,
+                                            double base, bool ascending,
+                                            bool negated)
+    : Function<T>::Function(d0, df, q0, qf, ascending, negated), base_(base),
+      k_(fabs(k))
 {
 }
 

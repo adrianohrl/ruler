@@ -22,9 +22,9 @@ public:
 
 protected:
   LinearFunction(double d0, double df, double q0, double qf,
-                 bool ascending = false);
+                 bool ascending, bool negated);
   LinearFunction(ros::Duration d0, ros::Duration df, double q0, double qf,
-                 bool ascending = false);
+                 bool ascending, bool negated);
   LinearFunction(const LinearFunction<T>& function);
 
 private:
@@ -33,15 +33,15 @@ private:
 
 template <typename T>
 LinearFunction<T>::LinearFunction(double d0, double df, double q0, double qf,
-                                  bool ascending)
-    : Function<T>::Function(d0, df, q0, qf, ascending)
+                                  bool ascending, bool negated)
+    : Function<T>::Function(d0, df, q0, qf, ascending, negated)
 {
 }
 
 template <typename T>
 LinearFunction<T>::LinearFunction(ros::Duration d0, ros::Duration df, double q0,
-                                  double qf, bool ascending)
-    : Function<T>::Function(d0, df, q0, qf, ascending)
+                                  double qf, bool ascending, bool negated)
+    : Function<T>::Function(d0, df, q0, qf, ascending, negated)
 {
 }
 

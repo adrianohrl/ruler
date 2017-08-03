@@ -12,24 +12,42 @@ namespace utilities
 {
 namespace functions
 {
-ContinuousPulseFunction::ContinuousPulseFunction(
-    double d0, double df, double q0, double qf, bool ascending)
+ContinuousPulseFunction::ContinuousPulseFunction(double d0, double df,
+                                                 double qf, bool ascending,
+                                                 bool negated)
     : PulseFunction<utilities::ContinuousSignalType>::PulseFunction(
-          d0, df, q0, qf, ascending)
+          d0, df, qf, ascending, negated)
 {
 }
 
-ContinuousPulseFunction::ContinuousPulseFunction(
-    ros::Duration d0, ros::Duration df, double q0, double qf, bool ascending)
+ContinuousPulseFunction::ContinuousPulseFunction(ros::Duration d0,
+                                                 ros::Duration df, double qf,
+                                                 bool ascending, bool negated)
     : PulseFunction<utilities::ContinuousSignalType>::PulseFunction(
-          d0, df, q0, qf, ascending)
+          d0, df, qf, ascending, negated)
+{
+}
+
+ContinuousPulseFunction::ContinuousPulseFunction(double d0, double df,
+                                                 double q0, double qf,
+                                                 bool ascending, bool negated)
+    : PulseFunction<utilities::ContinuousSignalType>::PulseFunction(
+          d0, df, q0, qf, ascending, negated)
+{
+}
+
+ContinuousPulseFunction::ContinuousPulseFunction(ros::Duration d0,
+                                                 ros::Duration df, double q0,
+                                                 double qf, bool ascending,
+                                                 bool negated)
+    : PulseFunction<utilities::ContinuousSignalType>::PulseFunction(
+          d0, df, q0, qf, ascending, negated)
 {
 }
 
 ContinuousPulseFunction::ContinuousPulseFunction(
     const ContinuousPulseFunction& function)
-    : PulseFunction<utilities::ContinuousSignalType>::PulseFunction(
-          function)
+    : PulseFunction<utilities::ContinuousSignalType>::PulseFunction(function)
 {
 }
 

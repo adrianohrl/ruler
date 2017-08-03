@@ -19,9 +19,10 @@ namespace functions
 class UnaryPulseFunction : public PulseFunction<utilities::UnarySignalType>
 {
 public:
-  UnaryPulseFunction(double d0, double df, bool ascending = false);
-  UnaryPulseFunction(ros::Duration d0, ros::Duration df,
-                     bool ascending = false);
+  UnaryPulseFunction(double d0, double df, bool ascending = false,
+                     bool negated = false);
+  UnaryPulseFunction(ros::Duration d0, ros::Duration df, bool ascending = false,
+                     bool negated = false);
   UnaryPulseFunction(const UnaryPulseFunction& function);
   virtual ~UnaryPulseFunction();
 };

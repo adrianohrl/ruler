@@ -21,9 +21,10 @@ class DiscreteLinearFunction
 {
 public:
   DiscreteLinearFunction(double d0, double df, double q0, double qf,
-                         bool ascending = false);
+                         bool ascending = false, bool negated = false);
   DiscreteLinearFunction(ros::Duration d0, ros::Duration df, double q0,
-                         double qf, bool ascending = false);
+                         double qf, bool ascending = false,
+                         bool negated = false);
   DiscreteLinearFunction(const DiscreteLinearFunction& function);
   virtual ~DiscreteLinearFunction();
 };

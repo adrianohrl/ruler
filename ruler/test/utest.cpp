@@ -125,12 +125,12 @@ TEST(Functions, unary_step)
 {
   unary_step->setAscending(true);
   EXPECT_FALSE(unary_step->getValue(0.0));
-  EXPECT_TRUE(unary_step->getValue(0.25));
+  EXPECT_FALSE(unary_step->getValue(0.25));
   EXPECT_TRUE(unary_step->getValue(0.5));
   EXPECT_TRUE(unary_step->getValue(1.0));
   unary_step->setAscending(false);
   EXPECT_TRUE(unary_step->getValue(0.0));
-  EXPECT_FALSE(unary_step->getValue(0.25));
+  EXPECT_TRUE(unary_step->getValue(0.25));
   EXPECT_FALSE(unary_step->getValue(0.5));
   EXPECT_FALSE(unary_step->getValue(1.0));
 }
@@ -139,14 +139,14 @@ TEST(Functions, unary_pulse)
 {
   unary_pulse->setAscending(true);
   EXPECT_FALSE(unary_pulse->getValue(0.0));
-  EXPECT_TRUE(unary_pulse->getValue(1.0));
+  EXPECT_FALSE(unary_pulse->getValue(1.0));
   EXPECT_TRUE(unary_pulse->getValue(1.25));
   EXPECT_TRUE(unary_pulse->getValue(1.5));
   EXPECT_FALSE(unary_pulse->getValue(1.75));
   EXPECT_FALSE(unary_pulse->getValue(2.0));
   unary_pulse->setAscending(false);
   EXPECT_TRUE(unary_pulse->getValue(0.0));
-  EXPECT_FALSE(unary_pulse->getValue(1.0));
+  EXPECT_TRUE(unary_pulse->getValue(1.0));
   EXPECT_FALSE(unary_pulse->getValue(1.25));
   EXPECT_FALSE(unary_pulse->getValue(1.5));
   EXPECT_TRUE(unary_pulse->getValue(1.75));
@@ -215,6 +215,8 @@ TEST(Task, start)
   {
     FAIL() << "Uncaught exception.";
   }
+  delete task;
+  task = NULL;
   delete resource;
   resource = NULL;
 }
@@ -650,12 +652,12 @@ TEST(Profiles, unary)
       new ruler::Profile<utilities::UnarySignalType>(true, false);
   profile->addTaskFunction(
       new ruler::TaskFunction<utilities::UnarySignalType>(task, unary_pulse));
-  profile->addTaskFunction(new ruler::TaskFunction<utilities::UnarySignalType>(
-      task, unary_step));
+  profile->addTaskFunction(
+      new ruler::TaskFunction<utilities::UnarySignalType>(task, unary_step));
   unary_pulse->setAscending(true);
   unary_step->setAscending(true);
   EXPECT_FALSE(profile->getLevel(timestamp + ros::Duration(0.0)));
-  EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(0.25)));
+  EXPECT_FALSE(profile->getLevel(timestamp + ros::Duration(0.25)));
   EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(0.5)));
   EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(0.75)));
   EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(1.0)));
@@ -665,10 +667,10 @@ TEST(Profiles, unary)
   unary_pulse->setAscending(true);
   unary_step->setAscending(false);
   EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(0.0)));
-  EXPECT_FALSE(profile->getLevel(timestamp + ros::Duration(0.25)));
+  EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(0.25)));
   EXPECT_FALSE(profile->getLevel(timestamp + ros::Duration(0.5)));
   EXPECT_FALSE(profile->getLevel(timestamp + ros::Duration(0.75)));
-  EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(1.0)));
+  EXPECT_FALSE(profile->getLevel(timestamp + ros::Duration(1.0)));
   EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(1.25)));
   EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(1.5)));
   EXPECT_FALSE(profile->getLevel(timestamp + ros::Duration(1.75)));
@@ -688,7 +690,7 @@ TEST(Profiles, unary)
   EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(0.25)));
   EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(0.5)));
   EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(0.75)));
-  EXPECT_FALSE(profile->getLevel(timestamp + ros::Duration(1.0)));
+  EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(1.0)));
   EXPECT_FALSE(profile->getLevel(timestamp + ros::Duration(1.25)));
   EXPECT_FALSE(profile->getLevel(timestamp + ros::Duration(1.5)));
   EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(1.75)));
@@ -698,6 +700,239 @@ TEST(Profiles, unary)
   task = NULL;
   delete resource;
   resource = NULL;
+}
+
+TEST(ResourceReservationRequests, consumableProduction)
+{
+  ruler::ContinuousConsumableResource* r1 =
+      new ruler::ContinuousConsumableResource("r1", "resource 1", 10, 4);
+  ruler::DiscreteConsumableResource* r2 =
+      new ruler::DiscreteConsumableResource("r2", "resource 2", 5, 3);
+  ruler::UnaryConsumableResource* r3 =
+      new ruler::UnaryConsumableResource("r3", "resource 3", false);
+  ruler::Task* task = new ruler::Task("t", "task", ros::Duration(10));
+  task->addResourceReservationRequest(
+      new ruler::ConsumableResourceReservationRequest<
+          utilities::ContinuousSignalType>(
+          task, r1, new utilities::functions::ContinuousStepFunction(1.0, 3.0),
+          false));
+  task->addResourceReservationRequest(
+      new ruler::ConsumableResourceReservationRequest<
+          utilities::DiscreteSignalType>(
+          task, r2, new utilities::functions::DiscreteStepFunction(2.0, 2.0), false));
+  task->addResourceReservationRequest(
+      new ruler::ConsumableResourceReservationRequest<
+          utilities::UnarySignalType>(task, r3, 6.0, false));
+  task->start();
+  ros::Time timestamp(task->getStartTimestamp());
+  EXPECT_GE(tolerance, fabs(4 - r1->getLevel(timestamp + ros::Duration(0.0))));
+  EXPECT_GE(tolerance, fabs(4 - r1->getLevel(timestamp + ros::Duration(1.0))));
+  EXPECT_GE(tolerance,
+            fabs(4 + 3 - r1->getLevel(timestamp + ros::Duration(1.01))));
+  EXPECT_GE(tolerance,
+            fabs(4 + 3 - r1->getLevel(timestamp + ros::Duration(2.0))));
+  EXPECT_GE(tolerance,
+            fabs(4 + 3 - r1->getLevel(timestamp + ros::Duration(3.0))));
+  EXPECT_GE(tolerance,
+            fabs(4 + 3 - r1->getLevel(timestamp + ros::Duration(4.0))));
+  EXPECT_GE(tolerance,
+            fabs(4 + 3 - r1->getLevel(timestamp + ros::Duration(5.0))));
+  EXPECT_GE(tolerance,
+            fabs(4 + 3 - r1->getLevel(timestamp + ros::Duration(6.0))));
+  EXPECT_GE(tolerance,
+            fabs(4 + 3 - r1->getLevel(timestamp + ros::Duration(7.0))));
+  EXPECT_GE(tolerance,
+            fabs(4 + 3 - r1->getLevel(timestamp + ros::Duration(8.0))));
+  EXPECT_GE(tolerance,
+            fabs(4 + 3 - r1->getLevel(timestamp + ros::Duration(9.0))));
+  EXPECT_GE(tolerance,
+            fabs(4 + 3 - r1->getLevel(timestamp + ros::Duration(10.0))));
+  EXPECT_EQ(3, r2->getLevel(timestamp + ros::Duration(0.0)));
+  EXPECT_EQ(3, r2->getLevel(timestamp + ros::Duration(1.0)));
+  EXPECT_EQ(3, r2->getLevel(timestamp + ros::Duration(2.0)));
+  EXPECT_EQ(3 + 2, r2->getLevel(timestamp + ros::Duration(2.01)));
+  EXPECT_EQ(3 + 2, r2->getLevel(timestamp + ros::Duration(3.0)));
+  EXPECT_EQ(3 + 2, r2->getLevel(timestamp + ros::Duration(4.0)));
+  EXPECT_EQ(3 + 2, r2->getLevel(timestamp + ros::Duration(5.0)));
+  EXPECT_EQ(3 + 2, r2->getLevel(timestamp + ros::Duration(6.0)));
+  EXPECT_EQ(3 + 2, r2->getLevel(timestamp + ros::Duration(7.0)));
+  EXPECT_EQ(3 + 2, r2->getLevel(timestamp + ros::Duration(8.0)));
+  EXPECT_EQ(3 + 2, r2->getLevel(timestamp + ros::Duration(9.0)));
+  EXPECT_EQ(3 + 2, r2->getLevel(timestamp + ros::Duration(10.0)));
+  EXPECT_FALSE(r3->getLevel(timestamp + ros::Duration(0.0)));
+  EXPECT_FALSE(r3->getLevel(timestamp + ros::Duration(1.0)));
+  EXPECT_FALSE(r3->getLevel(timestamp + ros::Duration(2.0)));
+  EXPECT_FALSE(r3->getLevel(timestamp + ros::Duration(3.0)));
+  EXPECT_FALSE(r3->getLevel(timestamp + ros::Duration(4.0)));
+  EXPECT_FALSE(r3->getLevel(timestamp + ros::Duration(5.0)));
+  EXPECT_FALSE(r3->getLevel(timestamp + ros::Duration(6.0)));
+  EXPECT_TRUE(r3->getLevel(timestamp + ros::Duration(6.01)));
+  EXPECT_TRUE(r3->getLevel(timestamp + ros::Duration(7.0)));
+  EXPECT_TRUE(r3->getLevel(timestamp + ros::Duration(8.0)));
+  EXPECT_TRUE(r3->getLevel(timestamp + ros::Duration(9.0)));
+  EXPECT_TRUE(r3->getLevel(timestamp + ros::Duration(10.0)));
+  delete task;
+  task = NULL;
+  delete r1;
+  r1 = NULL;
+  delete r2;
+  r2 = NULL;
+  delete r3;
+  r3 = NULL;
+}
+
+TEST(ResourceReservationRequests, consumableConsumption)
+{
+  ruler::ContinuousConsumableResource* r1 =
+      new ruler::ContinuousConsumableResource("r1", "resource 1", 10, 4);
+  ruler::DiscreteConsumableResource* r2 =
+      new ruler::DiscreteConsumableResource("r2", "resource 2", 5, 3);
+  ruler::UnaryConsumableResource* r3 =
+      new ruler::UnaryConsumableResource("r3", "resource 3", true);
+  ruler::Task* task = new ruler::Task("t", "task", ros::Duration(10));
+  task->addResourceReservationRequest(
+      new ruler::ConsumableResourceReservationRequest<
+          utilities::ContinuousSignalType>(
+          task, r1, new utilities::functions::ContinuousStepFunction(1.0, 3.0)));
+  task->addResourceReservationRequest(
+      new ruler::ConsumableResourceReservationRequest<
+          utilities::DiscreteSignalType>(
+          task, r2, new utilities::functions::DiscreteStepFunction(2.0, 2.0)));
+  task->addResourceReservationRequest(
+      new ruler::ConsumableResourceReservationRequest<
+          utilities::UnarySignalType>(task, r3, 6.0));
+  task->start();
+  ros::Time timestamp(task->getStartTimestamp());
+  EXPECT_GE(tolerance, fabs(4 - r1->getLevel(timestamp + ros::Duration(0.0))));
+  EXPECT_GE(tolerance, fabs(4 - r1->getLevel(timestamp + ros::Duration(1.0))));
+  EXPECT_GE(tolerance,
+            fabs(4 - 3 - r1->getLevel(timestamp + ros::Duration(1.01))));
+  EXPECT_GE(tolerance,
+            fabs(4 - 3 - r1->getLevel(timestamp + ros::Duration(2.0))));
+  EXPECT_GE(tolerance,
+            fabs(4 - 3 - r1->getLevel(timestamp + ros::Duration(3.0))));
+  EXPECT_GE(tolerance,
+            fabs(4 - 3 - r1->getLevel(timestamp + ros::Duration(4.0))));
+  EXPECT_GE(tolerance,
+            fabs(4 - 3 - r1->getLevel(timestamp + ros::Duration(5.0))));
+  EXPECT_GE(tolerance,
+            fabs(4 - 3 - r1->getLevel(timestamp + ros::Duration(6.0))));
+  EXPECT_GE(tolerance,
+            fabs(4 - 3 - r1->getLevel(timestamp + ros::Duration(7.0))));
+  EXPECT_GE(tolerance,
+            fabs(4 - 3 - r1->getLevel(timestamp + ros::Duration(8.0))));
+  EXPECT_GE(tolerance,
+            fabs(4 - 3 - r1->getLevel(timestamp + ros::Duration(9.0))));
+  EXPECT_GE(tolerance,
+            fabs(4 - 3 - r1->getLevel(timestamp + ros::Duration(10.0))));
+  EXPECT_EQ(3, r2->getLevel(timestamp + ros::Duration(0.0)));
+  EXPECT_EQ(3, r2->getLevel(timestamp + ros::Duration(1.0)));
+  EXPECT_EQ(3, r2->getLevel(timestamp + ros::Duration(2.0)));
+  EXPECT_EQ(3 - 2, r2->getLevel(timestamp + ros::Duration(2.01)));
+  EXPECT_EQ(3 - 2, r2->getLevel(timestamp + ros::Duration(3.0)));
+  EXPECT_EQ(3 - 2, r2->getLevel(timestamp + ros::Duration(4.0)));
+  EXPECT_EQ(3 - 2, r2->getLevel(timestamp + ros::Duration(5.0)));
+  EXPECT_EQ(3 - 2, r2->getLevel(timestamp + ros::Duration(6.0)));
+  EXPECT_EQ(3 - 2, r2->getLevel(timestamp + ros::Duration(7.0)));
+  EXPECT_EQ(3 - 2, r2->getLevel(timestamp + ros::Duration(8.0)));
+  EXPECT_EQ(3 - 2, r2->getLevel(timestamp + ros::Duration(9.0)));
+  EXPECT_EQ(3 - 2, r2->getLevel(timestamp + ros::Duration(10.0)));
+  EXPECT_TRUE(r3->getLevel(timestamp + ros::Duration(0.0)));
+  EXPECT_TRUE(r3->getLevel(timestamp + ros::Duration(1.0)));
+  EXPECT_TRUE(r3->getLevel(timestamp + ros::Duration(2.0)));
+  EXPECT_TRUE(r3->getLevel(timestamp + ros::Duration(3.0)));
+  EXPECT_TRUE(r3->getLevel(timestamp + ros::Duration(4.0)));
+  EXPECT_TRUE(r3->getLevel(timestamp + ros::Duration(5.0)));
+  EXPECT_TRUE(r3->getLevel(timestamp + ros::Duration(6.0)));
+  EXPECT_FALSE(r3->getLevel(timestamp + ros::Duration(6.01)));
+  EXPECT_FALSE(r3->getLevel(timestamp + ros::Duration(7.0)));
+  EXPECT_FALSE(r3->getLevel(timestamp + ros::Duration(8.0)));
+  EXPECT_FALSE(r3->getLevel(timestamp + ros::Duration(9.0)));
+  EXPECT_FALSE(r3->getLevel(timestamp + ros::Duration(10.0)));
+  delete task;
+  task = NULL;
+  delete r1;
+  r1 = NULL;
+  delete r2;
+  r2 = NULL;
+  delete r3;
+  r3 = NULL;
+}
+
+TEST(ResourceReservationRequests, reusable)
+{
+  ruler::ContinuousReusableResource* r1 =
+      new ruler::ContinuousReusableResource("r1", "resource 1", 10, 4);
+  ruler::DiscreteReusableResource* r2 =
+      new ruler::DiscreteReusableResource("r2", "resource 2", 5, 3);
+  ruler::UnaryReusableResource* r3 =
+      new ruler::UnaryReusableResource("r3", "resource 3", true);
+  ruler::Task* task = new ruler::Task("t", "task", ros::Duration(10));
+  task->addResourceReservationRequest(
+      new ruler::ReusableResourceReservationRequest<
+          utilities::ContinuousSignalType>(task, r1, 3.0, 1.0));
+  task->addResourceReservationRequest(
+      new ruler::ReusableResourceReservationRequest<
+          utilities::DiscreteSignalType>(task, r2, 2l, 2.0));
+  task->addResourceReservationRequest(
+      new ruler::ReusableResourceReservationRequest<utilities::UnarySignalType>(
+          task, r3, 6.0));
+  task->start();
+  ros::Time timestamp(task->getStartTimestamp());
+  EXPECT_GE(tolerance, fabs(4 - r1->getLevel(timestamp + ros::Duration(0.0))));
+  EXPECT_GE(tolerance, fabs(4 - r1->getLevel(timestamp + ros::Duration(1.0))));
+  EXPECT_GE(tolerance,
+            fabs(4 - 3 - r1->getLevel(timestamp + ros::Duration(1.01))));
+  EXPECT_GE(tolerance,
+            fabs(4 - 3 - r1->getLevel(timestamp + ros::Duration(2.0))));
+  EXPECT_GE(tolerance,
+            fabs(4 - 3 - r1->getLevel(timestamp + ros::Duration(3.0))));
+  EXPECT_GE(tolerance,
+            fabs(4 - 3 - r1->getLevel(timestamp + ros::Duration(4.0))));
+  EXPECT_GE(tolerance,
+            fabs(4 - 3 - r1->getLevel(timestamp + ros::Duration(5.0))));
+  EXPECT_GE(tolerance,
+            fabs(4 - 3 - r1->getLevel(timestamp + ros::Duration(6.0))));
+  EXPECT_GE(tolerance,
+            fabs(4 - 3 - r1->getLevel(timestamp + ros::Duration(7.0))));
+  EXPECT_GE(tolerance,
+            fabs(4 - 3 - r1->getLevel(timestamp + ros::Duration(8.0))));
+  EXPECT_GE(tolerance,
+            fabs(4 - 3 - r1->getLevel(timestamp + ros::Duration(9.0))));
+  EXPECT_GE(tolerance,
+            fabs(4 - 3 - r1->getLevel(timestamp + ros::Duration(10.0))));
+  EXPECT_EQ(3, r2->getLevel(timestamp + ros::Duration(0.0)));
+  EXPECT_EQ(3, r2->getLevel(timestamp + ros::Duration(1.0)));
+  EXPECT_EQ(3, r2->getLevel(timestamp + ros::Duration(2.0)));
+  EXPECT_EQ(3 - 2, r2->getLevel(timestamp + ros::Duration(2.01)));
+  EXPECT_EQ(3 - 2, r2->getLevel(timestamp + ros::Duration(3.0)));
+  EXPECT_EQ(3 - 2, r2->getLevel(timestamp + ros::Duration(4.0)));
+  EXPECT_EQ(3 - 2, r2->getLevel(timestamp + ros::Duration(5.0)));
+  EXPECT_EQ(3 - 2, r2->getLevel(timestamp + ros::Duration(6.0)));
+  EXPECT_EQ(3 - 2, r2->getLevel(timestamp + ros::Duration(7.0)));
+  EXPECT_EQ(3 - 2, r2->getLevel(timestamp + ros::Duration(8.0)));
+  EXPECT_EQ(3 - 2, r2->getLevel(timestamp + ros::Duration(9.0)));
+  EXPECT_EQ(3 - 2, r2->getLevel(timestamp + ros::Duration(10.0)));
+  EXPECT_TRUE(r3->getLevel(timestamp + ros::Duration(0.0)));
+  EXPECT_TRUE(r3->getLevel(timestamp + ros::Duration(1.0)));
+  EXPECT_TRUE(r3->getLevel(timestamp + ros::Duration(2.0)));
+  EXPECT_TRUE(r3->getLevel(timestamp + ros::Duration(3.0)));
+  EXPECT_TRUE(r3->getLevel(timestamp + ros::Duration(4.0)));
+  EXPECT_TRUE(r3->getLevel(timestamp + ros::Duration(5.0)));
+  EXPECT_TRUE(r3->getLevel(timestamp + ros::Duration(6.0)));
+  EXPECT_FALSE(r3->getLevel(timestamp + ros::Duration(6.01)));
+  EXPECT_FALSE(r3->getLevel(timestamp + ros::Duration(7.0)));
+  EXPECT_FALSE(r3->getLevel(timestamp + ros::Duration(8.0)));
+  EXPECT_FALSE(r3->getLevel(timestamp + ros::Duration(9.0)));
+  EXPECT_FALSE(r3->getLevel(timestamp + ros::Duration(10.0)));
+  delete task;
+  task = NULL;
+  delete r1;
+  r1 = NULL;
+  delete r2;
+  r2 = NULL;
+  delete r3;
+  r3 = NULL;
 }
 
 void init()
@@ -713,7 +948,7 @@ void init()
   // ascending step function expected quantities
   q_step_asc.insert(std::pair<double, double>(d[0], 6.1));
   q_step_asc.insert(std::pair<double, double>(d[1], 6.1));
-  q_step_asc.insert(std::pair<double, double>(d[2], 8.1));
+  q_step_asc.insert(std::pair<double, double>(d[2], 6.1));
   q_step_asc.insert(std::pair<double, double>(d[3], 8.1));
   q_step_asc.insert(std::pair<double, double>(d[4], 8.1));
   q_step_asc.insert(std::pair<double, double>(d[5], 8.1));
@@ -722,7 +957,7 @@ void init()
   // descending step function expected quantities
   q_step_des.insert(std::pair<double, double>(d[0], 8.1));
   q_step_des.insert(std::pair<double, double>(d[1], 8.1));
-  q_step_des.insert(std::pair<double, double>(d[2], 6.1));
+  q_step_des.insert(std::pair<double, double>(d[2], 8.1));
   q_step_des.insert(std::pair<double, double>(d[3], 6.1));
   q_step_des.insert(std::pair<double, double>(d[4], 6.1));
   q_step_des.insert(std::pair<double, double>(d[5], 6.1));
@@ -766,12 +1001,16 @@ void init()
   q_exponential_des.insert(std::pair<double, double>(d[7], 6.1));
   // functions
   double d0(1.5), df(5.5), q0(6.1), qf(8.1);
-  continuous_step = new utilities::functions::ContinuousStepFunction(d0, df, q0, qf);
-  continuous_linear = new utilities::functions::ContinuousLinearFunction(d0, df, q0, qf);
+  continuous_step =
+      new utilities::functions::ContinuousStepFunction(d0, q0, qf);
+  continuous_linear =
+      new utilities::functions::ContinuousLinearFunction(d0, df, q0, qf);
   continuous_exponential =
       new utilities::functions::ContinuousExponentialFunction(d0, df, q0, qf);
-  discrete_step = new utilities::functions::DiscreteStepFunction(d0, df, q0, qf);
-  discrete_linear = new utilities::functions::DiscreteLinearFunction(d0, df, q0, qf);
+  discrete_step =
+      new utilities::functions::DiscreteStepFunction(d0, q0, qf);
+  discrete_linear =
+      new utilities::functions::DiscreteLinearFunction(d0, df, q0, qf);
   discrete_exponential =
       new utilities::functions::DiscreteExponentialFunction(d0, df, q0, qf);
   unary_pulse = new utilities::functions::UnaryPulseFunction(1.0, 1.5);

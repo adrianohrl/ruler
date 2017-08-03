@@ -14,7 +14,6 @@
 #include "utilities/exception.h"
 #include "utilities/functions/functions.h"
 #include "utilities/interval.h"
-#include "utilities/non_unary_signal_type.h"
 #include "utilities/observer.h"
 #include "utilities/ros_node.h"
 #include "utilities/signal_type.h"
