@@ -12,6 +12,20 @@ namespace utilities
 {
 namespace functions
 {
+DiscretePulseFunction::DiscretePulseFunction(
+    const DiscreteStepFunction& step_function, double df)
+    : PulseFunction<utilities::DiscreteSignalType>::PulseFunction(step_function,
+                                                                  df)
+{
+}
+
+DiscretePulseFunction::DiscretePulseFunction(
+    const DiscreteStepFunction& step_function, ros::Duration df)
+    : PulseFunction<utilities::DiscreteSignalType>::PulseFunction(step_function,
+                                                                  df)
+{
+}
+
 DiscretePulseFunction::DiscretePulseFunction(double d0, double df, double qf,
                                              bool ascending, bool negated)
     : PulseFunction<utilities::DiscreteSignalType>::PulseFunction(

@@ -21,7 +21,8 @@ template <typename T> class Resource : public utilities::Observer<TaskEvent>
 public:
   virtual ~Resource();
   virtual void update(const TaskEvent& notification);
-  bool isConsumable() const;
+  virtual bool isConsumable() const;
+  virtual bool isReusable() const;
   bool isContinuous() const;
   bool isDiscrete() const;
   bool isUnary() const;
@@ -31,29 +32,26 @@ public:
 
 protected:
   Profile<T>* profile_;
-  Resource(std::string id, bool consumable, std::string name, T capacity,
-           T initial_level, ros::Duration latence = ros::Duration(0.0));
+  Resource(std::string id, std::string name, T capacity, T initial_level,
+           ros::Duration latence = ros::Duration(0.0));
   Resource(const Resource<T>& resource);
 
 private:
-  const bool consumable_;
   std::string name_;
   ros::Duration latence_;
 };
 
 template <typename T>
-Resource<T>::Resource(std::string id, bool consumable, std::string name,
-                      T capacity, T initial_level, ros::Duration latence)
-    : utilities::Observer<TaskEvent>::Observer(id), consumable_(consumable),
-      name_(name), latence_(latence),
-      profile_(new Profile<T>(capacity, initial_level))
+Resource<T>::Resource(std::string id, std::string name, T capacity,
+                      T initial_level, ros::Duration latence)
+    : utilities::Observer<TaskEvent>::Observer(id), name_(name),
+      latence_(latence), profile_(new Profile<T>(capacity, initial_level))
 {
 }
 
 template <typename T>
 Resource<T>::Resource(const Resource<T>& resource)
-    : utilities::Observer<TaskEvent>::Observer(resource),
-      consumable_(resource.consumable_), name_(resource.name_),
+    : utilities::Observer<TaskEvent>::Observer(resource), name_(resource.name_),
       latence_(resource.latence_), profile_(resource.profile_)
 {
 }
@@ -72,23 +70,19 @@ template <typename T> void Resource<T>::update(const TaskEvent& notification)
   profile_->update(notification);
 }
 
-template <typename T> bool Resource<T>::isConsumable() const
-{
-  return consumable_;
-}
+template <typename T> bool Resource<T>::isConsumable() const { return false; }
 
+template <typename T> bool Resource<T>::isReusable() const { return false; }
 
 template <typename T> bool Resource<T>::isContinuous() const
 {
   return profile_->isContinuous();
 }
 
-
 template <typename T> bool Resource<T>::isDiscrete() const
 {
   return profile_->isDiscrete();
 }
-
 
 template <typename T> bool Resource<T>::isUnary() const
 {

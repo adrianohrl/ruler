@@ -5,12 +5,14 @@
  *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)
  */
 
-#include <ros/common.h>
 #include "ruler/event.h"
 
 namespace ruler
 {
-Event::Event(EventType type, ros::Time timestamp) : type_(type), timestamp_(timestamp) {}
+Event::Event(EventType type, ros::Time timestamp)
+    : type_(type), timestamp_(timestamp)
+{
+}
 
 Event::Event(const Event& event)
     : type_(event.type_), timestamp_(event.timestamp_)
@@ -19,7 +21,7 @@ Event::Event(const Event& event)
 
 Event::~Event() {}
 
-ros::Time Event::getTimestamp() const {}
+ros::Time Event::getTimestamp() const { return timestamp_; }
 
-EventType Event::getType() const {}
+EventType Event::getType() const { return type_; }
 }

@@ -59,14 +59,14 @@ template <typename T> Subject<T>::~Subject()
 template <typename T> void Subject<T>::registerObserver(Observer<T>* observer)
 {
   observers_.push_back(observer);
-  ROS_DEBUG_STREAM("Registered observer (" << observer << ") to subject ("
+  ROS_DEBUG_STREAM("Registered observer (" << *observer << ") to subject ("
                                            << *this << ").");
 }
 
 template <typename T> void Subject<T>::unregisterObserver(Observer<T>* observer)
 {
   observers_.remove(observer);
-  ROS_DEBUG_STREAM("Unregistered observer (" << observer << ") to subject ("
+  ROS_DEBUG_STREAM("Unregistered observer (" << *observer << ") to subject ("
                                              << *this << ").");
 }
 
@@ -79,8 +79,8 @@ template <typename T> void Subject<T>::notify(const T& notification)
   {
     Observer<T>* observer = *it;
     observer->update(notification);
-    ROS_DEBUG_STREAM("Subject (" << *this << ") notified observer (" << observer
-                                 << ").");
+    ROS_DEBUG_STREAM("Subject (" << *this << ") notified observer (" << *observer
+                                << ").");
     it++;
   }
 }

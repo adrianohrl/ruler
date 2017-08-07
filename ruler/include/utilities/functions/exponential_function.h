@@ -36,8 +36,8 @@ template <typename T>
 ExponentialFunction<T>::ExponentialFunction(double d0, double df, double q0,
                                             double qf, double k, double base,
                                             bool ascending, bool negated)
-    : Function<T>::Function(d0, df, q0, qf, ascending, negated), base_(base),
-      k_(fabs(k))
+    : Function<T>::Function("Exponential", d0, df, q0, qf, ascending, negated),
+      base_(base), k_(fabs(k))
 {
 }
 
@@ -46,8 +46,8 @@ ExponentialFunction<T>::ExponentialFunction(ros::Duration d0, ros::Duration df,
                                             double q0, double qf, double k,
                                             double base, bool ascending,
                                             bool negated)
-    : Function<T>::Function(d0, df, q0, qf, ascending, negated), base_(base),
-      k_(fabs(k))
+    : Function<T>::Function("Exponential", d0, df, q0, qf, ascending, negated),
+      base_(base), k_(fabs(k))
 {
 }
 

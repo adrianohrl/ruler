@@ -39,6 +39,8 @@ public:
   ros::Duration getExpectedDuration() const;
   bool isPreemptive() const;
   ros::Time getStartTimestamp() const;
+  ros::Time getLastInterruptionTimestamp() const;
+  ros::Time getLastResumeTimestamp() const;
   ros::Time getEndTimestamp() const;
   bool hasStarted() const;
   bool isInterrupted() const;

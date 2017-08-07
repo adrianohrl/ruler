@@ -9,7 +9,7 @@
 #ifndef _UTILITIES_CONTINUOUS_PULSE_FUNCTION_H_
 #define _UTILITIES_CONTINUOUS_PULSE_FUNCTION_H_
 
-#include "utilities/continuous_signal_type.h"
+#include "utilities/functions/continuous_step_function.h"
 #include "utilities/functions/pulse_function.h"
 
 namespace utilities
@@ -20,6 +20,8 @@ class ContinuousPulseFunction
     : public PulseFunction<utilities::ContinuousSignalType>
 {
 public:
+  ContinuousPulseFunction(const ContinuousStepFunction& step_function, double df);
+  ContinuousPulseFunction(const ContinuousStepFunction& step_function, ros::Duration df);
   ContinuousPulseFunction(double d0, double df, double qf,
                           bool ascending = false, bool negated = false);
   ContinuousPulseFunction(ros::Duration d0, ros::Duration df, double qf,

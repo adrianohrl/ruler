@@ -67,6 +67,11 @@ Task::~Task()
 
 void Task::addResourceReservationRequest(ResourceReservationRequest* request)
 {
+  if (*request->getTask() != *this)
+  {
+    throw utilities::Exception("The input request does not belong to " + str() +
+                               ".");
+  }
   resource_reservation_requests_.push_back(request);
 }
 
@@ -192,6 +197,25 @@ ros::Duration Task::getExpectedDuration() const { return expected_duration_; }
 bool Task::isPreemptive() const { return preemptive_; }
 
 ros::Time Task::getStartTimestamp() const { return start_timestamp_; }
+
+ros::Time Task::getLastInterruptionTimestamp() const
+{
+  if (isInterrupted())
+  {
+    return last_interruption_timestamp_;
+  }
+  utilities::Interval<ros::Time>* last_interval(interruption_intervals_.back());
+  return !interruption_intervals_.empty() ? last_interval->getMin()
+                                          : ros::Time();
+}
+
+ros::Time Task::getLastResumeTimestamp() const
+{
+  utilities::Interval<ros::Time>* last_interval(interruption_intervals_.back());
+  return !isInterrupted() && !interruption_intervals_.empty()
+             ? last_interval->getMax()
+             : ros::Time();
+}
 
 ros::Time Task::getEndTimestamp() const { return end_timestamp_; }
 

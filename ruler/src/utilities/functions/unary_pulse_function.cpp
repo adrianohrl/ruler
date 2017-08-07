@@ -12,6 +12,20 @@ namespace utilities
 {
 namespace functions
 {
+UnaryPulseFunction::UnaryPulseFunction(const UnaryStepFunction& step_function,
+                                       double df)
+    : PulseFunction<utilities::UnarySignalType>::PulseFunction(step_function,
+                                                               df)
+{
+}
+
+UnaryPulseFunction::UnaryPulseFunction(const UnaryStepFunction& step_function,
+                                       ros::Duration df)
+    : PulseFunction<utilities::UnarySignalType>::PulseFunction(step_function,
+                                                               df)
+{
+}
+
 UnaryPulseFunction::UnaryPulseFunction(double d0, double df, bool ascending,
                                        bool negated)
     : PulseFunction<utilities::UnarySignalType>::PulseFunction(

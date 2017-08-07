@@ -18,6 +18,7 @@ public:
   ResourceReservationRequest(Task* task);
   ResourceReservationRequest(const ResourceReservationRequest& request);
   virtual ~ResourceReservationRequest();
+  Task* getTask() const;
   virtual void request() = 0;
 
 protected:

@@ -12,6 +12,20 @@ namespace utilities
 {
 namespace functions
 {
+ContinuousPulseFunction::ContinuousPulseFunction(
+    const ContinuousStepFunction& step_function, double df)
+    : PulseFunction<utilities::ContinuousSignalType>::PulseFunction(
+          step_function, df)
+{
+}
+
+ContinuousPulseFunction::ContinuousPulseFunction(
+    const ContinuousStepFunction& step_function, ros::Duration df)
+    : PulseFunction<utilities::ContinuousSignalType>::PulseFunction(
+          step_function, df)
+{
+}
+
 ContinuousPulseFunction::ContinuousPulseFunction(double d0, double df,
                                                  double qf, bool ascending,
                                                  bool negated)

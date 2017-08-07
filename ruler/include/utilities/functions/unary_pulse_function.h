@@ -9,7 +9,7 @@
 #ifndef _UTILITIES_UNARY_PULSE_FUNCTION_H_
 #define _UTILITIES_UNARY_PULSE_FUNCTION_H_
 
-#include "utilities/unary_signal_type.h"
+#include "utilities/functions/unary_step_function.h"
 #include "utilities/functions/pulse_function.h"
 
 namespace utilities
@@ -19,6 +19,8 @@ namespace functions
 class UnaryPulseFunction : public PulseFunction<utilities::UnarySignalType>
 {
 public:
+  UnaryPulseFunction(const UnaryStepFunction& step_function, double df);
+  UnaryPulseFunction(const UnaryStepFunction& step_function, ros::Duration df);
   UnaryPulseFunction(double d0, double df, bool ascending = false,
                      bool negated = false);
   UnaryPulseFunction(ros::Duration d0, ros::Duration df, bool ascending = false,

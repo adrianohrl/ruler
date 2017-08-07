@@ -21,4 +21,9 @@ ResourceReservationRequest::ResourceReservationRequest(
 }
 
 ResourceReservationRequest::~ResourceReservationRequest() { task_ = NULL; }
+
+Task *ResourceReservationRequest::getTask() const
+{
+  return task_;
+}
 }

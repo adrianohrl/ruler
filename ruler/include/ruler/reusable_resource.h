@@ -19,7 +19,9 @@ template <typename T> class ReusableResource : public Resource<T>
 {
 public:
   virtual ~ReusableResource();
-  virtual void require(Task* task, T quantity, double d0 = 0.0, double df = INFINITY);
+  virtual bool isReusable() const;
+  virtual void require(Task* task, T quantity, double d0 = 0.0,
+                       double df = INFINITY);
 
 protected:
   ReusableResource(std::string id, std::string name, T capacity,
@@ -31,7 +33,7 @@ template <typename T>
 ReusableResource<T>::ReusableResource(std::string id, std::string name,
                                       T capacity, T initial_level,
                                       ros::Duration latence)
-    : Resource<T>::Resource(id, false, name, capacity, initial_level, latence)
+    : Resource<T>::Resource(id, name, capacity, initial_level, latence)
 {
 }
 
@@ -43,7 +45,13 @@ ReusableResource<T>::ReusableResource(const ReusableResource<T>& resource)
 
 template <typename T> ReusableResource<T>::~ReusableResource() {}
 
-template <typename T> void ReusableResource<T>::require(Task* task, T quantity, double d0, double df)
+template <typename T> bool ReusableResource<T>::isReusable() const
+{
+  return true;
+}
+
+template <typename T>
+void ReusableResource<T>::require(Task* task, T quantity, double d0, double df)
 {
   if (task->hasStarted())
   {
@@ -54,14 +62,16 @@ template <typename T> void ReusableResource<T>::require(Task* task, T quantity, 
   utilities::functions::Function<T>* quantity_function;
   if (df < INFINITY)
   {
-    quantity_function = new utilities::functions::PulseFunction<T>(d0, df, quantity, true, true);
+    quantity_function = new utilities::functions::PulseFunction<T>(
+        d0, df, quantity, true, true);
   }
   else
   {
-    quantity_function = new utilities::functions::StepFunction<T>(d0, quantity, true, true);
+    quantity_function =
+        new utilities::functions::StepFunction<T>(d0, quantity, true, true);
   }
   Resource<T>::profile_->addTaskFunction(
-      new TaskFunction<T>(task, quantity_function));
+      new TaskFunction<T>(this, task, quantity_function));
 }
 }
 

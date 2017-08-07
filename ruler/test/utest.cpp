@@ -153,6 +153,32 @@ TEST(Functions, unary_pulse)
   EXPECT_TRUE(unary_pulse->getValue(2.0));
 }
 
+TEST(Functions, step2pulse)
+{
+  utilities::functions::DiscreteStepFunction* step = new utilities::functions::DiscreteStepFunction(2.0, 25, true, true);
+  utilities::functions::DiscretePulseFunction* pulse = new utilities::functions::DiscretePulseFunction(*step, 4.0);
+  // testing step
+  EXPECT_EQ(0, step->getValue(0.0));
+  EXPECT_EQ(0, step->getValue(1.9));
+  EXPECT_EQ(0, step->getValue(2.0));
+  EXPECT_EQ(25, step->getValue(2.1));
+  EXPECT_EQ(25, step->getValue(3.9));
+  EXPECT_EQ(25, step->getValue(4.0));
+  EXPECT_EQ(25, step->getValue(4.1));
+  // testing pulse
+  EXPECT_EQ(0, pulse->getValue(0.0));
+  EXPECT_EQ(0, pulse->getValue(1.9));
+  EXPECT_EQ(0, pulse->getValue(2.0));
+  EXPECT_EQ(25, pulse->getValue(2.1));
+  EXPECT_EQ(25, pulse->getValue(3.9));
+  EXPECT_EQ(25, pulse->getValue(4.0));
+  EXPECT_EQ(0, pulse->getValue(4.1));
+  delete step;
+  step = NULL;
+  delete pulse;
+  pulse = NULL;
+}
+
 TEST(Task, start)
 {
   ruler::Task* task = new ruler::Task("t", "task", ros::Duration(10));
@@ -411,13 +437,13 @@ TEST(Profiles, continuous)
   profile = new ruler::Profile<utilities::ContinuousSignalType>(c, l0);
   profile->addTaskFunction(
       new ruler::TaskFunction<utilities::ContinuousSignalType>(
-          task, continuous_step));
+          resource, task, continuous_step));
   profile->addTaskFunction(
       new ruler::TaskFunction<utilities::ContinuousSignalType>(
-          task, continuous_linear));
+          resource, task, continuous_linear));
   profile->addTaskFunction(
       new ruler::TaskFunction<utilities::ContinuousSignalType>(
-          task, continuous_exponential));
+          resource, task, continuous_exponential));
   continuous_step->setAscending(true);
   continuous_linear->setAscending(true);
   continuous_exponential->setAscending(true);
@@ -527,14 +553,14 @@ TEST(Profiles, discrete)
   ruler::Profile<utilities::DiscreteSignalType>* profile =
       new ruler::Profile<utilities::DiscreteSignalType>(c, l0);
   profile->addTaskFunction(
-      new ruler::TaskFunction<utilities::DiscreteSignalType>(task,
+      new ruler::TaskFunction<utilities::DiscreteSignalType>(resource, task,
                                                              discrete_step));
   profile->addTaskFunction(
-      new ruler::TaskFunction<utilities::DiscreteSignalType>(task,
+      new ruler::TaskFunction<utilities::DiscreteSignalType>(resource, task,
                                                              discrete_linear));
   profile->addTaskFunction(
       new ruler::TaskFunction<utilities::DiscreteSignalType>(
-          task, discrete_exponential));
+          resource, task, discrete_exponential));
   discrete_step->setAscending(true);
   discrete_linear->setAscending(true);
   discrete_exponential->setAscending(true);
@@ -651,9 +677,9 @@ TEST(Profiles, unary)
   ruler::Profile<utilities::UnarySignalType>* profile =
       new ruler::Profile<utilities::UnarySignalType>(true, false);
   profile->addTaskFunction(
-      new ruler::TaskFunction<utilities::UnarySignalType>(task, unary_pulse));
+      new ruler::TaskFunction<utilities::UnarySignalType>(resource, task, unary_pulse));
   profile->addTaskFunction(
-      new ruler::TaskFunction<utilities::UnarySignalType>(task, unary_step));
+      new ruler::TaskFunction<utilities::UnarySignalType>(resource, task, unary_step));
   unary_pulse->setAscending(true);
   unary_step->setAscending(true);
   EXPECT_FALSE(profile->getLevel(timestamp + ros::Duration(0.0)));
@@ -719,7 +745,8 @@ TEST(ResourceReservationRequests, consumableProduction)
   task->addResourceReservationRequest(
       new ruler::ConsumableResourceReservationRequest<
           utilities::DiscreteSignalType>(
-          task, r2, new utilities::functions::DiscreteStepFunction(2.0, 2.0), false));
+          task, r2, new utilities::functions::DiscreteStepFunction(2.0, 2.0),
+          false));
   task->addResourceReservationRequest(
       new ruler::ConsumableResourceReservationRequest<
           utilities::UnarySignalType>(task, r3, 6.0, false));
@@ -793,7 +820,8 @@ TEST(ResourceReservationRequests, consumableConsumption)
   task->addResourceReservationRequest(
       new ruler::ConsumableResourceReservationRequest<
           utilities::ContinuousSignalType>(
-          task, r1, new utilities::functions::ContinuousStepFunction(1.0, 3.0)));
+          task, r1,
+          new utilities::functions::ContinuousStepFunction(1.0, 3.0)));
   task->addResourceReservationRequest(
       new ruler::ConsumableResourceReservationRequest<
           utilities::DiscreteSignalType>(
@@ -935,6 +963,108 @@ TEST(ResourceReservationRequests, reusable)
   r3 = NULL;
 }
 
+TEST(ResourceSharing, task1and2)
+{
+  tolerance *= 50;
+  double d(0.5);
+  ruler::ContinuousConsumableResource* r1 =
+      new ruler::ContinuousConsumableResource("r1", "resource 1", 5.0, 3.0);
+  ruler::DiscreteReusableResource* r2 =
+      new ruler::DiscreteReusableResource("r2", "resource 2", 6, 5);
+  ruler::Task* t1 = new ruler::Task("t1", "task 1", ros::Duration(4 * d));
+  ruler::Task* t2 = new ruler::Task("t2", "task 2", ros::Duration(4 * d));
+  t1->addResourceReservationRequest(
+      new ruler::ConsumableResourceReservationRequest<
+          utilities::ContinuousSignalType>(
+          t1, r1, new utilities::functions::ContinuousLinearFunction(
+                      0.0 * d, 4.0 * d, 0.0, 4.0)));
+  t1->addResourceReservationRequest(
+      new ruler::ReusableResourceReservationRequest<
+          utilities::DiscreteSignalType>(t1, r2, 2l));
+  t2->addResourceReservationRequest(
+      new ruler::ConsumableResourceReservationRequest<
+          utilities::ContinuousSignalType>(
+          t2, r1, new utilities::functions::ContinuousLinearFunction(0.0 * d, 4.0 * d,
+                                                                     0.0, 4.0),
+          false));
+  t2->addResourceReservationRequest(
+      new ruler::ReusableResourceReservationRequest<
+          utilities::DiscreteSignalType>(t2, r2, 1l));
+  ros::Duration duration(d);
+  ros::Rate rate(duration);
+  rate.sleep(); // t = 0
+  rate.sleep(); // t = 1
+  t1->start();
+  rate.sleep(); // t = 2
+  t2->start();
+  rate.sleep(); // t = 3
+  t1->interrupt();
+  rate.sleep(); // t = 4
+  rate.sleep(); // t = 5
+  t1->resume();
+  rate.sleep(); // t = 6
+  t2->finish();
+  rate.sleep(); // t = 7
+  t1->finish();
+  ros::Time timestamp;
+  // testing r1
+  timestamp = t1->getStartTimestamp() - ros::Duration(1.0 * d);
+  EXPECT_GE(tolerance, fabs(3.0 - 0.0 - r1->getLevel(timestamp + ros::Duration(0.0 * d))));
+  EXPECT_GE(tolerance, fabs(3.0 - 0.0 - r1->getLevel(timestamp + ros::Duration(0.5 * d))));
+  EXPECT_GE(tolerance, fabs(3.0 - 0.0 - r1->getLevel(timestamp + ros::Duration(1.0 * d))));
+  EXPECT_GE(tolerance, fabs(3.0 - 0.5 - r1->getLevel(timestamp + ros::Duration(1.5 * d))));
+  timestamp = t2->getStartTimestamp() - ros::Duration(2.0 * d);
+  EXPECT_GE(tolerance, fabs(3.0 - 1.0 - r1->getLevel(timestamp + ros::Duration(2.0 * d))));
+  EXPECT_GE(tolerance, fabs(3.0 - 1.0 - r1->getLevel(timestamp + ros::Duration(2.5 * d))));
+  timestamp = t1->getLastInterruptionTimestamp() - ros::Duration(3.0 * d);
+  EXPECT_GE(tolerance, fabs(3.0 - 1.0 - r1->getLevel(timestamp + ros::Duration(3.0 * d))));
+  EXPECT_GE(tolerance, fabs(3.0 - 0.5 - r1->getLevel(timestamp + ros::Duration(3.5 * d))));
+  EXPECT_GE(tolerance, fabs(3.0 - 0.0 - r1->getLevel(timestamp + ros::Duration(4.0 * d))));
+  EXPECT_GE(tolerance, fabs(3.0 + 0.5 - r1->getLevel(timestamp + ros::Duration(4.5 * d))));
+  timestamp = t1->getLastResumeTimestamp() - ros::Duration(5.0 * d);
+  EXPECT_GE(tolerance, fabs(3.0 + 1.0 - r1->getLevel(timestamp + ros::Duration(5.0 * d))));
+  EXPECT_GE(tolerance, fabs(3.0 + 1.0 - r1->getLevel(timestamp + ros::Duration(5.5 * d))));
+  timestamp = t2->getEndTimestamp() - ros::Duration(6.0 * d);
+  EXPECT_GE(tolerance, fabs(3.0 + 1.0 - r1->getLevel(timestamp + ros::Duration(6.0 * d))));
+  EXPECT_GE(tolerance, fabs(3.0 + 0.5 - r1->getLevel(timestamp + ros::Duration(6.5 * d))));
+  timestamp = t1->getEndTimestamp() - ros::Duration(7.0 * d);
+  EXPECT_GE(tolerance, fabs(3.0 + 0.0 - r1->getLevel(timestamp + ros::Duration(7.0 * d))));
+  EXPECT_GE(tolerance, fabs(3.0 + 0.0 - r1->getLevel(timestamp + ros::Duration(7.5 * d))));
+  EXPECT_GE(tolerance, fabs(3.0 + 0.0 - r1->getLevel(timestamp + ros::Duration(8.0 * d))));
+  // testing r2
+  timestamp = t1->getStartTimestamp() - ros::Duration(1.0 * d);
+  EXPECT_EQ(5 - 0, r2->getLevel(timestamp + ros::Duration(0.0 * d)));
+  EXPECT_EQ(5 - 0, r2->getLevel(timestamp + ros::Duration(0.5 * d)));
+  EXPECT_EQ(5 - 0, r2->getLevel(timestamp + ros::Duration(1.0 * d)));
+  EXPECT_EQ(5 - 2, r2->getLevel(timestamp + ros::Duration(1.5 * d)));
+  timestamp = t2->getStartTimestamp() - ros::Duration(2.0 * d);
+  EXPECT_EQ(5 - 2, r2->getLevel(timestamp + ros::Duration(2.0 * d)));
+  EXPECT_EQ(5 - 3, r2->getLevel(timestamp + ros::Duration(2.5 * d)));
+  timestamp = t1->getLastInterruptionTimestamp() - ros::Duration(3.0 * d);
+  EXPECT_EQ(5 - 3, r2->getLevel(timestamp + ros::Duration(3.0 * d)));
+  EXPECT_EQ(5 - 1, r2->getLevel(timestamp + ros::Duration(3.5 * d)));
+  EXPECT_EQ(5 - 1, r2->getLevel(timestamp + ros::Duration(4.0 * d)));
+  EXPECT_EQ(5 - 1, r2->getLevel(timestamp + ros::Duration(4.5 * d)));
+  timestamp = t1->getLastResumeTimestamp() - ros::Duration(5.0 * d);
+  EXPECT_EQ(5 - 1, r2->getLevel(timestamp + ros::Duration(5.0 * d)));
+  EXPECT_EQ(5 - 3, r2->getLevel(timestamp + ros::Duration(5.5 * d)));
+  timestamp = t2->getEndTimestamp() - ros::Duration(6.0 * d);
+  EXPECT_EQ(5 - 3, r2->getLevel(timestamp + ros::Duration(6.0 * d)));
+  EXPECT_EQ(5 - 2, r2->getLevel(timestamp + ros::Duration(6.5 * d)));
+  timestamp = t1->getEndTimestamp() - ros::Duration(7.0 * d);
+  EXPECT_EQ(5 - 2, r2->getLevel(timestamp + ros::Duration(7.0 * d)));
+  EXPECT_EQ(5 - 0, r2->getLevel(timestamp + ros::Duration(7.5 * d)));
+  EXPECT_EQ(5 - 0, r2->getLevel(timestamp + ros::Duration(8.0 * d)));
+  delete t1;
+  t1 = NULL;
+  delete t2;
+  t2 = NULL;
+  delete r1;
+  r1 = NULL;
+  delete r2;
+  r2 = NULL;
+}
+
 void init()
 {
   d.push_back(0.0);
@@ -1007,8 +1137,7 @@ void init()
       new utilities::functions::ContinuousLinearFunction(d0, df, q0, qf);
   continuous_exponential =
       new utilities::functions::ContinuousExponentialFunction(d0, df, q0, qf);
-  discrete_step =
-      new utilities::functions::DiscreteStepFunction(d0, q0, qf);
+  discrete_step = new utilities::functions::DiscreteStepFunction(d0, q0, qf);
   discrete_linear =
       new utilities::functions::DiscreteLinearFunction(d0, df, q0, qf);
   discrete_exponential =

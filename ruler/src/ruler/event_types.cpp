@@ -7,6 +7,7 @@
  */
 
 #include "ruler/event_types.h"
+#include "utilities/exception.h"
 
 namespace ruler
 {
@@ -57,7 +58,8 @@ EventType EventTypes::toEnumerated(int code)
     enumerated = types::FINISHED;
     break;
   default:
-    enumerated = EventTypes::getDefault();
+    // enumerated = EventTypes::getDefault();
+    throw utilities::Exception("Invalid event type code.");
   }
   return enumerated;
 }
@@ -84,7 +86,8 @@ EventType EventTypes::toEnumerated(std::string name)
   }
   else
   {
-    enumerated = EventTypes::getDefault();
+    // enumerated = EventTypes::getDefault();
+    throw utilities::Exception("Invalid event type name.");
   }
   return enumerated;
 }
@@ -107,7 +110,8 @@ int EventTypes::toCode(EventType enumerated)
     code = 3;
     break;
   default:
-    code = EventTypes::toCode(EventTypes::getDefault());
+    // code = EventTypes::toCode(EventTypes::getDefault());
+    throw utilities::Exception("Invalid event type enumerated.");
   }
   return code;
 }
@@ -130,7 +134,8 @@ std::string EventTypes::toString(EventType enumerated)
     name = "FINISHED";
     break;
   default:
-    name = EventTypes::toString(EventTypes::getDefault());
+    // name = EventTypes::toString(EventTypes::getDefault());
+    throw utilities::Exception("Invalid event type enumerated.");
   }
   return name;
 }

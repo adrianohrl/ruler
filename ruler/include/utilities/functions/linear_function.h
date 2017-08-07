@@ -21,8 +21,8 @@ public:
   virtual ~LinearFunction();
 
 protected:
-  LinearFunction(double d0, double df, double q0, double qf,
-                 bool ascending, bool negated);
+  LinearFunction(double d0, double df, double q0, double qf, bool ascending,
+                 bool negated);
   LinearFunction(ros::Duration d0, ros::Duration df, double q0, double qf,
                  bool ascending, bool negated);
   LinearFunction(const LinearFunction<T>& function);
@@ -34,14 +34,14 @@ private:
 template <typename T>
 LinearFunction<T>::LinearFunction(double d0, double df, double q0, double qf,
                                   bool ascending, bool negated)
-    : Function<T>::Function(d0, df, q0, qf, ascending, negated)
+    : Function<T>::Function("Linear", d0, df, q0, qf, ascending, negated)
 {
 }
 
 template <typename T>
 LinearFunction<T>::LinearFunction(ros::Duration d0, ros::Duration df, double q0,
                                   double qf, bool ascending, bool negated)
-    : Function<T>::Function(d0, df, q0, qf, ascending, negated)
+    : Function<T>::Function("Linear", d0, df, q0, qf, ascending, negated)
 {
 }
 

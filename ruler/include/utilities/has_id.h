@@ -22,8 +22,7 @@ public:
   bool operator==(const HasId<K, T>& has_id);
   bool operator!=(const HasId<K, T>& has_id);
   template <typename U, typename V>
-  friend std::ostream& operator<<(std::ostream& out,
-                                  const HasId<U, V>& signal_type);
+  friend std::ostream& operator<<(std::ostream& out, const HasId<U, V>& has_id);
 
 protected:
   HasId(const K& id);
@@ -52,8 +51,10 @@ template <typename K, typename T> std::string HasId<K, T>::str() const
   return ss.str();
 }
 
-template <typename K, typename T>
-const char* HasId<K, T>::c_str() const { return str().c_str(); }
+template <typename K, typename T> const char* HasId<K, T>::c_str() const
+{
+  return str().c_str();
+}
 
 template <typename K, typename T>
 bool HasId<K, T>::operator==(const HasId<K, T>& has_id)
@@ -68,10 +69,10 @@ bool HasId<K, T>::operator!=(const HasId<K, T>& has_id)
 }
 
 template <typename K, typename T>
-std::ostream& operator<<(std::ostream& os, const HasId<K, T>& has_id)
+std::ostream& operator<<(std::ostream& out, const HasId<K, T>& has_id)
 {
-  os << has_id.id_;
-  return os;
+  out << has_id.id_;
+  return out;
 }
 }
 

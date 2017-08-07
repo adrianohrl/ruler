@@ -21,13 +21,13 @@ public:
   StepFunction(double qf, bool ascending, bool negated);
   StepFunction(double d0, double qf, bool ascending, bool negated);
   StepFunction(ros::Duration d0, double qf, bool ascending, bool negated);
+  StepFunction(const StepFunction<T>& function);
   virtual ~StepFunction();
 
 protected:
   StepFunction(double d0, double q0, double qf, bool ascending, bool negated);
   StepFunction(ros::Duration d0, double q0, double qf, bool ascending,
                bool negated);
-  StepFunction(const StepFunction<T>& function);
 
 private:
   virtual double calculate(double d) const;
@@ -35,35 +35,37 @@ private:
 
 template <typename T>
 StepFunction<T>::StepFunction(double qf, bool ascending, bool negated)
-    : Function<T>::Function(0.0, INFINITY, 0.0, qf, ascending, negated)
+    : Function<T>::Function("Step", 0.0, INFINITY, 0.0, qf, ascending, negated)
 {
 }
 
 template <typename T>
 StepFunction<T>::StepFunction(double d0, double qf, bool ascending,
                               bool negated)
-    : Function<T>::Function(d0, INFINITY, 0.0, qf, ascending, negated)
+    : Function<T>::Function("Step", d0, INFINITY, 0.0, qf, ascending, negated)
 {
 }
 
 template <typename T>
 StepFunction<T>::StepFunction(ros::Duration d0, double qf, bool ascending,
                               bool negated)
-    : Function<T>::Function(d0.toSec(), INFINITY, 0.0, qf, ascending, negated)
+    : Function<T>::Function("Step", d0.toSec(), INFINITY, 0.0, qf, ascending,
+                            negated)
 {
 }
 
 template <typename T>
 StepFunction<T>::StepFunction(double d0, double q0, double qf, bool ascending,
                               bool negated)
-    : Function<T>::Function(d0, INFINITY, q0, qf, ascending, negated)
+    : Function<T>::Function("Step", d0, INFINITY, q0, qf, ascending, negated)
 {
 }
 
 template <typename T>
 StepFunction<T>::StepFunction(ros::Duration d0, double q0, double qf,
                               bool ascending, bool negated)
-    : Function<T>::Function(d0.toSec(), INFINITY, q0, qf, ascending, negated)
+    : Function<T>::Function("Step", d0.toSec(), INFINITY, q0, qf, ascending,
+                            negated)
 {
 }
 

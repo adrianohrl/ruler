@@ -18,6 +18,7 @@ template <typename T> class ConsumableResource : public Resource<T>
 {
 public:
   virtual ~ConsumableResource();
+  virtual bool isConsumable() const;
   virtual void consume(Task* task,
                        utilities::functions::Function<T>* quantity_function);
   virtual void produce(Task* task,
@@ -34,7 +35,7 @@ template <typename T>
 ConsumableResource<T>::ConsumableResource(std::string id, std::string name,
                                           T capacity, T initial_level,
                                           ros::Duration latence)
-    : Resource<T>::Resource(id, true, name, capacity, initial_level, latence)
+    : Resource<T>::Resource(id, name, capacity, initial_level, latence)
 {
 }
 
@@ -46,15 +47,21 @@ ConsumableResource<T>::ConsumableResource(const ConsumableResource<T>& resource)
 
 template <typename T> ConsumableResource<T>::~ConsumableResource() {}
 
+template <typename T> bool ConsumableResource<T>::isConsumable() const
+{
+  return true;
+}
+
 template <typename T>
 void ConsumableResource<T>::consume(
     Task* task, utilities::functions::Function<T>* quantity_function)
 {
   if (!quantity_function->saturatesEnd())
   {
-    throw utilities::Exception("Unable to consume the " + Resource<T>::str() +
-                               " resource. The input quantity function does not " +
-                               " saturate after df.");
+    throw utilities::Exception(
+        "Unable to consume the " + Resource<T>::str() +
+        " resource. The input quantity function does not " +
+        " saturate after df.");
   }
   if (task->hasStarted())
   {
@@ -65,7 +72,7 @@ void ConsumableResource<T>::consume(
   quantity_function->setNegated(true);
   quantity_function->setAscending(true);
   Resource<T>::profile_->addTaskFunction(
-      new TaskFunction<T>(task, quantity_function));
+      new TaskFunction<T>(this, task, quantity_function));
 }
 
 template <typename T>
@@ -74,9 +81,10 @@ void ConsumableResource<T>::produce(
 {
   if (!quantity_function->saturatesEnd())
   {
-    throw utilities::Exception("Unable to produce the " + Resource<T>::str() +
-                               " resource. The input quantity function does not " +
-                               " saturate after df.");
+    throw utilities::Exception(
+        "Unable to produce the " + Resource<T>::str() +
+        " resource. The input quantity function does not " +
+        " saturate after df.");
   }
   if (task->hasStarted())
   {
@@ -87,7 +95,7 @@ void ConsumableResource<T>::produce(
   quantity_function->setNegated(false);
   quantity_function->setAscending(true);
   Resource<T>::profile_->addTaskFunction(
-      new TaskFunction<T>(task, quantity_function));
+      new TaskFunction<T>(this, task, quantity_function));
 }
 }
 

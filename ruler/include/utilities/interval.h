@@ -8,6 +8,8 @@
 #ifndef _UTILITIES_INTERVAL_H_
 #define _UTILITIES_INTERVAL_H_
 
+#include <sstream>
+
 namespace utilities
 {
 template <typename T> class Interval
@@ -15,6 +17,7 @@ template <typename T> class Interval
 public:
   Interval(const T& min, const T& max, bool including_min = true,
            bool including_max = true);
+  Interval(const Interval<T>& interval);
   virtual ~Interval();
   bool belongs(const T& value) const;
   T getValid(const T& value) const;
@@ -22,19 +25,32 @@ public:
   T getMax() const;
   void setMin(const T& min);
   void setMax(const T& max);
+  std::string str() const;
+  const char *c_str() const;
+  template <typename U>
+  friend std::ostream& operator<<(std::ostream& out,
+                                  const Interval<U>& interval);
 
 private:
   T min_;
   T max_;
   bool including_min_;
-  bool inculding_max_;
+  bool including_max_;
 };
 
 template <typename T>
 Interval<T>::Interval(const T& min, const T& max, bool including_min,
                       bool including_max)
     : min_(min), max_(max), including_min_(including_min),
-      inculding_max_(including_max)
+      including_max_(including_max)
+{
+}
+
+template <typename T>
+Interval<T>::Interval(const Interval<T>& interval)
+    : min_(interval.min_), max_(interval.max_),
+      including_min_(interval.including_min_),
+      including_max_(interval.including_max_)
 {
 }
 
@@ -42,7 +58,7 @@ template <typename T> Interval<T>::~Interval() {}
 
 template <typename T> bool Interval<T>::belongs(const T& value) const
 {
-  return including_min_ ? value >= min_ : value > min_ && inculding_max_
+  return including_min_ ? value >= min_ : value > min_ && including_max_
                                               ? value <= max_
                                               : value < max_;
 }
@@ -56,7 +72,7 @@ template <typename T> T Interval<T>::getMin() const { return min_; }
 
 template <typename T> T Interval<T>::getMax() const { return max_; }
 
-template <typename T> void Interval<T>::setMin(const T &min)
+template <typename T> void Interval<T>::setMin(const T& min)
 {
   if (min <= max_)
   {
@@ -64,12 +80,32 @@ template <typename T> void Interval<T>::setMin(const T &min)
   }
 }
 
-template <typename T> void Interval<T>::setMax(const T &max)
+template <typename T> void Interval<T>::setMax(const T& max)
 {
   if (max >= min_)
   {
     max_ = max;
   }
+}
+
+template <typename T> std::string Interval<T>::str() const
+{
+  std::stringstream ss;
+  ss << (including_min_ ? "[" : "(") << min_;
+  ss << " ; " << max_ << (including_max_ ? "]" : ")");
+  return ss.str();
+}
+
+template <typename T> const char* Interval<T>::c_str() const
+{
+  return str().c_str();
+}
+
+template <typename T>
+std::ostream& operator<<(std::ostream& out, const Interval<T>& interval)
+{
+  out << interval.str();
+  return out;
 }
 }
 

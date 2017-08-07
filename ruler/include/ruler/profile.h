@@ -91,8 +91,7 @@ template <typename T> T Profile<T>::getInitialLevel() const
 template <typename T> T Profile<T>::getLevel(ros::Time t) const
 {
   T level(initial_level_);
-  typename std::list<TaskFunction<T>*>::const_iterator it(
-      task_functions_.begin());
+  typename std::list<TaskFunction<T>*>::const_iterator it(task_functions_.begin());
   while (it != task_functions_.end())
   {
     TaskFunction<T>* task_function = *it;
