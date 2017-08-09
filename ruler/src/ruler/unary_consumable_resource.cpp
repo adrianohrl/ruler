@@ -12,6 +12,19 @@
 
 namespace ruler
 {
+UnaryConsumableResource::UnaryConsumableResource(
+    const ruler_msgs::Resource& msg)
+    : ConsumableResource<utilities::UnarySignalType>::ConsumableResource(msg)
+{
+  utilities::SignalTypeEnum signal_type(
+      utilities::SignalTypes::toEnumerated(msg.signal_type));
+  if (signal_type != utilities::signal_types::UNARY)
+  {
+    throw utilities::Exception(
+        "Not an unary signal type resource ros message.");
+  }
+}
+
 UnaryConsumableResource::UnaryConsumableResource(std::string id,
                                                  std::string name,
                                                  bool initial_level,

@@ -27,6 +27,7 @@ public:
 protected:
   HasId(const K& id);
   HasId(const HasId<K, T>& has_id);
+  void setId(const K& id);
 
 private:
   const K id_;
@@ -38,6 +39,11 @@ template <typename K, typename T>
 HasId<K, T>::HasId(const HasId<K, T>& has_id)
     : id_(has_id.id_)
 {
+}
+
+template <typename K, typename T> void HasId<K, T>::setId(const K& id)
+{
+  id_ = id;
 }
 
 template <typename K, typename T> HasId<K, T>::~HasId() {}

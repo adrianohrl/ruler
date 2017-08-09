@@ -18,6 +18,7 @@ class DiscreteConsumableResource
     : public ConsumableResource<utilities::DiscreteSignalType>
 {
 public:
+  DiscreteConsumableResource(const ruler_msgs::Resource& msg);
   DiscreteConsumableResource(std::string id, std::string name,
                              long capacity, long initial_level = 0,
                              ros::Duration latence = ros::Duration(0.0));

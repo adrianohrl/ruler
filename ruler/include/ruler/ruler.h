@@ -18,6 +18,7 @@
 #include "ruler/event_types.h"
 #include "ruler/profile.h"
 #include "ruler/resource.h"
+#include "ruler/resource_interface.h"
 #include "ruler/resource_reservation_request.h"
 #include "ruler/reusable_resource.h"
 #include "ruler/reusable_resource_reservation_request.h"

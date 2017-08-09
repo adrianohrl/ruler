@@ -11,6 +11,18 @@
 namespace ruler
 {
 
+UnaryReusableResource::UnaryReusableResource(const ruler_msgs::Resource& msg)
+    : ReusableResource<utilities::UnarySignalType>::ReusableResource(msg)
+{
+  utilities::SignalTypeEnum signal_type(
+      utilities::SignalTypes::toEnumerated(msg.signal_type));
+  if (signal_type != utilities::signal_types::UNARY)
+  {
+    throw utilities::Exception(
+        "Not an unary signal type resource ros message.");
+  }
+}
+
 UnaryReusableResource::UnaryReusableResource(std::string id, std::string name,
                                              bool initial_level,
                                              ros::Duration latence)
@@ -19,8 +31,9 @@ UnaryReusableResource::UnaryReusableResource(std::string id, std::string name,
           utilities::UnarySignalType(initial_level), latence)
 {
 }
-UnaryReusableResource::UnaryReusableResource(std::string id, std::string name,
-    utilities::UnarySignalType initial_level, ros::Duration latence)
+UnaryReusableResource::UnaryReusableResource(
+    std::string id, std::string name, utilities::UnarySignalType initial_level,
+    ros::Duration latence)
     : ReusableResource<utilities::UnarySignalType>::ReusableResource(
           id, name, utilities::UnarySignalType(true), initial_level, latence)
 {
@@ -34,7 +47,7 @@ UnaryReusableResource::UnaryReusableResource(
 
 UnaryReusableResource::~UnaryReusableResource() {}
 
-void UnaryReusableResource::require(Task *task, double d0, double df)
+void UnaryReusableResource::require(Task* task, double d0, double df)
 {
   /*ReusableResource<utilities::UnarySignalType>::require(
       task, new utilities::StepFunction());*/

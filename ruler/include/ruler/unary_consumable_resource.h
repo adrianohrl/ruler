@@ -18,6 +18,7 @@ class UnaryConsumableResource
     : public ConsumableResource<utilities::UnarySignalType>
 {
 public:
+  UnaryConsumableResource(const ruler_msgs::Resource& msg);
   UnaryConsumableResource(std::string id, std::string name,
                           bool initial_level = true,
                           ros::Duration latence = ros::Duration(0.0));

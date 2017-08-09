@@ -10,6 +10,19 @@
 
 namespace ruler
 {
+DiscreteReusableResource::DiscreteReusableResource(
+    const ruler_msgs::Resource& msg)
+    : ReusableResource<utilities::DiscreteSignalType>::ReusableResource(msg)
+{
+  utilities::SignalTypeEnum signal_type(
+      utilities::SignalTypes::toEnumerated(msg.signal_type));
+  if (signal_type != utilities::signal_types::DISCRETE)
+  {
+    throw utilities::Exception(
+        "Not a discrete signal type resource ros message.");
+  }
+}
+
 DiscreteReusableResource::DiscreteReusableResource(std::string id,
                                                    std::string name,
                                                    long capacity,
@@ -21,7 +34,8 @@ DiscreteReusableResource::DiscreteReusableResource(std::string id,
 {
 }
 
-DiscreteReusableResource::DiscreteReusableResource(std::string id, std::string name, utilities::DiscreteSignalType capacity,
+DiscreteReusableResource::DiscreteReusableResource(
+    std::string id, std::string name, utilities::DiscreteSignalType capacity,
     utilities::DiscreteSignalType initial_level, ros::Duration latence)
     : ReusableResource<utilities::DiscreteSignalType>::ReusableResource(
           id, name, capacity, initial_level, latence)
@@ -37,7 +51,7 @@ DiscreteReusableResource::DiscreteReusableResource(
 
 DiscreteReusableResource::~DiscreteReusableResource() {}
 
-void DiscreteReusableResource::require(Task *task, long quantity, double d0)
+void DiscreteReusableResource::require(Task* task, long quantity, double d0)
 {
   ReusableResource<utilities::DiscreteSignalType>::require(
       task, utilities::DiscreteSignalType(quantity), d0);

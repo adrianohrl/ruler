@@ -16,7 +16,7 @@ namespace ruler
 template <typename T> class Profile
 {
 public:
-  Profile(T capacity, T initial_level);
+  Profile(const T& capacity, const T& initial_level);
   Profile(const Profile<T>& profile);
   virtual ~Profile();
   bool isContinuous() const;
@@ -36,7 +36,7 @@ private:
 };
 
 template <typename T>
-Profile<T>::Profile(T capacity, T initial_level)
+Profile<T>::Profile(const T& capacity, const T& initial_level)
     : capacity_(capacity), initial_level_(initial_level)
 {
   if (initial_level_ > capacity_)
@@ -91,7 +91,8 @@ template <typename T> T Profile<T>::getInitialLevel() const
 template <typename T> T Profile<T>::getLevel(ros::Time t) const
 {
   T level(initial_level_);
-  typename std::list<TaskFunction<T>*>::const_iterator it(task_functions_.begin());
+  typename std::list<TaskFunction<T>*>::const_iterator it(
+      task_functions_.begin());
   while (it != task_functions_.end())
   {
     TaskFunction<T>* task_function = *it;

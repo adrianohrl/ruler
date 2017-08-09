@@ -20,14 +20,14 @@ class ROSNode
 public:
   virtual ~ROSNode(); // destructor
   virtual void spin(); // standard spin method (according to the given loop rate)
+  friend std::ostream& operator<<(std::ostream& out, const ROSNode& node);
 
 protected:
   ROSNode(ros::NodeHandle *nh, float loop_rate); // protected constructor
   ros::NodeHandle* getNodeHandle() const;
   std::string getName() const;
   bool ok() const;
-  void shutdown() const;
-  void shutdown(std::string message) const;
+  void shutdown(std::string message = "") const;
   virtual void reset();
   
 private:
@@ -37,7 +37,7 @@ private:
   virtual bool isSettedUp();
   virtual void init();
   virtual void controlLoop() = 0;
-  virtual void setParameters();
+  virtual void readParameters();
 };
 }
 

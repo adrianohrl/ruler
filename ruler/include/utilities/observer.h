@@ -10,6 +10,7 @@
 #define _UTILITIES_OBSERVER_H_
 
 #include "utilities/has_id.h"
+#include "utilities/exception.h"
 
 namespace utilities
 {
@@ -28,6 +29,10 @@ template <typename T>
 Observer<T>::Observer(std::string id)
     : HasId<std::string, T>::HasId(id)
 {
+  if (id.empty())
+  {
+    throw utilities::Exception("Observer id must not be empty.");
+  }
 }
 
 template <typename T>

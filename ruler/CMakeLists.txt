@@ -31,6 +31,7 @@ set(H_FILES
   include/ruler/event_types.h
   include/ruler/profile.h
   include/ruler/resource.h
+  include/ruler/resource_interface.h
   include/ruler/resource_reservation_request.h
   include/ruler/reusable_resource.h
   include/ruler/reusable_resource_reservation_request.h
@@ -64,7 +65,9 @@ set(H_FILES
   include/utilities/interval.h
   include/utilities/observer.h
   include/utilities/ros_node.h
+  include/utilities/ros_message_converter.h
   include/utilities/signal_type.h
+  include/utilities/signal_types.h
   include/utilities/subject.h
   include/utilities/unary_signal_type.h
   include/utilities/utilities.h
@@ -77,6 +80,7 @@ set(CPP_FILES
   src/ruler/discrete_reusable_resource.cpp
   src/ruler/event.cpp
   src/ruler/event_types.cpp
+  src/ruler/resource_interface.cpp
   src/ruler/resource_reservation_request.cpp
   src/ruler/task.cpp
   src/ruler/task_event.cpp
@@ -95,6 +99,7 @@ set(CPP_FILES
   src/utilities/functions/discrete_step_function.cpp
   src/utilities/functions/unary_pulse_function.cpp
   src/utilities/functions/unary_step_function.cpp
+  src/utilities/signal_types.cpp
   src/utilities/ros_node.cpp
   src/utilities/unary_signal_type.cpp
 )

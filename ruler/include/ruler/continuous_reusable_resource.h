@@ -18,6 +18,7 @@ class ContinuousReusableResource
     : public ReusableResource<utilities::ContinuousSignalType>
 {
 public:
+  ContinuousReusableResource(const ruler_msgs::Resource& msg);
   ContinuousReusableResource(std::string id, std::string name,
                              double capacity, double initial_level = 0.0,
                              ros::Duration latence = ros::Duration(0.0));

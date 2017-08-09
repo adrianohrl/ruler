@@ -37,7 +37,14 @@ ROSNode::ROSNode(ros::NodeHandle* nh, float loop_rate) : loop_rate_(loop_rate)
  * @brief ROSNode::~ROSNode announces that this ROS node will shutdown. This
  * will not destruct the used ROS NodeHandle object.
  */
-ROSNode::~ROSNode() {}
+ROSNode::~ROSNode()
+{
+  if (nh_)
+  {
+    delete nh_;
+    nh_ = NULL;
+  }
+}
 
 /**
  * @brief ROSNode::spin loops while there is not another instance
@@ -48,14 +55,16 @@ ROSNode::~ROSNode() {}
 void ROSNode::spin()
 {
   ros::Rate loop_rate(loop_rate_);
-  ROS_INFO("Setting %s up!!!", name_.c_str());
+  ROS_INFO_STREAM("   Reading " << *this << " parameters ...");
+  readParameters();
+  ROS_INFO_STREAM_COND(!isSettedUp(), "   Setting " << *this << " up ...");
   while (nh_->ok() && !isSettedUp())
   {
     ros::spinOnce();
     loop_rate.sleep();
   }
   init();
-  ROS_INFO("%s is setted up and initialized!!!", name_.c_str());
+  ROS_INFO_STREAM(*this << " is up and running.");
   while (nh_->ok())
   {
     controlLoop();
@@ -66,21 +75,16 @@ void ROSNode::spin()
 
 /**
  * @brief ROSNode::shutdown
- */
-void ROSNode::shutdown() const
-{
-  ROS_WARN("%s is OFF now!!!", name_.c_str());
-  nh_->shutdown();
-}
-
-/**
- * @brief ROSNode::shutdown
  * @param message
  */
 void ROSNode::shutdown(std::string message) const
 {
-  shutdown();
-  throw utilities::Exception(message);
+  ROS_WARN_STREAM("   Shutting " << *this << " off ...");
+  nh_->shutdown();
+  if (!message.empty())
+  {
+    throw utilities::Exception(message);
+  }
 }
 
 /**
@@ -88,14 +92,14 @@ void ROSNode::shutdown(std::string message) const
  */
 void ROSNode::reset()
 {
-  ROS_INFO("   Resetting %s!!!", name_.c_str());
-  setParameters();
+  ROS_INFO_STREAM("   Resetting " << *this << " ...");
+  readParameters();
 }
 
 /**
  * @brief ROSNode::setParameters
  */
-void ROSNode::setParameters() {}
+void ROSNode::readParameters() {}
 
 /**
  * @brief ROSNode::isSetted
@@ -125,4 +129,16 @@ std::string ROSNode::getName() const { return name_; }
  * @return if this ROS node controller is still running properly.
  */
 bool ROSNode::ok() const { return nh_->ok(); }
+
+/**
+ * @brief operator <<
+ * @param out
+ * @param node
+ * @return
+ */
+std::ostream& operator<<(std::ostream &out, const ROSNode &node)
+{
+  out << node.name_;
+  return out;
+}
 }

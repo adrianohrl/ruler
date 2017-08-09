@@ -16,7 +16,9 @@
 #include "utilities/interval.h"
 #include "utilities/observer.h"
 #include "utilities/ros_node.h"
+#include "utilities/ros_message_converter.h"
 #include "utilities/signal_type.h"
+#include "utilities/signal_types.h"
 #include "utilities/subject.h"
 #include "utilities/unary_signal_type.h"
 

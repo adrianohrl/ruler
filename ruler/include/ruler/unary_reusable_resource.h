@@ -18,6 +18,7 @@ class UnaryReusableResource
     : public ReusableResource<utilities::UnarySignalType>
 {
 public:
+  UnaryReusableResource(const ruler_msgs::Resource& msg);
   UnaryReusableResource(std::string id, std::string name,
                         bool initial_level = true,
                         ros::Duration latence = ros::Duration(0.0));

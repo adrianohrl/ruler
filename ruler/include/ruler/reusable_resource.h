@@ -24,10 +24,21 @@ public:
                        double df = INFINITY);
 
 protected:
+  ReusableResource(const ruler_msgs::Resource& msg);
   ReusableResource(std::string id, std::string name, T capacity,
                    T initial_level, ros::Duration latence = ros::Duration(0.0));
   ReusableResource(const ReusableResource<T>& resource);
 };
+
+template <typename T>
+ReusableResource<T>::ReusableResource(const ruler_msgs::Resource& msg)
+    : Resource<T>::Resource(msg)
+{
+  if (msg.consumable)
+  {
+    throw utilities::Exception("Not a reusable resource ros message.");
+  }
+}
 
 template <typename T>
 ReusableResource<T>::ReusableResource(std::string id, std::string name,

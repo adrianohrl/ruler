@@ -10,6 +10,7 @@
 #define _UTILITIES_UNARY_SIGNAL_TYPE_H_
 
 #include "utilities/signal_type.h"
+#include "utilities/signal_types.h"
 
 namespace utilities
 {

@@ -8,50 +8,75 @@
 #ifndef _RULER_RESOURCE_H_
 #define _RULER_RESOURCE_H_
 
-#include <string>
 #include <ros/duration.h>
 #include "ruler/profile.h"
-#include "utilities/exception.h"
-#include "utilities/observer.h"
+#include "ruler/resource_interface.h"
 
 namespace ruler
 {
-template <typename T> class Resource : public utilities::Observer<TaskEvent>
+template <typename T> class Resource : public ResourceInterface
 {
 public:
   virtual ~Resource();
   virtual void update(const TaskEvent& notification);
   virtual bool isConsumable() const;
   virtual bool isReusable() const;
-  bool isContinuous() const;
-  bool isDiscrete() const;
-  bool isUnary() const;
+  virtual bool isContinuous() const;
+  virtual bool isDiscrete() const;
+  virtual bool isUnary() const;
+  virtual utilities::SignalTypeEnum getSignalType() const;
   std::string getName() const;
   T getLevel(ros::Time timestamp = ros::Time::now()) const;
   ros::Duration getLatence() const;
+  virtual ruler_msgs::Resource toMsg() const;
 
 protected:
   Profile<T>* profile_;
+  Resource(const ruler_msgs::Resource& msg);
   Resource(std::string id, std::string name, T capacity, T initial_level,
            ros::Duration latence = ros::Duration(0.0));
   Resource(const Resource<T>& resource);
 
 private:
-  std::string name_;
+  const std::string name_;
   ros::Duration latence_;
 };
 
 template <typename T>
+Resource<T>::Resource(const ruler_msgs::Resource& msg)
+    : ResourceInterface::ResourceInterface(msg.header.frame_id),
+      name_(msg.name), latence_(msg.latence),
+      profile_(new Profile<T>(msg.capacity, msg.level))
+{
+  if (name_.empty())
+  {
+    throw utilities::Exception("Resource name must not be empty.");
+  }
+  if (latence_.toSec() < 0.0)
+  {
+    throw utilities::Exception("Resource latence must not be negative.");
+  }
+}
+
+template <typename T>
 Resource<T>::Resource(std::string id, std::string name, T capacity,
                       T initial_level, ros::Duration latence)
-    : utilities::Observer<TaskEvent>::Observer(id), name_(name),
-      latence_(latence), profile_(new Profile<T>(capacity, initial_level))
+    : ResourceInterface::ResourceInterface(id), name_(name), latence_(latence),
+      profile_(new Profile<T>(capacity, initial_level))
 {
+  if (name_.empty())
+  {
+    throw utilities::Exception("Resource name must not be empty.");
+  }
+  if (latence_.toSec() < 0.0)
+  {
+    throw utilities::Exception("Resource latence must not be negative.");
+  }
 }
 
 template <typename T>
 Resource<T>::Resource(const Resource<T>& resource)
-    : utilities::Observer<TaskEvent>::Observer(resource), name_(resource.name_),
+    : ResourceInterface::ResourceInterface(resource), name_(resource.name_),
       latence_(resource.latence_), profile_(resource.profile_)
 {
 }
@@ -89,6 +114,20 @@ template <typename T> bool Resource<T>::isUnary() const
   return profile_->isUnary();
 }
 
+template <typename T>
+utilities::SignalTypeEnum Resource<T>::getSignalType() const
+{
+  if (isContinuous())
+  {
+    return utilities::signal_types::CONTINUOUS;
+  }
+  else if (isDiscrete())
+  {
+    return utilities::signal_types::DISCRETE;
+  }
+  return utilities::signal_types::UNARY;
+}
+
 template <typename T> std::string Resource<T>::getName() const { return name_; }
 
 template <typename T> T Resource<T>::getLevel(ros::Time timestamp) const
@@ -99,6 +138,20 @@ template <typename T> T Resource<T>::getLevel(ros::Time timestamp) const
 template <typename T> ros::Duration Resource<T>::getLatence() const
 {
   return latence_;
+}
+
+template <typename T> ruler_msgs::Resource Resource<T>::toMsg() const
+{
+  ruler_msgs::Resource msg;
+  msg.header.stamp = ros::Time::now();
+  msg.header.frame_id = getId();
+  msg.signal_type = utilities::SignalTypes::toCode(getSignalType());
+  msg.consumable = isConsumable();
+  msg.name = name_;
+  msg.latence = latence_;
+  msg.capacity = profile_->getCapacity();
+  msg.level = getLevel(msg.header.stamp);
+  return msg;
 }
 }
 

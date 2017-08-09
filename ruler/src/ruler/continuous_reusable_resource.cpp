@@ -10,6 +10,19 @@
 
 namespace ruler
 {
+ContinuousReusableResource::ContinuousReusableResource(
+    const ruler_msgs::Resource& msg)
+    : ReusableResource<utilities::ContinuousSignalType>::ReusableResource(msg)
+{
+  utilities::SignalTypeEnum signal_type(
+      utilities::SignalTypes::toEnumerated(msg.signal_type));
+  if (signal_type != utilities::signal_types::CONTINUOUS)
+  {
+    throw utilities::Exception(
+        "Not a continuous signal type resource ros message.");
+  }
+}
+
 ContinuousReusableResource::ContinuousReusableResource(std::string id,
                                                        std::string name,
                                                        double capacity,
