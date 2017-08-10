@@ -18,7 +18,6 @@ class ContinuousConsumableResource
     : public ConsumableResource<utilities::ContinuousSignalType>
 {
 public:
-  ContinuousConsumableResource(const ruler_msgs::Resource& msg);
   ContinuousConsumableResource(std::string id, std::string name,
                                double capacity, double initial_level = 0.0,
                                ros::Duration latence = ros::Duration(0.0));
@@ -26,6 +25,7 @@ public:
                                utilities::ContinuousSignalType capacity,
                                utilities::ContinuousSignalType initial_level,
                                ros::Duration latence = ros::Duration(0.0));
+  ContinuousConsumableResource(const ruler_msgs::Resource& msg);
   ContinuousConsumableResource(const ContinuousConsumableResource& resource);
   virtual ~ContinuousConsumableResource();
 };

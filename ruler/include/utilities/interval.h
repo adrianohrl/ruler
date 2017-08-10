@@ -9,6 +9,7 @@
 #define _UTILITIES_INTERVAL_H_
 
 #include <sstream>
+#include "utilities/exception.h"
 
 namespace utilities
 {
@@ -26,7 +27,7 @@ public:
   void setMin(const T& min);
   void setMax(const T& max);
   std::string str() const;
-  const char *c_str() const;
+  const char* c_str() const;
   template <typename U>
   friend std::ostream& operator<<(std::ostream& out,
                                   const Interval<U>& interval);
@@ -44,6 +45,11 @@ Interval<T>::Interval(const T& min, const T& max, bool including_min,
     : min_(min), max_(max), including_min_(including_min),
       including_max_(including_max)
 {
+  if (min_ > max_)
+  {
+    throw utilities::Exception(
+        "The interval minimum bound must not be greater than its maximum one.");
+  }
 }
 
 template <typename T>

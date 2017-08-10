@@ -18,13 +18,13 @@ class UnaryReusableResource
     : public ReusableResource<utilities::UnarySignalType>
 {
 public:
-  UnaryReusableResource(const ruler_msgs::Resource& msg);
   UnaryReusableResource(std::string id, std::string name,
                         bool initial_level = true,
                         ros::Duration latence = ros::Duration(0.0));
   UnaryReusableResource(std::string id, std::string name,
                         utilities::UnarySignalType initial_level,
                         ros::Duration latence = ros::Duration(0.0));
+  UnaryReusableResource(const ruler_msgs::Resource& msg);
   UnaryReusableResource(const UnaryReusableResource& resource);
   virtual ~UnaryReusableResource();
   virtual void require(Task* task, double d0 = 0.0, double df = INFINITY);

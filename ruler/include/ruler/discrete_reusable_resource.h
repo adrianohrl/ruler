@@ -18,7 +18,6 @@ class DiscreteReusableResource
     : public ReusableResource<utilities::DiscreteSignalType>
 {
 public:
-  DiscreteReusableResource(const ruler_msgs::Resource& msg);
   DiscreteReusableResource(std::string id, std::string name,
                            long capacity, long initial_level = 0,
                            ros::Duration latence = ros::Duration(0.0));
@@ -26,6 +25,7 @@ public:
                            utilities::DiscreteSignalType capacity,
                            utilities::DiscreteSignalType initial_level,
                            ros::Duration latence = ros::Duration(0.0));
+  DiscreteReusableResource(const ruler_msgs::Resource& msg);
   DiscreteReusableResource(const DiscreteReusableResource& resource);
   virtual ~DiscreteReusableResource();
   using ReusableResource<utilities::DiscreteSignalType>::require;

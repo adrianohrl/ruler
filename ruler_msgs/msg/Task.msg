@@ -1,0 +1,12 @@
+Header header
+string name
+duration expected_duration
+bool preemptive
+time start_timestamp
+time end_timestamp
+time min_start_timestamp
+time max_start_timestamp
+time min_end_timestamp
+time max_end_timestamp
+time[] min_interruption_timestamps
+time[] max_interruption_timestamps

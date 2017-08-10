@@ -1,0 +1,52 @@
+tasks:
+  size: 5
+  task0:
+    id: 't0'
+    name: 'task 0'
+    expected_duration: 10.2       # in seconds
+    preemptive: true              # (default: false)
+    min_announcement_delay: 0.2   # in seconds (default: 0.0 [s])
+    max_announcement_delay: 0.6   # in seconds (default: 0.0 [s])
+    min_start_delay: 0.2          # in seconds (default: 0.0 [s])
+    max_start_delay: 0.3          # in seconds (default: 0.0 [s])
+    min_end_delay: 10.0           # in seconds (default: 0.0 [s])
+    max_end_delay: 11.0           # in seconds (default: 0.0 [s])
+    resource_reservation_requests:
+      size: 2
+      request0:
+        resource_id: 'r0'
+        consumption: # required if resource type is consumable
+        function:
+
+      request1:
+  task1:
+    type: 'consumable'          #'consumable' or 'reusable'
+    signal_type: 'discrete'     #'continuous', 'discrete', or 'unary'
+    id: 'r1'
+    name: 'resource 1'
+    latence: 0.2                # in seconds (default: 0.0 [s])
+    capacity: 20
+    initial_level: 15           # (default: 0)
+  task2:
+    type: 'consumable'          #'consumable' or 'reusable'
+    signal_type: 'unary'        #'continuous', 'discrete', or 'unary'
+    id: 'r2'
+    name: 'resource 2'
+    #latence: 0.0               # in seconds (default: 0.0 [s])
+    #initial_level: false       # (default: false)
+  task3:
+    type: 'reusable'            #'consumable' or 'reusable'
+    signal_type: 'continuous'   #'continuous', 'discrete', or 'unary'
+    id: 'r3'
+    name: 'resource 3'
+    latence: 6.2                # in seconds (default: 0.0 [s])
+    capacity: 5.5
+    initial_level: 2.25         # (default: 0.0)
+  task4:
+    type: 'reusable'            #'consumable' or 'reusable'
+    signal_type: 'discrete'     #'continuous', 'discrete', or 'unary'
+    id: 'r4'
+    name: 'resource 4'
+    latence: 1.0                # in seconds (default: 0.0 [s])
+    capacity: 4
+    #initial_level: 0           # (default: 0)

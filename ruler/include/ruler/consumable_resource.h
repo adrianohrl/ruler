@@ -25,12 +25,20 @@ public:
                        utilities::functions::Function<T>* quantity_function);
 
 protected:
-  ConsumableResource(const ruler_msgs::Resource& msg);
   ConsumableResource(std::string id, std::string name, T capacity,
                      T initial_level,
                      ros::Duration latence = ros::Duration(0.0));
+  ConsumableResource(const ruler_msgs::Resource& msg);
   ConsumableResource(const ConsumableResource<T>& resource);
 };
+
+template <typename T>
+ConsumableResource<T>::ConsumableResource(std::string id, std::string name,
+                                          T capacity, T initial_level,
+                                          ros::Duration latence)
+    : Resource<T>::Resource(id, name, capacity, initial_level, latence)
+{
+}
 
 template <typename T>
 ConsumableResource<T>::ConsumableResource(const ruler_msgs::Resource& msg)
@@ -40,14 +48,6 @@ ConsumableResource<T>::ConsumableResource(const ruler_msgs::Resource& msg)
   {
     throw utilities::Exception("Not a consumable resource ros message.");
   }
-}
-
-template <typename T>
-ConsumableResource<T>::ConsumableResource(std::string id, std::string name,
-                                          T capacity, T initial_level,
-                                          ros::Duration latence)
-    : Resource<T>::Resource(id, name, capacity, initial_level, latence)
-{
 }
 
 template <typename T>

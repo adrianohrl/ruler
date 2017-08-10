@@ -10,6 +10,25 @@
 
 namespace ruler
 {
+ContinuousReusableResource::ContinuousReusableResource(std::string id,
+                                                       std::string name,
+                                                       double capacity,
+                                                       double initial_level,
+                                                       ros::Duration latence)
+    : ReusableResource<utilities::ContinuousSignalType>::ReusableResource(
+          id, name, utilities::ContinuousSignalType(capacity),
+          utilities::ContinuousSignalType(initial_level), latence)
+{
+}
+
+ContinuousReusableResource::ContinuousReusableResource(
+    std::string id, std::string name, utilities::ContinuousSignalType capacity,
+    utilities::ContinuousSignalType initial_level, ros::Duration latence)
+    : ReusableResource<utilities::ContinuousSignalType>::ReusableResource(
+          id, name, capacity, initial_level, latence)
+{
+}
+
 ContinuousReusableResource::ContinuousReusableResource(
     const ruler_msgs::Resource& msg)
     : ReusableResource<utilities::ContinuousSignalType>::ReusableResource(msg)
@@ -21,24 +40,6 @@ ContinuousReusableResource::ContinuousReusableResource(
     throw utilities::Exception(
         "Not a continuous signal type resource ros message.");
   }
-}
-
-ContinuousReusableResource::ContinuousReusableResource(std::string id,
-                                                       std::string name,
-                                                       double capacity,
-                                                       double initial_level,
-                                                       ros::Duration latence)
-    : ReusableResource<utilities::ContinuousSignalType>::ReusableResource(
-          id, name, utilities::ContinuousSignalType(capacity),
-          utilities::ContinuousSignalType(initial_level), latence)
-{
-}
-ContinuousReusableResource::ContinuousReusableResource(
-    std::string id, std::string name, utilities::ContinuousSignalType capacity,
-    utilities::ContinuousSignalType initial_level, ros::Duration latence)
-    : ReusableResource<utilities::ContinuousSignalType>::ReusableResource(
-          id, name, capacity, initial_level, latence)
-{
 }
 
 ContinuousReusableResource::ContinuousReusableResource(

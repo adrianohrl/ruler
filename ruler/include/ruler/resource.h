@@ -32,9 +32,9 @@ public:
 
 protected:
   Profile<T>* profile_;
-  Resource(const ruler_msgs::Resource& msg);
   Resource(std::string id, std::string name, T capacity, T initial_level,
            ros::Duration latence = ros::Duration(0.0));
+  Resource(const ruler_msgs::Resource& msg);
   Resource(const Resource<T>& resource);
 
 private:
@@ -43,10 +43,10 @@ private:
 };
 
 template <typename T>
-Resource<T>::Resource(const ruler_msgs::Resource& msg)
-    : ResourceInterface::ResourceInterface(msg.header.frame_id),
-      name_(msg.name), latence_(msg.latence),
-      profile_(new Profile<T>(msg.capacity, msg.level))
+Resource<T>::Resource(std::string id, std::string name, T capacity,
+                      T initial_level, ros::Duration latence)
+    : ResourceInterface::ResourceInterface(id), name_(name), latence_(latence),
+      profile_(new Profile<T>(capacity, initial_level))
 {
   if (name_.empty())
   {
@@ -59,10 +59,10 @@ Resource<T>::Resource(const ruler_msgs::Resource& msg)
 }
 
 template <typename T>
-Resource<T>::Resource(std::string id, std::string name, T capacity,
-                      T initial_level, ros::Duration latence)
-    : ResourceInterface::ResourceInterface(id), name_(name), latence_(latence),
-      profile_(new Profile<T>(capacity, initial_level))
+Resource<T>::Resource(const ruler_msgs::Resource& msg)
+    : ResourceInterface::ResourceInterface(msg.header.frame_id),
+      name_(msg.name), latence_(msg.latence),
+      profile_(new Profile<T>(msg.capacity, msg.level))
 {
   if (name_.empty())
   {

@@ -1,0 +1,19 @@
+task_announcements:
+  size: 5
+  announcement0:
+    task_id: 't0'
+    min_delay: 2.5   # in seconds (default: 0.0 [s])
+    max_delay: 3.5   # in seconds (default: 0.0 [s])
+  announcement1:
+    task_id: 't1'
+    min_delay: 7.5   # in seconds (default: 0.0 [s])
+    max_delay: 8.6   # in seconds (default: 0.0 [s])
+  announcement2:
+    task_id: 't2'
+    min_delay: 4.2   # in seconds (default: 0.0 [s])
+    max_delay: 5.0   # in seconds (default: 0.0 [s])
+  announcement3:
+    task_id: 't3'
+    max_delay: 6.7   # in seconds (default: 0.0 [s])
+  announcement4:
+    task_id: 't4'

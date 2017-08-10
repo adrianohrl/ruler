@@ -1065,6 +1065,36 @@ TEST(ResourceSharing, task1and2)
   r2 = NULL;
 }
 
+#include <cstdio>
+#include <cstdlib>
+#include <ctime>
+
+TEST(testttt, tetete)
+{
+  double max_delay(5.2), min_delay(1.3);
+  srand(time(NULL));
+  double delay = (rand() % 100 + 1) / 100.0 * (max_delay - min_delay) + min_delay;
+  ROS_INFO_STREAM("delay: " << delay);
+  delay = (rand() % 100 + 1) / 100.0 * (max_delay - min_delay) + min_delay;
+  ROS_INFO_STREAM("delay: " << delay);
+  delay = (rand() % 100 + 1) / 100.0 * (max_delay - min_delay) + min_delay;
+  ROS_INFO_STREAM("delay: " << delay);
+  delay = (rand() % 100 + 1) / 100.0 * (max_delay - min_delay) + min_delay;
+  ROS_INFO_STREAM("delay: " << delay);
+  delay = (rand() % 100 + 1) / 100.0 * (max_delay - min_delay) + min_delay;
+  ROS_INFO_STREAM("delay: " << delay);
+  delay = (rand() % 100 + 1) / 100.0 * (max_delay - min_delay) + min_delay;
+  ROS_INFO_STREAM("delay: " << delay);
+  delay = (rand() % 100 + 1) / 100.0 * (max_delay - min_delay) + min_delay;
+  ROS_INFO_STREAM("delay: " << delay);
+  delay = (rand() % 100 + 1) / 100.0 * (max_delay - min_delay) + min_delay;
+  ROS_INFO_STREAM("delay: " << delay);
+  delay = (rand() % 100 + 1) / 100.0 * (max_delay - min_delay) + min_delay;
+  ROS_INFO_STREAM("delay: " << delay);
+  delay = (rand() % 100 + 1) / 100.0 * (max_delay - min_delay) + min_delay;
+  ROS_INFO_STREAM("delay: " << delay);
+}
+
 void init()
 {
   d.push_back(0.0);

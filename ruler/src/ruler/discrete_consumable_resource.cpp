@@ -10,18 +10,6 @@
 
 namespace ruler
 {
-DiscreteConsumableResource::DiscreteConsumableResource(const ruler_msgs::Resource &msg)
-  : ConsumableResource<utilities::DiscreteSignalType>::ConsumableResource(msg)
-{
-  utilities::SignalTypeEnum signal_type(
-      utilities::SignalTypes::toEnumerated(msg.signal_type));
-  if (signal_type != utilities::signal_types::DISCRETE)
-  {
-    throw utilities::Exception(
-        "Not a discrete signal type resource ros message.");
-  }
-}
-
 DiscreteConsumableResource::DiscreteConsumableResource(std::string id,
                                                        std::string name,
                                                        long capacity,
@@ -38,6 +26,18 @@ DiscreteConsumableResource::DiscreteConsumableResource(std::string id, std::stri
     : ConsumableResource<utilities::DiscreteSignalType>::ConsumableResource(
           id, name, capacity, initial_level, latence)
 {
+}
+
+DiscreteConsumableResource::DiscreteConsumableResource(const ruler_msgs::Resource &msg)
+  : ConsumableResource<utilities::DiscreteSignalType>::ConsumableResource(msg)
+{
+  utilities::SignalTypeEnum signal_type(
+      utilities::SignalTypes::toEnumerated(msg.signal_type));
+  if (signal_type != utilities::signal_types::DISCRETE)
+  {
+    throw utilities::Exception(
+        "Not a discrete signal type resource ros message.");
+  }
 }
 
 DiscreteConsumableResource::DiscreteConsumableResource(

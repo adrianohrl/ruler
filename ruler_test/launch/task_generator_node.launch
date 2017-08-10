@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="_name" default="adrianohrl"/>
+  <env name="ROSCONSOLE_CONFIG_FILE" value="$(find ruler)/config/rosconsole.conf"/>
+  <group ns="$(arg _name)">
+    <node name="task_generator_node" pkg="ruler_test" type="task_generator_node" output="screen">
+      <rosparam file="$(find ruler_test)/config/task_generator_params.yaml" command="load"/>
+    </node>
+  </group>
+</launch>

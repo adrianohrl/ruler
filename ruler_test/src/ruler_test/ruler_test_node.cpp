@@ -10,7 +10,6 @@
 
 namespace ruler_test
 {
-
 RulerTestNode::RulerTestNode(ros::NodeHandle* nh, float loop_rate)
     : ROSNode::ROSNode(nh, loop_rate)
 {
@@ -35,9 +34,9 @@ RulerTestNode::~RulerTestNode()
 
 void RulerTestNode::readParameters()
 {
-  ros::NodeHandle pnh("~");
+  ros::NodeHandle pnh("~/resources/");
   int resources_size;
-  pnh.param("resources/size", resources_size, 0);
+  pnh.param("size", resources_size, 0);
   std::string type, signal_type, id, name;
   double latence, continuous_capacity, continuous_initial_level;
   int discrete_capacity, discrete_initial_level;
@@ -46,15 +45,15 @@ void RulerTestNode::readParameters()
   for (int i(0); i < resources_size; i++)
   {
     std::stringstream ss;
-    ss << "resources/resource" << i << "/";
+    ss << "resource" << i << "/";
     pnh.param(ss.str() + "type", type, std::string(""));
-    if (type.empty() || type != "consumable" && type != "reusable")
+    if (type != "consumable" && type != "reusable")
     {
       ROS_ERROR_STREAM("Invalid resource type: '" << type << "'.");
       continue;
     }
     pnh.param(ss.str() + "signal_type", signal_type, std::string(""));
-    if (signal_type.empty() || !utilities::SignalTypes::isValid(signal_type))
+    if (!utilities::SignalTypes::isValid(signal_type))
     {
       ROS_ERROR_STREAM("Invalid resource signal type: '" << signal_type
                                                          << "'.");
@@ -127,7 +126,7 @@ void RulerTestNode::readParameters()
   }
   if (resources_.empty())
   {
-    ROS_FATAL("None resources were imported.");
+    ROS_FATAL("None resource was imported.");
     ROSNode::shutdown();
   }
 }
@@ -146,12 +145,6 @@ void RulerTestNode::init()
 
 void RulerTestNode::controlLoop()
 {
-  if (resources_.empty())
-  {
-    ROS_FATAL("None resources were imported.");
-    ROSNode::shutdown();
-  }
-  ros::NodeHandle* nh = ROSNode::getNodeHandle();
   for (int i(0); i < resources_.size(); i++)
   {
     ruler_msgs::Resource msg(resources_[i]->toMsg());

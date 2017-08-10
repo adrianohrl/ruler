@@ -14,6 +14,7 @@ add_message_files(
   DIRECTORY msg
   FILES
     Resource.msg
+    Task.msg
 )
 
 generate_messages(

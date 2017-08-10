@@ -11,15 +11,41 @@
 namespace ruler
 {
 Task::Task(std::string id, std::string name, ros::Duration expected_duration,
-           bool preemptive)
-    : utilities::Subject<TaskEvent>::Subject(id), name_(name),
+           bool preemptive,
+           utilities::Interval<ros::Time>* start_timestamp_bounds,
+           utilities::Interval<ros::Time>* end_timestamp_bounds)
+    : Subject<TaskEvent>::Subject(id), name_(name),
       expected_duration_(expected_duration), preemptive_(preemptive),
-      start_timestamp_bounds_(NULL), end_timestamp_bounds_(NULL)
+      start_timestamp_bounds_(start_timestamp_bounds),
+      end_timestamp_bounds_(end_timestamp_bounds)
 {
 }
 
+Task::Task(const ruler_msgs::Task& msg)
+    : Subject<TaskEvent>::Subject(msg.header.frame_id), name_(msg.name),
+      expected_duration_(msg.expected_duration), preemptive_(msg.preemptive),
+      start_timestamp_bounds_(NULL), end_timestamp_bounds_(NULL)
+{
+  if (msg.min_interruption_timestamps.size() !=
+      msg.max_interruption_timestamps.size())
+  {
+    throw utilities::Exception("The number of the minimum and maximum "
+                               "interruptions must be the same.");
+  }
+  start_timestamp_bounds_ = new utilities::Interval<ros::Time>(
+      msg.min_start_timestamp, msg.max_start_timestamp);
+  end_timestamp_bounds_ = new utilities::Interval<ros::Time>(
+      msg.min_end_timestamp, msg.max_end_timestamp);
+  for (int i(0); i < msg.min_interruption_timestamps.size(); i++)
+  {
+    interruption_intervals_.push_back(
+        new utilities::Interval<ros::Time>(msg.min_interruption_timestamps[i],
+                                           msg.max_interruption_timestamps[i]));
+  }
+}
+
 Task::Task(const Task& task)
-    : utilities::Subject<TaskEvent>::Subject(task), name_(task.name_),
+    : Subject<TaskEvent>::Subject(task), name_(task.name_),
       expected_duration_(task.expected_duration_),
       preemptive_(task.preemptive_), start_timestamp_(task.start_timestamp_),
       end_timestamp_(task.end_timestamp_),
@@ -67,7 +93,7 @@ Task::~Task()
 
 void Task::addResourceReservationRequest(ResourceReservationRequest* request)
 {
-  if (*request->getTask() != *this)
+  if (*this != *request->getTask())
   {
     throw utilities::Exception("The input request does not belong to " + str() +
                                ".");
@@ -75,8 +101,35 @@ void Task::addResourceReservationRequest(ResourceReservationRequest* request)
   resource_reservation_requests_.push_back(request);
 }
 
-void Task::start()
+void Task::addResource(ResourceInterface* resource)
 {
+  if (hasStarted())
+  {
+    throw utilities::Exception("Unable to add the " + resource->str() +
+                               " resource. The " + str() +
+                               " is already running.");
+  }
+  utilities::Subject<TaskEvent>::registerObserver(resource);
+}
+
+void Task::removeResource(ResourceInterface* resource)
+{
+  if (hasStarted() && !hasFinished())
+  {
+    throw utilities::Exception("Unable to remove the " + resource->str() +
+                               " resource. The " + str() +
+                               " is still running.");
+  }
+  utilities::Subject<TaskEvent>::unregisterObserver(resource);
+}
+
+void Task::start(ros::Time timestamp)
+{
+  if (timestamp <= last_event_timestamp_)
+  {
+    throw utilities::Exception(
+        "The input timestamp must be after the last event timestamp.");
+  }
   std::list<ResourceReservationRequest*>::iterator it(
       resource_reservation_requests_.begin());
   while (it != resource_reservation_requests_.end())
@@ -94,13 +147,19 @@ void Task::start()
     throw utilities::Exception(str() +
                                " does not have any resource registered yet.");
   }
-  start_timestamp_ = ros::Time::now();
+  start_timestamp_ = timestamp;
   utilities::Subject<TaskEvent>::notify(TaskEvent(this, types::STARTED));
   ROS_DEBUG_STREAM(*this << " has just started.");
+  last_event_timestamp_ = timestamp;
 }
 
-void Task::interrupt()
+void Task::interrupt(ros::Time timestamp)
 {
+  if (timestamp <= last_event_timestamp_)
+  {
+    throw utilities::Exception(
+        "The input timestamp must be after the last event timestamp.");
+  }
   if (!hasStarted())
   {
     throw utilities::Exception(str() + " has not been started yet.");
@@ -113,13 +172,19 @@ void Task::interrupt()
   {
     throw utilities::Exception(str() + " has already been interrupted.");
   }
-  last_interruption_timestamp_ = ros::Time::now();
+  last_interruption_timestamp_ = timestamp;
   utilities::Subject<TaskEvent>::notify(TaskEvent(this, types::INTERRUPTED));
   ROS_DEBUG_STREAM(*this << " has just interruped.");
+  last_event_timestamp_ = timestamp;
 }
 
-void Task::resume()
+void Task::resume(ros::Time timestamp)
 {
+  if (timestamp <= last_event_timestamp_)
+  {
+    throw utilities::Exception(
+        "The input timestamp must be after the last event timestamp.");
+  }
   if (!hasStarted())
   {
     throw utilities::Exception(str() + " has not started yet.");
@@ -133,14 +198,20 @@ void Task::resume()
     throw utilities::Exception(str() + " is already resuming.");
   }
   interruption_intervals_.push_back(new utilities::Interval<ros::Time>(
-      last_interruption_timestamp_, ros::Time::now()));
+      last_interruption_timestamp_, timestamp));
   last_interruption_timestamp_ = ros::Time();
   utilities::Subject<TaskEvent>::notify(TaskEvent(this, types::RESUMED));
   ROS_DEBUG_STREAM(*this << " has just resumed.");
+  last_event_timestamp_ = timestamp;
 }
 
-void Task::finish()
+void Task::finish(ros::Time timestamp)
 {
+  if (timestamp <= last_event_timestamp_)
+  {
+    throw utilities::Exception(
+        "The input timestamp must be after the last event timestamp.");
+  }
   if (!hasStarted())
   {
     throw utilities::Exception(str() + " has not started yet.");
@@ -149,7 +220,7 @@ void Task::finish()
   {
     throw utilities::Exception(str() + " has already been finished.");
   }
-  end_timestamp_ = ros::Time::now();
+  end_timestamp_ = timestamp;
   if (!last_interruption_timestamp_.isZero())
   {
     interruption_intervals_.push_back(new utilities::Interval<ros::Time>(
@@ -158,6 +229,7 @@ void Task::finish()
   utilities::Subject<TaskEvent>::notify(TaskEvent(this, types::FINISHED));
   utilities::Subject<TaskEvent>::clearObservers();
   ROS_DEBUG_STREAM(*this << " has just finished.");
+  last_event_timestamp_ = timestamp;
 }
 
 void Task::clearResources() { utilities::Subject<TaskEvent>::clearObservers(); }
@@ -232,4 +304,34 @@ bool Task::isRunning() const
 }
 
 bool Task::hasFinished() const { return !end_timestamp_.isZero(); }
+
+ruler_msgs::Task Task::toMsg() const
+{
+  ruler_msgs::Task msg;
+  msg.header.stamp = ros::Time::now();
+  msg.header.frame_id = getId();
+  msg.name = name_;
+  msg.expected_duration = expected_duration_;
+  msg.start_timestamp = start_timestamp_;
+  msg.end_timestamp = end_timestamp_;
+  msg.min_start_timestamp = start_timestamp_bounds_->getMin();
+  msg.max_start_timestamp = start_timestamp_bounds_->getMax();
+  msg.min_end_timestamp = end_timestamp_bounds_->getMin();
+  msg.max_end_timestamp = end_timestamp_bounds_->getMax();
+  std::list<utilities::Interval<ros::Time>*>::const_iterator it(
+      interruption_intervals_.begin());
+  while (it != interruption_intervals_.end())
+  {
+    utilities::Interval<ros::Time>* interruption_interval = *it;
+    msg.min_interruption_timestamps.push_back(interruption_interval->getMin());
+    msg.max_interruption_timestamps.push_back(interruption_interval->getMax());
+    it++;
+  }
+  return msg;
+}
+
+bool Task::operator==(const ruler_msgs::Task& msg) const
+{
+  return getId() == msg.header.frame_id;
+}
 }
