@@ -20,33 +20,10 @@ tasks:
 
       request1:
   task1:
-    type: 'consumable'          #'consumable' or 'reusable'
-    signal_type: 'discrete'     #'continuous', 'discrete', or 'unary'
-    id: 'r1'
-    name: 'resource 1'
-    latence: 0.2                # in seconds (default: 0.0 [s])
-    capacity: 20
-    initial_level: 15           # (default: 0)
+
   task2:
-    type: 'consumable'          #'consumable' or 'reusable'
-    signal_type: 'unary'        #'continuous', 'discrete', or 'unary'
-    id: 'r2'
-    name: 'resource 2'
-    #latence: 0.0               # in seconds (default: 0.0 [s])
-    #initial_level: false       # (default: false)
+
   task3:
-    type: 'reusable'            #'consumable' or 'reusable'
-    signal_type: 'continuous'   #'continuous', 'discrete', or 'unary'
-    id: 'r3'
-    name: 'resource 3'
-    latence: 6.2                # in seconds (default: 0.0 [s])
-    capacity: 5.5
-    initial_level: 2.25         # (default: 0.0)
+
   task4:
-    type: 'reusable'            #'consumable' or 'reusable'
-    signal_type: 'discrete'     #'continuous', 'discrete', or 'unary'
-    id: 'r4'
-    name: 'resource 4'
-    latence: 1.0                # in seconds (default: 0.0 [s])
-    capacity: 4
-    #initial_level: 0           # (default: 0)
+

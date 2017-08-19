@@ -2,7 +2,7 @@
 <package>
   <name>ruler_msgs</name>
   <version>0.1.0</version>
-  <description>This package containsthe definition of the message, service and action files of the ruler stack.</description>
+  <description>This package contains the definition of the message, service and action files of the ruler stack.</description>
 
   <maintainer email="adrianohrl@unifei.edu.br">Adriano Henrique Rossette Leite</maintainer>
   <license>Apache 2.0</license>

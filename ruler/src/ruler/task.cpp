@@ -305,6 +305,16 @@ bool Task::isRunning() const
 
 bool Task::hasFinished() const { return !end_timestamp_.isZero(); }
 
+utilities::Interval<ros::Time>* Task::getStartTimestampBounds() const
+{
+  return start_timestamp_bounds_;
+}
+
+utilities::Interval<ros::Time>* Task::getEndTimestampBounds() const
+{
+  return end_timestamp_bounds_;
+}
+
 ruler_msgs::Task Task::toMsg() const
 {
   ruler_msgs::Task msg;

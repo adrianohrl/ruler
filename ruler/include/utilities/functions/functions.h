@@ -19,8 +19,10 @@
 #include "utilities/functions/exponential_function.h"
 #include "utilities/functions/function.h"
 #include "utilities/functions/linear_function.h"
+#include "utilities/functions/probability_density_function.h"
 #include "utilities/functions/pulse_function.h"
 #include "utilities/functions/step_function.h"
+#include "utilities/functions/time_probability_density_function.h"
 #include "utilities/functions/unary_pulse_function.h"
 #include "utilities/functions/unary_step_function.h"
 

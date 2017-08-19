@@ -1,0 +1,18 @@
+<class_libraries>
+  <library path="lib/libruler_metrics">
+    <class name="ruler_metrics/battery_consumption_estimator"
+           type="ruler::BatteryConsumptionEstimator"
+           base_class_type="ruler::MetricsEstimator">
+      <description>
+        Metrics estimator that considers the robot's battery consumption in function of its resources usage during the execution of a given task.
+      </description>
+    </class>
+    <class name="ruler_metrics/displacement_estimator"
+           type="ruler::DisplacementEstimator"
+           base_class_type="ruler::MetricsEstimator">
+      <description>
+        Metrics estimator that considers the robot's displacement during the execution of a given task.
+      </description>
+    </class>
+  </library>
+</class_libraries>

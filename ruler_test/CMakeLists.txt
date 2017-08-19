@@ -2,14 +2,12 @@ cmake_minimum_required(VERSION 2.8.3)
 
 project(ruler_test)
 
-set(ROS_BUILD_TYPE Debug)
-
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
 )
 
-find_package(ruler REQUIRED
+find_package(ruler REQUIRED COMPONENTS
   ruler_msgs
 )
 

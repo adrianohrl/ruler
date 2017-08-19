@@ -21,6 +21,7 @@ include_directories(
 )
 
 set(H_FILES
+  include/ruler/plugins/metrics_calculator.h
   include/ruler/consumable_resource.h
   include/ruler/consumable_resource_reservation_request.h
   include/ruler/continuous_consumable_resource.h
@@ -29,12 +30,14 @@ set(H_FILES
   include/ruler/discrete_reusable_resource.h
   include/ruler/event.h
   include/ruler/event_types.h
+  include/ruler/metrics_estimator.h
   include/ruler/profile.h
   include/ruler/resource.h
   include/ruler/resource_interface.h
   include/ruler/resource_reservation_request.h
   include/ruler/reusable_resource.h
   include/ruler/reusable_resource_reservation_request.h
+  include/ruler/robot.h
   include/ruler/ruler.h
   include/ruler/task.h
   include/ruler/task_event.h
@@ -57,8 +60,10 @@ set(H_FILES
   include/utilities/functions/function.h
   include/utilities/functions/functions.h
   include/utilities/functions/linear_function.h
+  include/utilities/functions/probability_density_function.h
   include/utilities/functions/pulse_function.h
   include/utilities/functions/step_function.h
+  include/utilities/functions/time_probability_density_function.h
   include/utilities/functions/unary_pulse_function.h
   include/utilities/functions/unary_step_function.h
   include/utilities/has_id.h
@@ -80,8 +85,10 @@ set(CPP_FILES
   src/ruler/discrete_reusable_resource.cpp
   src/ruler/event.cpp
   src/ruler/event_types.cpp
+  src/ruler/metrics_estimator.cpp
   src/ruler/resource_interface.cpp
   src/ruler/resource_reservation_request.cpp
+  src/ruler/robot.cpp
   src/ruler/task.cpp
   src/ruler/task_event.cpp
   src/ruler/unary_consumable_resource.cpp
@@ -95,8 +102,10 @@ set(CPP_FILES
   src/utilities/functions/continuous_step_function.cpp
   src/utilities/functions/discrete_exponential_function.cpp
   src/utilities/functions/discrete_linear_function.cpp
+  src/utilities/functions/probability_density_function.cpp
   src/utilities/functions/discrete_pulse_function.cpp
   src/utilities/functions/discrete_step_function.cpp
+  src/utilities/functions/time_probability_density_function.cpp
   src/utilities/functions/unary_pulse_function.cpp
   src/utilities/functions/unary_step_function.cpp
   src/utilities/signal_types.cpp
@@ -116,15 +125,15 @@ target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
 )
 
-catkin_add_gtest(utest
+catkin_add_gtest(${PROJECT_NAME}_utest
   test/utest.cpp
   ${CPP_FILES}
 )
 
-add_dependencies(utest
+add_dependencies(${PROJECT_NAME}_utest
   ${catkin_EXPORTED_TARGETS}
 )
 
-target_link_libraries(utest
+target_link_libraries(${PROJECT_NAME}_utest
   ${catkin_LIBRARIES}
 )

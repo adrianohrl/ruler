@@ -53,6 +53,8 @@ public:
   bool isInterrupted() const;
   bool isRunning() const;
   bool hasFinished() const;
+  utilities::Interval<ros::Time>* getStartTimestampBounds() const;
+  utilities::Interval<ros::Time>* getEndTimestampBounds() const;
   virtual ruler_msgs::Task toMsg() const;
   using Subject<TaskEvent>::operator==;
   virtual bool operator==(const ruler_msgs::Task& msg) const;
