@@ -9,10 +9,58 @@
 
 namespace ruler
 {
-
-std::list<ResourceInterface*> Robot::getResources() const
+Robot::Robot(std::string id, std::string name,
+             std::list<ResourceInterface*> resources)
+    : HasId<std::string>::HasId(id), name_(name), resources_(resources)
 {
-  return resources_;
 }
 
+Robot::Robot(const Robot& robot)
+    : HasId<std::string>::HasId(robot), name_(robot.name_),
+      resources_(robot.resources_)
+{
+}
+
+Robot::~Robot()
+{
+  std::list<ResourceInterface*>::iterator it(resources_.begin());
+  while (it != resources_.end())
+  {
+    if (*it)
+    {
+      delete *it;
+      *it = NULL;
+    }
+    it++;
+  }
+}
+
+std::string Robot::getName() const { return name_; }
+
+std::list<ResourceInterface*> Robot::getResources() const { return resources_; }
+
+void Robot::addResource(ResourceInterface* resource)
+{
+  if (contains(*resource))
+  {
+    throw utilities::Exception("Unable to add the " + resource->str() +
+                               " resource. The " + str() +
+                               " robot already has it.");
+  }
+  resources_.push_back(resource);
+}
+
+bool Robot::contains(const ResourceInterface& resource) const
+{
+  std::list<ResourceInterface*>::const_iterator it(resources_.begin());
+  while (it != resources_.end())
+  {
+    if (**it == resource)
+    {
+      return true;
+    }
+    it++;
+  }
+  return false;
+}
 }

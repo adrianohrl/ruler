@@ -16,6 +16,12 @@ add_message_files(
     Task.msg
 )
 
+add_service_files(
+  DIRECTORY srv
+  FILES
+    CalculateMetrics.srv
+)
+
 generate_messages(
   DEPENDENCIES
     geometry_msgs

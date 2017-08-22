@@ -38,7 +38,6 @@ set(H_FILES
 set(CPP_FILES
   src/ruler/battery_consumption_estimator.cpp
   src/ruler/displacement_estimator.cpp
-  src/metrics_plugins.cpp
 )
 
 add_library(${PROJECT_NAME}

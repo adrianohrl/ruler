@@ -8,6 +8,7 @@
 #ifndef _RULER_TASK_H_
 #define _RULER_TASK_H_
 
+#include <geometry_msgs/Pose.h>
 #include <ros/time.h>
 #include "ruler/resource_interface.h"
 #include "ruler/task_event.h"
@@ -29,7 +30,8 @@ public:
   Task(std::string id, std::string name, ros::Duration expected_duration,
        bool preemptive = false,
        utilities::Interval<ros::Time>* start_timestamp_bounds = NULL,
-       utilities::Interval<ros::Time>* end_timestamp_bounds = NULL);
+       utilities::Interval<ros::Time>* end_timestamp_bounds = NULL,
+       std::list<geometry_msgs::Pose> waypoints = std::list<geometry_msgs::Pose>());
   Task(const ruler_msgs::Task& msg);
   Task(const Task& task);
   virtual ~Task();
@@ -55,6 +57,8 @@ public:
   bool hasFinished() const;
   utilities::Interval<ros::Time>* getStartTimestampBounds() const;
   utilities::Interval<ros::Time>* getEndTimestampBounds() const;
+  std::list<geometry_msgs::Pose> getWaypoints() const;
+  double getDistance() const;
   virtual ruler_msgs::Task toMsg() const;
   using Subject<TaskEvent>::operator==;
   virtual bool operator==(const ruler_msgs::Task& msg) const;
@@ -72,6 +76,7 @@ private:
   utilities::Interval<ros::Time>* end_timestamp_bounds_;
   std::list<utilities::Interval<ros::Time>*> interruption_intervals_;
   std::list<ResourceReservationRequest*> resource_reservation_requests_;
+  std::list<geometry_msgs::Pose> waypoints_;
 };
 }
 

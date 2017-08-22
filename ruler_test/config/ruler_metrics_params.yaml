@@ -1,6 +1,16 @@
-plugins:
+metrics:
   size: 2
-  plugin0:
-    name: 'ruler_metrics/battery_consumption_estimator'
-  plugin1:
-    name: 'ruler_metrics/displacement_estimator'
+  metric0:
+    name: 'utility/reward'
+    plugins:
+      size: 1
+      plugin1:
+        name: 'ruler_metrics/displacement_estimator'
+  metric1:
+    name: 'utility/cost'
+    plugins:
+      size: 2
+      plugin0:
+        name: 'ruler_metrics/battery_consumption_estimator'
+      plugin1:
+        name: 'ruler_metrics/displacement_estimator'

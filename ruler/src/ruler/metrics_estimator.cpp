@@ -10,7 +10,11 @@
 
 namespace ruler
 {
-void MetricsEstimator::initialize(Robot *robot)
+MetricsEstimator::MetricsEstimator() : robot_(NULL) {}
+
+MetricsEstimator::~MetricsEstimator() { robot_ = NULL; }
+
+void MetricsEstimator::initialize(Robot* robot)
 {
   if (!robot)
   {
@@ -19,20 +23,15 @@ void MetricsEstimator::initialize(Robot *robot)
   robot_ = robot;
 }
 
-MetricsEstimator::~MetricsEstimator()
+double MetricsEstimator::calculate(const ruler_msgs::Task& msg) const
 {
-  robot_ = NULL;
+  return calculate(Task(msg));
 }
-
-MetricsEstimator::MetricsEstimator() : robot_(NULL) {}
 
 std::list<ResourceInterface*> MetricsEstimator::getResources() const
 {
   return robot_->getResources();
 }
 
-bool MetricsEstimator::isInitialized() const
-{
-  return robot_;
-}
+bool MetricsEstimator::isInitialized() const { return robot_; }
 }

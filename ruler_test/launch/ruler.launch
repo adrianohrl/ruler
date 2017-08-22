@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="robot_id" default="robot1" />
+  <arg name="robot_params" default="$(find ruler_test)/config/$(arg robot_id)_params.yaml" />
+  <include file="$(find ruler)/launch/ruler.launch">
+    <arg name="robot_id" value="$(arg robot_id)" />
+    <arg name="robot_params" value="$(arg robot_params)" />
+  </include>
+</launch>

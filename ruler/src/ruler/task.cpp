@@ -13,11 +13,12 @@ namespace ruler
 Task::Task(std::string id, std::string name, ros::Duration expected_duration,
            bool preemptive,
            utilities::Interval<ros::Time>* start_timestamp_bounds,
-           utilities::Interval<ros::Time>* end_timestamp_bounds)
+           utilities::Interval<ros::Time>* end_timestamp_bounds,
+           std::list<geometry_msgs::Pose> waypoints)
     : Subject<TaskEvent>::Subject(id), name_(name),
       expected_duration_(expected_duration), preemptive_(preemptive),
       start_timestamp_bounds_(start_timestamp_bounds),
-      end_timestamp_bounds_(end_timestamp_bounds)
+      end_timestamp_bounds_(end_timestamp_bounds), waypoints_(waypoints)
 {
 }
 
@@ -42,6 +43,10 @@ Task::Task(const ruler_msgs::Task& msg)
         new utilities::Interval<ros::Time>(msg.min_interruption_timestamps[i],
                                            msg.max_interruption_timestamps[i]));
   }
+  for (int i(0); i < msg.waypoints.size(); i++)
+  {
+    waypoints_.push_back(msg.waypoints[i]);
+  }
 }
 
 Task::Task(const Task& task)
@@ -51,7 +56,8 @@ Task::Task(const Task& task)
       end_timestamp_(task.end_timestamp_),
       start_timestamp_bounds_(task.start_timestamp_bounds_),
       end_timestamp_bounds_(task.end_timestamp_bounds_),
-      interruption_intervals_(task.interruption_intervals_)
+      interruption_intervals_(task.interruption_intervals_),
+      waypoints_(task.waypoints_)
 {
 }
 
@@ -315,6 +321,30 @@ utilities::Interval<ros::Time>* Task::getEndTimestampBounds() const
   return end_timestamp_bounds_;
 }
 
+std::list<geometry_msgs::Pose> Task::getWaypoints() const { return waypoints_; }
+
+double Task::getDistance() const
+{
+  if (waypoints_.size() <= 1)
+  {
+    return 0.0;
+  }
+  std::list<geometry_msgs::Pose>::const_iterator it(waypoints_.begin());
+  geometry_msgs::Pose p1, p2;
+  p1 = *it;
+  it++;
+  double distance(0.0);
+  while (it != waypoints_.end())
+  {
+    p2 = *it;
+    distance += sqrt(pow(p2.position.x - p1.position.x, 2) +
+                     pow(p2.position.y - p1.position.y, 2));
+    it++;
+    p1 = p2;
+  }
+  return distance;
+}
+
 ruler_msgs::Task Task::toMsg() const
 {
   ruler_msgs::Task msg;
@@ -328,14 +358,20 @@ ruler_msgs::Task Task::toMsg() const
   msg.max_start_timestamp = start_timestamp_bounds_->getMax();
   msg.min_end_timestamp = end_timestamp_bounds_->getMin();
   msg.max_end_timestamp = end_timestamp_bounds_->getMax();
-  std::list<utilities::Interval<ros::Time>*>::const_iterator it(
+  std::list<utilities::Interval<ros::Time>*>::const_iterator intervals_it(
       interruption_intervals_.begin());
-  while (it != interruption_intervals_.end())
+  while (intervals_it != interruption_intervals_.end())
   {
-    utilities::Interval<ros::Time>* interruption_interval = *it;
+    utilities::Interval<ros::Time>* interruption_interval = *intervals_it;
     msg.min_interruption_timestamps.push_back(interruption_interval->getMin());
     msg.max_interruption_timestamps.push_back(interruption_interval->getMax());
-    it++;
+    intervals_it++;
+  }
+  std::list<geometry_msgs::Pose>::const_iterator waypoints_it(waypoints_.begin());
+  while (waypoints_it != waypoints_.end())
+  {
+    msg.waypoints.push_back(*waypoints_it);
+    waypoints_it++;
   }
   return msg;
 }

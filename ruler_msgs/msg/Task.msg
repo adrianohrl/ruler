@@ -10,3 +10,4 @@ time min_end_timestamp
 time max_end_timestamp
 time[] min_interruption_timestamps
 time[] max_interruption_timestamps
+geometry_msgs/Pose[] waypoints

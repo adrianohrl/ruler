@@ -2,7 +2,10 @@ cmake_minimum_required(VERSION 2.8.3)
 
 project(ruler)
 
+find_package(Boost REQUIRED)
+
 find_package(catkin REQUIRED COMPONENTS
+  pluginlib
   roscpp
   ruler_msgs
 )
@@ -11,16 +14,21 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS
+    pluginlib
     roscpp
     ruler_msgs
+  DEPENDS Boost
 )
 
 include_directories(
   include
+  ${Boost_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
 )
 
 set(H_FILES
+  include/nodes/ruler_node.h
+  include/nodes/metrics_service_server.h
   include/ruler/plugins/metrics_calculator.h
   include/ruler/consumable_resource.h
   include/ruler/consumable_resource_reservation_request.h
@@ -69,8 +77,9 @@ set(H_FILES
   include/utilities/has_id.h
   include/utilities/interval.h
   include/utilities/observer.h
-  include/utilities/ros_node.h
   include/utilities/ros_message_converter.h
+  include/utilities/ros_node.h
+  include/utilities/ros_service_server.h
   include/utilities/signal_type.h
   include/utilities/signal_types.h
   include/utilities/subject.h
@@ -79,6 +88,8 @@ set(H_FILES
 )
 
 set(CPP_FILES
+  src/nodes/ruler_node.cpp
+  src/nodes/metrics_service_server.cpp
   src/ruler/continuous_consumable_resource.cpp
   src/ruler/continuous_reusable_resource.cpp
   src/ruler/discrete_consumable_resource.cpp
@@ -118,10 +129,27 @@ add_library(${PROJECT_NAME}
 )
 
 add_dependencies(${PROJECT_NAME}
+  ${Boost_EXPORTED_TARGETS}
   ${catkin_EXPORTED_TARGETS}
 )
 
 target_link_libraries(${PROJECT_NAME}
+  ${Boost_LIBRARIES}
+  ${catkin_LIBRARIES}
+)
+
+add_executable(${PROJECT_NAME}_node
+  src/ruler_node.cpp
+  ${CPP_FILES}
+)
+
+add_dependencies(${PROJECT_NAME}_node
+  ${Boost_EXPORTED_TARGETS}
+  ${catkin_EXPORTED_TARGETS}
+)
+
+target_link_libraries(${PROJECT_NAME}_node
+  ${Boost_LIBRARIES}
   ${catkin_LIBRARIES}
 )
 
@@ -131,9 +159,11 @@ catkin_add_gtest(${PROJECT_NAME}_utest
 )
 
 add_dependencies(${PROJECT_NAME}_utest
+  ${Boost_EXPORTED_TARGETS}
   ${catkin_EXPORTED_TARGETS}
 )
 
 target_link_libraries(${PROJECT_NAME}_utest
+  ${Boost_LIBRARIES}
   ${catkin_LIBRARIES}
 )

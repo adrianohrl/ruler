@@ -1,0 +1,57 @@
+name: 'robot 3'
+metrics:
+  size: 1
+  metric0:
+    name: 'utility/reward'
+    plugins:
+      size: 1
+      plugin0:
+        name: 'ruler_metrics/displacement_estimator'
+resources:
+  size: 6
+  resource0:
+    type: 'consumable'          #'consumable' or 'reusable'
+    signal_type: 'continuous'   #'continuous', 'discrete', or 'unary'
+    id: 'r0'
+    name: 'resource 0'
+    latence: 3.4                # in seconds (default: 0.0 [s])
+    capacity: 10.0
+    initial_level: 3.0          # (default: 0.0)
+  resource1:
+    type: 'consumable'          #'consumable' or 'reusable'
+    signal_type: 'discrete'     #'continuous', 'discrete', or 'unary'
+    id: 'r1'
+    name: 'resource 1'
+    latence: 0.2                # in seconds (default: 0.0 [s])
+    capacity: 20
+    initial_level: 15           # (default: 0)
+  resource2:
+    type: 'consumable'          #'consumable' or 'reusable'
+    signal_type: 'unary'        #'continuous', 'discrete', or 'unary'
+    id: 'r2'
+    name: 'resource 2'
+    #latence: 0.0               # in seconds (default: 0.0 [s])
+    #initial_level: false       # (default: false)
+  resource3:
+    type: 'reusable'            #'consumable' or 'reusable'
+    signal_type: 'continuous'   #'continuous', 'discrete', or 'unary'
+    id: 'r3'
+    name: 'resource 3'
+    latence: 6.2                # in seconds (default: 0.0 [s])
+    capacity: 5.5
+    initial_level: 2.25         # (default: 0.0)
+  resource4:
+    type: 'reusable'            #'consumable' or 'reusable'
+    signal_type: 'discrete'     #'continuous', 'discrete', or 'unary'
+    id: 'r4'
+    name: 'resource 4'
+    latence: 1.0                # in seconds (default: 0.0 [s])
+    capacity: 4
+    #initial_level: 0           # (default: 0)
+  resource5:
+    type: 'reusable'            #'consumable' or 'reusable'
+    signal_type: 'unary'        #'continuous', 'discrete', or 'unary'
+    id: 'r5'
+    name: 'resource 5'
+    latence: 0.5                # in seconds (default: 0.0 [s])
+    initial_level: true         # (default: false)

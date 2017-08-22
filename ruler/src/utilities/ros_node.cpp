@@ -56,7 +56,14 @@ void ROSNode::spin()
 {
   ros::Rate loop_rate(loop_rate_);
   ROS_INFO_STREAM("   Reading " << *this << " parameters ...");
-  readParameters();
+  try
+  {
+    readParameters();
+  }
+  catch (const utilities::Exception& ex)
+  {
+    return;
+  }
   ROS_INFO_STREAM_COND(!isSettedUp(), "   Setting " << *this << " up ...");
   while (nh_->ok() && !isSettedUp())
   {

@@ -6,7 +6,10 @@
  *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)
  */
 
+#include <pluginlib/class_list_macros.h>
 #include "ruler/battery_consumption_estimator.h"
+
+PLUGINLIB_EXPORT_CLASS(ruler::BatteryConsumptionEstimator, ruler::MetricsEstimator)
 
 namespace ruler
 {

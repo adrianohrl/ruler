@@ -25,7 +25,7 @@ TEST(Plugins, calculus)
   delete estimator;
   estimator = new ruler::DisplacementEstimator();
   estimator->initialize(robot);
-  EXPECT_GE(tolerance, fabs(-3.0 - estimator->calculate(*task)));
+  EXPECT_GE(tolerance, fabs(12.0 - estimator->calculate(*task)));
   delete estimator;
   estimator = NULL;
 }
@@ -80,7 +80,7 @@ TEST(Plugins, loading)
     FAIL() << "Uncaught exception.";
   }
   estimator->initialize(robot);
-  EXPECT_GE(tolerance, fabs(-3.0 - estimator->calculate(*task)));
+  EXPECT_GE(tolerance, fabs(12.0 - estimator->calculate(*task)));
   delete robot;
   robot = NULL;
   delete task;
@@ -89,8 +89,24 @@ TEST(Plugins, loading)
 
 void init()
 {
-  robot = new ruler::Robot();
+  robot = new ruler::Robot("robot1", "robot1");
   task = new ruler::Task("t", "task", ros::Duration(10));
+  geometry_msgs::Pose waypoint0;
+  waypoint0.position.x = 0;
+  waypoint0.position.x = 0;
+  task->getWaypoints().push_back(waypoint0);
+  geometry_msgs::Pose waypoint1;
+  waypoint1.position.x = 0;
+  waypoint1.position.x = 3;
+  task->getWaypoints().push_back(waypoint1);
+  geometry_msgs::Pose waypoint2;
+  waypoint2.position.x = 4;
+  waypoint2.position.x = 0;
+  task->getWaypoints().push_back(waypoint2);
+  geometry_msgs::Pose waypoint3;
+  waypoint3.position.x = 0;
+  waypoint3.position.x = 0;
+  task->getWaypoints().push_back(waypoint3);
 }
 
 int main(int argc, char** argv)

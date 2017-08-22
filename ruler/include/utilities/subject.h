@@ -15,7 +15,7 @@
 
 namespace utilities
 {
-template <typename T> class Subject : public HasId<std::string, T>
+template <typename T> class Subject : public HasId<std::string>
 {
 public:
   virtual ~Subject();
@@ -35,13 +35,13 @@ private:
 
 template <typename T>
 Subject<T>::Subject(std::string id)
-    : HasId<std::string, T>::HasId(id)
+    : HasId<std::string>::HasId(id)
 {
 }
 
 template <typename T>
 Subject<T>::Subject(const Subject<T>& subject)
-    : HasId<std::string, T>::HasId(subject)
+    : HasId<std::string>::HasId(subject)
 {
 }
 

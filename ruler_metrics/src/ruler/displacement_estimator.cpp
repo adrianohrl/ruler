@@ -6,7 +6,10 @@
  *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)
  */
 
+#include <pluginlib/class_list_macros.h>
 #include "ruler/displacement_estimator.h"
+
+PLUGINLIB_EXPORT_CLASS(ruler::DisplacementEstimator, ruler::MetricsEstimator)
 
 namespace ruler
 {
@@ -29,6 +32,6 @@ double DisplacementEstimator::calculate(const Task& task) const
     throw utilities::Exception(
         "This displacement estimator must be initialized fistly.");
   }
-  return -3.0;
+  return task.getDistance();
 }
 }

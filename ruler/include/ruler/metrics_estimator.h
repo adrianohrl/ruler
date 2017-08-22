@@ -11,6 +11,7 @@
 
 #include "ruler/robot.h"
 #include "ruler/task.h"
+#include <ruler_msgs/Task.h>
 #include "utilities/exception.h"
 
 namespace ruler
@@ -19,6 +20,7 @@ class MetricsEstimator
 {
 public:
   virtual void initialize(Robot* robot);
+  double calculate(const ruler_msgs::Task& msg) const;
   virtual double calculate(const Task& task) const = 0;
   virtual ~MetricsEstimator();
 

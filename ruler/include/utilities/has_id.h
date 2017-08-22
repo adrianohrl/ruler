@@ -12,70 +12,63 @@
 
 namespace utilities
 {
-template <typename K, typename T> class HasId
+template <typename K> class HasId
 {
 public:
   virtual ~HasId();
   K getId() const;
   std::string str() const;
   const char* c_str() const;
-  bool operator==(const HasId<K, T>& has_id);
-  bool operator!=(const HasId<K, T>& has_id);
-  template <typename U, typename V>
-  friend std::ostream& operator<<(std::ostream& out, const HasId<U, V>& has_id);
+  bool operator==(const HasId<K>& has_id);
+  bool operator!=(const HasId<K>& has_id);
+  template <typename U>
+  friend std::ostream& operator<<(std::ostream& out, const HasId<U>& has_id);
 
 protected:
   HasId(const K& id);
-  HasId(const HasId<K, T>& has_id);
+  HasId(const HasId<K>& has_id);
   void setId(const K& id);
 
 private:
   const K id_;
 };
 
-template <typename K, typename T> HasId<K, T>::HasId(const K& id) : id_(id) {}
+template <typename K> HasId<K>::HasId(const K& id) : id_(id) {}
 
-template <typename K, typename T>
-HasId<K, T>::HasId(const HasId<K, T>& has_id)
-    : id_(has_id.id_)
+template <typename K> HasId<K>::HasId(const HasId<K>& has_id) : id_(has_id.id_)
 {
 }
 
-template <typename K, typename T> void HasId<K, T>::setId(const K& id)
-{
-  id_ = id;
-}
+template <typename K> void HasId<K>::setId(const K& id) { id_ = id; }
 
-template <typename K, typename T> HasId<K, T>::~HasId() {}
+template <typename K> HasId<K>::~HasId() {}
 
-template <typename K, typename T> K HasId<K, T>::getId() const { return id_; }
+template <typename K> K HasId<K>::getId() const { return id_; }
 
-template <typename K, typename T> std::string HasId<K, T>::str() const
+template <typename K> std::string HasId<K>::str() const
 {
   std::stringstream ss;
   ss << id_;
   return ss.str();
 }
 
-template <typename K, typename T> const char* HasId<K, T>::c_str() const
+template <typename K> const char* HasId<K>::c_str() const
 {
   return str().c_str();
 }
 
-template <typename K, typename T>
-bool HasId<K, T>::operator==(const HasId<K, T>& has_id)
+template <typename K> bool HasId<K>::operator==(const HasId<K>& has_id)
 {
   return id_ == has_id.id_;
 }
 
-template <typename K, typename T>
-bool HasId<K, T>::operator!=(const HasId<K, T>& has_id)
+template <typename K> bool HasId<K>::operator!=(const HasId<K>& has_id)
 {
   return id_ != has_id.id_;
 }
 
-template <typename K, typename T>
-std::ostream& operator<<(std::ostream& out, const HasId<K, T>& has_id)
+template <typename K>
+std::ostream& operator<<(std::ostream& out, const HasId<K>& has_id)
 {
   out << has_id.id_;
   return out;

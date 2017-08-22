@@ -14,7 +14,7 @@
 
 namespace utilities
 {
-template <typename T> class Observer : public HasId<std::string, T>
+template <typename T> class Observer : public HasId<std::string>
 {
 public:
   virtual ~Observer();
@@ -27,7 +27,7 @@ protected:
 
 template <typename T>
 Observer<T>::Observer(std::string id)
-    : HasId<std::string, T>::HasId(id)
+    : HasId<std::string>::HasId(id)
 {
   if (id.empty())
   {
@@ -37,7 +37,7 @@ Observer<T>::Observer(std::string id)
 
 template <typename T>
 Observer<T>::Observer(const Observer<T>& observer)
-    : HasId<std::string, T>::HasId(observer)
+    : HasId<std::string>::HasId(observer)
 {
 }
 
