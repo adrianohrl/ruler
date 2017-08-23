@@ -18,7 +18,7 @@ class Observer : public HasId<std::string>
 {
 public:
   virtual ~Observer();
-  virtual void update(const Event& event) = 0;
+  virtual void update(Event* event) = 0;
 
 protected:
   Observer(std::string id);

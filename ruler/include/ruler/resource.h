@@ -11,6 +11,7 @@
 #include <ros/duration.h>
 #include "ruler/profile.h"
 #include "ruler/resource_interface.h"
+#include <typeinfo>
 
 namespace ruler
 {
@@ -18,8 +19,8 @@ template <typename T> class Resource : public ResourceInterface
 {
 public:
   virtual ~Resource();
-  virtual void update(const utilities::Event& event);
-  virtual void update(const TaskEvent& event);
+  virtual void update(utilities::Event* event);
+  virtual void update(TaskEvent* event);
   virtual bool isConsumable() const;
   virtual bool isReusable() const;
   virtual bool isContinuous() const;
@@ -91,12 +92,15 @@ template <typename T> Resource<T>::~Resource()
   }
 }
 
-template <typename T> void Resource<T>::update(const utilities::Event &event)
+template <typename T> void Resource<T>::update(utilities::Event *event)
 {
-
+  if (typeid(*event) == typeid(TaskEvent))
+  {
+    Resource<T>::update((TaskEvent*) event);
+  }
 }
 
-template <typename T> void Resource<T>::update(const TaskEvent& event)
+template <typename T> void Resource<T>::update(TaskEvent* event)
 {
   profile_->update(event);
 }

@@ -41,7 +41,7 @@ void Subject::unregisterObserver(Observer* observer)
 
 void Subject::clearObservers() { observers_.clear(); }
 
-void Subject::notify(const Event& event)
+void Subject::notify(Event* event)
 {
   std::list<Observer*>::iterator it(observers_.begin());
   while (it != observers_.end())

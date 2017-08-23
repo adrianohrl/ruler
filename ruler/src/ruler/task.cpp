@@ -154,7 +154,9 @@ void Task::start(ros::Time timestamp)
                                " does not have any resource registered yet.");
   }
   start_timestamp_ = timestamp;
-  utilities::Subject::notify(TaskEvent(this, types::STARTED));
+  TaskEvent* event = new TaskEvent(this, types::STARTED);
+  utilities::Subject::notify(event);
+  delete event;
   ROS_DEBUG_STREAM(*this << " has just started.");
   last_event_timestamp_ = timestamp;
 }
@@ -179,7 +181,9 @@ void Task::interrupt(ros::Time timestamp)
     throw utilities::Exception(str() + " has already been interrupted.");
   }
   last_interruption_timestamp_ = timestamp;
-  utilities::Subject::notify(TaskEvent(this, types::INTERRUPTED));
+  TaskEvent* event = new TaskEvent(this, types::INTERRUPTED);
+  utilities::Subject::notify(event);
+  delete event;
   ROS_DEBUG_STREAM(*this << " has just interruped.");
   last_event_timestamp_ = timestamp;
 }
@@ -206,7 +210,9 @@ void Task::resume(ros::Time timestamp)
   interruption_intervals_.push_back(new utilities::Interval<ros::Time>(
       last_interruption_timestamp_, timestamp));
   last_interruption_timestamp_ = ros::Time();
-  utilities::Subject::notify(TaskEvent(this, types::RESUMED));
+  TaskEvent* event = new TaskEvent(this, types::RESUMED);
+  utilities::Subject::notify(event);
+  delete event;
   ROS_DEBUG_STREAM(*this << " has just resumed.");
   last_event_timestamp_ = timestamp;
 }
@@ -232,7 +238,9 @@ void Task::finish(ros::Time timestamp)
     interruption_intervals_.push_back(new utilities::Interval<ros::Time>(
         last_interruption_timestamp_, end_timestamp_));
   }
-  utilities::Subject::notify(TaskEvent(this, types::FINISHED));
+  TaskEvent* event = new TaskEvent(this, types::FINISHED);
+  utilities::Subject::notify(event);
+  delete event;
   utilities::Subject::clearObservers();
   ROS_DEBUG_STREAM(*this << " has just finished.");
   last_event_timestamp_ = timestamp;

@@ -26,7 +26,7 @@ protected:
   void registerObserver(Observer* observer);
   void unregisterObserver(Observer* observer);
   void clearObservers();
-  void notify(const Event& event);
+  void notify(Event* event);
   bool empty() const;
 
 private:

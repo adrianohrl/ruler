@@ -24,7 +24,7 @@ public:
                utilities::functions::Function<T>* quantity_function);
   TaskFunction(const TaskFunction<T>& task_function);
   virtual ~TaskFunction();
-  void update(const TaskEvent& event);
+  void update(TaskEvent *event);
   bool isNegated() const;
   T getLevel(ros::Time t) const;
   Resource<T>* getResource() const;
@@ -33,7 +33,6 @@ public:
 private:
   Resource<T>* resource_;
   Task* task_;
-  std::list<TaskEvent> events_;
   utilities::functions::Function<T>* quantity_function_;
   std::list<utilities::functions::Function<T>*> interrupted_quantity_functions_;
 };
@@ -82,11 +81,11 @@ template <typename T> TaskFunction<T>::~TaskFunction()
 }
 
 template <typename T>
-void TaskFunction<T>::update(const TaskEvent& event)
+void TaskFunction<T>::update(TaskEvent* event)
 {
   if (resource_->isReusable())
   {
-    if (event.getType() == types::INTERRUPTED)
+    if (event->getType() == types::INTERRUPTED)
     {
       ros::Time timestamp(task_->getLastInterruptionTimestamp());
       double d0(task_->getDuration(timestamp));
@@ -97,7 +96,7 @@ void TaskFunction<T>::update(const TaskEvent& event)
           new utilities::functions::StepFunction<T>(d0, qf, ascending, negated);
       interrupted_quantity_functions_.push_back(interrupted_quantity_function);
     }
-    else if (event.getType() == types::RESUMED)
+    else if (event->getType() == types::RESUMED)
     {
       if (interrupted_quantity_functions_.empty())
       {
@@ -126,7 +125,7 @@ void TaskFunction<T>::update(const TaskEvent& event)
           --interrupted_quantity_functions_.end());
       interrupted_quantity_functions_.push_back(interrupted_quantity_function);
     }
-    else if (event.getType() == types::FINISHED)
+    else if (event->getType() == types::FINISHED)
     {
       ros::Time timestamp(task_->getEndTimestamp());
       ros::Duration d0(task_->getEndTimestamp() - task_->getStartTimestamp());
@@ -138,7 +137,6 @@ void TaskFunction<T>::update(const TaskEvent& event)
       interrupted_quantity_functions_.push_back(interrupted_quantity_function);
     }
   }
-  events_.push_back(event);
 }
 
 template <typename T> bool TaskFunction<T>::isNegated() const
