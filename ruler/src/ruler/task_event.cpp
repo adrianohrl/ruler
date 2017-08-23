@@ -13,16 +13,21 @@ namespace ruler
 {
 
 TaskEvent::TaskEvent(Task* task, EventType type, ros::Time timestamp)
-    : Event::Event(type, timestamp), task_(task)
+    : Event::Event(task, timestamp), type_(type)
 {
 }
 
 TaskEvent::TaskEvent(const TaskEvent& event)
-    : Event::Event(event), task_(event.task_)
+    : Event::Event(event), type_(event.type_)
 {
 }
 
-TaskEvent::~TaskEvent() { task_ = NULL; }
+TaskEvent::~TaskEvent() {}
 
-Task* TaskEvent::getTask() const { return task_; }
+Task* TaskEvent::getTask() const
+{
+  return (Task*) utilities::Event::getSubject();
+}
+
+EventType TaskEvent::getType() const { return type_; }
 }

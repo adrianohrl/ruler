@@ -25,7 +25,7 @@ public:
   T getCapacity() const;
   T getInitialLevel() const;
   T getLevel(ros::Time t = ros::Time::now()) const;
-  void update(const TaskEvent& notification);
+  void update(const TaskEvent& event);
   void addTaskFunction(TaskFunction<T>* task_function);
   void removeTaskFunction(Task* task);
 
@@ -109,15 +109,15 @@ template <typename T> T Profile<T>::getLevel(ros::Time t) const
   return level;
 }
 
-template <typename T> void Profile<T>::update(const TaskEvent& notification)
+template <typename T> void Profile<T>::update(const TaskEvent& event)
 {
   typename std::list<TaskFunction<T>*>::iterator it(task_functions_.begin());
   while (it != task_functions_.end())
   {
     TaskFunction<T>* task_function = *it;
-    if (task_function->getTask() == notification.getTask())
+    if (task_function->getTask() == event.getTask())
     {
-      task_function->update(notification);
+      task_function->update(event);
     }
     it++;
   }

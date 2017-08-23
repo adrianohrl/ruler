@@ -9,23 +9,23 @@
 #define _RULER_ROBOT_H_
 
 #include "ruler/resource_interface.h"
-#include "utilities/has_id.h"
+#include <utilities/has_name.h>
 
 namespace ruler
 {
-class Robot : public utilities::HasId<std::string>
+class Robot : public utilities::HasName
 {
 public:
-  Robot(std::string id, std::string name, std::list<ResourceInterface*> resources = std::list<ResourceInterface*>());
+  Robot(std::string id, std::string name,
+        std::list<ResourceInterface*> resources =
+            std::list<ResourceInterface*>());
   Robot(const Robot& robot);
   virtual ~Robot();
-  std::string getName() const;
   std::list<ResourceInterface*> getResources() const;
   void addResource(ResourceInterface* resource);
   bool contains(const ResourceInterface& resource) const;
 
 private:
-  std::string name_;
   std::list<ResourceInterface*> resources_;
 };
 }

@@ -23,7 +23,7 @@ class ResourceReservationRequest;
 
 template <typename T> class Resource;
 
-class Task : public utilities::Subject<TaskEvent>,
+class Task : public utilities::Subject,
              public utilities::ROSMessageConverter<ruler_msgs::Task>
 {
 public:
@@ -60,9 +60,9 @@ public:
   std::list<geometry_msgs::Pose> getWaypoints() const;
   double getDistance() const;
   virtual ruler_msgs::Task toMsg() const;
-  using Subject<TaskEvent>::operator==;
+  using Subject::operator==;
   virtual bool operator==(const ruler_msgs::Task& msg) const;
-  using Subject<TaskEvent>::operator!=;
+  using Subject::operator!=;
 
 private:
   std::string name_;

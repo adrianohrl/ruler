@@ -19,8 +19,12 @@ public:
   K getId() const;
   std::string str() const;
   const char* c_str() const;
+  bool operator<(const HasId<K>& has_id);
+  bool operator<=(const HasId<K>& has_id);
   bool operator==(const HasId<K>& has_id);
   bool operator!=(const HasId<K>& has_id);
+  bool operator>=(const HasId<K>& has_id);
+  bool operator>(const HasId<K>& has_id);
   template <typename U>
   friend std::ostream& operator<<(std::ostream& out, const HasId<U>& has_id);
 
@@ -57,6 +61,16 @@ template <typename K> const char* HasId<K>::c_str() const
   return str().c_str();
 }
 
+template <typename K> bool HasId<K>::operator<(const HasId<K>& has_id)
+{
+  return id_ < has_id.id_;
+}
+
+template <typename K> bool HasId<K>::operator<=(const HasId<K>& has_id)
+{
+  return id_ <= has_id.id_;
+}
+
 template <typename K> bool HasId<K>::operator==(const HasId<K>& has_id)
 {
   return id_ == has_id.id_;
@@ -65,6 +79,16 @@ template <typename K> bool HasId<K>::operator==(const HasId<K>& has_id)
 template <typename K> bool HasId<K>::operator!=(const HasId<K>& has_id)
 {
   return id_ != has_id.id_;
+}
+
+template <typename K> bool HasId<K>::operator>=(const HasId<K>& has_id)
+{
+  return id_ >= has_id.id_;
+}
+
+template <typename K> bool HasId<K>::operator>(const HasId<K>& has_id)
+{
+  return id_ > has_id.id_;
 }
 
 template <typename K>

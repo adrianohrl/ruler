@@ -18,7 +18,8 @@ template <typename T> class Resource : public ResourceInterface
 {
 public:
   virtual ~Resource();
-  virtual void update(const TaskEvent& notification);
+  virtual void update(const utilities::Event& event);
+  virtual void update(const TaskEvent& event);
   virtual bool isConsumable() const;
   virtual bool isReusable() const;
   virtual bool isContinuous() const;
@@ -90,9 +91,14 @@ template <typename T> Resource<T>::~Resource()
   }
 }
 
-template <typename T> void Resource<T>::update(const TaskEvent& notification)
+template <typename T> void Resource<T>::update(const utilities::Event &event)
 {
-  profile_->update(notification);
+
+}
+
+template <typename T> void Resource<T>::update(const TaskEvent& event)
+{
+  profile_->update(event);
 }
 
 template <typename T> bool Resource<T>::isConsumable() const { return false; }

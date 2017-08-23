@@ -11,12 +11,12 @@ namespace ruler
 {
 
 ResourceInterface::ResourceInterface(const std::string id)
-    : Observer<TaskEvent>::Observer(id)
+    : Observer::Observer(id)
 {
 }
 
 ResourceInterface::ResourceInterface(const ResourceInterface& resource)
-    : Observer<TaskEvent>::Observer(resource)
+    : Observer::Observer(resource)
 {
 }
 

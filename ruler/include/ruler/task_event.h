@@ -9,22 +9,25 @@
 #ifndef _RULER_TASK_EVENT_H_
 #define _RULER_TASK_EVENT_H_
 
-#include "ruler/event.h"
+#include "ruler/event_types.h"
+#include "utilities/event.h"
 
 namespace ruler
 {
 class Task;
 
-class TaskEvent : public Event
+class TaskEvent : public utilities::Event
 {
 public:
-  TaskEvent(Task* task, EventType type, ros::Time timestamp = ros::Time::now());
+  TaskEvent(Task* task, EventType type,
+            ros::Time timestamp = ros::Time::now());
   TaskEvent(const TaskEvent& event);
   virtual ~TaskEvent();
   Task* getTask() const;
+  EventType getType() const;
 
 private:
-  Task* task_;
+  EventType type_;
 };
 }
 

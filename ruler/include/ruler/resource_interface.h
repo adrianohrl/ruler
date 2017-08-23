@@ -16,7 +16,7 @@
 
 namespace ruler
 {
-class ResourceInterface : public utilities::Observer<TaskEvent>,
+class ResourceInterface : public utilities::Observer,
                           public utilities::ROSMessageConverter<ruler_msgs::Resource>
 {
 public:
@@ -27,7 +27,7 @@ public:
   virtual bool isDiscrete() const = 0;
   virtual bool isUnary() const = 0;
   virtual utilities::SignalTypeEnum getSignalType() const = 0;
-  using Observer<TaskEvent>::operator==;
+  using Observer::operator==;
   virtual bool operator==(const ruler_msgs::Resource& msg) const;
 
 protected:

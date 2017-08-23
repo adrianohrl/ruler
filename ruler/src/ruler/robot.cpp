@@ -11,13 +11,12 @@ namespace ruler
 {
 Robot::Robot(std::string id, std::string name,
              std::list<ResourceInterface*> resources)
-    : HasId<std::string>::HasId(id), name_(name), resources_(resources)
+    : HasName::HasName(name, id), resources_(resources)
 {
 }
 
 Robot::Robot(const Robot& robot)
-    : HasId<std::string>::HasId(robot), name_(robot.name_),
-      resources_(robot.resources_)
+    : HasName::HasName(robot), resources_(robot.resources_)
 {
 }
 
@@ -34,8 +33,6 @@ Robot::~Robot()
     it++;
   }
 }
-
-std::string Robot::getName() const { return name_; }
 
 std::list<ResourceInterface*> Robot::getResources() const { return resources_; }
 

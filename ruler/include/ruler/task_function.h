@@ -24,7 +24,7 @@ public:
                utilities::functions::Function<T>* quantity_function);
   TaskFunction(const TaskFunction<T>& task_function);
   virtual ~TaskFunction();
-  void update(const TaskEvent& notification);
+  void update(const TaskEvent& event);
   bool isNegated() const;
   T getLevel(ros::Time t) const;
   Resource<T>* getResource() const;
@@ -82,11 +82,11 @@ template <typename T> TaskFunction<T>::~TaskFunction()
 }
 
 template <typename T>
-void TaskFunction<T>::update(const TaskEvent& notification)
+void TaskFunction<T>::update(const TaskEvent& event)
 {
   if (resource_->isReusable())
   {
-    if (notification.getType() == types::INTERRUPTED)
+    if (event.getType() == types::INTERRUPTED)
     {
       ros::Time timestamp(task_->getLastInterruptionTimestamp());
       double d0(task_->getDuration(timestamp));
@@ -97,7 +97,7 @@ void TaskFunction<T>::update(const TaskEvent& notification)
           new utilities::functions::StepFunction<T>(d0, qf, ascending, negated);
       interrupted_quantity_functions_.push_back(interrupted_quantity_function);
     }
-    else if (notification.getType() == types::RESUMED)
+    else if (event.getType() == types::RESUMED)
     {
       if (interrupted_quantity_functions_.empty())
       {
@@ -126,7 +126,7 @@ void TaskFunction<T>::update(const TaskEvent& notification)
           --interrupted_quantity_functions_.end());
       interrupted_quantity_functions_.push_back(interrupted_quantity_function);
     }
-    else if (notification.getType() == types::FINISHED)
+    else if (event.getType() == types::FINISHED)
     {
       ros::Time timestamp(task_->getEndTimestamp());
       ros::Duration d0(task_->getEndTimestamp() - task_->getStartTimestamp());
@@ -138,7 +138,7 @@ void TaskFunction<T>::update(const TaskEvent& notification)
       interrupted_quantity_functions_.push_back(interrupted_quantity_function);
     }
   }
-  events_.push_back(notification);
+  events_.push_back(event);
 }
 
 template <typename T> bool TaskFunction<T>::isNegated() const

@@ -15,7 +15,7 @@ Task::Task(std::string id, std::string name, ros::Duration expected_duration,
            utilities::Interval<ros::Time>* start_timestamp_bounds,
            utilities::Interval<ros::Time>* end_timestamp_bounds,
            std::list<geometry_msgs::Pose> waypoints)
-    : Subject<TaskEvent>::Subject(id), name_(name),
+    : Subject::Subject(id), name_(name),
       expected_duration_(expected_duration), preemptive_(preemptive),
       start_timestamp_bounds_(start_timestamp_bounds),
       end_timestamp_bounds_(end_timestamp_bounds), waypoints_(waypoints)
@@ -23,7 +23,7 @@ Task::Task(std::string id, std::string name, ros::Duration expected_duration,
 }
 
 Task::Task(const ruler_msgs::Task& msg)
-    : Subject<TaskEvent>::Subject(msg.header.frame_id), name_(msg.name),
+    : Subject::Subject(msg.header.frame_id), name_(msg.name),
       expected_duration_(msg.expected_duration), preemptive_(msg.preemptive),
       start_timestamp_bounds_(NULL), end_timestamp_bounds_(NULL)
 {
@@ -50,7 +50,7 @@ Task::Task(const ruler_msgs::Task& msg)
 }
 
 Task::Task(const Task& task)
-    : Subject<TaskEvent>::Subject(task), name_(task.name_),
+    : Subject::Subject(task), name_(task.name_),
       expected_duration_(task.expected_duration_),
       preemptive_(task.preemptive_), start_timestamp_(task.start_timestamp_),
       end_timestamp_(task.end_timestamp_),
@@ -115,7 +115,7 @@ void Task::addResource(ResourceInterface* resource)
                                " resource. The " + str() +
                                " is already running.");
   }
-  utilities::Subject<TaskEvent>::registerObserver(resource);
+  utilities::Subject::registerObserver(resource);
 }
 
 void Task::removeResource(ResourceInterface* resource)
@@ -126,7 +126,7 @@ void Task::removeResource(ResourceInterface* resource)
                                " resource. The " + str() +
                                " is still running.");
   }
-  utilities::Subject<TaskEvent>::unregisterObserver(resource);
+  utilities::Subject::unregisterObserver(resource);
 }
 
 void Task::start(ros::Time timestamp)
@@ -148,13 +148,13 @@ void Task::start(ros::Time timestamp)
   {
     throw utilities::Exception(str() + " has already been started.");
   }
-  if (utilities::Subject<TaskEvent>::empty())
+  if (utilities::Subject::empty())
   {
     throw utilities::Exception(str() +
                                " does not have any resource registered yet.");
   }
   start_timestamp_ = timestamp;
-  utilities::Subject<TaskEvent>::notify(TaskEvent(this, types::STARTED));
+  utilities::Subject::notify(TaskEvent(this, types::STARTED));
   ROS_DEBUG_STREAM(*this << " has just started.");
   last_event_timestamp_ = timestamp;
 }
@@ -179,7 +179,7 @@ void Task::interrupt(ros::Time timestamp)
     throw utilities::Exception(str() + " has already been interrupted.");
   }
   last_interruption_timestamp_ = timestamp;
-  utilities::Subject<TaskEvent>::notify(TaskEvent(this, types::INTERRUPTED));
+  utilities::Subject::notify(TaskEvent(this, types::INTERRUPTED));
   ROS_DEBUG_STREAM(*this << " has just interruped.");
   last_event_timestamp_ = timestamp;
 }
@@ -206,7 +206,7 @@ void Task::resume(ros::Time timestamp)
   interruption_intervals_.push_back(new utilities::Interval<ros::Time>(
       last_interruption_timestamp_, timestamp));
   last_interruption_timestamp_ = ros::Time();
-  utilities::Subject<TaskEvent>::notify(TaskEvent(this, types::RESUMED));
+  utilities::Subject::notify(TaskEvent(this, types::RESUMED));
   ROS_DEBUG_STREAM(*this << " has just resumed.");
   last_event_timestamp_ = timestamp;
 }
@@ -232,13 +232,13 @@ void Task::finish(ros::Time timestamp)
     interruption_intervals_.push_back(new utilities::Interval<ros::Time>(
         last_interruption_timestamp_, end_timestamp_));
   }
-  utilities::Subject<TaskEvent>::notify(TaskEvent(this, types::FINISHED));
-  utilities::Subject<TaskEvent>::clearObservers();
+  utilities::Subject::notify(TaskEvent(this, types::FINISHED));
+  utilities::Subject::clearObservers();
   ROS_DEBUG_STREAM(*this << " has just finished.");
   last_event_timestamp_ = timestamp;
 }
 
-void Task::clearResources() { utilities::Subject<TaskEvent>::clearObservers(); }
+void Task::clearResources() { utilities::Subject::clearObservers(); }
 
 double Task::getDuration(ros::Time t) const
 {

@@ -36,7 +36,6 @@ set(H_FILES
   include/ruler/continuous_reusable_resource.h
   include/ruler/discrete_consumable_resource.h
   include/ruler/discrete_reusable_resource.h
-  include/ruler/event.h
   include/ruler/event_types.h
   include/ruler/metrics_estimator.h
   include/ruler/profile.h
@@ -56,6 +55,7 @@ set(H_FILES
   include/utilities/discrete_signal_type.h
   include/utilities/enum_converter.h
   include/utilities/exception.h
+  include/utilities/event.h
   include/utilities/functions/continuous_exponential_function.h
   include/utilities/functions/continuous_linear_function.h
   include/utilities/functions/continuous_pulse_function.h
@@ -75,6 +75,7 @@ set(H_FILES
   include/utilities/functions/unary_pulse_function.h
   include/utilities/functions/unary_step_function.h
   include/utilities/has_id.h
+  include/utilities/has_name.h
   include/utilities/interval.h
   include/utilities/observer.h
   include/utilities/ros_message_converter.h
@@ -94,7 +95,6 @@ set(CPP_FILES
   src/ruler/continuous_reusable_resource.cpp
   src/ruler/discrete_consumable_resource.cpp
   src/ruler/discrete_reusable_resource.cpp
-  src/ruler/event.cpp
   src/ruler/event_types.cpp
   src/ruler/metrics_estimator.cpp
   src/ruler/resource_interface.cpp
@@ -107,6 +107,7 @@ set(CPP_FILES
   src/utilities/continuous_signal_type.cpp
   src/utilities/discrete_signal_type.cpp
   src/utilities/exception.cpp
+  src/utilities/event.cpp
   src/utilities/functions/continuous_exponential_function.cpp
   src/utilities/functions/continuous_linear_function.cpp
   src/utilities/functions/continuous_pulse_function.cpp
@@ -119,8 +120,11 @@ set(CPP_FILES
   src/utilities/functions/time_probability_density_function.cpp
   src/utilities/functions/unary_pulse_function.cpp
   src/utilities/functions/unary_step_function.cpp
-  src/utilities/signal_types.cpp
+  src/utilities/has_name.cpp
+  src/utilities/observer.cpp
   src/utilities/ros_node.cpp
+  src/utilities/signal_types.cpp
+  src/utilities/subject.cpp
   src/utilities/unary_signal_type.cpp
 )
 
