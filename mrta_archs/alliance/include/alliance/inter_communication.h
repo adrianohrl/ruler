@@ -7,10 +7,12 @@ namespace alliance
 {
 class Robot;
 
+class BehaviourSet;
+
 class InterCommunication : public utilities::BeaconSignalObserver
 {
 public:
-  InterCommunication(Robot *robot);
+  InterCommunication(Robot *robot, BehaviourSet* behaviour_set);
   InterCommunication(const InterCommunication& inter_communication);
   virtual ~InterCommunication();
   bool received(ros::Time timestamp = ros::Time::now()) const;

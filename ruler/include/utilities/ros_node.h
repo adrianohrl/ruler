@@ -19,7 +19,7 @@ class ROSNode
 {
 public:
   virtual ~ROSNode(); // destructor
-  virtual void spin(); // standard spin method (according to the given loop rate)
+  virtual void run(); // standard spin method (according to the given loop rate)
   friend std::ostream& operator<<(std::ostream& out, const ROSNode& node);
 
 protected:

@@ -3,7 +3,7 @@
   <arg name="robot_id" />
   <arg name="robot_params" />
   <group ns="$(arg robot_id)">
-    <node name="alliance_node" pkg="alliance" type="alliance_node" output="screen">
+    <node name="alliance_node" pkg="alliance" type="alliance_node" output="screen"> <!-- launch-prefix="valgrind">-->
       <param name="id" type="string" value="$(arg robot_id)" />
       <rosparam file="$(arg robot_params)" command="load" />
     </node>

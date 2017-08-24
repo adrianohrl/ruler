@@ -16,6 +16,9 @@ BeaconSignalObserver::~BeaconSignalObserver() {}
 
 void BeaconSignalObserver::update(Event* event)
 {
-  throw utilities::Exception("This update method must not be used.");
+  if (typeid(*event) == typeid(BeaconSignalEvent))
+  {
+    update((BeaconSignalEvent*) event);
+  }
 }
 }

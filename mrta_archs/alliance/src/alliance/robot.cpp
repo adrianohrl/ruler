@@ -110,15 +110,39 @@ void Robot::setImpatience(double fast_rate)
 
 void Robot::addBehaviourSet(BehaviourSet* behaviour_set)
 {
-  if (behaviour_set)
+  if (!behaviour_set)
   {
-    behaviour_sets_.push_back(behaviour_set);
+    ROS_ERROR_STREAM("The given robot's behaviour set must not be null.");
+    return;
+  }
+  if (contains(*behaviour_set))
+  {
+    ROS_WARN_STREAM(*this << " robot already have the " << *behaviour_set
+                          << " behaviour set.");
+    return;
   }
   std::list<BehaviourSet*>::iterator it(behaviour_sets_.begin());
   while (it != behaviour_sets_.end())
   {
-    behaviour_set->registerActivitySuppression(*it);
+    BehaviourSet* robot_behaviour_set = *it;
+    behaviour_set->registerActivitySuppression(robot_behaviour_set);
+    robot_behaviour_set->registerActivitySuppression(behaviour_set);
     it++;
   }
+  behaviour_sets_.push_back(behaviour_set);
+}
+
+bool Robot::contains(const BehaviourSet& behaviour_set) const
+{
+  std::list<BehaviourSet*>::const_iterator it(behaviour_sets_.begin());
+  while (it != behaviour_sets_.end())
+  {
+    if (**it == behaviour_set)
+    {
+      return true;
+    }
+    it++;
+  }
+  return false;
 }
 }

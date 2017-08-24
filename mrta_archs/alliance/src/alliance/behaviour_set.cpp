@@ -6,7 +6,7 @@ namespace alliance
 {
 BehaviourSet::BehaviourSet(Robot* robot, Task* task)
     : Subject::Subject(robot->getId() + "/" + task->getId()), task_(task),
-      motivational_behaviour_(new MotivationalBehaviour(robot))
+      motivational_behaviour_(new MotivationalBehaviour(robot, this))
 {
 }
 

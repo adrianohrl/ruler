@@ -11,7 +11,7 @@ int main(int argc, char** argv)
 {
   ros::init(argc, argv, "task_generator_node");
   ruler_test::TaskGeneratorNode* node = new ruler_test::TaskGeneratorNode();
-  node->spin();
+  node->run();
   delete node;
   return EXIT_SUCCESS;
 }

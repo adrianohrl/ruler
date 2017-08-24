@@ -38,6 +38,7 @@ private:
   BehaviourSet* active_behaviour_set_;
   std::list<BehaviourSet*> behaviour_sets_;
   Impatience* impatience_;
+  bool contains(const BehaviourSet& behaviour_set) const;
 };
 }
 

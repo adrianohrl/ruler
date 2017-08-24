@@ -21,8 +21,10 @@ private:
   ros::Publisher beacon_signal_pub_;
   ros::Subscriber beacon_signal_sub_;
   virtual void readParameters();
+  virtual void init();
   virtual void controlLoop();
   void beaconSignalCallback(const alliance_msgs::BeaconSignal& msg);
+  void registerBeaconSignalObservers();
 };
 }
 

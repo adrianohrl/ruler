@@ -5,8 +5,8 @@
 
 namespace alliance
 {
-ActivitySuppression::ActivitySuppression(Robot* robot)
-    : Observer::Observer(robot->getId() + "/activity_suppression"),
+ActivitySuppression::ActivitySuppression(Robot* robot, BehaviourSet *behaviour_set)
+    : Observer::Observer(behaviour_set->getId() + "/activity_suppression"),
       robot_(robot)
 {
 }

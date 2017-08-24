@@ -8,8 +8,8 @@ AllianceNode::AllianceNode(ros::NodeHandle* nh, float loop_rate)
       robot_(NULL)
 {
   beacon_signal_pub_ =
-      nh->advertise<alliance_msgs::BeaconSignal>("beacon_signal", 10);
-  beacon_signal_sub_ = nh->subscribe("beacon_signal", 100,
+      nh->advertise<alliance_msgs::BeaconSignal>("/alliance/beacon_signal", 10);
+  beacon_signal_sub_ = nh->subscribe("/alliance/beacon_signal", 100,
                                      &AllianceNode::beaconSignalCallback, this);
 }
 
@@ -112,7 +112,6 @@ void AllianceNode::readParameters()
       quiet_duration = 0.0;
     }
     robot_->setQuietDuration(ros::Duration(quiet_duration));
-
     robot_->addBehaviourSet(behaviour_set);
   }
   if (robot_->getBehaviourSets().empty())
@@ -122,16 +121,38 @@ void AllianceNode::readParameters()
   }
 }
 
+void AllianceNode::init()
+{
+  /** registering beacon signal message observers **/
+  std::list<alliance::BehaviourSet*> behaviour_sets(robot_->getBehaviourSets());
+  std::list<alliance::BehaviourSet*>::iterator it(
+      behaviour_sets.begin());
+  while (it != behaviour_sets.end())
+  {
+    alliance::MotivationalBehaviour* motivational_behaviour =
+        ((alliance::BehaviourSet*)*it)->getMotivationalBehaviour();
+    BeaconSignalSubject::registerObserver(
+        motivational_behaviour->getInterCommunication());
+    it++;
+  }
+}
+
 void AllianceNode::controlLoop()
 {
-  if (robot_->isActive())
+  /*if (robot_->isActive())
   {
     alliance_msgs::BeaconSignal msg;
     msg.header.stamp = ros::Time::now();
     msg.header.frame_id = robot_->getId();
     msg.task_id = robot_->getExecutingTask()->getId();
     beacon_signal_pub_.publish(msg);
-  }
+  }*/
+  ros::Duration d(0.5);
+  d.sleep();
+  alliance_msgs::BeaconSignal msg;
+  msg.header.stamp = ros::Time::now();
+  msg.header.frame_id = robot_->getId();
+  beacon_signal_pub_.publish(msg);
 }
 
 void AllianceNode::beaconSignalCallback(const alliance_msgs::BeaconSignal& msg)

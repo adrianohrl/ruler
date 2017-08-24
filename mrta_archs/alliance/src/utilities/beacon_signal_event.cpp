@@ -6,7 +6,7 @@ namespace utilities
 {
 BeaconSignalEvent::BeaconSignalEvent(BeaconSignalSubject* subject,
                                      const alliance_msgs::BeaconSignal& msg)
-    : Event::Event(subject, msg.header.stamp)
+    : Event::Event(subject, msg.header.stamp), msg_(msg)
 {
 }
 

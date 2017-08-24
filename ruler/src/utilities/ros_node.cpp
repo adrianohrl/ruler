@@ -47,12 +47,12 @@ ROSNode::~ROSNode()
 }
 
 /**
- * @brief ROSNode::spin loops while there is not another instance
+ * @brief ROSNode::run loops while there is not another instance
  * of this node with this node name, or while the Ctrl+C buttons
  * is not pressed at the terminal. In addition, it periodicly updates
  * this node, as well as, controls the updates rate.
  */
-void ROSNode::spin()
+void ROSNode::run()
 {
   ros::Rate loop_rate(loop_rate_);
   ROS_INFO_STREAM("   Reading " << *this << " parameters ...");

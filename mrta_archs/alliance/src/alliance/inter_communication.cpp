@@ -3,8 +3,8 @@
 
 namespace alliance
 {
-InterCommunication::InterCommunication(Robot* robot)
-    : BeaconSignalObserver::BeaconSignalObserver(robot->getId() +
+InterCommunication::InterCommunication(Robot* robot, BehaviourSet *behaviour_set)
+    : BeaconSignalObserver::BeaconSignalObserver(behaviour_set->getId() +
                                                  "/inter_communication"),
       robot_(robot)
 {
@@ -27,6 +27,5 @@ void InterCommunication::update(utilities::BeaconSignalEvent* event)
   {
     return;
   }
-  ROS_INFO_STREAM("Updating the " << *this << "observer.");
 }
 }

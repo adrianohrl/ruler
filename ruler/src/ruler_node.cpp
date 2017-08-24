@@ -11,7 +11,7 @@ int main(int argc, char** argv)
 {
   ros::init(argc, argv, "ruler_node");
   nodes::RulerNode* node = new nodes::RulerNode();
-  node->spin();
+  node->run();
   delete node;
   return EXIT_SUCCESS;
 }

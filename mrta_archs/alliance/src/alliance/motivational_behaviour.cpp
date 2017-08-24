@@ -1,13 +1,15 @@
+#include "alliance/behaviour_set.h"
 #include "alliance/motivational_behaviour.h"
 #include "alliance/robot.h"
 
 namespace alliance
 {
-MotivationalBehaviour::MotivationalBehaviour(Robot* robot)
+MotivationalBehaviour::MotivationalBehaviour(Robot* robot,
+                                             BehaviourSet* behaviour_set)
     : robot_(robot), threshold_(0.0),
-      activity_suppression_(new ActivitySuppression(robot)),
+      activity_suppression_(new ActivitySuppression(robot, behaviour_set)),
       impatience_reset_(new ImpatienceReset(robot)),
-      inter_communication_(new InterCommunication(robot)),
+      inter_communication_(new InterCommunication(robot, behaviour_set)),
       sensory_feedback_(new SensoryFeedback())
 {
 }
@@ -61,6 +63,11 @@ double MotivationalBehaviour::getLevel(ros::Time timestamp) const
 ActivitySuppression* MotivationalBehaviour::getActivitySuppression() const
 {
   return activity_suppression_;
+}
+
+InterCommunication* MotivationalBehaviour::getInterCommunication() const
+{
+  return inter_communication_;
 }
 
 void MotivationalBehaviour::setThreshold(double threshold)

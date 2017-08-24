@@ -12,7 +12,7 @@ int main(int argc, char** argv)
   ros::init(argc, argv, "ruler_test_node");
   ruler_test::TaskExecutionSimulatorNode* node =
       new ruler_test::TaskExecutionSimulatorNode();
-  node->spin();
+  node->run();
   delete node;
   return EXIT_SUCCESS;
 }

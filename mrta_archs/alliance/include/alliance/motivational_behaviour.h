@@ -11,15 +11,18 @@ namespace alliance
 {
 class Robot;
 
+class BehaviourSet;
+
 class MotivationalBehaviour
 {
 public:
-  MotivationalBehaviour(Robot* robot);
+  MotivationalBehaviour(Robot* robot, BehaviourSet* behaviour_set);
   MotivationalBehaviour(const MotivationalBehaviour& motivational_behaviour);
   virtual ~MotivationalBehaviour();
   bool active(ros::Time timestamp = ros::Time::now()) const;
   double getLevel(ros::Time timestamp = ros::Time::now()) const;
   ActivitySuppression* getActivitySuppression() const;
+  InterCommunication* getInterCommunication() const;
   void setThreshold(double threshold);
 
 private:
