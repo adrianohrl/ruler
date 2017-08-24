@@ -3,6 +3,15 @@
 
 namespace alliance
 {
+MotivationalBehaviour::MotivationalBehaviour(Robot* robot)
+    : robot_(robot), threshold_(0.0),
+      activity_suppression_(new ActivitySuppression(robot)),
+      impatience_reset_(new ImpatienceReset(robot)),
+      inter_communication_(new InterCommunication(robot)),
+      sensory_feedback_(new SensoryFeedback())
+{
+}
+
 MotivationalBehaviour::MotivationalBehaviour(
     const MotivationalBehaviour& motivational_behaviour)
     : threshold_(motivational_behaviour.threshold_),
@@ -34,40 +43,33 @@ MotivationalBehaviour::~MotivationalBehaviour()
   robot_ = NULL;
 }
 
-double MotivationalBehaviour::getThreshold() const { return threshold_; }
+bool MotivationalBehaviour::active(ros::Time timestamp) const
+{
+  return getLevel(timestamp) >= threshold_;
+}
+
+double MotivationalBehaviour::getLevel(ros::Time timestamp) const
+{
+  return (0.0 + robot_->getImpatience(timestamp)) *
+         activity_suppression_->suppress(timestamp) *
+         impatience_reset_->reset(timestamp) *
+         inter_communication_->received(timestamp) *
+         sensory_feedback_->received(timestamp) *
+         robot_->isAcquiescent(timestamp);
+}
 
 ActivitySuppression* MotivationalBehaviour::getActivitySuppression() const
 {
   return activity_suppression_;
 }
 
-ImpatienceReset* MotivationalBehaviour::getImpatienceReset() const
+void MotivationalBehaviour::setThreshold(double threshold)
 {
-  return impatience_reset_;
-}
-
-InterCommunication* MotivationalBehaviour::getInterCommunication() const
-{
-  return inter_communication_;
-}
-
-SensoryFeedback* MotivationalBehaviour::getSensoryFeedback() const
-{
-  return sensory_feedback_;
-}
-
-Robot *MotivationalBehaviour::getRobot() const
-{
-  return robot_;
-}
-
-double MotivationalBehaviour::getLevel(ros::Time timestamp) const
-{
-  return (0.0 + robot_->getImpatience(timestamp))
-      * activity_suppression_->suppress(timestamp)
-      * impatience_reset_->reset(timestamp)
-      * inter_communication_->received(timestamp)
-      * sensory_feedback_->received(timestamp)
-      * robot_->isAcquiescent(timestamp);
+  if (threshold <= 0.0)
+  {
+    throw utilities::Exception(
+        "The motivational behaviour's activation threshold must be positive.");
+  }
+  threshold_ = threshold;
 }
 }

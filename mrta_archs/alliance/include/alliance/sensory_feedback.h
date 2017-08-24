@@ -8,11 +8,10 @@ namespace alliance
 class SensoryFeedback
 {
 public:
+  SensoryFeedback();
   SensoryFeedback(const SensoryFeedback& sensory_feedback);
   virtual ~SensoryFeedback();
   bool received(ros::Time timestamp = ros::Time::now()) const;
-
-private:
 };
 }
 

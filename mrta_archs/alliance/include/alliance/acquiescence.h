@@ -8,6 +8,7 @@ namespace alliance
 class Acquiescence
 {
 public:
+  Acquiescence(ros::Duration yielding_delay, ros::Duration giving_up_delay);
   Acquiescence(const Acquiescence& acquiescence);
   virtual ~Acquiescence();
   ros::Duration getYieldingDelay() const;

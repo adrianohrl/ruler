@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="robot_id" default="robot1" />
+  <arg name="robot_params" default="$(find alliance_test)/config/$(arg robot_id)_alliance_params.yaml" />
+  <include file="$(find alliance)/launch/alliance.launch">
+    <arg name="robot_id" value="$(arg robot_id)" />
+    <arg name="robot_params" value="$(arg robot_params)" />
+  </include>
+</launch>

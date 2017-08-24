@@ -9,6 +9,7 @@
 #define _UTILITIES_HAS_NAME_H_
 
 #include "utilities/has_id.h"
+#include "utilities/exception.h"
 
 namespace utilities
 {

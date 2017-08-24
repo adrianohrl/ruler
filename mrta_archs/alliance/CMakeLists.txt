@@ -5,8 +5,8 @@ project(alliance)
 find_package(Boost REQUIRED)
 
 find_package(catkin REQUIRED COMPONENTS
-  roscpp
   alliance_msgs
+  roscpp
 )
 
 find_package(ruler REQUIRED COMPONENTS
@@ -19,8 +19,10 @@ catkin_package(
     ${PROJECT_NAME}
     ruler
   CATKIN_DEPENDS
-    roscpp
     alliance_msgs
+    roscpp
+    ruler
+    ruler_msgs
 )
 
 include_directories(
@@ -44,6 +46,9 @@ set(H_FILES
   include/alliance/sensory_feedback.h
   include/alliance/task.h
   include/nodes/alliance_node.h
+  include/utilities/beacon_signal_event.h
+  include/utilities/beacon_signal_observer.h
+  include/utilities/beacon_signal_subject.h
 )
 
 set(CPP_FILES
@@ -59,6 +64,9 @@ set(CPP_FILES
   src/alliance/sensory_feedback.cpp
   src/alliance/task.cpp
   src/nodes/alliance_node.cpp
+  src/utilities/beacon_signal_event.cpp
+  src/utilities/beacon_signal_observer.cpp
+  src/utilities/beacon_signal_subject.cpp
 )
 
 add_library(${PROJECT_NAME}

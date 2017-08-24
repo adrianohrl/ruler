@@ -12,15 +12,24 @@ namespace alliance
 {
 class Robot : public utilities::HasName
 {
-public:
+public: 
+  Robot(std::string id, std::string name);
   Robot(const Robot& robot);
   virtual ~Robot();
+  bool isActive() const;
   double getBroadcastRate() const;
   ros::Duration getQuietDuration() const;
   double getImpatience(ros::Time timestamp = ros::Time::now()) const;
   bool isAcquiescent(ros::Time timestamp = ros::Time::now()) const;
+  std::list<BehaviourSet*> getBehaviourSets() const;
+  Task* getExecutingTask() const;
   void setBroadcastRate(double broadcast_rate);
   void setQuietDuration(ros::Duration quiet_duration);
+  void setAcquiescence(ros::Duration yielding_delay,
+                       ros::Duration giving_up_delay);
+  void setImpatience(double fast_rate);
+  void setImpatience(const Robot& robot, double slow_rate, ros::Duration reliability_duration);
+  void addBehaviourSet(BehaviourSet* behaviour_set);
 
 private:
   double broadcast_rate_;
@@ -29,7 +38,6 @@ private:
   BehaviourSet* active_behaviour_set_;
   std::list<BehaviourSet*> behaviour_sets_;
   Impatience* impatience_;
-
 };
 }
 

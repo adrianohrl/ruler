@@ -84,6 +84,7 @@ set(H_FILES
   include/utilities/signal_type.h
   include/utilities/signal_types.h
   include/utilities/subject.h
+  include/utilities/toggle_event.h
   include/utilities/unary_signal_type.h
   include/utilities/utilities.h
 )
@@ -125,6 +126,7 @@ set(CPP_FILES
   src/utilities/ros_node.cpp
   src/utilities/signal_types.cpp
   src/utilities/subject.cpp
+  src/utilities/toggle_event.cpp
   src/utilities/unary_signal_type.cpp
 )
 

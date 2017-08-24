@@ -2,6 +2,11 @@
 
 namespace alliance
 {
+SensoryFeedback::SensoryFeedback()
+{
+
+}
+
 SensoryFeedback::SensoryFeedback(const SensoryFeedback &sensory_feedback)
 {
 

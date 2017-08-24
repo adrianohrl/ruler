@@ -10,8 +10,9 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
   DIRECTORY msg
   FILES
-    Message.msg
+    BeaconSignal.msg
     Motivation.msg
+    Robot.msg
 )
 
 generate_messages(

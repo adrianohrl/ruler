@@ -12,6 +12,14 @@ namespace utilities
 HasName::HasName(std::string name, std::string id)
     : HasId<std::string>::HasId(id.empty() ? name : id), name_(name)
 {
+  if (id.empty())
+  {
+    throw utilities::Exception("Id must not be empty.");
+  }
+  if (name.empty())
+  {
+    throw utilities::Exception("Name must not be empty.");
+  }
 }
 
 HasName::HasName(const HasName& has_name)

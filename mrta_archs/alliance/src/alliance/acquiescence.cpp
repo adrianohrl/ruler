@@ -2,6 +2,12 @@
 
 namespace alliance
 {
+Acquiescence::Acquiescence(ros::Duration yielding_delay,
+                           ros::Duration giving_up_delay)
+    : yielding_delay_(yielding_delay), giving_up_delay_(giving_up_delay)
+{
+}
+
 Acquiescence::Acquiescence(const Acquiescence& acquiescence)
     : yielding_delay_(acquiescence.yielding_delay_),
       giving_up_delay_(acquiescence.giving_up_delay_)

@@ -7,15 +7,18 @@
 
 namespace alliance
 {
-class BehaviourSet //: public utilities::Subject
+class BehaviourSet : public utilities::Subject
 {
 public:
+  BehaviourSet(Robot* robot, Task* task);
   BehaviourSet(const BehaviourSet& behaviour_set);
   virtual ~BehaviourSet();
   MotivationalBehaviour* getMotivationalBehaviour() const;
   bool isActive() const;
   Task* getTask() const;
   void setActive(bool active = true);
+  void setActivationThreshold(double threshold);
+  void registerActivitySuppression(BehaviourSet* behaviour_set);
 
 private:
   bool active_;

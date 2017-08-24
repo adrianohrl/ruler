@@ -14,15 +14,13 @@ class Robot;
 class MotivationalBehaviour
 {
 public:
+  MotivationalBehaviour(Robot* robot);
   MotivationalBehaviour(const MotivationalBehaviour& motivational_behaviour);
   virtual ~MotivationalBehaviour();
-  double getThreshold() const;
-  ActivitySuppression* getActivitySuppression() const;
-  ImpatienceReset* getImpatienceReset() const;
-  InterCommunication* getInterCommunication() const;
-  SensoryFeedback* getSensoryFeedback() const;
-  Robot* getRobot() const;
+  bool active(ros::Time timestamp = ros::Time::now()) const;
   double getLevel(ros::Time timestamp = ros::Time::now()) const;
+  ActivitySuppression* getActivitySuppression() const;
+  void setThreshold(double threshold);
 
 private:
   double threshold_;

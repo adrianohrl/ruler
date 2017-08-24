@@ -1,19 +1,34 @@
 #include "alliance/activity_suppression.h"
+#include "alliance/robot.h"
+#include <typeinfo>
+#include <utilities/toggle_event.h>
 
 namespace alliance
 {
-ActivitySuppression::ActivitySuppression(const ActivitySuppression &activity_suppression)
+ActivitySuppression::ActivitySuppression(Robot* robot)
+    : Observer::Observer(robot->getId() + "/activity_suppression"),
+      robot_(robot)
 {
-
 }
 
-ActivitySuppression::~ActivitySuppression()
+ActivitySuppression::ActivitySuppression(
+    const ActivitySuppression& activity_suppression)
+    : Observer::Observer(activity_suppression),
+      robot_(activity_suppression.robot_)
 {
-
 }
 
-bool ActivitySuppression::suppress(ros::Time timestamp) const
+ActivitySuppression::~ActivitySuppression() { robot_ = NULL; }
+
+void ActivitySuppression::update(utilities::Event* event)
 {
-  return false;
+  if (typeid(*event) == typeid(utilities::ToggleEvent))
+  {
+    utilities::ToggleEvent* toggle_event = (utilities::ToggleEvent*) event;
+    ROS_INFO_STREAM(
+        "[Updating activity_suppresion] active: " << toggle_event->getValue());
+  }
 }
+
+bool ActivitySuppression::suppress(ros::Time timestamp) const { return false; }
 }
