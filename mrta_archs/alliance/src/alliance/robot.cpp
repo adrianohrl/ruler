@@ -42,12 +42,29 @@ Robot::~Robot()
   }
 }
 
+void Robot::process()
+{
+  std::list<BehaviourSet*>::iterator it(behaviour_sets_.begin());
+  while (it != behaviour_sets_.end())
+  {
+    BehaviourSet* behaviour_set = *it;
+    behaviour_set->process();
+    if (behaviour_set->isActive())
+    {
+      // mas e se houver mais de um comportamento ativo ????
+      active_behaviour_set_ = behaviour_set;
+      return;
+    }
+    it++;
+  }
+}
+
 bool Robot::isActive() const
 {
   return active_behaviour_set_ && active_behaviour_set_->isActive();
 }
 
-double Robot::getBroadcastRate() const { return broadcast_rate_; }
+ros::Rate Robot::getBroadcastRate() const { return broadcast_rate_; }
 
 ros::Duration Robot::getQuietDuration() const { return quiet_duration_; }
 
@@ -71,13 +88,8 @@ Task* Robot::getExecutingTask() const
   return active_behaviour_set_ ? active_behaviour_set_->getTask() : NULL;
 }
 
-void Robot::setBroadcastRate(double broadcast_rate)
+void Robot::setBroadcastRate(ros::Rate broadcast_rate)
 {
-  if (broadcast_rate <= 0.0)
-  {
-    throw utilities::Exception(
-        "The robot's inter communication broadcast rate must be positive.");
-  }
   broadcast_rate_ = broadcast_rate;
 }
 

@@ -26,6 +26,7 @@ protected:
   LinearFunction(ros::Duration d0, ros::Duration df, double q0, double qf,
                  bool ascending, bool negated);
   LinearFunction(const LinearFunction<T>& function);
+  virtual LinearFunction<T>* clone() const;
 
 private:
   virtual double calculate(double d) const;
@@ -49,6 +50,12 @@ template <typename T>
 LinearFunction<T>::LinearFunction(const LinearFunction<T>& function)
     : Function<T>::Function(function)
 {
+}
+
+template <typename T>
+LinearFunction<T> *LinearFunction<T>::clone() const
+{
+  return new LinearFunction<T>(*this);
 }
 
 template <typename T> LinearFunction<T>::~LinearFunction() {}

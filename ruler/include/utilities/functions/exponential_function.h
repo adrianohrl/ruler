@@ -25,6 +25,7 @@ public:
                       double k, double base, bool ascending, bool negated);
   ExponentialFunction(const ExponentialFunction<T>& function);
   virtual ~ExponentialFunction();
+  virtual ExponentialFunction<T>* clone() const;
 
 private:
   double base_;
@@ -59,6 +60,11 @@ ExponentialFunction<T>::ExponentialFunction(
 }
 
 template <typename T> ExponentialFunction<T>::~ExponentialFunction() {}
+
+template <typename T> ExponentialFunction<T> *ExponentialFunction<T>::clone() const
+{
+  return new ExponentialFunction<T>(*this);
+}
 
 template <typename T> double ExponentialFunction<T>::calculate(double d) const
 {

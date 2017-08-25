@@ -56,6 +56,7 @@ set(H_FILES
   include/utilities/enum_converter.h
   include/utilities/exception.h
   include/utilities/event.h
+  include/utilities/functions/buffered_function.h
   include/utilities/functions/continuous_exponential_function.h
   include/utilities/functions/continuous_linear_function.h
   include/utilities/functions/continuous_pulse_function.h
@@ -72,6 +73,7 @@ set(H_FILES
   include/utilities/functions/pulse_function.h
   include/utilities/functions/step_function.h
   include/utilities/functions/time_probability_density_function.h
+  include/utilities/functions/unary_buffered_function.h
   include/utilities/functions/unary_pulse_function.h
   include/utilities/functions/unary_step_function.h
   include/utilities/has_id.h
@@ -119,6 +121,7 @@ set(CPP_FILES
   src/utilities/functions/discrete_pulse_function.cpp
   src/utilities/functions/discrete_step_function.cpp
   src/utilities/functions/time_probability_density_function.cpp
+  src/utilities/functions/unary_buffered_function.cpp
   src/utilities/functions/unary_pulse_function.cpp
   src/utilities/functions/unary_step_function.cpp
   src/utilities/has_name.cpp

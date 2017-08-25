@@ -155,8 +155,10 @@ TEST(Functions, unary_pulse)
 
 TEST(Functions, step2pulse)
 {
-  utilities::functions::DiscreteStepFunction* step = new utilities::functions::DiscreteStepFunction(2.0, 25, true, true);
-  utilities::functions::DiscretePulseFunction* pulse = new utilities::functions::DiscretePulseFunction(*step, 4.0);
+  utilities::functions::DiscreteStepFunction* step =
+      new utilities::functions::DiscreteStepFunction(2.0, 25, true, true);
+  utilities::functions::DiscretePulseFunction* pulse =
+      new utilities::functions::DiscretePulseFunction(*step, 4.0);
   // testing step
   EXPECT_EQ(0, step->getValue(0.0));
   EXPECT_EQ(0, step->getValue(1.9));
@@ -177,6 +179,35 @@ TEST(Functions, step2pulse)
   step = NULL;
   delete pulse;
   pulse = NULL;
+}
+
+TEST(Functions, unary_buffered)
+{
+  utilities::functions::UnaryBufferedFunction* ubf =
+      new utilities::functions::UnaryBufferedFunction("ubf", ros::Duration(1.0),
+                                                      ros::Duration(3.5));
+  ros::Time timestamp = ubf->getStartTimestamp();
+  ubf->update(timestamp + ros::Duration(0.5));
+  ubf->update(timestamp + ros::Duration(1.0));
+  ubf->update(timestamp + ros::Duration(2.5));
+  EXPECT_FALSE(ubf->getValue(0.0));
+  EXPECT_FALSE(ubf->getValue(0.25));
+  EXPECT_FALSE(ubf->getValue(0.5));
+  EXPECT_TRUE(ubf->getValue(0.75));
+  EXPECT_TRUE(ubf->getValue(1.0));
+  EXPECT_TRUE(ubf->getValue(1.75));
+  EXPECT_TRUE(ubf->getValue(2.0));
+  EXPECT_FALSE(ubf->getValue(2.25));
+  EXPECT_FALSE(ubf->getValue(2.5));
+  EXPECT_TRUE(ubf->getValue(2.75));
+  EXPECT_TRUE(ubf->getValue(3.0));
+  EXPECT_TRUE(ubf->getValue(3.25));
+  EXPECT_TRUE(ubf->getValue(3.5));
+  EXPECT_FALSE(ubf->getValue(3.75));
+  EXPECT_FALSE(ubf->getValue(4.0));
+  EXPECT_FALSE(ubf->getValue(5.0));
+
+  delete ubf;
 }
 
 TEST(Task, start)
@@ -676,10 +707,10 @@ TEST(Profiles, unary)
   ros::Time timestamp(task->getStartTimestamp());
   ruler::Profile<utilities::UnarySignalType>* profile =
       new ruler::Profile<utilities::UnarySignalType>(true, false);
-  profile->addTaskFunction(
-      new ruler::TaskFunction<utilities::UnarySignalType>(resource, task, unary_pulse));
-  profile->addTaskFunction(
-      new ruler::TaskFunction<utilities::UnarySignalType>(resource, task, unary_step));
+  profile->addTaskFunction(new ruler::TaskFunction<utilities::UnarySignalType>(
+      resource, task, unary_pulse));
+  profile->addTaskFunction(new ruler::TaskFunction<utilities::UnarySignalType>(
+      resource, task, unary_step));
   unary_pulse->setAscending(true);
   unary_step->setAscending(true);
   EXPECT_FALSE(profile->getLevel(timestamp + ros::Duration(0.0)));
@@ -984,8 +1015,8 @@ TEST(ResourceSharing, task1and2)
   t2->addResourceReservationRequest(
       new ruler::ConsumableResourceReservationRequest<
           utilities::ContinuousSignalType>(
-          t2, r1, new utilities::functions::ContinuousLinearFunction(0.0 * d, 4.0 * d,
-                                                                     0.0, 4.0),
+          t2, r1, new utilities::functions::ContinuousLinearFunction(
+                      0.0 * d, 4.0 * d, 0.0, 4.0),
           false));
   t2->addResourceReservationRequest(
       new ruler::ReusableResourceReservationRequest<
@@ -1009,28 +1040,45 @@ TEST(ResourceSharing, task1and2)
   ros::Time timestamp;
   // testing r1
   timestamp = t1->getStartTimestamp() - ros::Duration(1.0 * d);
-  EXPECT_GE(tolerance, fabs(3.0 - 0.0 - r1->getLevel(timestamp + ros::Duration(0.0 * d))));
-  EXPECT_GE(tolerance, fabs(3.0 - 0.0 - r1->getLevel(timestamp + ros::Duration(0.5 * d))));
-  EXPECT_GE(tolerance, fabs(3.0 - 0.0 - r1->getLevel(timestamp + ros::Duration(1.0 * d))));
-  EXPECT_GE(tolerance, fabs(3.0 - 0.5 - r1->getLevel(timestamp + ros::Duration(1.5 * d))));
+  EXPECT_GE(tolerance,
+            fabs(3.0 - 0.0 - r1->getLevel(timestamp + ros::Duration(0.0 * d))));
+  EXPECT_GE(tolerance,
+            fabs(3.0 - 0.0 - r1->getLevel(timestamp + ros::Duration(0.5 * d))));
+  EXPECT_GE(tolerance,
+            fabs(3.0 - 0.0 - r1->getLevel(timestamp + ros::Duration(1.0 * d))));
+  EXPECT_GE(tolerance,
+            fabs(3.0 - 0.5 - r1->getLevel(timestamp + ros::Duration(1.5 * d))));
   timestamp = t2->getStartTimestamp() - ros::Duration(2.0 * d);
-  EXPECT_GE(tolerance, fabs(3.0 - 1.0 - r1->getLevel(timestamp + ros::Duration(2.0 * d))));
-  EXPECT_GE(tolerance, fabs(3.0 - 1.0 - r1->getLevel(timestamp + ros::Duration(2.5 * d))));
+  EXPECT_GE(tolerance,
+            fabs(3.0 - 1.0 - r1->getLevel(timestamp + ros::Duration(2.0 * d))));
+  EXPECT_GE(tolerance,
+            fabs(3.0 - 1.0 - r1->getLevel(timestamp + ros::Duration(2.5 * d))));
   timestamp = t1->getLastInterruptionTimestamp() - ros::Duration(3.0 * d);
-  EXPECT_GE(tolerance, fabs(3.0 - 1.0 - r1->getLevel(timestamp + ros::Duration(3.0 * d))));
-  EXPECT_GE(tolerance, fabs(3.0 - 0.5 - r1->getLevel(timestamp + ros::Duration(3.5 * d))));
-  EXPECT_GE(tolerance, fabs(3.0 - 0.0 - r1->getLevel(timestamp + ros::Duration(4.0 * d))));
-  EXPECT_GE(tolerance, fabs(3.0 + 0.5 - r1->getLevel(timestamp + ros::Duration(4.5 * d))));
+  EXPECT_GE(tolerance,
+            fabs(3.0 - 1.0 - r1->getLevel(timestamp + ros::Duration(3.0 * d))));
+  EXPECT_GE(tolerance,
+            fabs(3.0 - 0.5 - r1->getLevel(timestamp + ros::Duration(3.5 * d))));
+  EXPECT_GE(tolerance,
+            fabs(3.0 - 0.0 - r1->getLevel(timestamp + ros::Duration(4.0 * d))));
+  EXPECT_GE(tolerance,
+            fabs(3.0 + 0.5 - r1->getLevel(timestamp + ros::Duration(4.5 * d))));
   timestamp = t1->getLastResumeTimestamp() - ros::Duration(5.0 * d);
-  EXPECT_GE(tolerance, fabs(3.0 + 1.0 - r1->getLevel(timestamp + ros::Duration(5.0 * d))));
-  EXPECT_GE(tolerance, fabs(3.0 + 1.0 - r1->getLevel(timestamp + ros::Duration(5.5 * d))));
+  EXPECT_GE(tolerance,
+            fabs(3.0 + 1.0 - r1->getLevel(timestamp + ros::Duration(5.0 * d))));
+  EXPECT_GE(tolerance,
+            fabs(3.0 + 1.0 - r1->getLevel(timestamp + ros::Duration(5.5 * d))));
   timestamp = t2->getEndTimestamp() - ros::Duration(6.0 * d);
-  EXPECT_GE(tolerance, fabs(3.0 + 1.0 - r1->getLevel(timestamp + ros::Duration(6.0 * d))));
-  EXPECT_GE(tolerance, fabs(3.0 + 0.5 - r1->getLevel(timestamp + ros::Duration(6.5 * d))));
+  EXPECT_GE(tolerance,
+            fabs(3.0 + 1.0 - r1->getLevel(timestamp + ros::Duration(6.0 * d))));
+  EXPECT_GE(tolerance,
+            fabs(3.0 + 0.5 - r1->getLevel(timestamp + ros::Duration(6.5 * d))));
   timestamp = t1->getEndTimestamp() - ros::Duration(7.0 * d);
-  EXPECT_GE(tolerance, fabs(3.0 + 0.0 - r1->getLevel(timestamp + ros::Duration(7.0 * d))));
-  EXPECT_GE(tolerance, fabs(3.0 + 0.0 - r1->getLevel(timestamp + ros::Duration(7.5 * d))));
-  EXPECT_GE(tolerance, fabs(3.0 + 0.0 - r1->getLevel(timestamp + ros::Duration(8.0 * d))));
+  EXPECT_GE(tolerance,
+            fabs(3.0 + 0.0 - r1->getLevel(timestamp + ros::Duration(7.0 * d))));
+  EXPECT_GE(tolerance,
+            fabs(3.0 + 0.0 - r1->getLevel(timestamp + ros::Duration(7.5 * d))));
+  EXPECT_GE(tolerance,
+            fabs(3.0 + 0.0 - r1->getLevel(timestamp + ros::Duration(8.0 * d))));
   // testing r2
   timestamp = t1->getStartTimestamp() - ros::Duration(1.0 * d);
   EXPECT_EQ(5 - 0, r2->getLevel(timestamp + ros::Duration(0.0 * d)));

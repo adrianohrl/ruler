@@ -1,6 +1,7 @@
 #ifndef _ALLIANCE_INTER_COMMUNICATION_H_
 #define _ALLIANCE_INTER_COMMUNICATION_H_
 
+//#include <list>
 #include "utilities/beacon_signal_observer.h"
 
 namespace alliance
@@ -20,6 +21,8 @@ public:
 
 private:
   Robot* robot_;
+  std::list<Robot*> robots_;
+  Robot* get(std::string robot_id) const;
 };
 }
 

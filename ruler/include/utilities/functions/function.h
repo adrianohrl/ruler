@@ -22,11 +22,18 @@ public:
   virtual ~Function();
   T getValue(double d) const;
   std::string getName() const;
+  double getD0() const;
+  double getDf() const;
   bool isAscending() const;
   bool isNegated() const;
+  void setD0(double d0);
+  void setD0(ros::Duration d0);
+  void setDf(double df);
+  void setDf(ros::Duration df);
   void setAscending(bool ascending);
   void setNegated(bool negated);
   bool saturatesEnd() const;
+  virtual Function<T>* clone() const = 0;
   std::string str() const;
   const char* c_str() const;
 
@@ -116,12 +123,42 @@ template <typename T> T Function<T>::getValue(double d) const
 
 template <typename T> std::string Function<T>::getName() const { return name_; }
 
+template <typename T> double Function<T>::getD0() const { return d0_; }
+
+template <typename T> double Function<T>::getDf() const { return df_; }
+
 template <typename T> bool Function<T>::isAscending() const
 {
   return ascending_;
 }
 
 template <typename T> bool Function<T>::isNegated() const { return negated_; }
+
+template <typename T> void Function<T>::setD0(double d0)
+{
+  if (d0 >= 0.0 && d0 < df_)
+  {
+    d0_ = d0;
+  }
+}
+
+template <typename T> void Function<T>::setD0(ros::Duration d0)
+{
+  return setD0(d0.toSec());
+}
+
+template <typename T> void Function<T>::setDf(double df)
+{
+  if (df > d0_)
+  {
+    df_ = df;
+  }
+}
+
+template <typename T> void Function<T>::setDf(ros::Duration df)
+{
+  setDf(df.toSec());
+}
 
 template <typename T> void Function<T>::setAscending(bool ascending)
 {
@@ -149,7 +186,7 @@ template <typename T> std::string Function<T>::str() const
   return ss.str();
 }
 
-template <typename T> const char *Function<T>::c_str() const
+template <typename T> const char* Function<T>::c_str() const
 {
   return str().c_str();
 }

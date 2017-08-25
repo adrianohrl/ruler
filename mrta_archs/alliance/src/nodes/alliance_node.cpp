@@ -5,7 +5,7 @@ namespace nodes
 AllianceNode::AllianceNode(ros::NodeHandle* nh, float loop_rate)
     : ROSNode::ROSNode(nh, loop_rate),
       BeaconSignalSubject::BeaconSignalSubject(ros::this_node::getName()),
-      robot_(NULL)
+      robot_(NULL), started_broadcasting_(false)
 {
   beacon_signal_pub_ =
       nh->advertise<alliance_msgs::BeaconSignal>("/alliance/beacon_signal", 10);
@@ -17,6 +17,7 @@ AllianceNode::~AllianceNode()
 {
   beacon_signal_pub_.shutdown();
   beacon_signal_sub_.shutdown();
+  broadcast_timer_.stop();
   if (robot_)
   {
     delete robot_;
@@ -101,7 +102,7 @@ void AllianceNode::readParameters()
           "The robot's inter communication broadcast rate must be positive.");
       continue;
     }
-    robot_->setBroadcastRate(broadcast_rate);
+    robot_->setBroadcastRate(ros::Rate(broadcast_rate));
     double quiet_duration;
     pnh.param(ss.str() + "inter_communication/quiet_duration", quiet_duration,
               0.0);
@@ -125,8 +126,7 @@ void AllianceNode::init()
 {
   /** registering beacon signal message observers **/
   std::list<alliance::BehaviourSet*> behaviour_sets(robot_->getBehaviourSets());
-  std::list<alliance::BehaviourSet*>::iterator it(
-      behaviour_sets.begin());
+  std::list<alliance::BehaviourSet*>::iterator it(behaviour_sets.begin());
   while (it != behaviour_sets.end())
   {
     alliance::MotivationalBehaviour* motivational_behaviour =
@@ -135,28 +135,42 @@ void AllianceNode::init()
         motivational_behaviour->getInterCommunication());
     it++;
   }
+  /** creating robot broadcast timer **/
+  broadcast_timer_ = ROSNode::getNodeHandle()->createTimer(
+      robot_->getBroadcastRate().expectedCycleTime(),
+      &AllianceNode::broadcastTimerCallback, this, false, false);
 }
 
 void AllianceNode::controlLoop()
 {
-  /*if (robot_->isActive())
+  robot_->process();
+  if (robot_->isActive() && started_broadcasting_)
   {
-    alliance_msgs::BeaconSignal msg;
-    msg.header.stamp = ros::Time::now();
-    msg.header.frame_id = robot_->getId();
-    msg.task_id = robot_->getExecutingTask()->getId();
-    beacon_signal_pub_.publish(msg);
-  }*/
-  ros::Duration d(0.5);
-  d.sleep();
-  alliance_msgs::BeaconSignal msg;
-  msg.header.stamp = ros::Time::now();
-  msg.header.frame_id = robot_->getId();
-  beacon_signal_pub_.publish(msg);
+    ROS_DEBUG_STREAM("Starting " << *robot_ << " broadcast timer.");
+    broadcast_timer_.start();
+    started_broadcasting_ = true;
+  }
+
 }
 
 void AllianceNode::beaconSignalCallback(const alliance_msgs::BeaconSignal& msg)
 {
   BeaconSignalSubject::notify(msg);
+}
+
+void AllianceNode::broadcastTimerCallback(const ros::TimerEvent& event)
+{
+  if (!robot_->getExecutingTask())
+  {
+    ROS_DEBUG_STREAM("Stoping " << *robot_ << " broadcast timer.");
+    broadcast_timer_.stop();
+    started_broadcasting_ = false;
+    return;
+  }
+  alliance_msgs::BeaconSignal msg;
+  msg.header.stamp = ros::Time::now();
+  msg.header.frame_id = robot_->getId();
+  msg.task_id = robot_->getExecutingTask()->getId();
+  beacon_signal_pub_.publish(msg);
 }
 }

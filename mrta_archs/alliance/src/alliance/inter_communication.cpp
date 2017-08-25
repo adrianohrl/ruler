@@ -17,7 +17,20 @@ InterCommunication::InterCommunication(
 {
 }
 
-InterCommunication::~InterCommunication() { robot_ = NULL; }
+InterCommunication::~InterCommunication()
+{
+  robot_ = NULL;
+  std::list<Robot*>::iterator it(robots_.begin());
+  while (it != robots_.end())
+  {
+    if (*it)
+    {
+      *it = NULL;
+    }
+    it++;
+  }
+  robots_.clear();
+}
 
 bool InterCommunication::received(ros::Time timestamp) const { return false; }
 
@@ -27,5 +40,27 @@ void InterCommunication::update(utilities::BeaconSignalEvent* event)
   {
     return;
   }
+  std::string robot_id(event->getMsg().header.frame_id);
+  Robot* robot = get(robot_id);
+  if (!robot);
+  {
+    robot = new Robot(robot_id, robot_id);
+  }
+  // update robot
+}
+
+Robot *InterCommunication::get(std::string robot_id) const
+{
+  std::list<Robot*>::const_iterator it(robots_.begin());
+  while (it != robots_.end())
+  {
+    Robot* robot = *it;
+    if (robot->getId() == robot_id)
+    {
+      return robot;
+    }
+    it++;
+  }
+  return NULL;
 }
 }

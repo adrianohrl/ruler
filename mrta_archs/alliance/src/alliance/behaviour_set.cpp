@@ -27,6 +27,11 @@ BehaviourSet::~BehaviourSet()
   task_ = NULL;
 }
 
+void BehaviourSet::process()
+{
+  setActive(motivational_behaviour_->active());
+}
+
 MotivationalBehaviour* BehaviourSet::getMotivationalBehaviour() const
 {
   return motivational_behaviour_;

@@ -23,6 +23,7 @@ public:
   StepFunction(ros::Duration d0, double qf, bool ascending, bool negated);
   StepFunction(const StepFunction<T>& function);
   virtual ~StepFunction();
+  virtual StepFunction<T>* clone() const;
 
 protected:
   StepFunction(double d0, double q0, double qf, bool ascending, bool negated);
@@ -76,6 +77,11 @@ StepFunction<T>::StepFunction(const StepFunction<T>& function)
 }
 
 template <typename T> StepFunction<T>::~StepFunction() {}
+
+template <typename T> StepFunction<T> *StepFunction<T>::clone() const
+{
+  return new StepFunction<T>(*this);
+}
 
 template <typename T> double StepFunction<T>::calculate(double d) const
 {

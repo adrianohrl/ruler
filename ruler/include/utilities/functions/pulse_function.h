@@ -25,6 +25,7 @@ public:
   PulseFunction(const StepFunction<T>& step_function, double df);
   PulseFunction(const StepFunction<T>& step_function, ros::Duration df);
   virtual ~PulseFunction();
+  virtual PulseFunction<T>* clone() const;
 
 protected:
   PulseFunction(double d0, double df, double q0, double qf, bool ascending,
@@ -107,6 +108,11 @@ PulseFunction<T>::PulseFunction(const PulseFunction<T>& function)
 }
 
 template <typename T> PulseFunction<T>::~PulseFunction() {}
+
+template <typename T> PulseFunction<T> *PulseFunction<T>::clone() const
+{
+  return new PulseFunction<T>(*this);
+}
 
 template <typename T> double PulseFunction<T>::calculate(double d) const
 {

@@ -8,6 +8,7 @@
 #ifndef _UTILITIES_FUNCTIONS_H_
 #define _UTILITIES_FUNCTIONS_H_
 
+#include "utilities/functions/buffered_function.h"
 #include "utilities/functions/continuous_exponential_function.h"
 #include "utilities/functions/continuous_linear_function.h"
 #include "utilities/functions/continuous_pulse_function.h"
@@ -23,6 +24,7 @@
 #include "utilities/functions/pulse_function.h"
 #include "utilities/functions/step_function.h"
 #include "utilities/functions/time_probability_density_function.h"
+#include "utilities/functions/unary_buffered_function.h"
 #include "utilities/functions/unary_pulse_function.h"
 #include "utilities/functions/unary_step_function.h"
 

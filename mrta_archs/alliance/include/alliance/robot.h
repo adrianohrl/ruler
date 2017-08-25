@@ -3,6 +3,7 @@
 
 #include <list>
 #include <ros/time.h>
+#include <ros/rate.h>
 #include "alliance/acquiescence.h"
 #include "alliance/behaviour_set.h"
 #include "alliance/impatience.h"
@@ -16,14 +17,15 @@ public:
   Robot(std::string id, std::string name);
   Robot(const Robot& robot);
   virtual ~Robot();
+  void process();
   bool isActive() const;
-  double getBroadcastRate() const;
+  ros::Rate getBroadcastRate() const;
   ros::Duration getQuietDuration() const;
   double getImpatience(ros::Time timestamp = ros::Time::now()) const;
   bool isAcquiescent(ros::Time timestamp = ros::Time::now()) const;
   std::list<BehaviourSet*> getBehaviourSets() const;
   Task* getExecutingTask() const;
-  void setBroadcastRate(double broadcast_rate);
+  void setBroadcastRate(ros::Rate broadcast_rate);
   void setQuietDuration(ros::Duration quiet_duration);
   void setAcquiescence(ros::Duration yielding_delay,
                        ros::Duration giving_up_delay);
@@ -32,7 +34,7 @@ public:
   void addBehaviourSet(BehaviourSet* behaviour_set);
 
 private:
-  double broadcast_rate_;
+  ros::Rate broadcast_rate_;
   ros::Duration quiet_duration_;
   Acquiescence* acquiescence_;
   BehaviourSet* active_behaviour_set_;
