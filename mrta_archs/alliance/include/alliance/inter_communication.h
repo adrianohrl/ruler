@@ -1,7 +1,7 @@
 #ifndef _ALLIANCE_INTER_COMMUNICATION_H_
 #define _ALLIANCE_INTER_COMMUNICATION_H_
 
-//#include <list>
+#include <utilities/functions/unary_buffered_function.h>
 #include "utilities/beacon_signal_observer.h"
 
 namespace alliance
@@ -22,6 +22,7 @@ public:
 private:
   Robot* robot_;
   std::list<Robot*> robots_;
+  utilities::functions::UnaryBufferedFunction* function_;
   Robot* get(std::string robot_id) const;
 };
 }

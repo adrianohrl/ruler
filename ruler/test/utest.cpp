@@ -183,30 +183,35 @@ TEST(Functions, step2pulse)
 
 TEST(Functions, unary_buffered)
 {
+  double dt(0.25);
   utilities::functions::UnaryBufferedFunction* ubf =
-      new utilities::functions::UnaryBufferedFunction("ubf", ros::Duration(1.0),
-                                                      ros::Duration(3.5));
+      new utilities::functions::UnaryBufferedFunction("ubf", ros::Duration(1.0 * dt),
+                                                      ros::Duration(3.5 * dt));
   ros::Time timestamp = ubf->getStartTimestamp();
-  ubf->update(timestamp + ros::Duration(0.5));
-  ubf->update(timestamp + ros::Duration(1.0));
-  ubf->update(timestamp + ros::Duration(2.5));
-  EXPECT_FALSE(ubf->getValue(0.0));
-  EXPECT_FALSE(ubf->getValue(0.25));
-  EXPECT_FALSE(ubf->getValue(0.5));
-  EXPECT_TRUE(ubf->getValue(0.75));
-  EXPECT_TRUE(ubf->getValue(1.0));
-  EXPECT_TRUE(ubf->getValue(1.75));
-  EXPECT_TRUE(ubf->getValue(2.0));
-  EXPECT_FALSE(ubf->getValue(2.25));
-  EXPECT_FALSE(ubf->getValue(2.5));
-  EXPECT_TRUE(ubf->getValue(2.75));
-  EXPECT_TRUE(ubf->getValue(3.0));
-  EXPECT_TRUE(ubf->getValue(3.25));
-  EXPECT_TRUE(ubf->getValue(3.5));
-  EXPECT_FALSE(ubf->getValue(3.75));
-  EXPECT_FALSE(ubf->getValue(4.0));
-  EXPECT_FALSE(ubf->getValue(5.0));
-
+  EXPECT_FALSE(ubf->getValue(timestamp + ros::Duration(0.0 * dt)));
+  EXPECT_FALSE(ubf->getValue(timestamp + ros::Duration(0.25 * dt)));
+  ubf->update(timestamp + ros::Duration(0.5 * dt));
+  EXPECT_FALSE(ubf->getValue(timestamp + ros::Duration(0.5 * dt)));
+  EXPECT_TRUE(ubf->getValue(timestamp + ros::Duration(0.75 * dt)));
+  ubf->update(timestamp + ros::Duration(1.0 * dt));
+  EXPECT_TRUE(ubf->getValue(timestamp + ros::Duration(1.0 * dt)));
+  EXPECT_TRUE(ubf->getValue(timestamp + ros::Duration(1.75 * dt)));
+  EXPECT_TRUE(ubf->getValue(timestamp + ros::Duration(2.0 * dt)));
+  EXPECT_FALSE(ubf->getValue(timestamp + ros::Duration(2.25 * dt)));
+  ubf->update(timestamp + ros::Duration(2.5 * dt));
+  EXPECT_FALSE(ubf->getValue(timestamp + ros::Duration(2.5 * dt)));
+  EXPECT_TRUE(ubf->getValue(timestamp + ros::Duration(2.75 * dt)));
+  EXPECT_TRUE(ubf->getValue(timestamp + ros::Duration(3.0 * dt)));
+  EXPECT_TRUE(ubf->getValue(timestamp + ros::Duration(3.25 * dt)));
+  EXPECT_TRUE(ubf->getValue(timestamp + ros::Duration(3.5 * dt)));
+  EXPECT_FALSE(ubf->getValue(timestamp + ros::Duration(3.75 * dt)));
+  EXPECT_FALSE(ubf->getValue(timestamp + ros::Duration(4.0 * dt)));
+  EXPECT_FALSE(ubf->getValue(timestamp + ros::Duration(5.0 * dt)));
+  EXPECT_FALSE(ubf->getValue(timestamp + ros::Duration(5.5 * dt)));
+  EXPECT_FALSE(ubf->getValue(timestamp + ros::Duration(6.0 * dt)));
+  EXPECT_FALSE(ubf->getValue(timestamp + ros::Duration(6.5 * dt)));
+  EXPECT_FALSE(ubf->getValue(timestamp + ros::Duration(7.0 * dt)));
+  EXPECT_FALSE(ubf->getValue(timestamp + ros::Duration(7.5 * dt)));
   delete ubf;
 }
 
