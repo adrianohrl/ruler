@@ -17,7 +17,7 @@ SensoryFeedback::~SensoryFeedback()
 
 }
 
-bool SensoryFeedback::received(ros::Time timestamp) const
+bool SensoryFeedback::received(const ros::Time& timestamp) const
 {
 
 }

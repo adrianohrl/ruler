@@ -13,29 +13,33 @@ namespace alliance
 {
 class Robot : public utilities::HasName
 {
-public: 
-  Robot(std::string id, std::string name);
+public:
+  Robot(const std::string& id, const std::string& name);
   Robot(const Robot& robot);
   virtual ~Robot();
   void process();
+  bool received(const Robot& robot, const Task& task, const ros::Time& t1,
+                const ros::Time& t2);
   bool isActive() const;
   ros::Rate getBroadcastRate() const;
-  ros::Duration getQuietDuration() const;
-  double getImpatience(ros::Time timestamp = ros::Time::now()) const;
-  bool isAcquiescent(ros::Time timestamp = ros::Time::now()) const;
+  ros::Duration getMaximumInterruptionDuration() const;
+  double getImpatience(const ros::Time& timestamp = ros::Time::now()) const;
+  bool isAcquiescent(const ros::Time& timestamp = ros::Time::now()) const;
   std::list<BehaviourSet*> getBehaviourSets() const;
   Task* getExecutingTask() const;
-  void setBroadcastRate(ros::Rate broadcast_rate);
-  void setQuietDuration(ros::Duration quiet_duration);
-  void setAcquiescence(ros::Duration yielding_delay,
-                       ros::Duration giving_up_delay);
+  void setBroadcastRate(const ros::Rate& broadcast_rate);
+  void setMaximumInterruptionDuration(
+      const ros::Duration& max_interruption_duration);
+  void setAcquiescence(const ros::Duration& yielding_delay,
+                       const ros::Duration& giving_up_delay);
   void setImpatience(double fast_rate);
-  void setImpatience(const Robot& robot, double slow_rate, ros::Duration reliability_duration);
+  void setImpatience(const Robot& robot, double slow_rate,
+                     const ros::Duration& reliability_duration);
   void addBehaviourSet(BehaviourSet* behaviour_set);
 
 private:
   ros::Rate broadcast_rate_;
-  ros::Duration quiet_duration_;
+  ros::Duration max_interruption_duration_;
   Acquiescence* acquiescence_;
   BehaviourSet* active_behaviour_set_;
   std::list<BehaviourSet*> behaviour_sets_;

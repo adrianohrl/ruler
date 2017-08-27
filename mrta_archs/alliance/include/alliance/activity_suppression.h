@@ -17,10 +17,12 @@ public:
   ActivitySuppression(const ActivitySuppression& activity_suppression);
   virtual ~ActivitySuppression();
   virtual void update(utilities::Event* event);
-  bool suppress(ros::Time timestamp = ros::Time::now()) const;
+  bool isSuppressed(const ros::Time& timestamp = ros::Time::now()) const;
 
 private:
   Robot* robot_;
+  ros::Time last_suppression_timestamp_;
+  ros::Time last_accession_timestamp_;
 };
 }
 

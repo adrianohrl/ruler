@@ -103,16 +103,17 @@ void AllianceNode::readParameters()
       continue;
     }
     robot_->setBroadcastRate(ros::Rate(broadcast_rate));
-    double quiet_duration;
-    pnh.param(ss.str() + "inter_communication/quiet_duration", quiet_duration,
-              0.0);
-    if (quiet_duration < 0.0)
+    double maximum_interruption_duration;
+    pnh.param(ss.str() + "inter_communication/maximum_interruption_duration",
+              maximum_interruption_duration, 0.0);
+    if (maximum_interruption_duration < 0.0)
     {
       ROS_WARN(
           "The robot's inter communication quiet duration must be positive.");
-      quiet_duration = 0.0;
+      maximum_interruption_duration = 0.0;
     }
-    robot_->setQuietDuration(ros::Duration(quiet_duration));
+    robot_->setMaximumInterruptionDuration(
+        ros::Duration(maximum_interruption_duration));
     robot_->addBehaviourSet(behaviour_set);
   }
   if (robot_->getBehaviourSets().empty())
@@ -150,7 +151,6 @@ void AllianceNode::controlLoop()
     broadcast_timer_.start();
     started_broadcasting_ = true;
   }
-
 }
 
 void AllianceNode::beaconSignalCallback(const alliance_msgs::BeaconSignal& msg)

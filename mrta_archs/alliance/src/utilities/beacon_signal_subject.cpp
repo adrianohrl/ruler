@@ -3,7 +3,8 @@
 namespace utilities
 {
 
-BeaconSignalSubject::BeaconSignalSubject(std::string id) : Subject::Subject(id)
+BeaconSignalSubject::BeaconSignalSubject(const std::string& id)
+    : Subject::Subject(id)
 {
 }
 

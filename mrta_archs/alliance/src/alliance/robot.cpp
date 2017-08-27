@@ -2,15 +2,16 @@
 
 namespace alliance
 {
-Robot::Robot(std::string id, std::string name)
-    : HasName::HasName(name, id), broadcast_rate_(0.0), quiet_duration_(0.0),
-      acquiescence_(NULL), active_behaviour_set_(NULL), impatience_(NULL)
+Robot::Robot(const std::string& id, const std::string& name)
+    : HasName::HasName(name, id), broadcast_rate_(0.0),
+      max_interruption_duration_(0.0), acquiescence_(NULL),
+      active_behaviour_set_(NULL), impatience_(NULL)
 {
 }
 
 Robot::Robot(const Robot& robot)
     : HasName::HasName(robot), broadcast_rate_(robot.broadcast_rate_),
-      quiet_duration_(robot.quiet_duration_),
+      max_interruption_duration_(robot.max_interruption_duration_),
       acquiescence_(robot.acquiescence_),
       active_behaviour_set_(robot.active_behaviour_set_),
       behaviour_sets_(robot.behaviour_sets_), impatience_(robot.impatience_)
@@ -52,8 +53,30 @@ void Robot::process()
     if (behaviour_set->isActive())
     {
       // mas e se houver mais de um comportamento ativo ????
+      if (active_behaviour_set_ && *active_behaviour_set_ != *behaviour_set)
+      {
+        active_behaviour_set_->setActive(false);
+      }
       active_behaviour_set_ = behaviour_set;
+      active_behaviour_set_->setActive();
       return;
+    }
+    it++;
+  }
+}
+
+bool Robot::received(const Robot& robot, const Task& task, const ros::Time& t1,
+                     const ros::Time& t2)
+{
+  std::list<BehaviourSet*>::iterator it(behaviour_sets_.begin());
+  while (it != behaviour_sets_.end())
+  {
+    BehaviourSet* behaviour_set = *it;
+    if (*behaviour_set->getTask() == task)
+    {
+      InterCommunication* monitor =
+          behaviour_set->getMotivationalBehaviour()->getInterCommunication();
+      return monitor->received(robot, t1, t2);
     }
     it++;
   }
@@ -66,14 +89,17 @@ bool Robot::isActive() const
 
 ros::Rate Robot::getBroadcastRate() const { return broadcast_rate_; }
 
-ros::Duration Robot::getQuietDuration() const { return quiet_duration_; }
+ros::Duration Robot::getMaximumInterruptionDuration() const
+{
+  return max_interruption_duration_;
+}
 
-double Robot::getImpatience(ros::Time timestamp) const
+double Robot::getImpatience(const ros::Time& timestamp) const
 {
   return impatience_->getLevel(timestamp);
 }
 
-bool Robot::isAcquiescent(ros::Time timestamp) const
+bool Robot::isAcquiescent(const ros::Time& timestamp) const
 {
   return acquiescence_->isAcquiescent(timestamp);
 }
@@ -88,18 +114,19 @@ Task* Robot::getExecutingTask() const
   return active_behaviour_set_ ? active_behaviour_set_->getTask() : NULL;
 }
 
-void Robot::setBroadcastRate(ros::Rate broadcast_rate)
+void Robot::setBroadcastRate(const ros::Rate& broadcast_rate)
 {
   broadcast_rate_ = broadcast_rate;
 }
 
-void Robot::setQuietDuration(ros::Duration quiet_duration)
+void Robot::setMaximumInterruptionDuration(
+    const ros::Duration& max_interruption_duration)
 {
-  quiet_duration_ = quiet_duration;
+  max_interruption_duration_ = max_interruption_duration;
 }
 
-void Robot::setAcquiescence(ros::Duration yielding_delay,
-                            ros::Duration giving_up_delay)
+void Robot::setAcquiescence(const ros::Duration& yielding_delay,
+                            const ros::Duration& giving_up_delay)
 {
   if (!acquiescence_)
   {

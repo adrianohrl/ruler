@@ -16,13 +16,13 @@ namespace utilities
 class HasName : public HasId<std::string>
 {
 public:
-  HasName(std::string name, std::string id = "");
+  HasName(const std::string& name, const std::string& id = "");
   HasName(const HasName& has_name);
   virtual ~HasName();
-  std::string getName() const;
+  const std::string getName() const;
 
 private:
-  std::string name_;
+  const std::string name_;
 };
 }
 

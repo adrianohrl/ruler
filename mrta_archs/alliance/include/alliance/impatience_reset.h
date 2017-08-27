@@ -14,7 +14,7 @@ public:
   ImpatienceReset(Robot* robot);
   ImpatienceReset(const ImpatienceReset& impatience_reset);
   virtual ~ImpatienceReset();
-  bool reset(ros::Time timestamp = ros::Time::now()) const;
+  bool reset(const ros::Time& timestamp = ros::Time::now()) const;
 };
 }
 

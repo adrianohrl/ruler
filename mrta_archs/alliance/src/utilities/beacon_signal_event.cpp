@@ -23,4 +23,9 @@ bool BeaconSignalEvent::isRelated(const alliance::Robot& robot) const
 {
   return msg_.header.frame_id == robot.getId();
 }
+
+bool BeaconSignalEvent::isRelated(const alliance::Task &task) const
+{
+  return msg_.task_id == task.getId();
+}
 }

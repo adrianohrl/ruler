@@ -8,10 +8,9 @@ namespace alliance
 class Task : public utilities::HasName
 {
 public:
-  Task(std::string id, std::string name);
+  Task(const std::string& id, const std::string& name);
   Task(const Task& task);
   virtual ~Task();
-private:
 };
 }
 

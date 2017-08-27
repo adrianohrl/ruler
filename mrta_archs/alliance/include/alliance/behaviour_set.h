@@ -20,6 +20,8 @@ public:
   void setActive(bool active = true);
   void setActivationThreshold(double threshold);
   void registerActivitySuppression(BehaviourSet* behaviour_set);
+  bool operator==(const BehaviourSet& behaviour_set) const;
+  bool operator!=(const BehaviourSet& behaviour_set) const;
 
 private:
   bool active_;

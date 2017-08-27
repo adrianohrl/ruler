@@ -38,7 +38,7 @@ std::map<Robot, ros::Duration> Impatience::getReliabilityDurations() const
   return reliability_durations_;
 }
 
-double Impatience::getLevel(ros::Time timestamp) const { return 0.0; }
+double Impatience::getLevel(const ros::Time& timestamp) const { return 0.0; }
 
 void Impatience::setFastRate(double fast_rate)
 {
@@ -55,12 +55,12 @@ void Impatience::setSlowRate(const Robot& robot, double slow_rate)
   {
     throw utilities::Exception("The impatience fast rate must be positive.");
   }
-  //slow_rates_[robot] = slow_rate;
+  // slow_rates_[robot] = slow_rate;
 }
 
-void Impatience::setReliabilityDuration(const Robot& robot,
-                                        ros::Duration reliability_duration)
+void Impatience::setReliabilityDuration(
+    const Robot& robot, const ros::Duration& reliability_duration)
 {
-  //reliability_durations_[robot] = reliability_duration;
+  // reliability_durations_[robot] = reliability_duration;
 }
 }

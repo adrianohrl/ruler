@@ -2,20 +2,12 @@
 
 namespace alliance
 {
-Task::Task(std::string id, std::string name)
-  : HasName::HasName(name, id)
+Task::Task(const std::string& id, const std::string& name)
+    : HasName::HasName(name, id)
 {
-
 }
 
-Task::Task(const Task &task)
-  : HasName::HasName(task)
-{
+Task::Task(const Task& task) : HasName::HasName(task) {}
 
-}
-
-Task::~Task()
-{
-
-}
+Task::~Task() {}
 }

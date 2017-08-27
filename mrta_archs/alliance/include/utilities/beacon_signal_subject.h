@@ -11,7 +11,7 @@ namespace utilities
 class BeaconSignalSubject : public Subject
 {
 public:
-  BeaconSignalSubject(std::string id);
+  BeaconSignalSubject(const std::string& id);
   BeaconSignalSubject(const BeaconSignalSubject& subject);
   virtual ~BeaconSignalSubject();
 

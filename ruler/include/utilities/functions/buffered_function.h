@@ -13,17 +13,23 @@ namespace functions
 template <typename T> class BufferedFunction : public Observer
 {
 public:
-  BufferedFunction(std::string id, Function<T>* model,
-                   ros::Duration interruption_delay,
-                   ros::Duration buffer_horizon);
+  BufferedFunction(const std::string& id, Function<T>* model,
+                   const ros::Duration& interruption_delay,
+                   const ros::Duration& buffer_horizon,
+                   const ros::Time& start_timestamp = ros::Time::now());
   BufferedFunction(const BufferedFunction<T>& function);
   virtual ~BufferedFunction();
   ros::Time getStartTimestamp() const;
-  T getValue(ros::Time timestamp = ros::Time::now());
+  ros::Duration getInterruptionDelay() const;
+  ros::Duration getBufferHorizon() const;
+  T getValue(const ros::Time& timestamp = ros::Time::now());
   virtual void update(Event* event);
-  void update(ros::Time timestmap = ros::Time::now());
-  void setInterruptionDelay(ros::Duration interruption_delay);
-  void setBufferHorizon(ros::Duration buffer_horizon);
+  void update(const ros::Time& timestmap = ros::Time::now());
+  void setInterruptionDelay(const ros::Duration& interruption_delay);
+  void setBufferHorizon(const ros::Duration& buffer_horizon);
+
+protected:
+  T getValue(double d) const;
 
 private:
   ros::Time start_timestamp_;
@@ -32,16 +38,15 @@ private:
   ros::Duration buffer_horizon_;
   Function<T>* model_;
   std::list<Function<T>*> functions_;
-  T getValue(double d) const;
   void cleanBuffer(double d);
-
 };
 
 template <typename T>
-BufferedFunction<T>::BufferedFunction(std::string id, Function<T>* model,
-                                      ros::Duration interruption_delay,
-                                      ros::Duration buffer_horizon)
-    : Observer::Observer(id), model_(model), start_timestamp_(ros::Time::now()),
+BufferedFunction<T>::BufferedFunction(const std::string& id, Function<T>* model,
+                                      const ros::Duration& interruption_delay,
+                                      const ros::Duration& buffer_horizon,
+                                      const ros::Time& start_timestamp)
+    : Observer::Observer(id), model_(model), start_timestamp_(start_timestamp),
       interruption_delay_(interruption_delay), buffer_horizon_(buffer_horizon),
       last_update_timestamp_(start_timestamp_)
 {
@@ -81,6 +86,18 @@ template <typename T> ros::Time BufferedFunction<T>::getStartTimestamp() const
   return start_timestamp_;
 }
 
+template <typename T>
+ros::Duration BufferedFunction<T>::getInterruptionDelay() const
+{
+  return interruption_delay_;
+}
+
+template <typename T>
+ros::Duration BufferedFunction<T>::getBufferHorizon() const
+{
+  return buffer_horizon_;
+}
+
 template <typename T> T BufferedFunction<T>::getValue(double d) const
 {
   double q(0.0);
@@ -104,7 +121,8 @@ template <typename T> T BufferedFunction<T>::getValue(double d) const
   return q;
 }
 
-template <typename T> T BufferedFunction<T>::getValue(ros::Time timestamp)
+template <typename T>
+T BufferedFunction<T>::getValue(const ros::Time& timestamp)
 {
   double d((timestamp - start_timestamp_).toSec());
   cleanBuffer(d);
@@ -116,7 +134,8 @@ template <typename T> void BufferedFunction<T>::update(Event* event)
   update(event->getTimestamp());
 }
 
-template <typename T> void BufferedFunction<T>::update(ros::Time timestamp)
+template <typename T>
+void BufferedFunction<T>::update(const ros::Time& timestamp)
 {
   if (timestamp <= last_update_timestamp_)
   {
@@ -149,19 +168,19 @@ template <typename T> void BufferedFunction<T>::update(ros::Time timestamp)
 }
 
 template <typename T>
-void BufferedFunction<T>::setInterruptionDelay(ros::Duration interruption_delay)
+void BufferedFunction<T>::setInterruptionDelay(
+    const ros::Duration& interruption_delay)
 {
   interruption_delay_ = interruption_delay;
 }
 
 template <typename T>
-void BufferedFunction<T>::setBufferHorizon(ros::Duration buffer_horizon)
+void BufferedFunction<T>::setBufferHorizon(const ros::Duration& buffer_horizon)
 {
   buffer_horizon_ = buffer_horizon;
 }
 
-template <typename T>
-void BufferedFunction<T>::cleanBuffer(double d)
+template <typename T> void BufferedFunction<T>::cleanBuffer(double d)
 {
   if (functions_.empty())
   {
@@ -179,18 +198,6 @@ void BufferedFunction<T>::cleanBuffer(double d)
     delete function;
     it = functions_.erase(it);
   }
-  /*
-  functions_.erase(functions_.begin());
-  if (!functions_.empty())
-  {
-    Function<T>* function = functions_.front();
-    d = ros::Duration(function->getDf()) - d + buffer_horizon_;
-    ROS_WARN_STREAM("resetting clean buffer trigger to "
-                    << d.toSec() << " [s] after start.");
-    return;
-  }
-  start_timestamp_ = ros::Time::now();
-  last_update_timestamp_ = start_timestamp_;*/
 }
 }
 }

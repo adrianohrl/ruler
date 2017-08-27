@@ -16,7 +16,7 @@ template <typename K> class HasId
 {
 public:
   virtual ~HasId();
-  K getId() const;
+  const K getId() const;
   std::string str() const;
   const char* c_str() const;
   bool operator<(const HasId<K>& has_id);
@@ -47,7 +47,7 @@ template <typename K> void HasId<K>::setId(const K& id) { id_ = id; }
 
 template <typename K> HasId<K>::~HasId() {}
 
-template <typename K> K HasId<K>::getId() const { return id_; }
+template <typename K> const K HasId<K>::getId() const { return id_; }
 
 template <typename K> std::string HasId<K>::str() const
 {

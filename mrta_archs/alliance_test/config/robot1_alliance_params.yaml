@@ -22,9 +22,9 @@ behaviour_sets:
 
       inter_communication:
         broadcast_rate: 10.0    # in Hertz
-        quiet_duration: 20.0    # in seconds
+        maximum_interruption_duration: 2.0    # in seconds
       #sensory_feedback:
-        quiet_duration: 20.0    # in seconds
+        maximum_interruption_duration: 20.0    # in seconds
   behaviour_set1:
     task:
       id: 'border_protection'
@@ -46,7 +46,7 @@ behaviour_sets:
 
       inter_communication:
         broadcast_rate: 10.0    # in Hertz
-        quiet_duration: 20.0    # in seconds
+        maximum_interruption_duration: 20.0    # in seconds
       #sensory_feedback:
 
   behaviour_set2:
@@ -70,5 +70,5 @@ behaviour_sets:
 
       inter_communication:
         broadcast_rate: 10.0    # in Hertz
-        quiet_duration: 20.0    # in seconds
+        maximum_interruption_duration: 20.0    # in seconds
       #sensory_feedback:

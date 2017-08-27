@@ -45,17 +45,16 @@ MotivationalBehaviour::~MotivationalBehaviour()
   robot_ = NULL;
 }
 
-bool MotivationalBehaviour::active(ros::Time timestamp) const
+bool MotivationalBehaviour::active(const ros::Time& timestamp) const
 {
   return getLevel(timestamp) >= threshold_;
 }
 
-double MotivationalBehaviour::getLevel(ros::Time timestamp) const
+double MotivationalBehaviour::getLevel(const ros::Time& timestamp) const
 {
   return (0.0 + robot_->getImpatience(timestamp)) *
-         activity_suppression_->suppress(timestamp) *
+         activity_suppression_->isSuppressed(timestamp) *
          impatience_reset_->reset(timestamp) *
-         inter_communication_->received(timestamp) *
          sensory_feedback_->received(timestamp) *
          robot_->isAcquiescent(timestamp);
 }

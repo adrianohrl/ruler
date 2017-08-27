@@ -2,7 +2,7 @@
 
 namespace utilities
 {
-BeaconSignalObserver::BeaconSignalObserver(std::string id)
+BeaconSignalObserver::BeaconSignalObserver(const std::string& id)
     : Observer::Observer(id)
 {
 }
@@ -18,7 +18,7 @@ void BeaconSignalObserver::update(Event* event)
 {
   if (typeid(*event) == typeid(BeaconSignalEvent))
   {
-    update((BeaconSignalEvent*) event);
+    update((BeaconSignalEvent*)event);
   }
 }
 }

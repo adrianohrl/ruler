@@ -8,14 +8,15 @@ namespace alliance
 class Acquiescence
 {
 public:
-  Acquiescence(ros::Duration yielding_delay, ros::Duration giving_up_delay);
+  Acquiescence(const ros::Duration& yielding_delay,
+               const ros::Duration& giving_up_delay);
   Acquiescence(const Acquiescence& acquiescence);
   virtual ~Acquiescence();
   ros::Duration getYieldingDelay() const;
   ros::Duration getGivingUpDelay() const;
-  bool isAcquiescent(ros::Time timestamp = ros::Time::now());
-  void setYieldingDelay(ros::Duration yielding_delay);
-  void setGivingUpDelay(ros::Duration giving_up_delay);
+  bool isAcquiescent(const ros::Time& timestamp = ros::Time::now());
+  void setYieldingDelay(const ros::Duration& yielding_delay);
+  void setGivingUpDelay(const ros::Duration& giving_up_delay);
 
 private:
   ros::Duration yielding_delay_;

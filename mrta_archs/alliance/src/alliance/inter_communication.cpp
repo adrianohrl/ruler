@@ -3,36 +3,52 @@
 
 namespace alliance
 {
-InterCommunication::InterCommunication(Robot* robot, BehaviourSet *behaviour_set)
+InterCommunication::InterCommunication(Robot* robot,
+                                       BehaviourSet* behaviour_set)
     : BeaconSignalObserver::BeaconSignalObserver(behaviour_set->getId() +
                                                  "/inter_communication"),
-      robot_(robot)
+      robot_(robot), task_(behaviour_set->getTask())
 {
 }
 
 InterCommunication::InterCommunication(
     const InterCommunication& inter_communication)
     : BeaconSignalObserver::BeaconSignalObserver(inter_communication),
-      robot_(inter_communication.robot_)
+      robot_(inter_communication.robot_), task_(inter_communication.task_)
 {
 }
 
 InterCommunication::~InterCommunication()
 {
   robot_ = NULL;
-  std::list<Robot*>::iterator it(robots_.begin());
+  task_ = NULL;
+  std::map<std::string, utilities::functions::UnaryBufferedFunction*>::iterator
+      it(robots_.begin());
   while (it != robots_.end())
   {
-    if (*it)
+    if (it->second)
     {
-      *it = NULL;
+      delete it->second;
+      it->second = NULL;
     }
     it++;
   }
   robots_.clear();
 }
 
-bool InterCommunication::received(ros::Time timestamp) const { return false; }
+bool InterCommunication::received(const Robot& robot, const ros::Time& t1,
+                                  const ros::Time& t2) const
+{
+  std::map<std::string,
+           utilities::functions::UnaryBufferedFunction*>::const_iterator
+      it(robots_.find(robot.getId()));
+  if (it == robots_.end())
+  {
+    return false;
+  }
+  utilities::functions::UnaryBufferedFunction* function = it->second;
+  return function->updated(t1, t2);
+}
 
 void InterCommunication::update(utilities::BeaconSignalEvent* event)
 {
@@ -40,27 +56,27 @@ void InterCommunication::update(utilities::BeaconSignalEvent* event)
   {
     return;
   }
+  if (!event->isRelated(*task_))
+  {
+    ROS_DEBUG_STREAM("Received beacon signal that is not related to "
+                     << *task_ << " task.");
+    return;
+  }
   std::string robot_id(event->getMsg().header.frame_id);
-  Robot* robot = get(robot_id);
-  if (!robot);
+  std::map<std::string, utilities::functions::UnaryBufferedFunction*>::iterator
+      it(robots_.find(robot_id));
+  utilities::functions::UnaryBufferedFunction* function;
+  if (it != robots_.end())
   {
-    robot = new Robot(robot_id, robot_id);
+    function = it->second;
   }
-  // update robot
-}
-
-Robot *InterCommunication::get(std::string robot_id) const
-{
-  std::list<Robot*>::const_iterator it(robots_.begin());
-  while (it != robots_.end())
+  else
   {
-    Robot* robot = *it;
-    if (robot->getId() == robot_id)
-    {
-      return robot;
-    }
-    it++;
+    function = new utilities::functions::UnaryBufferedFunction(
+        robot_id + "/function", robot_->getMaximumInterruptionDuration(),
+        event->getTimestamp());
+    robots_[robot_id] = function;
   }
-  return NULL;
+  function->update(event->getTimestamp());
 }
 }

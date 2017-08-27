@@ -11,7 +11,7 @@ public:
   SensoryFeedback();
   SensoryFeedback(const SensoryFeedback& sensory_feedback);
   virtual ~SensoryFeedback();
-  bool received(ros::Time timestamp = ros::Time::now()) const;
+  bool received(const ros::Time& timestamp = ros::Time::now()) const;
 };
 }
 

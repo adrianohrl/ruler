@@ -9,7 +9,7 @@ namespace utilities
 class BeaconSignalObserver : public Observer
 {
 public:
-  BeaconSignalObserver(std::string id);
+  BeaconSignalObserver(const std::string& id);
   BeaconSignalObserver(const BeaconSignalObserver& observer);
   virtual ~BeaconSignalObserver();
   virtual void update(Event* event);

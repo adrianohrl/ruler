@@ -19,11 +19,11 @@ public:
   double getFastRate() const;
   ros::Duration getReliabilityDuration(const Robot& robot) const;
   std::map<Robot, ros::Duration> getReliabilityDurations() const;
-  double getLevel(ros::Time timestamp = ros::Time::now()) const;
+  double getLevel(const ros::Time& timestamp = ros::Time::now()) const;
   void setFastRate(double fast_rate);
   void setSlowRate(const Robot& robot, double slow_rate);
   void setReliabilityDuration(const Robot& robot,
-                              ros::Duration reliability_duration);
+                              const ros::Duration& reliability_duration);
 
 private:
   std::map<Robot, double> slow_rates_;

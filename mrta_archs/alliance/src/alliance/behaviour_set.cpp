@@ -65,6 +65,16 @@ void BehaviourSet::setActivationThreshold(double threshold)
 void BehaviourSet::registerActivitySuppression(BehaviourSet* behaviour_set)
 {
   Subject::registerObserver(
-      behaviour_set->motivational_behaviour_->getActivitySuppression());
+        behaviour_set->motivational_behaviour_->getActivitySuppression());
+}
+
+bool BehaviourSet::operator==(const BehaviourSet &behaviour_set) const
+{
+  return *task_ == *behaviour_set.task_;
+}
+
+bool BehaviourSet::operator!=(const BehaviourSet &behaviour_set) const
+{
+  return *task_ != *behaviour_set.task_;
 }
 }
