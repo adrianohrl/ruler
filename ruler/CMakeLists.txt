@@ -65,17 +65,20 @@ set(H_FILES
   include/utilities/functions/discrete_linear_function.h
   include/utilities/functions/discrete_pulse_function.h
   include/utilities/functions/discrete_step_function.h
+  include/utilities/functions/discrete_sample_holder.h
   include/utilities/functions/exponential_function.h
   include/utilities/functions/function.h
   include/utilities/functions/functions.h
   include/utilities/functions/linear_function.h
   include/utilities/functions/probability_density_function.h
   include/utilities/functions/pulse_function.h
+  include/utilities/functions/sample_holder.h
   include/utilities/functions/step_function.h
   include/utilities/functions/time_probability_density_function.h
-  include/utilities/functions/unary_buffered_function.h
   include/utilities/functions/unary_pulse_function.h
   include/utilities/functions/unary_step_function.h
+  include/utilities/functions/unary_sample_holder.h
+  include/utilities/functions/value_change_event.h
   include/utilities/has_id.h
   include/utilities/has_name.h
   include/utilities/interval.h
@@ -117,13 +120,14 @@ set(CPP_FILES
   src/utilities/functions/continuous_step_function.cpp
   src/utilities/functions/discrete_exponential_function.cpp
   src/utilities/functions/discrete_linear_function.cpp
+  src/utilities/functions/discrete_sample_holder.cpp
   src/utilities/functions/probability_density_function.cpp
   src/utilities/functions/discrete_pulse_function.cpp
   src/utilities/functions/discrete_step_function.cpp
   src/utilities/functions/time_probability_density_function.cpp
-  src/utilities/functions/unary_buffered_function.cpp
   src/utilities/functions/unary_pulse_function.cpp
   src/utilities/functions/unary_step_function.cpp
+  src/utilities/functions/unary_sample_holder.cpp
   src/utilities/has_name.cpp
   src/utilities/observer.cpp
   src/utilities/ros_node.cpp

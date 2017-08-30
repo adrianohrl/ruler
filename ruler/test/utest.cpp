@@ -181,38 +181,38 @@ TEST(Functions, step2pulse)
   pulse = NULL;
 }
 
-TEST(Functions, unary_buffered)
+TEST(Functions, unary_sample_holder)
 {
   double dt(0.25);
-  utilities::functions::UnaryBufferedFunction* ubf =
-      new utilities::functions::UnaryBufferedFunction("ubf", ros::Duration(1.0 * dt),
+  utilities::functions::UnarySampleHolder* ush =
+      new utilities::functions::UnarySampleHolder("ush", ros::Duration(1.0 * dt),
                                                       ros::Duration(3.5 * dt));
-  ros::Time timestamp = ubf->getStartTimestamp();
-  EXPECT_FALSE(ubf->getValue(timestamp + ros::Duration(0.0 * dt)));
-  EXPECT_FALSE(ubf->getValue(timestamp + ros::Duration(0.25 * dt)));
-  ubf->update(timestamp + ros::Duration(0.5 * dt));
-  EXPECT_FALSE(ubf->getValue(timestamp + ros::Duration(0.5 * dt)));
-  EXPECT_TRUE(ubf->getValue(timestamp + ros::Duration(0.75 * dt)));
-  ubf->update(timestamp + ros::Duration(1.0 * dt));
-  EXPECT_TRUE(ubf->getValue(timestamp + ros::Duration(1.0 * dt)));
-  EXPECT_TRUE(ubf->getValue(timestamp + ros::Duration(1.75 * dt)));
-  EXPECT_TRUE(ubf->getValue(timestamp + ros::Duration(2.0 * dt)));
-  EXPECT_FALSE(ubf->getValue(timestamp + ros::Duration(2.25 * dt)));
-  ubf->update(timestamp + ros::Duration(2.5 * dt));
-  EXPECT_FALSE(ubf->getValue(timestamp + ros::Duration(2.5 * dt)));
-  EXPECT_TRUE(ubf->getValue(timestamp + ros::Duration(2.75 * dt)));
-  EXPECT_TRUE(ubf->getValue(timestamp + ros::Duration(3.0 * dt)));
-  EXPECT_TRUE(ubf->getValue(timestamp + ros::Duration(3.25 * dt)));
-  EXPECT_TRUE(ubf->getValue(timestamp + ros::Duration(3.5 * dt)));
-  EXPECT_FALSE(ubf->getValue(timestamp + ros::Duration(3.75 * dt)));
-  EXPECT_FALSE(ubf->getValue(timestamp + ros::Duration(4.0 * dt)));
-  EXPECT_FALSE(ubf->getValue(timestamp + ros::Duration(5.0 * dt)));
-  EXPECT_FALSE(ubf->getValue(timestamp + ros::Duration(5.5 * dt)));
-  EXPECT_FALSE(ubf->getValue(timestamp + ros::Duration(6.0 * dt)));
-  EXPECT_FALSE(ubf->getValue(timestamp + ros::Duration(6.5 * dt)));
-  EXPECT_FALSE(ubf->getValue(timestamp + ros::Duration(7.0 * dt)));
-  EXPECT_FALSE(ubf->getValue(timestamp + ros::Duration(7.5 * dt)));
-  delete ubf;
+  ros::Time timestamp = ush->getStartTimestamp();
+  EXPECT_FALSE(ush->getValue(timestamp + ros::Duration(0.0 * dt)));
+  EXPECT_FALSE(ush->getValue(timestamp + ros::Duration(0.25 * dt)));
+  ush->update(timestamp + ros::Duration(0.5 * dt));
+  EXPECT_FALSE(ush->getValue(timestamp + ros::Duration(0.5 * dt)));
+  EXPECT_TRUE(ush->getValue(timestamp + ros::Duration(0.75 * dt)));
+  ush->update(timestamp + ros::Duration(1.0 * dt));
+  EXPECT_TRUE(ush->getValue(timestamp + ros::Duration(1.0 * dt)));
+  EXPECT_TRUE(ush->getValue(timestamp + ros::Duration(1.75 * dt)));
+  EXPECT_TRUE(ush->getValue(timestamp + ros::Duration(2.0 * dt)));
+  EXPECT_FALSE(ush->getValue(timestamp + ros::Duration(2.25 * dt)));
+  ush->update(timestamp + ros::Duration(2.5 * dt));
+  EXPECT_FALSE(ush->getValue(timestamp + ros::Duration(2.5 * dt)));
+  EXPECT_TRUE(ush->getValue(timestamp + ros::Duration(2.75 * dt)));
+  EXPECT_TRUE(ush->getValue(timestamp + ros::Duration(3.0 * dt)));
+  EXPECT_TRUE(ush->getValue(timestamp + ros::Duration(3.25 * dt)));
+  EXPECT_TRUE(ush->getValue(timestamp + ros::Duration(3.5 * dt)));
+  EXPECT_FALSE(ush->getValue(timestamp + ros::Duration(3.75 * dt)));
+  EXPECT_FALSE(ush->getValue(timestamp + ros::Duration(4.0 * dt)));
+  EXPECT_FALSE(ush->getValue(timestamp + ros::Duration(5.0 * dt)));
+  EXPECT_FALSE(ush->getValue(timestamp + ros::Duration(5.5 * dt)));
+  EXPECT_FALSE(ush->getValue(timestamp + ros::Duration(6.0 * dt)));
+  EXPECT_FALSE(ush->getValue(timestamp + ros::Duration(6.5 * dt)));
+  EXPECT_FALSE(ush->getValue(timestamp + ros::Duration(7.0 * dt)));
+  EXPECT_FALSE(ush->getValue(timestamp + ros::Duration(7.5 * dt)));
+  delete ush;
 }
 
 TEST(Task, start)

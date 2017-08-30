@@ -1,10 +1,10 @@
 #ifndef _ALLIANCE_NODE_H_
 #define _ALLIANCE_NODE_H_
 
+#include "alliance/robot.h"
 #include <alliance_msgs/BeaconSignal.h>
 #include "utilities/beacon_signal_subject.h"
 #include <utilities/ros_node.h>
-#include "alliance/robot.h"
 
 namespace nodes
 {

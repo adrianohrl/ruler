@@ -4,7 +4,7 @@
 
 namespace alliance
 {
-MotivationalBehaviour::MotivationalBehaviour(Robot* robot,
+MotivationalBehaviour::MotivationalBehaviour(Robot *robot,
                                              BehaviourSet* behaviour_set)
     : robot_(robot), threshold_(0.0),
       activity_suppression_(new ActivitySuppression(robot, behaviour_set)),

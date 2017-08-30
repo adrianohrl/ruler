@@ -6,14 +6,15 @@ namespace alliance
 {
 BehaviourSet::BehaviourSet(Robot* robot, Task* task)
     : Subject::Subject(robot->getId() + "/" + task->getId()), task_(task),
-      motivational_behaviour_(new MotivationalBehaviour(robot, this))
+      motivational_behaviour_(new MotivationalBehaviour(robot, this)),
+      active_(false)
 {
 }
 
 BehaviourSet::BehaviourSet(const BehaviourSet& behaviour_set)
     : Subject::Subject(behaviour_set),
       motivational_behaviour_(behaviour_set.motivational_behaviour_),
-      task_(behaviour_set.task_)
+      task_(behaviour_set.task_), active_(behaviour_set.active_)
 {
 }
 
@@ -29,7 +30,14 @@ BehaviourSet::~BehaviourSet()
 
 void BehaviourSet::process()
 {
-  setActive(motivational_behaviour_->active());
+
+  /** so para testar agora **/
+  std::string id(getId());
+  return setActive(id == "robot1/wander" || id == "robot2/report" ||
+                   id == "robot3/border_protection");
+  /* acaba aki o test */
+
+  // setActive(motivational_behaviour_->active());
 }
 
 MotivationalBehaviour* BehaviourSet::getMotivationalBehaviour() const
@@ -65,15 +73,15 @@ void BehaviourSet::setActivationThreshold(double threshold)
 void BehaviourSet::registerActivitySuppression(BehaviourSet* behaviour_set)
 {
   Subject::registerObserver(
-        behaviour_set->motivational_behaviour_->getActivitySuppression());
+      behaviour_set->motivational_behaviour_->getActivitySuppression());
 }
 
-bool BehaviourSet::operator==(const BehaviourSet &behaviour_set) const
+bool BehaviourSet::operator==(const BehaviourSet& behaviour_set) const
 {
   return *task_ == *behaviour_set.task_;
 }
 
-bool BehaviourSet::operator!=(const BehaviourSet &behaviour_set) const
+bool BehaviourSet::operator!=(const BehaviourSet& behaviour_set) const
 {
   return *task_ != *behaviour_set.task_;
 }

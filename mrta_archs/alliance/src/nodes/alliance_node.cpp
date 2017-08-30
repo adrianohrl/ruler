@@ -103,17 +103,16 @@ void AllianceNode::readParameters()
       continue;
     }
     robot_->setBroadcastRate(ros::Rate(broadcast_rate));
-    double maximum_interruption_duration;
-    pnh.param(ss.str() + "inter_communication/maximum_interruption_duration",
-              maximum_interruption_duration, 0.0);
-    if (maximum_interruption_duration < 0.0)
+    double timeout_duration;
+    pnh.param(ss.str() + "inter_communication/timeout_duration",
+              timeout_duration, 0.0);
+    if (timeout_duration < 0.0)
     {
       ROS_WARN(
           "The robot's inter communication quiet duration must be positive.");
-      maximum_interruption_duration = 0.0;
+      timeout_duration = 0.0;
     }
-    robot_->setMaximumInterruptionDuration(
-        ros::Duration(maximum_interruption_duration));
+    robot_->setTimeoutDuration(ros::Duration(timeout_duration));
     robot_->addBehaviourSet(behaviour_set);
   }
   if (robot_->getBehaviourSets().empty())
@@ -145,9 +144,9 @@ void AllianceNode::init()
 void AllianceNode::controlLoop()
 {
   robot_->process();
-  if (robot_->isActive() && started_broadcasting_)
+  if (robot_->isActive() && !started_broadcasting_)
   {
-    ROS_DEBUG_STREAM("Starting " << *robot_ << " broadcast timer.");
+    ROS_WARN_STREAM("Starting " << *robot_ << " broadcast timer.");
     broadcast_timer_.start();
     started_broadcasting_ = true;
   }
@@ -162,11 +161,12 @@ void AllianceNode::broadcastTimerCallback(const ros::TimerEvent& event)
 {
   if (!robot_->getExecutingTask())
   {
-    ROS_DEBUG_STREAM("Stoping " << *robot_ << " broadcast timer.");
+    ROS_WARN_STREAM("Stoping " << *robot_ << " broadcast timer.");
     broadcast_timer_.stop();
     started_broadcasting_ = false;
     return;
   }
+  ROS_INFO_STREAM("Broadcasting " << *robot_ << " beacon signal message.");
   alliance_msgs::BeaconSignal msg;
   msg.header.stamp = ros::Time::now();
   msg.header.frame_id = robot_->getId();

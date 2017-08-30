@@ -3,15 +3,14 @@
 namespace alliance
 {
 Robot::Robot(const std::string& id, const std::string& name)
-    : HasName::HasName(name, id), broadcast_rate_(0.0),
-      max_interruption_duration_(0.0), acquiescence_(NULL),
-      active_behaviour_set_(NULL), impatience_(NULL)
+    : HasName::HasName(name, id), broadcast_rate_(0.0), timeout_duration_(0.0),
+      acquiescence_(NULL), active_behaviour_set_(NULL), impatience_(NULL)
 {
 }
 
 Robot::Robot(const Robot& robot)
     : HasName::HasName(robot), broadcast_rate_(robot.broadcast_rate_),
-      max_interruption_duration_(robot.max_interruption_duration_),
+      timeout_duration_(robot.timeout_duration_),
       acquiescence_(robot.acquiescence_),
       active_behaviour_set_(robot.active_behaviour_set_),
       behaviour_sets_(robot.behaviour_sets_), impatience_(robot.impatience_)
@@ -89,10 +88,7 @@ bool Robot::isActive() const
 
 ros::Rate Robot::getBroadcastRate() const { return broadcast_rate_; }
 
-ros::Duration Robot::getMaximumInterruptionDuration() const
-{
-  return max_interruption_duration_;
-}
+ros::Duration Robot::getTimeoutDuration() const { return timeout_duration_; }
 
 double Robot::getImpatience(const ros::Time& timestamp) const
 {
@@ -119,10 +115,9 @@ void Robot::setBroadcastRate(const ros::Rate& broadcast_rate)
   broadcast_rate_ = broadcast_rate;
 }
 
-void Robot::setMaximumInterruptionDuration(
-    const ros::Duration& max_interruption_duration)
+void Robot::setTimeoutDuration(const ros::Duration& timeout_duration)
 {
-  max_interruption_duration_ = max_interruption_duration;
+  timeout_duration_ = timeout_duration;
 }
 
 void Robot::setAcquiescence(const ros::Duration& yielding_delay,

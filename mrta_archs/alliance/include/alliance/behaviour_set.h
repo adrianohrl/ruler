@@ -10,7 +10,7 @@ namespace alliance
 class BehaviourSet : public utilities::Subject
 {
 public:
-  BehaviourSet(Robot* robot, Task* task);
+  BehaviourSet(Robot *robot, Task* task);
   BehaviourSet(const BehaviourSet& behaviour_set);
   virtual ~BehaviourSet();
   void process();

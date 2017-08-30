@@ -14,18 +14,20 @@ template <typename T> class BufferedFunction : public Observer
 {
 public:
   BufferedFunction(const std::string& id, Function<T>* model,
-                   const ros::Duration& interruption_delay,
+                   const ros::Duration& timeout_duration,
                    const ros::Duration& buffer_horizon,
                    const ros::Time& start_timestamp = ros::Time::now());
   BufferedFunction(const BufferedFunction<T>& function);
   virtual ~BufferedFunction();
   ros::Time getStartTimestamp() const;
-  ros::Duration getInterruptionDelay() const;
+  ros::Duration getTimeoutDuration() const;
   ros::Duration getBufferHorizon() const;
   T getValue(const ros::Time& timestamp = ros::Time::now());
   virtual void update(Event* event);
-  void update(const ros::Time& timestmap = ros::Time::now());
-  void setInterruptionDelay(const ros::Duration& interruption_delay);
+  void update(Event* event, Function<T>* model);
+  virtual void update(const ros::Time& timestamp);
+  void update(const ros::Time& timestamp, Function<T>* model);
+  void setTimeoutDuration(const ros::Duration& timeout_duration);
   void setBufferHorizon(const ros::Duration& buffer_horizon);
 
 protected:
@@ -34,7 +36,7 @@ protected:
 private:
   ros::Time start_timestamp_;
   ros::Time last_update_timestamp_;
-  ros::Duration interruption_delay_;
+  ros::Duration timeout_duration_;
   ros::Duration buffer_horizon_;
   Function<T>* model_;
   std::list<Function<T>*> functions_;
@@ -43,11 +45,11 @@ private:
 
 template <typename T>
 BufferedFunction<T>::BufferedFunction(const std::string& id, Function<T>* model,
-                                      const ros::Duration& interruption_delay,
+                                      const ros::Duration& timeout_duration,
                                       const ros::Duration& buffer_horizon,
                                       const ros::Time& start_timestamp)
     : Observer::Observer(id), model_(model), start_timestamp_(start_timestamp),
-      interruption_delay_(interruption_delay), buffer_horizon_(buffer_horizon),
+      timeout_duration_(timeout_duration), buffer_horizon_(buffer_horizon),
       last_update_timestamp_(start_timestamp_)
 {
 }
@@ -56,7 +58,7 @@ template <typename T>
 BufferedFunction<T>::BufferedFunction(const BufferedFunction<T>& function)
     : Observer::Observer(function), model_(function.model_),
       start_timestamp_(ros::Time::now()),
-      interruption_delay_(function.interruption_delay_),
+      timeout_duration_(function.timeout_duration_),
       buffer_horizon_(function.buffer_horizon_),
       last_update_timestamp_(start_timestamp_)
 {
@@ -87,9 +89,9 @@ template <typename T> ros::Time BufferedFunction<T>::getStartTimestamp() const
 }
 
 template <typename T>
-ros::Duration BufferedFunction<T>::getInterruptionDelay() const
+ros::Duration BufferedFunction<T>::getTimeoutDuration() const
 {
-  return interruption_delay_;
+  return timeout_duration_;
 }
 
 template <typename T>
@@ -131,11 +133,28 @@ T BufferedFunction<T>::getValue(const ros::Time& timestamp)
 
 template <typename T> void BufferedFunction<T>::update(Event* event)
 {
-  update(event->getTimestamp());
+  update(event->getTimestamp(), model_);
+}
+
+template <typename T>
+void BufferedFunction<T>::update(Event* event, Function<T>* model)
+{
+  update(event->getTimestamp(), model);
+  if (model_)
+  {
+    delete model_;
+  }
+  model_ = model;
 }
 
 template <typename T>
 void BufferedFunction<T>::update(const ros::Time& timestamp)
+{
+  update(timestamp, model_);
+}
+
+template <typename T>
+void BufferedFunction<T>::update(const ros::Time& timestamp, Function<T>* model)
 {
   if (timestamp <= last_update_timestamp_)
   {
@@ -147,31 +166,31 @@ void BufferedFunction<T>::update(const ros::Time& timestamp)
   Function<T>* function;
   if (functions_.empty())
   {
-    function = model_->clone();
+    function = model->clone();
     function->setD0(d);
-    function->setDf(interruption_delay_ + d);
+    function->setDf(timeout_duration_ + d);
     functions_.push_back(function);
     return;
   }
   function = functions_.back();
   if (function->getDf() < d.toSec())
   {
-    function = model_->clone();
+    function = model->clone();
     function->setD0(d);
-    function->setDf(interruption_delay_ + d);
+    function->setDf(timeout_duration_ + d);
     functions_.push_back(function);
   }
   else
   {
-    function->setDf(interruption_delay_ + d);
+    function->setDf(timeout_duration_ + d);
   }
 }
 
 template <typename T>
-void BufferedFunction<T>::setInterruptionDelay(
-    const ros::Duration& interruption_delay)
+void BufferedFunction<T>::setTimeoutDuration(
+    const ros::Duration& timeout_duration)
 {
-  interruption_delay_ = interruption_delay;
+  timeout_duration_ = timeout_duration;
 }
 
 template <typename T>

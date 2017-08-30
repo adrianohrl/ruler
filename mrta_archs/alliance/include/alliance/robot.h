@@ -22,14 +22,13 @@ public:
                 const ros::Time& t2);
   bool isActive() const;
   ros::Rate getBroadcastRate() const;
-  ros::Duration getMaximumInterruptionDuration() const;
+  ros::Duration getTimeoutDuration() const;
   double getImpatience(const ros::Time& timestamp = ros::Time::now()) const;
   bool isAcquiescent(const ros::Time& timestamp = ros::Time::now()) const;
   std::list<BehaviourSet*> getBehaviourSets() const;
   Task* getExecutingTask() const;
   void setBroadcastRate(const ros::Rate& broadcast_rate);
-  void setMaximumInterruptionDuration(
-      const ros::Duration& max_interruption_duration);
+  void setTimeoutDuration(const ros::Duration& timeout_duration);
   void setAcquiescence(const ros::Duration& yielding_delay,
                        const ros::Duration& giving_up_delay);
   void setImpatience(double fast_rate);
@@ -39,7 +38,7 @@ public:
 
 private:
   ros::Rate broadcast_rate_;
-  ros::Duration max_interruption_duration_;
+  ros::Duration timeout_duration_;
   Acquiescence* acquiescence_;
   BehaviourSet* active_behaviour_set_;
   std::list<BehaviourSet*> behaviour_sets_;

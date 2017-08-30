@@ -1,4 +1,5 @@
 #include "alliance/activity_suppression.h"
+#include "alliance/behaviour_set.h"
 #include "alliance/robot.h"
 #include <typeinfo>
 #include <utilities/toggle_event.h>
