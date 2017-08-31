@@ -1,9 +1,12 @@
 #ifndef _ALLIANCE_BEHAVIOUR_SET_H_
 #define _ALLIANCE_BEHAVIOUR_SET_H_
 
+#include "alliance/layer.h"
 #include "alliance/motivational_behaviour.h"
 #include "alliance/task.h"
+#include <list>
 #include <utilities/subject.h>
+#include <utilities/functions/unary_sample_holder.h>
 
 namespace alliance
 {
@@ -15,9 +18,10 @@ public:
   virtual ~BehaviourSet();
   void process();
   MotivationalBehaviour* getMotivationalBehaviour() const;
-  bool isActive() const;
+  bool isActive(const ros::Time &timestamp = ros::Time::now()) const;
   Task* getTask() const;
-  void setActive(bool active = true);
+  ros::Time getActivationTimestamp() const;
+  void setActive(bool active = true, const ros::Time &timestamp = ros::Time::now());
   void setActivationThreshold(double threshold);
   void setAcquiescence(const ros::Duration& yielding_delay,
                        const ros::Duration& giving_up_delay);
@@ -27,7 +31,8 @@ public:
   bool operator!=(const BehaviourSet& behaviour_set) const;
 
 private:
-  bool active_;
+  ros::Time activation_timestamp_;
+  utilities::functions::UnarySampleHolder* active_;
   MotivationalBehaviour* motivational_behaviour_;
   Task* task_;
 };

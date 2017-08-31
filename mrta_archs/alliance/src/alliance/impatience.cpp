@@ -131,6 +131,8 @@ void Impatience::setSlowRate(const std::string& robot_id, double slow_rate,
   {
     sample_holder = it->second;
   }
+  ROS_DEBUG_STREAM("Updating " << *sample_holder << " to "
+                               << slow_rate << ".");
   sample_holder->update(slow_rate, timestamp);
 }
 
@@ -140,6 +142,7 @@ void Impatience::setFastRate(double fast_rate, const ros::Time& timestamp)
   {
     throw utilities::Exception("The impatience fast rate must be positive.");
   }
+  ROS_DEBUG_STREAM("Updating " << *fast_rate_ << " to " << fast_rate << ".");
   fast_rate_->update(fast_rate, timestamp);
 }
 
@@ -161,6 +164,8 @@ void Impatience::setReliabilityDuration(
   {
     sample_holder = it->second;
   }
+  ROS_DEBUG_STREAM("Updating " << *sample_holder << " to "
+                               << reliability_duration.toSec() << " [s].");
   sample_holder->update(reliability_duration.toSec(), timestamp);
 }
 }

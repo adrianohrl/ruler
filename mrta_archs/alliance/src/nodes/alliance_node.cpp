@@ -164,7 +164,6 @@ void AllianceNode::broadcastTimerCallback(const ros::TimerEvent& event)
     started_broadcasting_ = false;
     return;
   }
-  ROS_INFO_STREAM("Broadcasting " << *robot_ << " beacon signal message.");
   alliance_msgs::BeaconSignal msg;
   msg.header.stamp = ros::Time::now();
   msg.header.frame_id = robot_->getId();

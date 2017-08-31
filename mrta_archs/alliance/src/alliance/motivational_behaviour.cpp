@@ -18,8 +18,8 @@ MotivationalBehaviour::MotivationalBehaviour(Robot* robot,
   acquiescence_ = new Acquiescence(robot, behaviour_set, inter_communication_);
   activity_suppression_ = new ActivitySuppression(robot, behaviour_set);
   impatience_ = new Impatience(robot, behaviour_set, inter_communication_);
-  impatience_reset_ = new ImpatienceReset(robot);
-  sensory_feedback_ = new SensoryFeedback();
+  impatience_reset_ = new ImpatienceReset(inter_communication_);
+  sensory_feedback_ = new SensoryFeedback(behaviour_set->getTask());
 }
 
 MotivationalBehaviour::MotivationalBehaviour(
@@ -84,7 +84,7 @@ MotivationalBehaviour::~MotivationalBehaviour()
 
 bool MotivationalBehaviour::active(const ros::Time& timestamp) const
 {
-  return getMotivation(timestamp) >= threshold_->getValue(timestamp);
+  return getLevel(timestamp) >= threshold_->getValue(timestamp);
 }
 
 double MotivationalBehaviour::getThreshold(const ros::Time& timestamp) const
@@ -92,14 +92,14 @@ double MotivationalBehaviour::getThreshold(const ros::Time& timestamp) const
   return threshold_->getValue(timestamp);
 }
 
-double MotivationalBehaviour::getMotivation(const ros::Time& timestamp) const
+double MotivationalBehaviour::getLevel(const ros::Time& timestamp) const
 {
   double motivation(motivation_->getValue());
   motivation = (motivation + impatience_->getLevel(timestamp)) *
                acquiescence_->isAcquiescent(timestamp) *
                activity_suppression_->isSuppressed(timestamp) *
-               impatience_reset_->reset(timestamp) *
-               sensory_feedback_->received(timestamp);
+               impatience_reset_->isResetted(timestamp) *
+               sensory_feedback_->isApplicable(timestamp);
   motivation_->update(motivation, timestamp);
   return motivation;
 }
@@ -122,6 +122,7 @@ void MotivationalBehaviour::setThreshold(double threshold,
     throw utilities::Exception(
         "The motivational behaviour's activation threshold must be positive.");
   }
+  ROS_DEBUG_STREAM("Updating " << *threshold_ << " to " << threshold << ".");
   threshold_->update(threshold, timestamp);
 }
 

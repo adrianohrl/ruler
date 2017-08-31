@@ -5,26 +5,34 @@
 namespace alliance
 {
 BehaviourSet::BehaviourSet(Robot* robot, Task* task)
-    : Subject::Subject(robot->getId() + "/" + task->getId()), task_(task),
-      active_(false)
+    : Subject::Subject(robot->getId() + "/" + task->getId()), task_(task)
 {
-  motivational_behaviour_ = new MotivationalBehaviour(robot, this);
   if (!task)
   {
     throw utilities::Exception("The behaviour set's task must not be null.");
   }
+  active_ = new utilities::functions::UnarySampleHolder(
+      getId() + "/active",
+      ros::Duration(10 * robot->getTimeoutDuration().toSec()));
+  motivational_behaviour_ = new MotivationalBehaviour(robot, this);
 }
 
 BehaviourSet::BehaviourSet(const BehaviourSet& behaviour_set)
     : Subject::Subject(behaviour_set), task_(behaviour_set.task_),
-      active_(behaviour_set.active_)
+      activation_timestamp_(behaviour_set.activation_timestamp_)
 {
+  active_ = new utilities::functions::UnarySampleHolder(*behaviour_set.active_);
   motivational_behaviour_ =
       new MotivationalBehaviour(*behaviour_set.motivational_behaviour_);
 }
 
 BehaviourSet::~BehaviourSet()
 {
+  if (active_)
+  {
+    delete active_;
+    active_ = NULL;
+  }
   if (motivational_behaviour_)
   {
     delete motivational_behaviour_;
@@ -50,16 +58,27 @@ MotivationalBehaviour* BehaviourSet::getMotivationalBehaviour() const
   return motivational_behaviour_;
 }
 
-bool BehaviourSet::isActive() const { return active_; }
+bool BehaviourSet::isActive(const ros::Time& timestamp) const
+{
+  return active_->getValue(timestamp);
+}
 
 Task* BehaviourSet::getTask() const { return task_; }
 
-void BehaviourSet::setActive(bool active)
+ros::Time BehaviourSet::getActivationTimestamp() const
 {
-  if (active != active_)
+  return activation_timestamp_;
+}
+
+void BehaviourSet::setActive(bool active, const ros::Time& timestamp)
+{
+  if (active != active_->getValue(timestamp))
   {
-    active_ = active;
-    utilities::ToggleEvent* event = new utilities::ToggleEvent(this, active);
+    ROS_DEBUG_STREAM("Updating " << *active_ << " to " << active << ".");
+    active_->update(active, timestamp);
+    activation_timestamp_ = active ? timestamp : ros::Time();
+    utilities::ToggleEvent* event =
+        new utilities::ToggleEvent(this, active, timestamp);
     Subject::notify(event);
     delete event;
   }

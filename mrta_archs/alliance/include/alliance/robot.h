@@ -29,7 +29,6 @@ public:
 private:
   ros::Rate broadcast_rate_;
   ros::Duration timeout_duration_;
-  Acquiescence* acquiescence_;
   BehaviourSet* active_behaviour_set_;
   std::list<BehaviourSet*> behaviour_sets_;
   bool contains(const BehaviourSet& behaviour_set) const;

@@ -3,6 +3,7 @@
 
 #include "utilities/unary_signal_type.h"
 #include "utilities/functions/sample_holder.h"
+#include "utilities/toggle_event.h"
 
 namespace utilities
 {
@@ -20,6 +21,7 @@ public:
   virtual ~UnarySampleHolder();
   using BufferedFunction<UnarySignalType>::update;
   using SampleHolder<UnarySignalType>::update;
+  void update(ToggleEvent* event);
   bool updated(const ros::Time& t1, const ros::Time& t2 = ros::Time::now()) const;
 };
 }

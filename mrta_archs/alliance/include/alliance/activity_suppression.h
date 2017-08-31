@@ -3,6 +3,7 @@
 
 #include <ros/time.h>
 #include <utilities/observer.h>
+#include <utilities/functions/unary_sample_holder.h>
 
 namespace alliance
 {
@@ -16,13 +17,12 @@ public:
   ActivitySuppression(Robot* robot, BehaviourSet* behaviour_set);
   ActivitySuppression(const ActivitySuppression& activity_suppression);
   virtual ~ActivitySuppression();
-  virtual void update(utilities::Event* event);
+  virtual void update(utilities::Event *event);
   bool isSuppressed(const ros::Time& timestamp = ros::Time::now()) const;
 
 private:
   Robot* robot_;
-  ros::Time last_suppression_timestamp_;
-  ros::Time last_accession_timestamp_;
+  utilities::functions::UnarySampleHolder* suppressed_;
 };
 }
 

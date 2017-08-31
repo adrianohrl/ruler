@@ -3,17 +3,22 @@
 
 namespace alliance
 {
-ImpatienceReset::ImpatienceReset(Robot* robot)
-//: Observer::Observer(robot->getId() + "/impatience_reset")
+ImpatienceReset::ImpatienceReset(InterCommunication* monitor)
+    : monitor_(monitor)
 {
 }
 
 ImpatienceReset::ImpatienceReset(const ImpatienceReset& impatience_reset)
-//: Observer::Observer(impatience_reset)
+    : monitor_(impatience_reset.monitor_)
 {
 }
 
-ImpatienceReset::~ImpatienceReset() {}
+ImpatienceReset::~ImpatienceReset() { monitor_ = NULL; }
 
-bool ImpatienceReset::reset(const ros::Time& timestamp) const { return false; }
+bool ImpatienceReset::isResetted(const ros::Time& timestamp) const
+{
+  return !(monitor_->received(monitor_->getLastUpdateTimestamp(), timestamp) &&
+           !monitor_->received(ros::Time(),
+                               monitor_->getLastUpdateTimestamp()));
+}
 }

@@ -20,7 +20,7 @@ public:
   virtual ~MotivationalBehaviour();
   bool active(const ros::Time& timestamp = ros::Time::now()) const;
   double getThreshold(const ros::Time& timestamp = ros::Time::now()) const;
-  double getMotivation(const ros::Time& timestamp = ros::Time::now()) const;
+  double getLevel(const ros::Time& timestamp = ros::Time::now()) const;
   ActivitySuppression* getActivitySuppression() const;
   InterCommunication* getInterCommunication() const;
   void setThreshold(double threshold,

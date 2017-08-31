@@ -4,14 +4,13 @@ namespace alliance
 {
 Robot::Robot(const std::string& id, const std::string& name)
     : HasName::HasName(name, id), broadcast_rate_(0.0), timeout_duration_(0.0),
-      acquiescence_(NULL), active_behaviour_set_(NULL)
+      active_behaviour_set_(NULL)
 {
 }
 
 Robot::Robot(const Robot& robot)
     : HasName::HasName(robot), broadcast_rate_(robot.broadcast_rate_),
       timeout_duration_(robot.timeout_duration_),
-      acquiescence_(robot.acquiescence_),
       active_behaviour_set_(robot.active_behaviour_set_),
       behaviour_sets_(robot.behaviour_sets_)
 {
@@ -19,11 +18,6 @@ Robot::Robot(const Robot& robot)
 
 Robot::~Robot()
 {
-  if (acquiescence_)
-  {
-    delete acquiescence_;
-    acquiescence_ = NULL;
-  }
   active_behaviour_set_ = NULL;
   std::list<BehaviourSet*>::iterator it(behaviour_sets_.begin());
   while (it != behaviour_sets_.end())
@@ -46,7 +40,6 @@ void Robot::process()
     behaviour_set->process();
     if (behaviour_set->isActive())
     {
-      // mas e se houver mais de um comportamento ativo ????
       if (active_behaviour_set_ && *active_behaviour_set_ != *behaviour_set)
       {
         active_behaviour_set_->setActive(false);

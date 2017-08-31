@@ -26,6 +26,7 @@ public:
 
 private:
   Robot* robot_;
+  BehaviourSet* behaviour_set_;
   InterCommunication* monitor_;
   utilities::functions::ContinuousSampleHolder* yielding_delay_;
   utilities::functions::ContinuousSampleHolder* giving_up_delay_;

@@ -61,6 +61,7 @@ set(CPP_FILES
   src/alliance/layer.cpp
   src/alliance/motivational_behaviour.cpp
   src/alliance/robot.cpp
+  src/alliance/sensor.cpp
   src/alliance/sensory_feedback.cpp
   src/alliance/task.cpp
   src/nodes/alliance_node.cpp
