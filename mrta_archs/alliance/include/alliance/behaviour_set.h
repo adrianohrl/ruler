@@ -10,7 +10,7 @@ namespace alliance
 class BehaviourSet : public utilities::Subject
 {
 public:
-  BehaviourSet(Robot *robot, Task* task);
+  BehaviourSet(Robot* robot, Task* task);
   BehaviourSet(const BehaviourSet& behaviour_set);
   virtual ~BehaviourSet();
   void process();
@@ -19,6 +19,9 @@ public:
   Task* getTask() const;
   void setActive(bool active = true);
   void setActivationThreshold(double threshold);
+  void setAcquiescence(const ros::Duration& yielding_delay,
+                       const ros::Duration& giving_up_delay);
+  void setImpatience(double fast_rate);
   void registerActivitySuppression(BehaviourSet* behaviour_set);
   bool operator==(const BehaviourSet& behaviour_set) const;
   bool operator!=(const BehaviourSet& behaviour_set) const;

@@ -11,16 +11,16 @@ namespace functions
 class UnarySampleHolder : public SampleHolder<UnarySignalType>
 {
 public:
-  UnarySampleHolder(std::string id, ros::Duration timeout_duration,
-                    ros::Time start_timestamp = ros::Time::now());
-  UnarySampleHolder(std::string id, ros::Duration timeout_duration,
-                    ros::Duration buffer_horizon,
-                    ros::Time start_timestamp = ros::Time::now());
+  UnarySampleHolder(const std::string &id, const ros::Duration &buffer_horizon,
+                    const ros::Time &start_timestamp = ros::Time::now());
+  UnarySampleHolder(const std::string &id, const ros::Duration &timeout_duration,
+                    const ros::Duration &buffer_horizon,
+                    const ros::Time &start_timestamp = ros::Time::now());
   UnarySampleHolder(const UnarySampleHolder& function);
   virtual ~UnarySampleHolder();
   using BufferedFunction<UnarySignalType>::update;
   using SampleHolder<UnarySignalType>::update;
-  bool updated(ros::Time t1, ros::Time t2 = ros::Time::now()) const;
+  bool updated(const ros::Time& t1, const ros::Time& t2 = ros::Time::now()) const;
 };
 }
 }

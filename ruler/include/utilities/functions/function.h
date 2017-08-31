@@ -24,6 +24,8 @@ public:
   std::string getName() const;
   double getD0() const;
   double getDf() const;
+  double getQ0() const;
+  double getQf() const;
   bool isAscending() const;
   bool isNegated() const;
   void setD0(double d0);
@@ -126,6 +128,10 @@ template <typename T> std::string Function<T>::getName() const { return name_; }
 template <typename T> double Function<T>::getD0() const { return d0_; }
 
 template <typename T> double Function<T>::getDf() const { return df_; }
+
+template <typename T> double Function<T>::getQ0() const { return q0_; }
+
+template <typename T> double Function<T>::getQf() const { return qf_; }
 
 template <typename T> bool Function<T>::isAscending() const
 {

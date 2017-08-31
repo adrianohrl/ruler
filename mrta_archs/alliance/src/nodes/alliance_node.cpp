@@ -43,6 +43,24 @@ void AllianceNode::readParameters()
     return;
   }
   robot_ = new alliance::Robot(id, name);
+  double broadcast_rate;
+  pnh.param("broadcast_rate", broadcast_rate, 0.0);
+  if (broadcast_rate <= 0.0)
+  {
+    ROSNode::shutdown(
+        "The robot's inter communication broadcast rate must be positive.");
+    return;
+  }
+  robot_->setBroadcastRate(ros::Rate(broadcast_rate));
+  double timeout_duration;
+  pnh.param("timeout_duration", timeout_duration, 0.0);
+  if (timeout_duration < 0.0)
+  {
+    ROS_WARN(
+        "The robot's inter communication timeout duration must be positive.");
+    timeout_duration = 0.0;
+  }
+  robot_->setTimeoutDuration(ros::Duration(timeout_duration));
   pnh = ros::NodeHandle("~/behaviour_sets");
   int size;
   pnh.param("size", size, 0);
@@ -83,8 +101,8 @@ void AllianceNode::readParameters()
       ROS_WARN("The robot's yielding delay must not be negative.");
       giving_up_delay = 0.0;
     }
-    robot_->setAcquiescence(ros::Duration(yielding_delay),
-                            ros::Duration(giving_up_delay));
+    behaviour_set->setAcquiescence(ros::Duration(yielding_delay),
+                                   ros::Duration(giving_up_delay));
     double fast_rate;
     pnh.param(ss.str() + "impatience/fast_rate", fast_rate, 0.0);
     if (fast_rate <= 0.0)
@@ -92,27 +110,7 @@ void AllianceNode::readParameters()
       ROS_ERROR("The robot's impatience fast rate must be positive.");
       continue;
     }
-    robot_->setImpatience(fast_rate);
-    double broadcast_rate;
-    pnh.param(ss.str() + "inter_communication/broadcast_rate", broadcast_rate,
-              0.0);
-    if (broadcast_rate <= 0.0)
-    {
-      ROS_ERROR(
-          "The robot's inter communication broadcast rate must be positive.");
-      continue;
-    }
-    robot_->setBroadcastRate(ros::Rate(broadcast_rate));
-    double timeout_duration;
-    pnh.param(ss.str() + "inter_communication/timeout_duration",
-              timeout_duration, 0.0);
-    if (timeout_duration < 0.0)
-    {
-      ROS_WARN(
-          "The robot's inter communication quiet duration must be positive.");
-      timeout_duration = 0.0;
-    }
-    robot_->setTimeoutDuration(ros::Duration(timeout_duration));
+    behaviour_set->setImpatience(fast_rate);
     robot_->addBehaviourSet(behaviour_set);
   }
   if (robot_->getBehaviourSets().empty())

@@ -13,13 +13,27 @@ template <typename T> class SampleHolder : public BufferedFunction<T>
 {
 public:
   SampleHolder(const std::string& id, StepFunction<T>* model,
+               const ros::Duration& buffer_horizon,
+               const ros::Time& start_timestamp = ros::Time::now());
+  SampleHolder(const std::string& id, StepFunction<T>* model,
                const ros::Duration& timeout_duration,
                const ros::Duration& buffer_horizon,
                const ros::Time& start_timestamp = ros::Time::now());
   SampleHolder(const SampleHolder<T>& sample_holder);
   virtual ~SampleHolder();
   void update(ValueChangeEvent<T>* event);
+  virtual void update(const ros::Time& timestamp);
+  void update(const T& value, const ros::Time& timestamp);
 };
+
+template <typename T>
+SampleHolder<T>::SampleHolder(const std::string& id, StepFunction<T>* model,
+                              const ros::Duration& buffer_horizon,
+                              const ros::Time& start_timestamp)
+    : BufferedFunction<T>::BufferedFunction(id, model, buffer_horizon,
+                                            start_timestamp)
+{
+}
 
 template <typename T>
 SampleHolder<T>::SampleHolder(const std::string& id, StepFunction<T>* model,
@@ -39,10 +53,22 @@ SampleHolder<T>::SampleHolder(const SampleHolder<T>& sample_holder)
 
 template <typename T> SampleHolder<T>::~SampleHolder() {}
 
-template <typename T> void SampleHolder<T>::update(ValueChangeEvent<T> *event)
+template <typename T> void SampleHolder<T>::update(ValueChangeEvent<T>* event)
 {
   BufferedFunction<T>::update(event,
                               new StepFunction<T>(event->getValue(), true));
+}
+
+template <typename T> void SampleHolder<T>::update(const ros::Time& timestamp)
+{
+  BufferedFunction<T>::update(timestamp);
+}
+
+template <typename T>
+void SampleHolder<T>::update(const T& value, const ros::Time& timestamp)
+{
+  BufferedFunction<T>::update(timestamp,
+                              new StepFunction<T>(value, true, false));
 }
 }
 }

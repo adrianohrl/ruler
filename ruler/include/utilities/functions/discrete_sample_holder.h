@@ -11,7 +11,10 @@ namespace functions
 class DiscreteSampleHolder : public SampleHolder<DiscreteSignalType>
 {
 public:
-  DiscreteSampleHolder(const std::string& id, int value,
+  DiscreteSampleHolder(const std::string& id, long value,
+                       const ros::Duration& buffer_horizon,
+                       const ros::Time& start_timestamp = ros::Time::now());
+  DiscreteSampleHolder(const std::string& id, long value,
                        const ros::Duration& timeout_duration,
                        const ros::Duration& buffer_horizon,
                        const ros::Time& start_timestamp = ros::Time::now());

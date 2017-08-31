@@ -4,7 +4,7 @@
 #include <map>
 #include "alliance/task.h"
 #include <utilities/functions/unary_sample_holder.h>
-#include "utilities/beacon_signal_observer.h"
+#include <utilities/beacon_signal_observer.h>
 
 namespace alliance
 {
@@ -15,10 +15,10 @@ class BehaviourSet;
 class InterCommunication : public utilities::BeaconSignalObserver
 {
 public:
-  InterCommunication(Robot *robot, BehaviourSet* behaviour_set);
+  InterCommunication(Robot* robot, BehaviourSet* behaviour_set);
   InterCommunication(const InterCommunication& inter_communication);
   virtual ~InterCommunication();
-  bool received(const Robot& robot, const ros::Time& t1,
+  bool received(const std::string& robot_id, const ros::Time& t1,
                 const ros::Time& t2) const;
   virtual void update(utilities::BeaconSignalEvent* event);
 

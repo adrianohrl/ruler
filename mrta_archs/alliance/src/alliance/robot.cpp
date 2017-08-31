@@ -4,7 +4,7 @@ namespace alliance
 {
 Robot::Robot(const std::string& id, const std::string& name)
     : HasName::HasName(name, id), broadcast_rate_(0.0), timeout_duration_(0.0),
-      acquiescence_(NULL), active_behaviour_set_(NULL), impatience_(NULL)
+      acquiescence_(NULL), active_behaviour_set_(NULL)
 {
 }
 
@@ -13,7 +13,7 @@ Robot::Robot(const Robot& robot)
       timeout_duration_(robot.timeout_duration_),
       acquiescence_(robot.acquiescence_),
       active_behaviour_set_(robot.active_behaviour_set_),
-      behaviour_sets_(robot.behaviour_sets_), impatience_(robot.impatience_)
+      behaviour_sets_(robot.behaviour_sets_)
 {
 }
 
@@ -34,11 +34,6 @@ Robot::~Robot()
       *it = NULL;
     }
     it++;
-  }
-  if (impatience_)
-  {
-    delete impatience_;
-    impatience_ = NULL;
   }
 }
 
@@ -64,23 +59,6 @@ void Robot::process()
   }
 }
 
-bool Robot::received(const Robot& robot, const Task& task, const ros::Time& t1,
-                     const ros::Time& t2)
-{
-  std::list<BehaviourSet*>::iterator it(behaviour_sets_.begin());
-  while (it != behaviour_sets_.end())
-  {
-    BehaviourSet* behaviour_set = *it;
-    if (*behaviour_set->getTask() == task)
-    {
-      InterCommunication* monitor =
-          behaviour_set->getMotivationalBehaviour()->getInterCommunication();
-      return monitor->received(robot, t1, t2);
-    }
-    it++;
-  }
-}
-
 bool Robot::isActive() const
 {
   return active_behaviour_set_ && active_behaviour_set_->isActive();
@@ -89,16 +67,6 @@ bool Robot::isActive() const
 ros::Rate Robot::getBroadcastRate() const { return broadcast_rate_; }
 
 ros::Duration Robot::getTimeoutDuration() const { return timeout_duration_; }
-
-double Robot::getImpatience(const ros::Time& timestamp) const
-{
-  return impatience_->getLevel(timestamp);
-}
-
-bool Robot::isAcquiescent(const ros::Time& timestamp) const
-{
-  return acquiescence_->isAcquiescent(timestamp);
-}
 
 std::list<BehaviourSet*> Robot::getBehaviourSets() const
 {
@@ -118,28 +86,6 @@ void Robot::setBroadcastRate(const ros::Rate& broadcast_rate)
 void Robot::setTimeoutDuration(const ros::Duration& timeout_duration)
 {
   timeout_duration_ = timeout_duration;
-}
-
-void Robot::setAcquiescence(const ros::Duration& yielding_delay,
-                            const ros::Duration& giving_up_delay)
-{
-  if (!acquiescence_)
-  {
-    acquiescence_ = new Acquiescence(yielding_delay, giving_up_delay);
-    return;
-  }
-  acquiescence_->setYieldingDelay(yielding_delay);
-  acquiescence_->setGivingUpDelay(giving_up_delay);
-}
-
-void Robot::setImpatience(double fast_rate)
-{
-  if (!impatience_)
-  {
-    impatience_ = new Impatience(fast_rate);
-    return;
-  }
-  impatience_->setFastRate(fast_rate);
 }
 
 void Robot::addBehaviourSet(BehaviourSet* behaviour_set)

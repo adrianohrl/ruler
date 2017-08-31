@@ -26,7 +26,7 @@ public:
   Subject* getSubject() const;
 
 private:
-  ros::Time timestamp_;
+  const ros::Time timestamp_;
   Subject* subject_;
 };
 }

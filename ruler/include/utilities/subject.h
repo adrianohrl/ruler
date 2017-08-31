@@ -21,7 +21,7 @@ public:
   virtual ~Subject();
 
 protected:
-  Subject(std::string id);
+  Subject(const std::string& id);
   Subject(const Subject& subject);
   void registerObserver(Observer* observer);
   void unregisterObserver(Observer* observer);

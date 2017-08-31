@@ -10,7 +10,7 @@
 
 namespace utilities
 {
-Subject::Subject(std::string id) : HasId<std::string>::HasId(id) {}
+Subject::Subject(const std::string& id) : HasId<std::string>::HasId(id) {}
 
 Subject::Subject(const Subject& subject) : HasId<std::string>::HasId(subject) {}
 

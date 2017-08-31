@@ -12,6 +12,7 @@
 #include "utilities/functions/continuous_exponential_function.h"
 #include "utilities/functions/continuous_linear_function.h"
 #include "utilities/functions/continuous_pulse_function.h"
+#include "utilities/functions/continuous_sample_holder.h"
 #include "utilities/functions/continuous_step_function.h"
 #include "utilities/functions/discrete_sample_holder.h"
 #include "utilities/functions/discrete_exponential_function.h"

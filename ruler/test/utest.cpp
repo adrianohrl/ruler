@@ -185,8 +185,8 @@ TEST(Functions, unary_sample_holder)
 {
   double dt(0.25);
   utilities::functions::UnarySampleHolder* ush =
-      new utilities::functions::UnarySampleHolder("ush", ros::Duration(1.0 * dt),
-                                                      ros::Duration(3.5 * dt));
+      new utilities::functions::UnarySampleHolder(
+          "ush", ros::Duration(1.0 * dt), ros::Duration(3.5 * dt));
   ros::Time timestamp = ush->getStartTimestamp();
   EXPECT_FALSE(ush->getValue(timestamp + ros::Duration(0.0 * dt)));
   EXPECT_FALSE(ush->getValue(timestamp + ros::Duration(0.25 * dt)));
@@ -213,6 +213,95 @@ TEST(Functions, unary_sample_holder)
   EXPECT_FALSE(ush->getValue(timestamp + ros::Duration(7.0 * dt)));
   EXPECT_FALSE(ush->getValue(timestamp + ros::Duration(7.5 * dt)));
   delete ush;
+}
+
+TEST(Functions, discrete_sample_holder)
+{
+  double dt(0.25);
+  utilities::functions::DiscreteSampleHolder* dsh =
+      new utilities::functions::DiscreteSampleHolder(
+          "dsh", 2, ros::Duration(3.5 * dt));
+  ros::Time timestamp = dsh->getStartTimestamp();
+  EXPECT_EQ(0, dsh->getValue(timestamp + ros::Duration(0.0 * dt)));
+  EXPECT_EQ(0, dsh->getValue(timestamp + ros::Duration(0.25 * dt)));
+  dsh->update(timestamp + ros::Duration(0.5 * dt));
+  EXPECT_EQ(0, dsh->getValue(timestamp + ros::Duration(0.5 * dt)));
+  EXPECT_EQ(2, dsh->getValue(timestamp + ros::Duration(0.75 * dt)));
+  dsh->update(timestamp + ros::Duration(1.0 * dt));
+  EXPECT_EQ(2, dsh->getValue(timestamp + ros::Duration(1.0 * dt)));
+  EXPECT_EQ(2, dsh->getValue(timestamp + ros::Duration(1.75 * dt)));
+  EXPECT_EQ(2, dsh->getValue(timestamp + ros::Duration(2.0 * dt)));
+  EXPECT_EQ(2, dsh->getValue(timestamp + ros::Duration(2.25 * dt)));
+  dsh->update(3l, timestamp + ros::Duration(2.5 * dt));
+  EXPECT_EQ(2, dsh->getValue(timestamp + ros::Duration(2.5 * dt)));
+  EXPECT_EQ(3, dsh->getValue(timestamp + ros::Duration(2.75 * dt)));
+  EXPECT_EQ(3, dsh->getValue(timestamp + ros::Duration(3.0 * dt)));
+  EXPECT_EQ(3, dsh->getValue(timestamp + ros::Duration(3.25 * dt)));
+  EXPECT_EQ(3, dsh->getValue(timestamp + ros::Duration(3.5 * dt)));
+  EXPECT_EQ(3, dsh->getValue(timestamp + ros::Duration(3.75 * dt)));
+  EXPECT_EQ(3, dsh->getValue(timestamp + ros::Duration(4.0 * dt)));
+  EXPECT_EQ(3, dsh->getValue(timestamp + ros::Duration(5.0 * dt)));
+  EXPECT_EQ(3, dsh->getValue(timestamp + ros::Duration(5.5 * dt)));
+  EXPECT_EQ(3, dsh->getValue(timestamp + ros::Duration(6.0 * dt)));
+  EXPECT_EQ(3, dsh->getValue(timestamp + ros::Duration(6.5 * dt)));
+  EXPECT_EQ(3, dsh->getValue(timestamp + ros::Duration(7.0 * dt)));
+  EXPECT_EQ(3, dsh->getValue(timestamp + ros::Duration(7.5 * dt)));
+  delete dsh;
+}
+
+TEST(Functions, continuous_sample_holder)
+{
+  double dt(0.25);
+  utilities::functions::ContinuousSampleHolder* csh =
+      new utilities::functions::ContinuousSampleHolder(
+          "csh", 1.8, ros::Duration(3.5 * dt));
+  ros::Time timestamp = csh->getStartTimestamp();
+  EXPECT_GE(tolerance,
+            fabs(0.0 - csh->getValue(timestamp + ros::Duration(0.0 * dt))));
+  EXPECT_GE(tolerance,
+            fabs(0.0 - csh->getValue(timestamp + ros::Duration(0.25 * dt))));
+  csh->update(timestamp + ros::Duration(0.5 * dt));
+  EXPECT_GE(tolerance,
+            fabs(0.0 - csh->getValue(timestamp + ros::Duration(0.5 * dt))));
+  EXPECT_GE(tolerance,
+            fabs(1.8 - csh->getValue(timestamp + ros::Duration(0.75 * dt))));
+  csh->update(2.6, timestamp + ros::Duration(1.0 * dt));
+  EXPECT_GE(tolerance,
+            fabs(1.8 - csh->getValue(timestamp + ros::Duration(1.0 * dt))));
+  EXPECT_GE(tolerance,
+            fabs(2.6 - csh->getValue(timestamp + ros::Duration(1.75 * dt))));
+  EXPECT_GE(tolerance,
+            fabs(2.6 - csh->getValue(timestamp + ros::Duration(2.0 * dt))));
+  EXPECT_GE(tolerance,
+            fabs(2.6 - csh->getValue(timestamp + ros::Duration(2.25 * dt))));
+  csh->update(1.3, timestamp + ros::Duration(2.5 * dt));
+  EXPECT_GE(tolerance,
+            fabs(2.6 - csh->getValue(timestamp + ros::Duration(2.5 * dt))));
+  EXPECT_GE(tolerance,
+            fabs(1.3 - csh->getValue(timestamp + ros::Duration(2.75 * dt))));
+  EXPECT_GE(tolerance,
+            fabs(1.3 - csh->getValue(timestamp + ros::Duration(3.0 * dt))));
+  EXPECT_GE(tolerance,
+            fabs(1.3 - csh->getValue(timestamp + ros::Duration(3.25 * dt))));
+  EXPECT_GE(tolerance,
+            fabs(1.3 - csh->getValue(timestamp + ros::Duration(3.5 * dt))));
+  EXPECT_GE(tolerance,
+            fabs(1.3 - csh->getValue(timestamp + ros::Duration(3.75 * dt))));
+  EXPECT_GE(tolerance,
+            fabs(1.3 - csh->getValue(timestamp + ros::Duration(4.0 * dt))));
+  EXPECT_GE(tolerance,
+            fabs(1.3 - csh->getValue(timestamp + ros::Duration(5.0 * dt))));
+  EXPECT_GE(tolerance,
+            fabs(1.3 - csh->getValue(timestamp + ros::Duration(5.5 * dt))));
+  EXPECT_GE(tolerance,
+            fabs(1.3 - csh->getValue(timestamp + ros::Duration(6.0 * dt))));
+  EXPECT_GE(tolerance,
+            fabs(1.3 - csh->getValue(timestamp + ros::Duration(6.5 * dt))));
+  EXPECT_GE(tolerance,
+            fabs(1.3 - csh->getValue(timestamp + ros::Duration(7.0 * dt))));
+  EXPECT_GE(tolerance,
+            fabs(1.3 - csh->getValue(timestamp + ros::Duration(7.5 * dt))));
+  delete csh;
 }
 
 TEST(Task, start)

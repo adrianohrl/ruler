@@ -21,7 +21,7 @@ public:
   virtual void update(Event* event) = 0;
 
 protected:
-  Observer(std::string id);
+  Observer(const std::string& id);
   Observer(const Observer& observer);
 };
 }

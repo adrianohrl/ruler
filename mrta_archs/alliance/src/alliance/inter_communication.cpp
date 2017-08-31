@@ -37,18 +37,19 @@ InterCommunication::~InterCommunication()
   robots_.clear();
 }
 
-bool InterCommunication::received(const Robot& robot, const ros::Time& t1,
+bool InterCommunication::received(const std::string& robot_id,
+                                  const ros::Time& t1,
                                   const ros::Time& t2) const
 {
   std::map<std::string,
            utilities::functions::UnarySampleHolder*>::const_iterator
-      it(robots_.find(robot.getId()));
+      it(robots_.find(robot_id));
   if (it == robots_.end())
   {
     return false;
   }
-  utilities::functions::UnarySampleHolder* function = it->second;
-  return function->updated(t1, t2);
+  utilities::functions::UnarySampleHolder* sample_holder = it->second;
+  return sample_holder->updated(t1, t2);
 }
 
 void InterCommunication::update(utilities::BeaconSignalEvent* event)
@@ -66,18 +67,18 @@ void InterCommunication::update(utilities::BeaconSignalEvent* event)
   std::string robot_id(event->getMsg().header.frame_id);
   std::map<std::string, utilities::functions::UnarySampleHolder*>::iterator it(
       robots_.find(robot_id));
-  utilities::functions::UnarySampleHolder* function;
+  utilities::functions::UnarySampleHolder* sample_holder;
   if (it != robots_.end())
   {
-    function = it->second;
+    sample_holder = it->second;
   }
   else
   {
-    function = new utilities::functions::UnarySampleHolder(
+    sample_holder = new utilities::functions::UnarySampleHolder(
         robot_id + "/function", robot_->getTimeoutDuration(),
         event->getTimestamp());
-    robots_[robot_id] = function;
+    robots_[robot_id] = sample_holder;
   }
-  function->update(event->getTimestamp());
+  sample_holder->update(event->getTimestamp());
 }
 }

@@ -6,16 +6,21 @@ namespace alliance
 {
 BehaviourSet::BehaviourSet(Robot* robot, Task* task)
     : Subject::Subject(robot->getId() + "/" + task->getId()), task_(task),
-      motivational_behaviour_(new MotivationalBehaviour(robot, this)),
       active_(false)
 {
+  motivational_behaviour_ = new MotivationalBehaviour(robot, this);
+  if (!task)
+  {
+    throw utilities::Exception("The behaviour set's task must not be null.");
+  }
 }
 
 BehaviourSet::BehaviourSet(const BehaviourSet& behaviour_set)
-    : Subject::Subject(behaviour_set),
-      motivational_behaviour_(behaviour_set.motivational_behaviour_),
-      task_(behaviour_set.task_), active_(behaviour_set.active_)
+    : Subject::Subject(behaviour_set), task_(behaviour_set.task_),
+      active_(behaviour_set.active_)
 {
+  motivational_behaviour_ =
+      new MotivationalBehaviour(*behaviour_set.motivational_behaviour_);
 }
 
 BehaviourSet::~BehaviourSet()
@@ -68,6 +73,17 @@ void BehaviourSet::setActivationThreshold(double threshold)
                                " behaviour set has not been initialized yet.");
   }
   motivational_behaviour_->setThreshold(threshold);
+}
+
+void BehaviourSet::setAcquiescence(const ros::Duration& yielding_delay,
+                                   const ros::Duration& giving_up_delay)
+{
+  motivational_behaviour_->setAcquiescence(yielding_delay, giving_up_delay);
+}
+
+void BehaviourSet::setImpatience(double fast_rate)
+{
+  motivational_behaviour_->setImpatience(fast_rate);
 }
 
 void BehaviourSet::registerActivitySuppression(BehaviourSet* behaviour_set)

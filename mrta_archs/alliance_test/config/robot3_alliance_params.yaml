@@ -1,4 +1,6 @@
 name: 'Robot 3'
+broadcast_rate: 0.75    # in Hertz
+timeout_duration: 10.0    # in seconds
 behaviour_sets:
   size: 3
   behaviour_set0:
@@ -18,13 +20,6 @@ behaviour_sets:
         fast_rate: 5.0
         # nao da pra saber a priori, pq depende do numero de robos no sistema (o q eh desconhecido):
                 #reliability_durations: [1000.0 1000.0 ] # in seconds
-      #impatience_reset:
-
-      inter_communication:
-        broadcast_rate: 10.0    # in Hertz
-        timeout_duration: 20.0    # in seconds
-      #sensory_feedback:
-        timeout_duration: 20.0    # in seconds
   behaviour_set1:
     task:
       id: 'border_protection'
@@ -42,13 +37,6 @@ behaviour_sets:
         fast_rate: 10.0
         # nao da pra saber a priori, pq depende do numero de robos no sistema (o q eh desconhecido):
                 #reliability_durations: [1000.0 1000.0 ] # in seconds
-      #impatience_reset:
-
-      inter_communication:
-        broadcast_rate: 10.0    # in Hertz
-        timeout_duration: 20.0    # in seconds
-      #sensory_feedback:
-
   behaviour_set2:
     task:
       id: 'report'
@@ -66,9 +54,3 @@ behaviour_sets:
         fast_rate: 3.0
         # nao da pra saber a priori, pq depende do numero de robos no sistema (o q eh desconhecido):
                 #reliability_durations: [1000.0 1000.0 ] # in seconds
-      #impatience_reset:
-
-      inter_communication:
-        broadcast_rate: 10.0    # in Hertz
-        timeout_duration: 20.0    # in seconds
-      #sensory_feedback:

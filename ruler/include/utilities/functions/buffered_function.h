@@ -14,6 +14,9 @@ template <typename T> class BufferedFunction : public Observer
 {
 public:
   BufferedFunction(const std::string& id, Function<T>* model,
+                   const ros::Duration& buffer_horizon,
+                   const ros::Time& start_timestamp = ros::Time::now());
+  BufferedFunction(const std::string& id, Function<T>* model,
                    const ros::Duration& timeout_duration,
                    const ros::Duration& buffer_horizon,
                    const ros::Time& start_timestamp = ros::Time::now());
@@ -42,6 +45,15 @@ private:
   std::list<Function<T>*> functions_;
   void cleanBuffer(double d);
 };
+
+template <typename T>
+BufferedFunction<T>::BufferedFunction(const std::string& id, Function<T>* model,
+                                      const ros::Duration& buffer_horizon,
+                                      const ros::Time& start_timestamp)
+    : Observer::Observer(id), model_(model), start_timestamp_(start_timestamp),
+      buffer_horizon_(buffer_horizon), last_update_timestamp_(start_timestamp_)
+{
+}
 
 template <typename T>
 BufferedFunction<T>::BufferedFunction(const std::string& id, Function<T>* model,
@@ -168,11 +180,25 @@ void BufferedFunction<T>::update(const ros::Time& timestamp, Function<T>* model)
   {
     function = model->clone();
     function->setD0(d);
-    function->setDf(timeout_duration_ + d);
+    if (!timeout_duration_.isZero())
+    {
+      function->setDf(timeout_duration_ + d);
+    }
     functions_.push_back(function);
     return;
   }
   function = functions_.back();
+  if (timeout_duration_.isZero())
+  {
+    if (function->getQf() != model->getQf())
+    {
+      function->setDf(d);
+      function = model->clone();
+      function->setD0(d);
+      functions_.push_back(function);
+    }
+    return;
+  }
   if (function->getDf() < d.toSec())
   {
     function = model->clone();
