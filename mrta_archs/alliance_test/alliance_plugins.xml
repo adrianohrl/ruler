@@ -1,0 +1,25 @@
+<class_libraries>
+  <library path="lib/liballiance">
+    <class name="alliance/border_protection"
+           type="alliance_test::BorderProtection"
+           base_class_type="alliance::Layer">
+      <description>
+        Border Protection layer for ALLIANCE MRTA architecture.
+      </description>
+    </class>
+    <class name="alliance/report"
+           type="alliance_test::Report"
+           base_class_type="alliance::Layer">
+      <description>
+        Report layer for ALLIANCE MRTA architecture.
+      </description>
+    </class>
+    <class name="alliance/wander"
+           type="alliance_test::Wander"
+           base_class_type="alliance::Layer">
+      <description>
+        Wander layer for ALLIANCE MRTA architecture.
+      </description>
+    </class>
+  </library>
+</class_libraries>

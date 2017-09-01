@@ -33,7 +33,31 @@ include_directories(
 )
 
 set(H_FILES
+  include/alliance_test/layer.h
+  include/alliance_test/border_protection.h
+  include/alliance_test/report.h
+  include/alliance_test/wander.h
 )
 
 set(CPP_FILES
+  src/alliance_test/layer.cpp
+  src/alliance_test/border_protection.cpp
+  src/alliance_test/report.cpp
+  src/alliance_test/wander.cpp
+)
+
+add_library(${PROJECT_NAME}
+  ${CPP_FILES}
+)
+
+add_dependencies(${PROJECT_NAME}
+  ${alliance_EXPORTED_TARGETS}
+  ${Boost_EXPORTED_TARGETS}
+  ${catkin_EXPORTED_TARGETS}
+)
+
+target_link_libraries(${PROJECT_NAME}
+  ${alliance_LIBRARIES}
+  ${Boost_LIBRARIES}
+  ${catkin_LIBRARIES}
 )

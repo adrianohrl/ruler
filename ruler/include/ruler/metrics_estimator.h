@@ -26,7 +26,7 @@ public:
 
 protected:
   MetricsEstimator();
-  std::list<ResourceInterface *> getResources() const;
+  std::list<ResourceInterface*> getResources() const;
   bool isInitialized() const;
 
 private:

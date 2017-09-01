@@ -5,25 +5,11 @@
 namespace alliance
 {
 BehaviourSet::BehaviourSet(Robot* robot, Task* task)
-    : Subject::Subject(robot->getId() + "/" + task->getId()), task_(task)
+    : BehaviourSetInterface::BehaviourSetInterface(robot, task)
 {
-  if (!task)
-  {
-    throw utilities::Exception("The behaviour set's task must not be null.");
-  }
-  active_ = new utilities::functions::UnarySampleHolder(
-      getId() + "/active",
+  active_ = new utilities::functions::UnarySampleHolder(getId() + "/active",
       ros::Duration(10 * robot->getTimeoutDuration().toSec()));
   motivational_behaviour_ = new MotivationalBehaviour(robot, this);
-}
-
-BehaviourSet::BehaviourSet(const BehaviourSet& behaviour_set)
-    : Subject::Subject(behaviour_set), task_(behaviour_set.task_),
-      activation_timestamp_(behaviour_set.activation_timestamp_)
-{
-  active_ = new utilities::functions::UnarySampleHolder(*behaviour_set.active_);
-  motivational_behaviour_ =
-      new MotivationalBehaviour(*behaviour_set.motivational_behaviour_);
 }
 
 BehaviourSet::~BehaviourSet()
@@ -38,7 +24,6 @@ BehaviourSet::~BehaviourSet()
     delete motivational_behaviour_;
     motivational_behaviour_ = NULL;
   }
-  task_ = NULL;
 }
 
 void BehaviourSet::process()
@@ -53,21 +38,19 @@ void BehaviourSet::process()
   // setActive(motivational_behaviour_->active());
 }
 
-MotivationalBehaviour* BehaviourSet::getMotivationalBehaviour() const
-{
-  return motivational_behaviour_;
-}
-
 bool BehaviourSet::isActive(const ros::Time& timestamp) const
 {
   return active_->getValue(timestamp);
 }
 
-Task* BehaviourSet::getTask() const { return task_; }
-
 ros::Time BehaviourSet::getActivationTimestamp() const
 {
   return activation_timestamp_;
+}
+
+MotivationalBehaviour* BehaviourSet::getMotivationalBehaviour() const
+{
+  return motivational_behaviour_;
 }
 
 void BehaviourSet::setActive(bool active, const ros::Time& timestamp)
@@ -109,15 +92,5 @@ void BehaviourSet::registerActivitySuppression(BehaviourSet* behaviour_set)
 {
   Subject::registerObserver(
       behaviour_set->motivational_behaviour_->getActivitySuppression());
-}
-
-bool BehaviourSet::operator==(const BehaviourSet& behaviour_set) const
-{
-  return *task_ == *behaviour_set.task_;
-}
-
-bool BehaviourSet::operator!=(const BehaviourSet& behaviour_set) const
-{
-  return *task_ != *behaviour_set.task_;
 }
 }

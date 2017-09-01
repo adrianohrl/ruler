@@ -123,8 +123,8 @@ void AllianceNode::readParameters()
 void AllianceNode::init()
 {
   /** registering beacon signal message observers **/
-  std::list<alliance::BehaviourSet*> behaviour_sets(robot_->getBehaviourSets());
-  std::list<alliance::BehaviourSet*>::iterator it(behaviour_sets.begin());
+  std::list<alliance::BehaviourSetInterface*> behaviour_sets(robot_->getBehaviourSets());
+  std::list<alliance::BehaviourSetInterface*>::iterator it(behaviour_sets.begin());
   while (it != behaviour_sets.end())
   {
     alliance::MotivationalBehaviour* motivational_behaviour =
@@ -142,7 +142,7 @@ void AllianceNode::init()
 void AllianceNode::controlLoop()
 {
   robot_->process();
-  if (robot_->isActive() && !started_broadcasting_)
+  if (!robot_->isIdle() && !started_broadcasting_)
   {
     ROS_WARN_STREAM("Starting " << *robot_ << " broadcast timer.");
     broadcast_timer_.start();

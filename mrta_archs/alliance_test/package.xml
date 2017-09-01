@@ -22,5 +22,9 @@
   <run_depend>roscpp</run_depend>
   <run_depend>ruler</run_depend>
   <run_depend>ruler_msgs</run_depend>
+
+  <export>
+    <alliance plugin="${prefix}/alliance_plugins.xml"/>
+  </export>
 </package>
 
