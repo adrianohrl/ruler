@@ -15,17 +15,6 @@ Acquiescence::Acquiescence(Robot* robot, BehaviourSet* behaviour_set,
       ros::Duration(10 * robot_->getTimeoutDuration().toSec()));
 }
 
-Acquiescence::Acquiescence(const Acquiescence& acquiescence)
-    : robot_(acquiescence.robot_), behaviour_set_(acquiescence.behaviour_set_),
-      monitor_(acquiescence.monitor_)
-{
-
-  yielding_delay_ = new utilities::functions::ContinuousSampleHolder(
-      *acquiescence.yielding_delay_);
-  giving_up_delay_ = new utilities::functions::ContinuousSampleHolder(
-      *acquiescence.giving_up_delay_);
-}
-
 Acquiescence::~Acquiescence()
 {
   if (yielding_delay_)

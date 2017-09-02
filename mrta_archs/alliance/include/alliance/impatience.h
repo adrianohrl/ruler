@@ -12,7 +12,6 @@ class Impatience
 {
 public:
   Impatience(Robot* robot, BehaviourSet *behaviour_set, InterCommunication* monitor);
-  Impatience(const Impatience& impatence);
   virtual ~Impatience();
   double getSlowRate(const std::string& robot_id,
                      const ros::Time& timestamp = ros::Time::now()) const;

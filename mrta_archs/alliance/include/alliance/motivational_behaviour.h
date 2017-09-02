@@ -16,7 +16,6 @@ class MotivationalBehaviour
 {
 public:
   MotivationalBehaviour(Robot* robot, BehaviourSet* behaviour_set);
-  MotivationalBehaviour(const MotivationalBehaviour& motivational_behaviour);
   virtual ~MotivationalBehaviour();
   bool active(const ros::Time& timestamp = ros::Time::now()) const;
   double getThreshold(const ros::Time& timestamp = ros::Time::now()) const;

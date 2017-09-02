@@ -13,13 +13,11 @@
 
   <build_depend>alliance</build_depend>
   <build_depend>alliance_msgs</build_depend>
-  <build_depend>roscpp</build_depend>
   <build_depend>ruler</build_depend>
   <build_depend>ruler_msgs</build_depend>
 
   <run_depend>alliance</run_depend>
   <run_depend>alliance_msgs</run_depend>
-  <run_depend>roscpp</run_depend>
   <run_depend>ruler</run_depend>
   <run_depend>ruler_msgs</run_depend>
 

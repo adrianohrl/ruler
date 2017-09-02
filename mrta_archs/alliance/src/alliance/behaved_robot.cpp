@@ -3,7 +3,8 @@
 namespace alliance
 {
 BehavedRobot::BehavedRobot(const std::string& id, const std::string& name)
-    : RobotInterface::RobotInterface(id, name)
+    : RobotInterface<BehavedRobot, LayeredBehaviourSet>::RobotInterface(id,
+                                                                        name)
 {
 }
 
@@ -13,12 +14,10 @@ void BehavedRobot::process()
 {
   if (active_behaviour_set_)
   {
+    ROS_WARN_STREAM("[BehavedRobot] active: " << *active_behaviour_set_);
     active_behaviour_set_->process();
   }
 }
 
-void BehavedRobot::addBehaviourSet(LayeredBehaviourSet* behaviour_set)
-{
-  RobotInterface::addBehaviourSet(behaviour_set);
-}
+void BehavedRobot::update(const alliance_msgs::BeaconSignal& msg) {}
 }

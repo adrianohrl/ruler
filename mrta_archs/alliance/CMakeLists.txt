@@ -64,7 +64,6 @@ set(CPP_FILES
   src/alliance/activity_suppression.cpp
   src/alliance/behaved_robot.cpp
   src/alliance/behaviour_set.cpp
-  src/alliance/behaviour_set_interface.cpp
   src/alliance/impatience.cpp
   src/alliance/impatience_reset.cpp
   src/alliance/inter_communication.cpp
@@ -72,7 +71,6 @@ set(CPP_FILES
   src/alliance/layered_behaviour_set.cpp
   src/alliance/motivational_behaviour.cpp
   src/alliance/robot.cpp
-  src/alliance/robot_interface.cpp
   src/alliance/sensor.cpp
   src/alliance/sensory_feedback.cpp
   src/alliance/task.cpp

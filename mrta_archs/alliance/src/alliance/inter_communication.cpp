@@ -13,13 +13,6 @@ InterCommunication::InterCommunication(Robot* robot,
 {
 }
 
-InterCommunication::InterCommunication(const InterCommunication& monitor)
-    : BeaconSignalObserver::BeaconSignalObserver(monitor),
-      robot_(monitor.robot_), task_(monitor.task_),
-      last_update_timestamp_(monitor.last_update_timestamp_)
-{
-}
-
 InterCommunication::~InterCommunication()
 {
   robot_ = NULL;

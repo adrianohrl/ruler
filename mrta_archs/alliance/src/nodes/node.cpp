@@ -4,12 +4,17 @@ namespace nodes
 {
 
 Node::Node(ros::NodeHandle* nh, float loop_rate)
-    : ROSNode::ROSNode(nh, loop_rate), robot_(NULL)
+    : ROSNode::ROSNode(nh, loop_rate),
+      BeaconSignalSubject::BeaconSignalSubject(ros::this_node::getName()),
+      robot_(NULL)
 {
+  beacon_signal_sub_ = nh->subscribe("/alliance/beacon_signal", 100,
+                                     &Node::beaconSignalCallback, this);
 }
 
 Node::~Node()
 {
+  beacon_signal_sub_.shutdown();
   if (robot_)
   {
     delete robot_;
@@ -38,13 +43,13 @@ void Node::readParameters()
     alliance::Task task(id, name.empty() ? id : name);
     ss << "layers/";
     int layers_size;
-    pnh.param("size", layers_size, 0);
+    pnh.param(ss.str() + "size", layers_size, 0);
     std::string plugin_name;
     for (int j(0); j < layers_size; j++)
     {
       std::stringstream sss;
       sss << ss.str() << "layer" << j << "/";
-      pnh.param(ss.str() + "plugin_name", plugin_name, std::string(""));
+      pnh.param(sss.str() + "plugin_name", plugin_name, std::string(""));
       task.addNeededLayer(plugin_name);
     }
     tasks.push_back(task);
@@ -69,6 +74,8 @@ void Node::readParameters()
     return;
   }
   robot_ = new alliance::BehavedRobot(id, name);
+  pnh = ros::NodeHandle("~/behaviour_sets");
+  pnh.param("size", size, 0);
   for (int i(0); i < size; i++)
   {
     std::stringstream ss;
@@ -100,5 +107,24 @@ void Node::readParameters()
   }
 }
 
+void Node::init()
+{
+  /** registering beacon signal message observers **/
+  std::list<alliance::LayeredBehaviourSet*> behaviour_sets(
+      robot_->getBehaviourSets());
+  std::list<alliance::LayeredBehaviourSet*>::iterator it(
+      behaviour_sets.begin());
+  while (it != behaviour_sets.end())
+  {
+    BeaconSignalSubject::registerObserver(*it);
+    it++;
+  }
+}
+
 void Node::controlLoop() { robot_->process(); }
+
+void Node::beaconSignalCallback(const alliance_msgs::BeaconSignal &msg)
+{
+  BeaconSignalSubject::notify(msg);
+}
 }

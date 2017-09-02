@@ -12,7 +12,6 @@ class Acquiescence
 public:
   Acquiescence(Robot* robot, BehaviourSet* behaviour_set,
                InterCommunication* monitor);
-  Acquiescence(const Acquiescence& acquiescence);
   virtual ~Acquiescence();
   ros::Duration
   getYieldingDelay(const ros::Time& timestamp = ros::Time::now()) const;

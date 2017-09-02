@@ -8,6 +8,8 @@
 namespace alliance
 {
 class Robot;
+
+class BehavedRobot;
 }
 
 namespace utilities
@@ -23,6 +25,7 @@ public:
   virtual ~BeaconSignalEvent();
   alliance_msgs::BeaconSignal getMsg() const;
   bool isRelated(const alliance::Robot& robot) const;
+  bool isRelated(const alliance::BehavedRobot& robot) const;
   bool isRelated(const alliance::Task& task) const;
 
 private:

@@ -5,8 +5,6 @@ namespace alliance
 {
 Layer::Layer() {}
 
-Layer::Layer(const Layer& layer) : name_(layer.name_) {}
-
 Layer::~Layer() {}
 
 void Layer::initialize(const std::string& name)

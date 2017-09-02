@@ -3,16 +3,17 @@
 
 #include "alliance/layered_behaviour_set.h"
 #include "alliance/robot_interface.h"
+#include <alliance_msgs/BeaconSignal.h>
 
 namespace alliance
 {
-class BehavedRobot : public RobotInterface
+class BehavedRobot : public RobotInterface<BehavedRobot, LayeredBehaviourSet>
 {
 public:
   BehavedRobot(const std::string& id, const std::string& name);
   virtual ~BehavedRobot();
   virtual void process();
-  void addBehaviourSet(LayeredBehaviourSet* behaviour_set);
+  void update(const alliance_msgs::BeaconSignal& msg);
 };
 }
 

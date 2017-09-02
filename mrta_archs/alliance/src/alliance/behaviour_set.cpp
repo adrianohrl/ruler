@@ -5,7 +5,8 @@
 namespace alliance
 {
 BehaviourSet::BehaviourSet(Robot* robot, Task* task)
-    : BehaviourSetInterface::BehaviourSetInterface(robot, task)
+    : BehaviourSetInterface<Robot>::BehaviourSetInterface(robot, task),
+      Subject::Subject(/*robot->getId() + */"/" + task->getId())
 {
   active_ = new utilities::functions::UnarySampleHolder(getId() + "/active",
       ros::Duration(10 * robot->getTimeoutDuration().toSec()));
@@ -91,6 +92,6 @@ void BehaviourSet::setImpatience(double fast_rate)
 void BehaviourSet::registerActivitySuppression(BehaviourSet* behaviour_set)
 {
   Subject::registerObserver(
-      behaviour_set->motivational_behaviour_->getActivitySuppression());
+        behaviour_set->motivational_behaviour_->getActivitySuppression());
 }
 }

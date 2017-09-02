@@ -9,7 +9,6 @@ class  Layer
 {
 public:
   Layer();
-  Layer(const Layer& layer);
   virtual ~Layer();
   virtual void initialize(const std::string& name);
   virtual void readParameters();

@@ -4,17 +4,6 @@ namespace alliance
 {
 SensoryFeedback::SensoryFeedback(Task* task) : task_(task) {}
 
-SensoryFeedback::SensoryFeedback(const SensoryFeedback& sensory_feedback)
-  : task_(sensory_feedback.task_)
-{
-  std::list<Sensor*>::const_iterator it(sensory_feedback.sensors_.begin());
-  while (it != sensory_feedback.sensors_.end())
-  {
-    sensors_.push_back(new Sensor(**it));
-    it++;
-  }
-}
-
 SensoryFeedback::~SensoryFeedback()
 {
   std::list<Sensor*>::iterator it(sensors_.begin());

@@ -5,12 +5,6 @@ namespace alliance
 
 Sensor::Sensor() : sample_holder_(NULL) {}
 
-Sensor::Sensor(const Sensor& sensor)
-{
-  sample_holder_ =
-      new utilities::functions::UnarySampleHolder(*sensor.sample_holder_);
-}
-
 Sensor::~Sensor()
 {
   if (sample_holder_)

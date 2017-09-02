@@ -8,11 +8,6 @@ ImpatienceReset::ImpatienceReset(InterCommunication* monitor)
 {
 }
 
-ImpatienceReset::ImpatienceReset(const ImpatienceReset& impatience_reset)
-    : monitor_(impatience_reset.monitor_)
-{
-}
-
 ImpatienceReset::~ImpatienceReset() { monitor_ = NULL; }
 
 bool ImpatienceReset::isResetted(const ros::Time& timestamp) const

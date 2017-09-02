@@ -15,7 +15,6 @@ class ActivitySuppression : public utilities::Observer
 {
 public:
   ActivitySuppression(Robot* robot, BehaviourSet* behaviour_set);
-  ActivitySuppression(const ActivitySuppression& activity_suppression);
   virtual ~ActivitySuppression();
   virtual void update(utilities::Event *event);
   bool isSuppressed(const ros::Time& timestamp = ros::Time::now()) const;

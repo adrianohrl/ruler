@@ -152,14 +152,12 @@ void AllianceNode::readParameters()
 void AllianceNode::init()
 {
   /** registering beacon signal message observers **/
-  std::list<alliance::BehaviourSetInterface*> behaviour_sets(
-      robot_->getBehaviourSets());
-  std::list<alliance::BehaviourSetInterface*>::iterator it(
-      behaviour_sets.begin());
+  std::list<alliance::BehaviourSet*> behaviour_sets(robot_->getBehaviourSets());
+  std::list<alliance::BehaviourSet*>::iterator it(behaviour_sets.begin());
   while (it != behaviour_sets.end())
   {
     alliance::MotivationalBehaviour* motivational_behaviour =
-        ((alliance::BehaviourSet*)*it)->getMotivationalBehaviour();
+        ((alliance::BehaviourSet*) *it)->getMotivationalBehaviour();
     BeaconSignalSubject::registerObserver(
         motivational_behaviour->getInterCommunication());
     it++;

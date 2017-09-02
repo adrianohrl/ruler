@@ -1,3 +1,4 @@
+#include "alliance/behaved_robot.h"
 #include "alliance/robot.h"
 #include "utilities/beacon_signal_event.h"
 #include "utilities/beacon_signal_subject.h"
@@ -19,12 +20,17 @@ BeaconSignalEvent::~BeaconSignalEvent() {}
 
 alliance_msgs::BeaconSignal BeaconSignalEvent::getMsg() const { return msg_; }
 
-bool BeaconSignalEvent::isRelated(const alliance::Robot& robot) const
+bool BeaconSignalEvent::isRelated(const alliance::Robot &robot) const
 {
   return msg_.header.frame_id == robot.getId();
 }
 
-bool BeaconSignalEvent::isRelated(const alliance::Task &task) const
+bool BeaconSignalEvent::isRelated(const alliance::BehavedRobot &robot) const
+{
+  return msg_.header.frame_id == robot.getId();
+}
+
+bool BeaconSignalEvent::isRelated(const alliance::Task& task) const
 {
   return msg_.task_id == task.getId();
 }

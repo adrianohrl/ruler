@@ -12,7 +12,6 @@ class SensoryFeedback
 {
 public:
   SensoryFeedback(Task* task);
-  SensoryFeedback(const SensoryFeedback& sensory_feedback);
   virtual ~SensoryFeedback();
   bool isApplicable(const ros::Time& timestamp = ros::Time::now()) const;
 

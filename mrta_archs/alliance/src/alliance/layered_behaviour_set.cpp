@@ -5,17 +5,21 @@
 namespace alliance
 {
 LayeredBehaviourSet::LayeredBehaviourSet(BehavedRobot* robot, Task* task)
-    : BehaviourSetInterface::BehaviourSetInterface(robot, task),
+    : BehaviourSetInterface<BehavedRobot>::BehaviourSetInterface(robot, task),
+      BeaconSignalObserver::BeaconSignalObserver(robot->getId() + "/" +
+                                                 task->getId()),
       loader_("alliance", "alliance::Layer")
 {
-  std::list<std::string>::const_iterator it(task->getNeededLayers().begin());
+  std::list<std::string> layers(task->getNeededLayers());
+  std::list<std::string>::const_iterator it(layers.begin());
   boost::shared_ptr<alliance::Layer> layer;
-  while (it != task->getNeededLayers().end())
+  while (it != layers.end())
   {
     try
     {
       layer = loader_.createInstance(it->c_str());
-      ROS_DEBUG_STREAM("Loaded " << *it << " layer plugin to execute " << *task << " task.");
+      ROS_DEBUG_STREAM("Loaded " << *it << " layer plugin to execute " << *task
+                                 << " task.");
     }
     catch (const pluginlib::PluginlibException& ex)
     {
@@ -56,6 +60,15 @@ void LayeredBehaviourSet::addLayer(const std::string& layer_name)
   {
     throw utilities::Exception("This layer already exists.");
   }
+}
+
+void LayeredBehaviourSet::update(utilities::BeaconSignalEvent* event)
+{
+  if (!event->isRelated(*robot_) || !event->isRelated(*task_))
+  {
+    return;
+  }
+  ROS_WARN("[LayeredBehaviourSet] do stuff here to update.");
 }
 
 bool LayeredBehaviourSet::contains(const std::string& layer_name) const

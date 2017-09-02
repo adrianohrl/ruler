@@ -11,7 +11,6 @@ class ImpatienceReset
 {
 public:
   ImpatienceReset(InterCommunication* monitor);
-  ImpatienceReset(const ImpatienceReset& impatience_reset);
   virtual ~ImpatienceReset();
   bool isResetted(const ros::Time& timestamp = ros::Time::now()) const;
 

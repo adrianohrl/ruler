@@ -22,26 +22,6 @@ MotivationalBehaviour::MotivationalBehaviour(Robot* robot,
   sensory_feedback_ = new SensoryFeedback(behaviour_set->getTask());
 }
 
-MotivationalBehaviour::MotivationalBehaviour(
-    const MotivationalBehaviour& motivational_behaviour)
-    : robot_(motivational_behaviour.robot_)
-{
-  threshold_ = new utilities::functions::ContinuousSampleHolder(
-      *motivational_behaviour.threshold_);
-  motivation_ = new utilities::functions::ContinuousSampleHolder(
-      *motivational_behaviour.motivation_);
-  activity_suppression_ =
-      new ActivitySuppression(*motivational_behaviour.activity_suppression_);
-  acquiescence_ = new Acquiescence(*motivational_behaviour.acquiescence_);
-  impatience_ = new Impatience(*motivational_behaviour.impatience_);
-  impatience_reset_ =
-      new ImpatienceReset(*motivational_behaviour.impatience_reset_);
-  inter_communication_ =
-      new InterCommunication(*motivational_behaviour.inter_communication_);
-  sensory_feedback_ =
-      new SensoryFeedback(*motivational_behaviour.sensory_feedback_);
-}
-
 MotivationalBehaviour::~MotivationalBehaviour()
 {
   if (threshold_)

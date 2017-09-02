@@ -12,14 +12,6 @@ Impatience::Impatience(Robot* robot, BehaviourSet* behaviour_set,
       ros::Duration(10 * robot_->getTimeoutDuration().toSec()));
 }
 
-Impatience::Impatience(const Impatience& impatence)
-    : robot_(impatence.robot_), monitor_(impatence.monitor_)
-{
-  fast_rate_ =
-      new utilities::functions::ContinuousSampleHolder(*impatence.fast_rate_);
-  // implementar a copia dos mapas de slow_rates_ e reliability_durations_
-}
-
 Impatience::~Impatience()
 {
   std::map<std::string, utilities::functions::ContinuousSampleHolder*>::iterator

@@ -16,7 +16,6 @@ class InterCommunication : public utilities::BeaconSignalObserver
 {
 public:
   InterCommunication(Robot* robot, BehaviourSet* behaviour_set);
-  InterCommunication(const InterCommunication& monitor);
   virtual ~InterCommunication();
   bool received(const ros::Time& t1,
                 const ros::Time& t2) const;

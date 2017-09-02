@@ -7,7 +7,7 @@
 
 namespace alliance
 {
-class BehaviourSet : public BehaviourSetInterface
+class BehaviourSet : public BehaviourSetInterface<Robot>, public utilities::Subject
 {
 public:
   BehaviourSet(Robot* robot, Task* task);

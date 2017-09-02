@@ -16,15 +16,6 @@ ActivitySuppression::ActivitySuppression(Robot* robot,
       ros::Duration(10 * robot_->getTimeoutDuration().toSec()));
 }
 
-ActivitySuppression::ActivitySuppression(
-    const ActivitySuppression& activity_suppression)
-    : Observer::Observer(activity_suppression),
-      robot_(activity_suppression.robot_)
-{
-  suppressed_ = new utilities::functions::UnarySampleHolder(
-      *activity_suppression.suppressed_);
-}
-
 ActivitySuppression::~ActivitySuppression()
 {
   if (suppressed_)

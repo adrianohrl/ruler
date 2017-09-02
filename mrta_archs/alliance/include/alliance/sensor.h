@@ -10,7 +10,6 @@ class Sensor
 {
 public:
   Sensor();
-  Sensor(const Sensor& sensor);
   virtual ~Sensor();
   bool isUpToDate(const ros::Time timestamp = ros::Time::now());
 

@@ -2,9 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 
 project(alliance_test)
 
-find_package(catkin REQUIRED COMPONENTS
-  roscpp
-)
+find_package(catkin REQUIRED)
 
 find_package(alliance REQUIRED COMPONENTS
   alliance_msgs
@@ -21,7 +19,6 @@ catkin_package(
   CATKIN_DEPENDS
     alliance
     alliance_msgs
-    roscpp
     ruler
     ruler_msgs
 )
@@ -52,12 +49,10 @@ add_library(${PROJECT_NAME}
 
 add_dependencies(${PROJECT_NAME}
   ${alliance_EXPORTED_TARGETS}
-  ${Boost_EXPORTED_TARGETS}
   ${catkin_EXPORTED_TARGETS}
 )
 
 target_link_libraries(${PROJECT_NAME}
   ${alliance_LIBRARIES}
-  ${Boost_LIBRARIES}
   ${catkin_LIBRARIES}
 )
