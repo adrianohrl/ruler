@@ -2,14 +2,17 @@
 <launch>
   <arg name="robot_id" />
   <arg name="robot_params" />
+  <arg name="tasks_params" />
   <group ns="$(arg robot_id)">
     <node name="alliance_node" pkg="alliance" type="alliance_node" output="screen" launch-prefix="valgrind">
       <param name="id" type="string" value="$(arg robot_id)" />
       <rosparam file="$(arg robot_params)" command="load" />
+      <rosparam file="$(arg tasks_params)" command="load" />
     </node>
     <node name="node" pkg="alliance" type="node" output="screen" launch-prefix="valgrind">
       <param name="id" type="string" value="$(arg robot_id)" />
       <rosparam file="$(arg robot_params)" command="load" />
+      <rosparam file="$(arg tasks_params)" command="load" />
     </node>
   </group>
 </launch>

@@ -4,9 +4,7 @@ timeout_duration: 15.0    # in seconds
 behaviour_sets:
   size: 3
   behaviour_set0:
-    task:
-      id: 'wander'
-      name: 'Wander'
+    task_id: 'wander'
     motivational_behaviour:
       threshold: 200.0
       acquiescence:
@@ -21,9 +19,7 @@ behaviour_sets:
         # nao da pra saber a priori, pq depende do numero de robos no sistema (o q eh desconhecido):
                 #reliability_durations: [1000.0 1000.0 ] # in seconds
   behaviour_set1:
-    task:
-      id: 'border_protection'
-      name: 'Border Protection'
+    task_id: 'border_protection'
     motivational_behaviour:
       threshold: 200.0
       acquiescence:
@@ -38,9 +34,7 @@ behaviour_sets:
         # nao da pra saber a priori, pq depende do numero de robos no sistema (o q eh desconhecido):
                 #reliability_durations: [1000.0 1000.0 ] # in seconds
   behaviour_set2:
-    task:
-      id: 'report'
-      name: 'Report'
+    task_id: 'report'
     motivational_behaviour:
       threshold: 200.0
       acquiescence:

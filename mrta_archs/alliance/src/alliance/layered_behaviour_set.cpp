@@ -8,6 +8,21 @@ LayeredBehaviourSet::LayeredBehaviourSet(BehavedRobot* robot, Task* task)
     : BehaviourSetInterface::BehaviourSetInterface(robot, task),
       loader_("alliance", "alliance::Layer")
 {
+  std::list<std::string>::const_iterator it(task->getNeededLayers().begin());
+  boost::shared_ptr<alliance::Layer> layer;
+  while (it != task->getNeededLayers().end())
+  {
+    try
+    {
+      layer = loader_.createInstance(it->c_str());
+      ROS_DEBUG_STREAM("Loaded " << *it << " layer plugin to execute " << *task << " task.");
+    }
+    catch (const pluginlib::PluginlibException& ex)
+    {
+      ROS_ERROR_STREAM("Could not load " << *it << ". " << ex.what());
+    }
+    it++;
+  }
 }
 
 LayeredBehaviourSet::~LayeredBehaviourSet() {}

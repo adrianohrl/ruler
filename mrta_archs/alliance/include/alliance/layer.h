@@ -12,6 +12,7 @@ public:
   Layer(const Layer& layer);
   virtual ~Layer();
   virtual void initialize(const std::string& name);
+  virtual void readParameters();
   virtual void process() = 0;
   std::string getName() const;
   bool operator==(const Layer& layer) const;

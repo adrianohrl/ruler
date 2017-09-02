@@ -16,6 +16,11 @@ void Layer::initialize(const std::string& name)
     throw utilities::Exception("Layer name must not be empty.");
   }
   name_ = name;
+  readParameters();
+}
+
+void Layer::readParameters()
+{
 }
 
 std::string Layer::getName() const

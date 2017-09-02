@@ -27,8 +27,30 @@ AllianceNode::~AllianceNode()
 
 void AllianceNode::readParameters()
 {
-  ros::NodeHandle pnh("~");
+  ros::NodeHandle pnh("~/tasks");
+  int size;
+  pnh.param("size", size, 0);
   std::string id, name;
+  std::list<alliance::Task> tasks;
+  for (int i(0); i < size; i++)
+  {
+    std::stringstream ss;
+    ss << "task" << i << "/";
+    pnh.param(ss.str() + "id", id, std::string(""));
+    if (id.empty())
+    {
+      ROS_ERROR("The task's id must not be empty.");
+      continue;
+    }
+    pnh.param(ss.str() + "name", name, std::string(""));
+    tasks.push_back(alliance::Task(id, name.empty() ? id : name));
+  }
+  if (tasks.empty())
+  {
+    ROSNode::shutdown("Not found any task info as a ROS parameter.");
+    return;
+  }
+  pnh = ros::NodeHandle("~");
   pnh.param("id", id, std::string(""));
   pnh.param("name", name, std::string(""));
   if (id.empty())
@@ -62,22 +84,29 @@ void AllianceNode::readParameters()
   }
   robot_->setTimeoutDuration(ros::Duration(timeout_duration));
   pnh = ros::NodeHandle("~/behaviour_sets");
-  int size;
   pnh.param("size", size, 0);
   for (int i(0); i < size; i++)
   {
     std::stringstream ss;
     ss << "behaviour_set" << i << "/";
-    pnh.param(ss.str() + "task/id", id, std::string(""));
+    pnh.param(ss.str() + "task_id", id, std::string(""));
     if (id.empty())
     {
       ROS_ERROR("The behaviour set's task id must not be empty.");
       continue;
     }
-    pnh.param(ss.str() + "task/name", name, std::string(""));
-    alliance::Task* task = new alliance::Task(id, name.empty() ? id : name);
-    alliance::BehaviourSet* behaviour_set =
-        new alliance::BehaviourSet(robot_, task);
+    std::list<alliance::Task>::const_iterator it(tasks.begin());
+    alliance::BehaviourSet* behaviour_set;
+    while (it != tasks.end())
+    {
+      if (it->getId() == id)
+      {
+        behaviour_set =
+            new alliance::BehaviourSet(robot_, new alliance::Task(*it));
+        break;
+      }
+      it++;
+    }
     ss << "motivational_behaviour/";
     double threshold;
     pnh.param(ss.str() + "threshold", threshold, 0.0);
@@ -123,8 +152,10 @@ void AllianceNode::readParameters()
 void AllianceNode::init()
 {
   /** registering beacon signal message observers **/
-  std::list<alliance::BehaviourSetInterface*> behaviour_sets(robot_->getBehaviourSets());
-  std::list<alliance::BehaviourSetInterface*>::iterator it(behaviour_sets.begin());
+  std::list<alliance::BehaviourSetInterface*> behaviour_sets(
+      robot_->getBehaviourSets());
+  std::list<alliance::BehaviourSetInterface*>::iterator it(
+      behaviour_sets.begin());
   while (it != behaviour_sets.end())
   {
     alliance::MotivationalBehaviour* motivational_behaviour =
