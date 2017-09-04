@@ -3,33 +3,12 @@
 namespace alliance
 {
 Robot::Robot(const std::string& id, const std::string& name)
-    : RobotInterface<Robot, BehaviourSet>::RobotInterface(name, id),
+    : RobotInterface<Robot, BehaviourSet>::RobotInterface(id, name),
       broadcast_rate_(0.0), timeout_duration_(0.0)
 {
 }
 
 Robot::~Robot() {}
-
-void Robot::process()
-{
-  std::list<BehaviourSet*>::iterator it(behaviour_sets_.begin());
-  while (it != behaviour_sets_.end())
-  {
-    BehaviourSet* behaviour_set = *it;
-    behaviour_set->process();
-    if (behaviour_set->isActive())
-    {
-      if (active_behaviour_set_ && *active_behaviour_set_ != *behaviour_set)
-      {
-        active_behaviour_set_->setActive(false);
-      }
-      active_behaviour_set_ = behaviour_set;
-      active_behaviour_set_->setActive();
-      return;
-    }
-    it++;
-  }
-}
 
 ros::Rate Robot::getBroadcastRate() const { return broadcast_rate_; }
 

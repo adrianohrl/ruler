@@ -74,7 +74,14 @@ void AllianceNode::readParameters()
     return;
   }
   robot_->setBroadcastRate(ros::Rate(broadcast_rate));
-  double timeout_duration;
+  double buffer_horizon, timeout_duration;
+  pnh.param("buffer_horizon", buffer_horizon, 5.0);
+  if (buffer_horizon <= 0.0)
+  {
+    ROS_WARN(
+        "The active buffer horizon of the behaviour set must be positive.");
+    buffer_horizon = 5.0;
+  }
   pnh.param("timeout_duration", timeout_duration, 0.0);
   if (timeout_duration < 0.0)
   {
@@ -101,8 +108,8 @@ void AllianceNode::readParameters()
     {
       if (it->getId() == id)
       {
-        behaviour_set =
-            new alliance::BehaviourSet(robot_, new alliance::Task(*it));
+        behaviour_set = new alliance::BehaviourSet(
+            robot_, new alliance::Task(*it), ros::Duration(buffer_horizon));
         break;
       }
       it++;
@@ -157,7 +164,7 @@ void AllianceNode::init()
   while (it != behaviour_sets.end())
   {
     alliance::MotivationalBehaviour* motivational_behaviour =
-        ((alliance::BehaviourSet*) *it)->getMotivationalBehaviour();
+        ((alliance::BehaviourSet*)*it)->getMotivationalBehaviour();
     BeaconSignalSubject::registerObserver(
         motivational_behaviour->getInterCommunication());
     it++;

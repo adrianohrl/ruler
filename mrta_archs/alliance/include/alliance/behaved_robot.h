@@ -12,7 +12,6 @@ class BehavedRobot : public RobotInterface<BehavedRobot, LayeredBehaviourSet>
 public:
   BehavedRobot(const std::string& id, const std::string& name);
   virtual ~BehavedRobot();
-  virtual void process();
   void update(const alliance_msgs::BeaconSignal& msg);
 };
 }

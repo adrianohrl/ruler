@@ -15,11 +15,14 @@ class LayeredBehaviourSet : public BehaviourSetInterface<BehavedRobot>,
                             public utilities::BeaconSignalObserver
 {
 public:
-  LayeredBehaviourSet(BehavedRobot* robot, Task* task);
+  LayeredBehaviourSet(BehavedRobot* robot, Task* task,
+                      ros::Duration buffer_horizon,
+                      ros::Duration timeout_duration);
   virtual ~LayeredBehaviourSet();
   virtual void process();
   void addLayer(const std::string& layer_name);
-  virtual void update(utilities::BeaconSignalEvent *event);
+  void addLayer(const boost::shared_ptr<Layer>& layer);
+  virtual void update(utilities::BeaconSignalEvent* event);
 
 private:
   pluginlib::ClassLoader<Layer> loader_;

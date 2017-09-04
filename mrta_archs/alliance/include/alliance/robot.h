@@ -14,7 +14,6 @@ class Robot : public RobotInterface<Robot, BehaviourSet>
 public:
   Robot(const std::string& id, const std::string& name);
   virtual ~Robot();
-  void process();
   ros::Rate getBroadcastRate() const;
   ros::Duration getTimeoutDuration() const;
   void setBroadcastRate(const ros::Rate& broadcast_rate);

@@ -15,7 +15,7 @@ class RobotInterface : public utilities::HasName
 public:
   RobotInterface(const std::string& id, const std::string& name);
   virtual ~RobotInterface();
-  virtual void process() = 0;
+  void process();
   std::list<BS*> getBehaviourSets() const;
   Task* getExecutingTask() const;
   bool isIdle() const;
@@ -44,6 +44,28 @@ template <typename R, typename BS> RobotInterface<R, BS>::~RobotInterface()
     {
       delete *it;
       *it = NULL;
+    }
+    it++;
+  }
+}
+
+template <typename R, typename BS> void RobotInterface<R, BS>::process()
+{
+  typename std::list<BS*>::iterator it(behaviour_sets_.begin());
+  while (it != behaviour_sets_.end())
+  {
+    BS* behaviour_set = *it;
+    behaviour_set->preProcess();
+    if (behaviour_set->isActive())
+    {
+      if (active_behaviour_set_ && *active_behaviour_set_ != *behaviour_set)
+      {
+        active_behaviour_set_->setActive(false);
+      }
+      active_behaviour_set_ = behaviour_set;
+      ROS_WARN_STREAM("[BehavedRobot] active: " << *active_behaviour_set_);
+      active_behaviour_set_->process();
+      return;
     }
     it++;
   }

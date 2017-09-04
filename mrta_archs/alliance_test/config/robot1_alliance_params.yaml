@@ -1,6 +1,7 @@
 name: 'Robot 1'
-broadcast_rate: 1.0    # in Hertz
-timeout_duration: 20.0    # in seconds
+broadcast_rate: 1.0      # in Hertz
+timeout_duration: 2.0    # in seconds
+buffer_horizon: 5.0      # in seconds
 behaviour_sets:
   size: 3
   behaviour_set0:

@@ -86,14 +86,29 @@ void Node::readParameters()
       ROS_ERROR("The behaviour set's task id must not be empty.");
       continue;
     }
+    double buffer_horizon, timeout_duration;
+    pnh.param("buffer_horizon", buffer_horizon, 5.0);
+    if (buffer_horizon <= 0.0)
+    {
+      ROS_WARN(
+          "The active buffer horizon of the behaviour set must be positive.");
+      buffer_horizon = 5.0;
+    }
+    pnh.param("timeout_duration", timeout_duration, 2.0);
+    if (timeout_duration < 0.0)
+    {
+      ROS_WARN("The active timeout duration of the behaviour set must not be negative.");
+      timeout_duration = 2.0;
+    }
     std::list<alliance::Task>::const_iterator it(tasks.begin());
     alliance::LayeredBehaviourSet* behaviour_set;
     while (it != tasks.end())
     {
       if (it->getId() == id)
       {
-        behaviour_set =
-            new alliance::LayeredBehaviourSet(robot_, new alliance::Task(*it));
+        behaviour_set = new alliance::LayeredBehaviourSet(
+            robot_, new alliance::Task(*it), ros::Duration(buffer_horizon),
+            ros::Duration(timeout_duration));
         break;
       }
       it++;
@@ -123,7 +138,7 @@ void Node::init()
 
 void Node::controlLoop() { robot_->process(); }
 
-void Node::beaconSignalCallback(const alliance_msgs::BeaconSignal &msg)
+void Node::beaconSignalCallback(const alliance_msgs::BeaconSignal& msg)
 {
   BeaconSignalSubject::notify(msg);
 }

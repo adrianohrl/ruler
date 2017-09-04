@@ -7,26 +7,23 @@
 
 namespace alliance
 {
-class BehaviourSet : public BehaviourSetInterface<Robot>, public utilities::Subject
+class BehaviourSet : public BehaviourSetInterface<Robot>,
+                     public utilities::Subject
 {
 public:
-  BehaviourSet(Robot* robot, Task* task);
+  BehaviourSet(Robot* robot, Task* task, ros::Duration buffer_horizon);
   virtual ~BehaviourSet();
-  void process();
-  bool isActive(const ros::Time& timestamp = ros::Time::now()) const;
-  ros::Time getActivationTimestamp() const;
+  virtual void preProcess();
   MotivationalBehaviour* getMotivationalBehaviour() const;
-  void setActive(bool active = true,
-                 const ros::Time& timestamp = ros::Time::now());
   void setActivationThreshold(double threshold);
   void setAcquiescence(const ros::Duration& yielding_delay,
                        const ros::Duration& giving_up_delay);
   void setImpatience(double fast_rate);
   void registerActivitySuppression(BehaviourSet* behaviour_set);
+  virtual void setActive(bool active = true,
+                         const ros::Time& timestamp = ros::Time::now());
 
 private:
-  ros::Time activation_timestamp_;
-  utilities::functions::UnarySampleHolder* active_;
   MotivationalBehaviour* motivational_behaviour_;
 };
 }
