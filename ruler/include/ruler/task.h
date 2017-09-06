@@ -31,13 +31,14 @@ public:
        bool preemptive = false,
        utilities::Interval<ros::Time>* start_timestamp_bounds = NULL,
        utilities::Interval<ros::Time>* end_timestamp_bounds = NULL,
-       std::list<geometry_msgs::Pose> waypoints = std::list<geometry_msgs::Pose>());
+       std::list<geometry_msgs::Pose> waypoints =
+           std::list<geometry_msgs::Pose>());
   Task(const ruler_msgs::Task& msg);
   Task(const Task& task);
   virtual ~Task();
   void addResourceReservationRequest(ResourceReservationRequest* request);
-  void addResource(ResourceInterface* resource);
-  void removeResource(ResourceInterface* resource);
+  void addResource(const ResourceInterfacePtr& resource);
+  void removeResource(const ResourceInterfacePtr& resource);
   void start(ros::Time timestamp = ros::Time::now());
   void interrupt(ros::Time timestamp = ros::Time::now());
   void resume(ros::Time timestamp = ros::Time::now());
@@ -77,7 +78,11 @@ private:
   std::list<utilities::Interval<ros::Time>*> interruption_intervals_;
   std::list<ResourceReservationRequest*> resource_reservation_requests_;
   std::list<geometry_msgs::Pose> waypoints_;
+  virtual boost::shared_ptr<Task> shared_from_this();
 };
+
+typedef boost::shared_ptr<Task> TaskPtr;
+typedef boost::shared_ptr<Task const> TaskConstPtr;
 }
 
 #endif // _RULER_TASK_H_

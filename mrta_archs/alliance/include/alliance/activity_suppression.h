@@ -8,21 +8,30 @@
 namespace alliance
 {
 class Robot;
+typedef boost::shared_ptr<Robot> RobotPtr;
+typedef boost::shared_ptr<Robot const> RobotConstPtr;
 
 class BehaviourSet;
+typedef boost::shared_ptr<BehaviourSet> BehaviourSetPtr;
+typedef boost::shared_ptr<BehaviourSet const> BehaviourSetConstPtr;
 
 class ActivitySuppression : public utilities::Observer
 {
 public:
-  ActivitySuppression(Robot* robot, BehaviourSet* behaviour_set);
+  ActivitySuppression(const RobotPtr& robot,
+                      const BehaviourSetPtr& behaviour_set);
   virtual ~ActivitySuppression();
-  virtual void update(utilities::Event *event);
+  virtual void update(const utilities::EventConstPtr& event);
   bool isSuppressed(const ros::Time& timestamp = ros::Time::now()) const;
 
 private:
-  Robot* robot_;
-  utilities::functions::UnarySampleHolder* suppressed_;
+  const RobotPtr robot_;
+  const utilities::functions::UnarySampleHolderPtr suppressed_;
 };
+
+typedef boost::shared_ptr<ActivitySuppression> ActivitySuppressionPtr;
+typedef boost::shared_ptr<ActivitySuppression const>
+    ActivitySuppressionConstPtr;
 }
 
 #endif // _ALLIANCE_ACTIVITY_SUPPRESSION_H_

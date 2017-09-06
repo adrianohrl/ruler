@@ -15,20 +15,25 @@
 namespace ruler
 {
 class Task;
+typedef boost::shared_ptr<Task> TaskPtr;
+typedef boost::shared_ptr<Task const> TaskConstPtr;
 
 class TaskEvent : public utilities::Event
 {
 public:
-  TaskEvent(Task* task, EventType type,
-            ros::Time timestamp = ros::Time::now());
+  TaskEvent(const TaskPtr& task, const EventType& type,
+            const ros::Time& timestamp = ros::Time::now());
   TaskEvent(const TaskEvent& event);
   virtual ~TaskEvent();
-  Task* getTask() const;
+  TaskPtr getTask() const;
   EventType getType() const;
 
 private:
   EventType type_;
 };
+
+typedef boost::shared_ptr<TaskEvent> TaskEventPtr;
+typedef boost::shared_ptr<TaskEvent const> TaskEventConstPtr;
 }
 
 #endif // _RULER_TASK_EVENT_H_

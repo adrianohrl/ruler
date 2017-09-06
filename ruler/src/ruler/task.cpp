@@ -15,9 +15,8 @@ Task::Task(std::string id, std::string name, ros::Duration expected_duration,
            utilities::Interval<ros::Time>* start_timestamp_bounds,
            utilities::Interval<ros::Time>* end_timestamp_bounds,
            std::list<geometry_msgs::Pose> waypoints)
-    : Subject::Subject(id), name_(name),
-      expected_duration_(expected_duration), preemptive_(preemptive),
-      start_timestamp_bounds_(start_timestamp_bounds),
+    : Subject::Subject(id), name_(name), expected_duration_(expected_duration),
+      preemptive_(preemptive), start_timestamp_bounds_(start_timestamp_bounds),
       end_timestamp_bounds_(end_timestamp_bounds), waypoints_(waypoints)
 {
 }
@@ -107,7 +106,7 @@ void Task::addResourceReservationRequest(ResourceReservationRequest* request)
   resource_reservation_requests_.push_back(request);
 }
 
-void Task::addResource(ResourceInterface* resource)
+void Task::addResource(const ResourceInterfacePtr& resource)
 {
   if (hasStarted())
   {
@@ -118,7 +117,7 @@ void Task::addResource(ResourceInterface* resource)
   utilities::Subject::registerObserver(resource);
 }
 
-void Task::removeResource(ResourceInterface* resource)
+void Task::removeResource(const ResourceInterfacePtr& resource)
 {
   if (hasStarted() && !hasFinished())
   {
@@ -154,9 +153,8 @@ void Task::start(ros::Time timestamp)
                                " does not have any resource registered yet.");
   }
   start_timestamp_ = timestamp;
-  TaskEvent* event = new TaskEvent(this, types::STARTED);
+  TaskEventConstPtr event(new TaskEvent(shared_from_this(), types::STARTED, timestamp));
   utilities::Subject::notify(event);
-  delete event;
   ROS_DEBUG_STREAM(*this << " has just started.");
   last_event_timestamp_ = timestamp;
 }
@@ -181,9 +179,8 @@ void Task::interrupt(ros::Time timestamp)
     throw utilities::Exception(str() + " has already been interrupted.");
   }
   last_interruption_timestamp_ = timestamp;
-  TaskEvent* event = new TaskEvent(this, types::INTERRUPTED);
+  TaskEventConstPtr event(new TaskEvent(shared_from_this(), types::INTERRUPTED, timestamp));
   utilities::Subject::notify(event);
-  delete event;
   ROS_DEBUG_STREAM(*this << " has just interruped.");
   last_event_timestamp_ = timestamp;
 }
@@ -210,9 +207,8 @@ void Task::resume(ros::Time timestamp)
   interruption_intervals_.push_back(new utilities::Interval<ros::Time>(
       last_interruption_timestamp_, timestamp));
   last_interruption_timestamp_ = ros::Time();
-  TaskEvent* event = new TaskEvent(this, types::RESUMED);
+  TaskEventConstPtr event(new TaskEvent(shared_from_this(), types::RESUMED, timestamp));
   utilities::Subject::notify(event);
-  delete event;
   ROS_DEBUG_STREAM(*this << " has just resumed.");
   last_event_timestamp_ = timestamp;
 }
@@ -238,9 +234,8 @@ void Task::finish(ros::Time timestamp)
     interruption_intervals_.push_back(new utilities::Interval<ros::Time>(
         last_interruption_timestamp_, end_timestamp_));
   }
-  TaskEvent* event = new TaskEvent(this, types::FINISHED);
+  TaskEventConstPtr event(new TaskEvent(shared_from_this(), types::FINISHED, timestamp));
   utilities::Subject::notify(event);
-  delete event;
   utilities::Subject::clearObservers();
   ROS_DEBUG_STREAM(*this << " has just finished.");
   last_event_timestamp_ = timestamp;
@@ -375,7 +370,8 @@ ruler_msgs::Task Task::toMsg() const
     msg.max_interruption_timestamps.push_back(interruption_interval->getMax());
     intervals_it++;
   }
-  std::list<geometry_msgs::Pose>::const_iterator waypoints_it(waypoints_.begin());
+  std::list<geometry_msgs::Pose>::const_iterator waypoints_it(
+      waypoints_.begin());
   while (waypoints_it != waypoints_.end())
   {
     msg.waypoints.push_back(*waypoints_it);
@@ -387,5 +383,10 @@ ruler_msgs::Task Task::toMsg() const
 bool Task::operator==(const ruler_msgs::Task& msg) const
 {
   return getId() == msg.header.frame_id;
+}
+
+boost::shared_ptr<Task> Task::shared_from_this()
+{
+  return boost::dynamic_pointer_cast<Task>(Subject::shared_from_this());
 }
 }

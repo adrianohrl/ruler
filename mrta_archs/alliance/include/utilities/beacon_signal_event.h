@@ -15,11 +15,14 @@ class BehavedRobot;
 namespace utilities
 {
 class BeaconSignalSubject;
+typedef boost::shared_ptr<BeaconSignalSubject> BeaconSignalSubjectPtr;
+typedef boost::shared_ptr<BeaconSignalSubject const>
+    BeaconSignalSubjectConstPtr;
 
 class BeaconSignalEvent : public Event
 {
 public:
-  BeaconSignalEvent(BeaconSignalSubject* subject,
+  BeaconSignalEvent(const BeaconSignalSubjectPtr& subject,
                     const alliance_msgs::BeaconSignal& msg);
   BeaconSignalEvent(const BeaconSignalEvent& event);
   virtual ~BeaconSignalEvent();
@@ -31,6 +34,9 @@ public:
 private:
   alliance_msgs::BeaconSignal msg_;
 };
+
+typedef boost::shared_ptr<BeaconSignalEvent> BeaconSignalEventPtr;
+typedef boost::shared_ptr<BeaconSignalEvent const> BeaconSignalEventConstPtr;
 }
 
 #endif // _UTILITIES_BEACON_SIGNAL_EVENT_H_

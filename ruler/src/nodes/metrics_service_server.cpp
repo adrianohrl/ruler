@@ -11,7 +11,7 @@
 namespace nodes
 {
 
-MetricsServiceServer::MetricsServiceServer(ros::NodeHandle* nh,
+MetricsServiceServer::MetricsServiceServer(ros::NodeHandlePtr nh,
                                            std::string name)
     : ROSServiceServer<ruler_msgs::CalculateMetrics::Request,
                        ruler_msgs::CalculateMetrics::Response>::

@@ -12,8 +12,10 @@ class BehavedRobot : public RobotInterface<BehavedRobot, LayeredBehaviourSet>
 public:
   BehavedRobot(const std::string& id, const std::string& name);
   virtual ~BehavedRobot();
-  void update(const alliance_msgs::BeaconSignal& msg);
 };
+
+typedef boost::shared_ptr<BehavedRobot> BehavedRobotPtr;
+typedef boost::shared_ptr<BehavedRobot const> BehavedRobotConstPtr;
 }
 
 #endif // _ALLIANCE_BEHAVED_ROBOT_H_

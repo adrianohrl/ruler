@@ -3,24 +3,15 @@
 namespace nodes
 {
 
-Node::Node(ros::NodeHandle* nh, float loop_rate)
+Node::Node(ros::NodeHandlePtr nh, float loop_rate)
     : ROSNode::ROSNode(nh, loop_rate),
-      BeaconSignalSubject::BeaconSignalSubject(ros::this_node::getName()),
-      robot_(NULL)
+      BeaconSignalSubject::BeaconSignalSubject(ros::this_node::getName())
 {
   beacon_signal_sub_ = nh->subscribe("/alliance/beacon_signal", 100,
                                      &Node::beaconSignalCallback, this);
 }
 
-Node::~Node()
-{
-  beacon_signal_sub_.shutdown();
-  if (robot_)
-  {
-    delete robot_;
-    robot_ = NULL;
-  }
-}
+Node::~Node() { beacon_signal_sub_.shutdown(); }
 
 void Node::readParameters()
 {
@@ -28,7 +19,7 @@ void Node::readParameters()
   int size;
   pnh.param("size", size, 0);
   std::string id, name;
-  std::list<alliance::Task> tasks;
+  std::list<alliance::TaskPtr> tasks;
   for (int i(0); i < size; i++)
   {
     std::stringstream ss;
@@ -40,7 +31,7 @@ void Node::readParameters()
       continue;
     }
     pnh.param(ss.str() + "name", name, std::string(""));
-    alliance::Task task(id, name.empty() ? id : name);
+    alliance::TaskPtr task(new alliance::Task(id, name.empty() ? id : name));
     ss << "layers/";
     int layers_size;
     pnh.param(ss.str() + "size", layers_size, 0);
@@ -50,7 +41,7 @@ void Node::readParameters()
       std::stringstream sss;
       sss << ss.str() << "layer" << j << "/";
       pnh.param(sss.str() + "plugin_name", plugin_name, std::string(""));
-      task.addNeededLayer(plugin_name);
+      task->addNeededLayer(plugin_name);
     }
     tasks.push_back(task);
   }
@@ -73,7 +64,7 @@ void Node::readParameters()
     ROSNode::shutdown("Invalid ROS namespace. It must end with '" + id + "'.");
     return;
   }
-  robot_ = new alliance::BehavedRobot(id, name);
+  robot_.reset(new alliance::BehavedRobot(id, name));
   pnh = ros::NodeHandle("~/behaviour_sets");
   pnh.param("size", size, 0);
   for (int i(0); i < size; i++)
@@ -97,18 +88,20 @@ void Node::readParameters()
     pnh.param("timeout_duration", timeout_duration, 2.0);
     if (timeout_duration < 0.0)
     {
-      ROS_WARN("The active timeout duration of the behaviour set must not be negative.");
+      ROS_WARN("The active timeout duration of the behaviour set must not be "
+               "negative.");
       timeout_duration = 2.0;
     }
-    std::list<alliance::Task>::const_iterator it(tasks.begin());
-    alliance::LayeredBehaviourSet* behaviour_set;
+    std::list<alliance::TaskPtr>::const_iterator it(tasks.begin());
+    alliance::LayeredBehaviourSetPtr behaviour_set;
     while (it != tasks.end())
     {
-      if (it->getId() == id)
+      alliance::TaskPtr task(*it);
+      if (task->getId() == id)
       {
-        behaviour_set = new alliance::LayeredBehaviourSet(
-            robot_, new alliance::Task(*it), ros::Duration(buffer_horizon),
-            ros::Duration(timeout_duration));
+        behaviour_set.reset(new alliance::LayeredBehaviourSet(
+            robot_, task, ros::Duration(buffer_horizon),
+            ros::Duration(timeout_duration)));
         break;
       }
       it++;
@@ -125,9 +118,9 @@ void Node::readParameters()
 void Node::init()
 {
   /** registering beacon signal message observers **/
-  std::list<alliance::LayeredBehaviourSet*> behaviour_sets(
+  std::list<alliance::LayeredBehaviourSetPtr> behaviour_sets(
       robot_->getBehaviourSets());
-  std::list<alliance::LayeredBehaviourSet*>::iterator it(
+  std::list<alliance::LayeredBehaviourSetPtr>::iterator it(
       behaviour_sets.begin());
   while (it != behaviour_sets.end())
   {

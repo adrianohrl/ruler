@@ -17,7 +17,7 @@ namespace ruler_test
 class TaskExecutionSimulatorNode : public utilities::ROSNode
 {
 public:
-  TaskExecutionSimulatorNode(ros::NodeHandle* nh = new ros::NodeHandle(),
+  TaskExecutionSimulatorNode(ros::NodeHandlePtr nh,
                              float loop_rate = 30.0);
   virtual ~TaskExecutionSimulatorNode();
 
@@ -25,6 +25,8 @@ private:
   virtual void readParameters();
   virtual void controlLoop();
 };
+
+typedef boost::scoped_ptr<TaskExecutionSimulatorNode> TaskExecutionSimulatorNodePtr;
 }
 
 #endif // _RULER_TEST_TASK_EXECUTION_SIMULATOR_NODE_H_

@@ -12,13 +12,13 @@ class AllianceNode : public utilities::ROSNode,
                      public utilities::BeaconSignalSubject
 {
 public:
-  AllianceNode(ros::NodeHandle* nh = new ros::NodeHandle(),
+  AllianceNode(ros::NodeHandlePtr nh,
                float loop_rate = 30.0);
   virtual ~AllianceNode();
 
 private:
   bool started_broadcasting_;
-  alliance::Robot* robot_;
+  alliance::RobotPtr robot_;
   ros::Publisher beacon_signal_pub_;
   ros::Subscriber beacon_signal_sub_;
   ros::Timer broadcast_timer_;
@@ -28,6 +28,8 @@ private:
   void beaconSignalCallback(const alliance_msgs::BeaconSignal& msg);
   void broadcastTimerCallback(const ros::TimerEvent& event);
 };
+
+typedef boost::scoped_ptr<AllianceNode> AllianceNodePtr;
 }
 
 #endif // _ALLIANCE_NODE_H_

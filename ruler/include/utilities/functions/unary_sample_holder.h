@@ -26,6 +26,8 @@ public:
   bool updated(const ros::Time& t1,
                const ros::Time& t2 = ros::Time::now()) const;
 };
+
+typedef boost::shared_ptr<UnarySampleHolder> UnarySampleHolderPtr;
 }
 }
 

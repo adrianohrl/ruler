@@ -8,10 +8,11 @@
 
 #include "utilities/event.h"
 #include "utilities/subject.h"
+#include "utilities/exception.h"
 
 namespace utilities
 {
-Event::Event(Subject* subject, ros::Time timestamp)
+Event::Event(const SubjectPtr& subject, const ros::Time& timestamp)
     : subject_(subject), timestamp_(timestamp)
 {
   if (!subject)
@@ -29,9 +30,9 @@ Event::Event(const Event& event)
 {
 }
 
-Event::~Event() { subject_ = NULL; }
+Event::~Event() {}
 
 ros::Time Event::getTimestamp() const { return timestamp_; }
 
-Subject* Event::getSubject() const { return subject_; }
+SubjectPtr Event::getSubject() const { return subject_; }
 }

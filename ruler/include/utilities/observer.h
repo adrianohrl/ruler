@@ -18,12 +18,15 @@ class Observer : public HasId<std::string>
 {
 public:
   virtual ~Observer();
-  virtual void update(Event* event) = 0;
+  virtual void update(const EventConstPtr& event) = 0;
 
 protected:
   Observer(const std::string& id);
   Observer(const Observer& observer);
 };
+
+typedef boost::shared_ptr<Observer> ObserverPtr;
+typedef boost::shared_ptr<Observer const> ObserverConstPtr;
 }
 
 #endif // _UTILITIES_OBSERVER_H_

@@ -10,25 +10,31 @@
 #define _UTILITIES_EVENT_H_
 
 #include <ros/time.h>
-#include "utilities/exception.h"
 
 namespace utilities
 {
 class Subject;
+typedef boost::shared_ptr<Subject> SubjectPtr;
 
 class Event
 {
 public:
-  Event(Subject* subject, ros::Time timestamp = ros::Time::now());
+  Event(const SubjectPtr& subject,
+        const ros::Time& timestamp = ros::Time::now());
   Event(const Event& event);
   virtual ~Event();
   ros::Time getTimestamp() const;
-  Subject* getSubject() const;
+  SubjectPtr getSubject() const;
+
+protected:
+  const SubjectPtr subject_;
 
 private:
   const ros::Time timestamp_;
-  Subject* subject_;
 };
+
+typedef boost::shared_ptr<Event> EventPtr;
+typedef boost::shared_ptr<Event const> EventConstPtr;
 }
 
 #endif // _UTILITIES_EVENT_H_

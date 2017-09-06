@@ -11,14 +11,17 @@ namespace alliance
 class SensoryFeedback
 {
 public:
-  SensoryFeedback(Task* task);
+  SensoryFeedback(const TaskPtr& task);
   virtual ~SensoryFeedback();
   bool isApplicable(const ros::Time& timestamp = ros::Time::now()) const;
 
 private:
-  Task* task_;
-  std::list<Sensor*> sensors_;
+  const TaskPtr task_;
+  const std::list<SensorPtr> sensors_;
 };
+
+typedef boost::shared_ptr<SensoryFeedback> SensoryFeedbackPtr;
+typedef boost::shared_ptr<SensoryFeedback const> SensoryFeedbackConstPtr;
 }
 
 #endif // _ALLIANCE_SENSORY_FEEDBACK_H_

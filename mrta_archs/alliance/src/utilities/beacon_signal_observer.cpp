@@ -14,11 +14,13 @@ BeaconSignalObserver::BeaconSignalObserver(const BeaconSignalObserver& observer)
 
 BeaconSignalObserver::~BeaconSignalObserver() {}
 
-void BeaconSignalObserver::update(Event* event)
+void BeaconSignalObserver::update(const EventConstPtr& event)
 {
-  if (typeid(*event) == typeid(BeaconSignalEvent))
+  BeaconSignalEventConstPtr beacon_signal_event(
+      boost::dynamic_pointer_cast<BeaconSignalEvent const>(event));
+  if (beacon_signal_event)
   {
-    update((BeaconSignalEvent*)event);
+    update(beacon_signal_event);
   }
 }
 }

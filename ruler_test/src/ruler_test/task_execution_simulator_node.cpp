@@ -10,7 +10,7 @@
 
 namespace ruler_test
 {
-TaskExecutionSimulatorNode::TaskExecutionSimulatorNode(ros::NodeHandle* nh,
+TaskExecutionSimulatorNode::TaskExecutionSimulatorNode(ros::NodeHandlePtr nh,
                                                        float loop_rate)
     : ROSNode::ROSNode(nh, loop_rate)
 {

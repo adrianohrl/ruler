@@ -24,13 +24,13 @@ void Robot::setTimeoutDuration(const ros::Duration& timeout_duration)
   timeout_duration_ = timeout_duration;
 }
 
-void Robot::addBehaviourSet(BehaviourSet* behaviour_set)
+void Robot::addBehaviourSet(const BehaviourSetPtr& behaviour_set)
 {
   RobotInterface<Robot, BehaviourSet>::addBehaviourSet(behaviour_set);
-  std::list<BehaviourSet*>::iterator it(behaviour_sets_.begin());
+  std::list<BehaviourSetPtr>::iterator it(behaviour_sets_.begin());
   while (it != behaviour_sets_.end())
   {
-    BehaviourSet* robot_behaviour_set = *it;
+    BehaviourSetPtr robot_behaviour_set = *it;
     behaviour_set->registerActivitySuppression(robot_behaviour_set);
     robot_behaviour_set->registerActivitySuppression(behaviour_set);
     it++;

@@ -10,8 +10,8 @@
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "ruler_test_node");
-  ruler_test::RulerTestNode* node = new ruler_test::RulerTestNode();
+  ros::NodeHandlePtr nh(new ros::NodeHandle());
+  ruler_test::RulerTestNodePtr node(new ruler_test::RulerTestNode(nh));
   node->run();
-  delete node;
   return EXIT_SUCCESS;
 }

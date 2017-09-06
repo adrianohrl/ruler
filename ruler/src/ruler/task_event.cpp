@@ -12,7 +12,8 @@
 namespace ruler
 {
 
-TaskEvent::TaskEvent(Task* task, EventType type, ros::Time timestamp)
+TaskEvent::TaskEvent(const TaskPtr& task, const EventType& type,
+                     const ros::Time& timestamp)
     : Event::Event(task, timestamp), type_(type)
 {
 }
@@ -24,9 +25,9 @@ TaskEvent::TaskEvent(const TaskEvent& event)
 
 TaskEvent::~TaskEvent() {}
 
-Task* TaskEvent::getTask() const
+TaskPtr TaskEvent::getTask() const
 {
-  return (Task*) utilities::Event::getSubject();
+  return boost::dynamic_pointer_cast<Task>(subject_);
 }
 
 EventType TaskEvent::getType() const { return type_; }

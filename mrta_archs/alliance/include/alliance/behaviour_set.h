@@ -7,25 +7,30 @@
 
 namespace alliance
 {
-class BehaviourSet : public BehaviourSetInterface<Robot>,
+class BehaviourSet : public BehaviourSetInterface<Robot, BehaviourSet>,
                      public utilities::Subject
 {
 public:
-  BehaviourSet(Robot* robot, Task* task, ros::Duration buffer_horizon);
+  BehaviourSet(const RobotPtr& robot, const TaskPtr& task,
+               const ros::Duration& buffer_horizon);
   virtual ~BehaviourSet();
   virtual void preProcess();
-  MotivationalBehaviour* getMotivationalBehaviour() const;
+  MotivationalBehaviourPtr getMotivationalBehaviour() const;
   void setActivationThreshold(double threshold);
   void setAcquiescence(const ros::Duration& yielding_delay,
                        const ros::Duration& giving_up_delay);
   void setImpatience(double fast_rate);
-  void registerActivitySuppression(BehaviourSet* behaviour_set);
+  void registerActivitySuppression(const BehaviourSetPtr& behaviour_set);
   virtual void setActive(bool active = true,
                          const ros::Time& timestamp = ros::Time::now());
 
 private:
-  MotivationalBehaviour* motivational_behaviour_;
+  const MotivationalBehaviourPtr motivational_behaviour_;
+  virtual BehaviourSetPtr shared_from_this();
 };
+
+typedef boost::shared_ptr<BehaviourSet> BehaviourSetPtr;
+typedef boost::shared_ptr<BehaviourSet const> BehaviourSetConstPtr;
 }
 
 #endif // _ALLIANCE_BEHAVIOUR_SET_H_

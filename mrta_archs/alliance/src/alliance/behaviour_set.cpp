@@ -4,36 +4,24 @@
 
 namespace alliance
 {
-BehaviourSet::BehaviourSet(Robot* robot, Task* task,
-                           ros::Duration buffer_horizon)
-    : BehaviourSetInterface<Robot>::BehaviourSetInterface(robot, task,
-                                                          buffer_horizon),
-      Subject::Subject(robot->getId() + "/" + task->getId())
+BehaviourSet::BehaviourSet(const RobotPtr& robot, const TaskPtr& task,
+                           const ros::Duration& buffer_horizon)
+    : BehaviourSetInterface<Robot, BehaviourSet>::BehaviourSetInterface(
+          robot, task, buffer_horizon),
+      Subject::Subject(robot->getId() + "/" + task->getId()),
+      motivational_behaviour_(
+          new MotivationalBehaviour(robot, shared_from_this()))
 {
-  motivational_behaviour_ = new MotivationalBehaviour(robot, this);
 }
 
-BehaviourSet::~BehaviourSet()
-{
-  if (motivational_behaviour_)
-  {
-    delete motivational_behaviour_;
-    motivational_behaviour_ = NULL;
-  }
-}
+BehaviourSet::~BehaviourSet() {}
 
 void BehaviourSet::preProcess()
 {
-  /** so para testar agora **/
-  std::string id(getId());
-  return setActive(id == "robot1/wander" || id == "robot2/report" ||
-                   id == "robot3/border_protection");
-  /* acaba aki o test */
-
-  // setActive(motivational_behaviour_->active());
+  setActive(motivational_behaviour_->active());
 }
 
-MotivationalBehaviour* BehaviourSet::getMotivationalBehaviour() const
+MotivationalBehaviourPtr BehaviourSet::getMotivationalBehaviour() const
 {
   return motivational_behaviour_;
 }
@@ -59,7 +47,8 @@ void BehaviourSet::setImpatience(double fast_rate)
   motivational_behaviour_->setImpatience(fast_rate);
 }
 
-void BehaviourSet::registerActivitySuppression(BehaviourSet* behaviour_set)
+void BehaviourSet::registerActivitySuppression(
+    const BehaviourSetPtr& behaviour_set)
 {
   Subject::registerObserver(
       behaviour_set->motivational_behaviour_->getActivitySuppression());
@@ -69,11 +58,15 @@ void BehaviourSet::setActive(bool active, const ros::Time& timestamp)
 {
   if (active != isActive(timestamp))
   {
-    BehaviourSetInterface<Robot>::setActive(active, timestamp);
-    utilities::ToggleEvent* event =
-        new utilities::ToggleEvent(this, active, timestamp);
+    BehaviourSetInterface<Robot, BehaviourSet>::setActive(active, timestamp);
+    utilities::ToggleEventConstPtr event(
+        new utilities::ToggleEvent(shared_from_this(), active, timestamp));
     Subject::notify(event);
-    delete event;
   }
+}
+
+BehaviourSetPtr BehaviourSet::shared_from_this()
+{
+  return boost::dynamic_pointer_cast<BehaviourSet>(Subject::shared_from_this());
 }
 }

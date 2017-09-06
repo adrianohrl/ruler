@@ -11,7 +11,7 @@
 
 namespace ruler_test
 {
-TaskGeneratorNode::TaskGeneratorNode(ros::NodeHandle* nh, float loop_rate)
+TaskGeneratorNode::TaskGeneratorNode(ros::NodeHandlePtr nh, float loop_rate)
     : ROSNode::ROSNode(nh, loop_rate)
 {
   task_announcements_pub_ = nh->advertise<ruler_msgs::Task>("tasks", 10);
@@ -70,7 +70,7 @@ void TaskGeneratorNode::readParameters()
 
 void TaskGeneratorNode::controlLoop()
 {
-  ros::NodeHandle* nh = ROSNode::getNodeHandle();
+  ros::NodeHandlePtr nh(ROSNode::getNodeHandle());
   std::vector<TaskAnnouncement>::iterator it(task_announcements_.begin());
   while (it != task_announcements_.end())
   {

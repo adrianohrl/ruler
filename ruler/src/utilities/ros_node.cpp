@@ -15,7 +15,7 @@ namespace utilities
  * @param nh must NOT be NULL.
  * @param loop_rate must be positive.
  */
-ROSNode::ROSNode(ros::NodeHandle* nh, float loop_rate) : loop_rate_(loop_rate)
+ROSNode::ROSNode(ros::NodeHandlePtr nh, float loop_rate) : nh_(nh), loop_rate_(loop_rate)
 {
   if (!nh)
   {
@@ -29,7 +29,6 @@ ROSNode::ROSNode(ros::NodeHandle* nh, float loop_rate) : loop_rate_(loop_rate)
     ros::shutdown();
     return;
   }
-  nh_ = nh;
   name_ = ros::this_node::getName();
 }
 
@@ -39,11 +38,6 @@ ROSNode::ROSNode(ros::NodeHandle* nh, float loop_rate) : loop_rate_(loop_rate)
  */
 ROSNode::~ROSNode()
 {
-  if (nh_)
-  {
-    delete nh_;
-    nh_ = NULL;
-  }
 }
 
 /**
@@ -123,7 +117,7 @@ void ROSNode::init() {}
  * @brief ROSNode::getNodeHandle encapsulates this ROS node handle.
  * @return a pointer to an internal member that handles this node.
  */
-ros::NodeHandle* ROSNode::getNodeHandle() const { return nh_; }
+ros::NodeHandlePtr ROSNode::getNodeHandle() const { return nh_; }
 
 /**
  * @brief ROSNode::getName encapsulates this ROS node name.

@@ -4,18 +4,19 @@
 
 namespace alliance
 {
-LayeredBehaviourSet::LayeredBehaviourSet(BehavedRobot* robot, Task* task,
-                                         ros::Duration buffer_horizon,
-                                         ros::Duration timeout_duration)
-    : BehaviourSetInterface<BehavedRobot>::BehaviourSetInterface(
-          robot, task, buffer_horizon, timeout_duration),
+LayeredBehaviourSet::LayeredBehaviourSet(const BehavedRobotPtr& robot,
+                                         const TaskPtr& task,
+                                         const ros::Duration& buffer_horizon,
+                                         const ros::Duration& timeout_duration)
+    : BehaviourSetInterface<BehavedRobot, LayeredBehaviourSet>::
+          BehaviourSetInterface(robot, task, buffer_horizon, timeout_duration),
       BeaconSignalObserver::BeaconSignalObserver(robot->getId() + "/" +
                                                  task->getId()),
       loader_("alliance", "alliance::Layer")
 {
   std::list<std::string> layers(task->getNeededLayers());
   std::list<std::string>::const_iterator it(layers.begin());
-  boost::shared_ptr<alliance::Layer> layer;
+  LayerPtr layer;
   while (it != layers.end())
   {
     try
@@ -36,10 +37,11 @@ LayeredBehaviourSet::~LayeredBehaviourSet() {}
 
 void LayeredBehaviourSet::process()
 {
-  std::list<boost::shared_ptr<Layer> >::iterator it(layers_.begin());
+  std::list<LayerPtr>::iterator it(layers_.begin());
   while (it != layers_.end())
   {
-    ((boost::shared_ptr<Layer>)*it)->process();
+    LayerPtr layer = *it;
+    layer->process();
     it++;
   }
 }
@@ -48,7 +50,7 @@ void LayeredBehaviourSet::addLayer(const std::string& layer_name)
 {
   try
   {
-    boost::shared_ptr<Layer> layer(loader_.createInstance(layer_name.c_str()));
+    LayerPtr layer(loader_.createInstance(layer_name.c_str()));
     layer->initialize(getId() + "/" + layer_name);
     addLayer(layer);
   }
@@ -63,14 +65,15 @@ void LayeredBehaviourSet::addLayer(const std::string& layer_name)
   }
 }
 
-void LayeredBehaviourSet::addLayer(const boost::shared_ptr<Layer>& layer)
+void LayeredBehaviourSet::addLayer(const LayerPtr& layer)
 {
   layers_.push_back(layer);
   ROS_DEBUG_STREAM("Loaded " << layer->getName() << " layer plugin to the "
                              << *this << " behaviour set.");
 }
 
-void LayeredBehaviourSet::update(utilities::BeaconSignalEvent* event)
+void LayeredBehaviourSet::update(
+    const utilities::BeaconSignalEventConstPtr& event)
 {
   if (!event->isRelated(*robot_) || !event->isRelated(*task_))
   {
@@ -81,10 +84,10 @@ void LayeredBehaviourSet::update(utilities::BeaconSignalEvent* event)
 
 bool LayeredBehaviourSet::contains(const std::string& layer_name) const
 {
-  std::list<boost::shared_ptr<Layer> >::const_iterator it(layers_.begin());
+  std::list<LayerPtr>::const_iterator it(layers_.begin());
   while (it != layers_.end())
   {
-    boost::shared_ptr<Layer> layer = *it;
+    LayerPtr layer = *it;
     if (layer->getName() == layer_name)
     {
       return true;

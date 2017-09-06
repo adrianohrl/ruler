@@ -11,7 +11,8 @@ namespace alliance
 class Impatience
 {
 public:
-  Impatience(Robot* robot, BehaviourSet *behaviour_set, InterCommunication* monitor);
+  Impatience(const RobotPtr& robot, const BehaviourSetPtr& behaviour_set,
+             const InterCommunicationPtr& monitor);
   virtual ~Impatience();
   double getSlowRate(const std::string& robot_id,
                      const ros::Time& timestamp = ros::Time::now()) const;
@@ -22,20 +23,24 @@ public:
   double getLevel(const ros::Time& timestamp = ros::Time::now()) const;
   void setSlowRate(const std::string& robot_id, double slow_rate,
                    const ros::Time& timestamp = ros::Time::now());
-  void setFastRate(double fast_rate, const ros::Time &timestamp = ros::Time::now());
+  void setFastRate(double fast_rate,
+                   const ros::Time& timestamp = ros::Time::now());
   void setReliabilityDuration(const std::string& robot_id,
                               const ros::Duration& reliability_duration,
                               const ros::Time& timestamp = ros::Time::now());
 
 private:
-  Robot* robot_;
-  InterCommunication* monitor_;
-  std::map<std::string, utilities::functions::ContinuousSampleHolder*>
+  const RobotPtr robot_;
+  const InterCommunicationPtr monitor_;
+  std::map<std::string, utilities::functions::ContinuousSampleHolderPtr>
       slow_rates_;
-  utilities::functions::ContinuousSampleHolder* fast_rate_;
-  std::map<std::string, utilities::functions::ContinuousSampleHolder*>
+  const utilities::functions::ContinuousSampleHolderPtr fast_rate_;
+  std::map<std::string, utilities::functions::ContinuousSampleHolderPtr>
       reliability_durations_;
 };
+
+typedef boost::shared_ptr<Impatience> ImpatiencePtr;
+typedef boost::shared_ptr<Impatience const> ImpatienceConstPtr;
 }
 
 #endif // _ALLIANCE_IMPATIENCE_H_

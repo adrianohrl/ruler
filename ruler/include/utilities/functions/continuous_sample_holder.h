@@ -21,6 +21,9 @@ public:
   ContinuousSampleHolder(const ContinuousSampleHolder& function);
   virtual ~ContinuousSampleHolder();
 };
+
+typedef boost::shared_ptr<ContinuousSampleHolder> ContinuousSampleHolderPtr;
+typedef boost::shared_ptr<ContinuousSampleHolder const> ContinuousSampleHolderConstPtr;
 }
 }
 

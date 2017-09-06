@@ -3,12 +3,12 @@
 
 namespace alliance
 {
-ImpatienceReset::ImpatienceReset(InterCommunication* monitor)
+ImpatienceReset::ImpatienceReset(const InterCommunicationPtr& monitor)
     : monitor_(monitor)
 {
 }
 
-ImpatienceReset::~ImpatienceReset() { monitor_ = NULL; }
+ImpatienceReset::~ImpatienceReset() {}
 
 bool ImpatienceReset::isResetted(const ros::Time& timestamp) const
 {

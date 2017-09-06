@@ -6,34 +6,27 @@
 
 namespace alliance
 {
-ActivitySuppression::ActivitySuppression(Robot* robot,
-                                         BehaviourSet* behaviour_set)
+ActivitySuppression::ActivitySuppression(const RobotPtr& robot,
+                                         const BehaviourSetPtr& behaviour_set)
     : Observer::Observer(behaviour_set->getId() + "/activity_suppression"),
-      robot_(robot)
+      robot_(robot),
+      suppressed_(new utilities::functions::UnarySampleHolder(
+          behaviour_set->getId() + "/activity_suppression/suppressed",
+          ros::Duration(10 * robot_->getTimeoutDuration().toSec())))
 {
-  suppressed_ = new utilities::functions::UnarySampleHolder(
-      behaviour_set->getId() + "/activity_suppression/suppressed",
-      ros::Duration(10 * robot_->getTimeoutDuration().toSec()));
 }
 
-ActivitySuppression::~ActivitySuppression()
-{
-  if (suppressed_)
-  {
-    delete suppressed_;
-    suppressed_ = NULL;
-  }
-  robot_ = NULL;
-}
+ActivitySuppression::~ActivitySuppression() {}
 
-void ActivitySuppression::update(utilities::Event* event)
+void ActivitySuppression::update(const utilities::EventConstPtr& event)
 {
-  if (typeid(*event) == typeid(utilities::ToggleEvent))
+  utilities::ToggleEventConstPtr toggle_event(
+      boost::dynamic_pointer_cast<utilities::ToggleEvent const>(event));
+  if (toggle_event)
   {
     ROS_DEBUG_STREAM("Updating " << *suppressed_ << " to "
-                                 << ((utilities::ToggleEvent*)event)->getValue()
-                                 << ".");
-    suppressed_->update((utilities::ToggleEvent*)event);
+                                 << toggle_event->getValue() << ".");
+    suppressed_->update(toggle_event);
   }
 }
 

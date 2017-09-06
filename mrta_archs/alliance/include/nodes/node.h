@@ -10,17 +10,19 @@ namespace nodes
 class Node : public utilities::ROSNode, public utilities::BeaconSignalSubject
 {
 public:
-  Node(ros::NodeHandle* nh = new ros::NodeHandle(), float loop_rate = 30.0);
+  Node(ros::NodeHandlePtr nh, float loop_rate = 30.0);
   virtual ~Node();
 
 private:
   ros::Subscriber beacon_signal_sub_;
-  alliance::BehavedRobot* robot_;
+  alliance::BehavedRobotPtr robot_;
   virtual void readParameters();
   virtual void init();
   virtual void controlLoop();
   void beaconSignalCallback(const alliance_msgs::BeaconSignal& msg);
 };
+
+typedef boost::scoped_ptr<Node> NodePtr;
 }
 
 #endif // _ALLIANCE__NODE_H_

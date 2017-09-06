@@ -18,7 +18,7 @@ namespace nodes
 class RulerNode : public utilities::ROSNode
 {
 public:
-  RulerNode(ros::NodeHandle *nh = new ros::NodeHandle(), float loop_rate = 30.0);
+  RulerNode(ros::NodeHandlePtr nh, float loop_rate = 30.0);
   virtual ~RulerNode();
 
 private:
@@ -31,6 +31,8 @@ private:
   virtual void controlLoop();
   bool calculateMetrics();
 };
+
+typedef boost::scoped_ptr<RulerNode> RulerNodePtr;
 }
 
 #endif // _RULER_NODE_H_

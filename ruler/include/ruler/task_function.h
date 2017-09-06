@@ -24,7 +24,7 @@ public:
                utilities::functions::Function<T>* quantity_function);
   TaskFunction(const TaskFunction<T>& task_function);
   virtual ~TaskFunction();
-  void update(TaskEvent *event);
+  void update(const TaskEventConstPtr& event);
   bool isNegated() const;
   T getLevel(ros::Time t) const;
   Resource<T>* getResource() const;
@@ -81,7 +81,7 @@ template <typename T> TaskFunction<T>::~TaskFunction()
 }
 
 template <typename T>
-void TaskFunction<T>::update(TaskEvent* event)
+void TaskFunction<T>::update(const TaskEventConstPtr& event)
 {
   if (resource_->isReusable())
   {

@@ -22,7 +22,7 @@ class MetricsServiceServer
                                          ruler_msgs::CalculateMetrics::Response>
 {
 public:
-  MetricsServiceServer(ros::NodeHandle* nh, std::string name);
+  MetricsServiceServer(ros::NodeHandlePtr nh, std::string name);
   virtual ~MetricsServiceServer();
   void readPlugins(ruler::Robot *robot, std::string ns);
 

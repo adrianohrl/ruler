@@ -17,8 +17,14 @@ public:
 
 protected:
   void notify(const alliance_msgs::BeaconSignal& msg);
-  void registerObserver(BeaconSignalObserver* observer);
+  void registerObserver(const BeaconSignalObserverPtr& observer);
+
+private:
+  virtual BeaconSignalSubjectPtr shared_from_this();
 };
+
+typedef boost::shared_ptr<BeaconSignalSubject> BeaconSignalSubjectPtr;
+typedef boost::shared_ptr<BeaconSignalSubject const> BeaconSignalSubjectConstPtr;
 }
 
 #endif // _UTILITIES_BEACON_SIGNAL_SUBJECT_H_

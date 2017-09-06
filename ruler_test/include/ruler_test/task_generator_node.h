@@ -57,7 +57,7 @@ struct TaskAnnouncement
 class TaskGeneratorNode : public utilities::ROSNode
 {
 public:
-  TaskGeneratorNode(ros::NodeHandle* nh = new ros::NodeHandle(),
+  TaskGeneratorNode(ros::NodeHandlePtr nh,
                     float loop_rate = 30.0);
   virtual ~TaskGeneratorNode();
 
@@ -68,6 +68,8 @@ private:
   virtual void controlLoop();
   bool contains(const TaskAnnouncement& announcement) const;
 };
+
+typedef boost::scoped_ptr<TaskGeneratorNode> TaskGeneratorNodePtr;
 }
 
 #endif // _TASK_GENERATOR_NODE_H_

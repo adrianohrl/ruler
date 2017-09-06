@@ -2,8 +2,8 @@
 
 namespace utilities
 {
-ToggleEvent::ToggleEvent(Subject *subject, bool value,
-                         ros::Time timestamp)
+ToggleEvent::ToggleEvent(SubjectPtr subject, bool value,
+                         const ros::Time& timestamp)
     : Event::Event(subject, timestamp), value_(value)
 {
 }

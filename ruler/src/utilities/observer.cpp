@@ -7,6 +7,7 @@
  */
 
 #include "utilities/observer.h"
+#include "utilities/exception.h"
 
 namespace utilities
 {

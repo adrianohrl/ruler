@@ -5,7 +5,7 @@
 
 namespace utilities
 {
-BeaconSignalEvent::BeaconSignalEvent(BeaconSignalSubject* subject,
+BeaconSignalEvent::BeaconSignalEvent(const BeaconSignalSubjectPtr& subject,
                                      const alliance_msgs::BeaconSignal& msg)
     : Event::Event(subject, msg.header.stamp), msg_(msg)
 {
@@ -20,12 +20,12 @@ BeaconSignalEvent::~BeaconSignalEvent() {}
 
 alliance_msgs::BeaconSignal BeaconSignalEvent::getMsg() const { return msg_; }
 
-bool BeaconSignalEvent::isRelated(const alliance::Robot &robot) const
+bool BeaconSignalEvent::isRelated(const alliance::Robot& robot) const
 {
   return msg_.header.frame_id == robot.getId();
 }
 
-bool BeaconSignalEvent::isRelated(const alliance::BehavedRobot &robot) const
+bool BeaconSignalEvent::isRelated(const alliance::BehavedRobot& robot) const
 {
   return msg_.header.frame_id == robot.getId();
 }

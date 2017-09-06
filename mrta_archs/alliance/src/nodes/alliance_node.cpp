@@ -2,10 +2,10 @@
 
 namespace nodes
 {
-AllianceNode::AllianceNode(ros::NodeHandle* nh, float loop_rate)
+AllianceNode::AllianceNode(ros::NodeHandlePtr nh, float loop_rate)
     : ROSNode::ROSNode(nh, loop_rate),
       BeaconSignalSubject::BeaconSignalSubject(ros::this_node::getName()),
-      robot_(NULL), started_broadcasting_(false)
+      started_broadcasting_(false)
 {
   beacon_signal_pub_ =
       nh->advertise<alliance_msgs::BeaconSignal>("/alliance/beacon_signal", 10);
@@ -18,11 +18,6 @@ AllianceNode::~AllianceNode()
   beacon_signal_pub_.shutdown();
   beacon_signal_sub_.shutdown();
   broadcast_timer_.stop();
-  if (robot_)
-  {
-    delete robot_;
-    robot_ = NULL;
-  }
 }
 
 void AllianceNode::readParameters()
@@ -31,7 +26,7 @@ void AllianceNode::readParameters()
   int size;
   pnh.param("size", size, 0);
   std::string id, name;
-  std::list<alliance::Task> tasks;
+  std::list<alliance::TaskPtr> tasks;
   for (int i(0); i < size; i++)
   {
     std::stringstream ss;
@@ -43,7 +38,8 @@ void AllianceNode::readParameters()
       continue;
     }
     pnh.param(ss.str() + "name", name, std::string(""));
-    tasks.push_back(alliance::Task(id, name.empty() ? id : name));
+    alliance::TaskPtr task(new alliance::Task(id, name.empty() ? id : name));
+    tasks.push_back(task);
   }
   if (tasks.empty())
   {
@@ -64,7 +60,7 @@ void AllianceNode::readParameters()
     ROSNode::shutdown("Invalid ROS namespace. It must end with '" + id + "'.");
     return;
   }
-  robot_ = new alliance::Robot(id, name);
+  robot_.reset(new alliance::Robot(id, name));
   double broadcast_rate;
   pnh.param("broadcast_rate", broadcast_rate, 0.0);
   if (broadcast_rate <= 0.0)
@@ -102,14 +98,15 @@ void AllianceNode::readParameters()
       ROS_ERROR("The behaviour set's task id must not be empty.");
       continue;
     }
-    std::list<alliance::Task>::const_iterator it(tasks.begin());
-    alliance::BehaviourSet* behaviour_set;
+    std::list<alliance::TaskPtr>::const_iterator it(tasks.begin());
+    alliance::BehaviourSetPtr behaviour_set;
     while (it != tasks.end())
     {
-      if (it->getId() == id)
+      alliance::TaskPtr task(*it);
+      if (task->getId() == id)
       {
-        behaviour_set = new alliance::BehaviourSet(
-            robot_, new alliance::Task(*it), ros::Duration(buffer_horizon));
+        behaviour_set.reset(new alliance::BehaviourSet(
+            robot_, task, ros::Duration(buffer_horizon)));
         break;
       }
       it++;
@@ -159,12 +156,14 @@ void AllianceNode::readParameters()
 void AllianceNode::init()
 {
   /** registering beacon signal message observers **/
-  std::list<alliance::BehaviourSet*> behaviour_sets(robot_->getBehaviourSets());
-  std::list<alliance::BehaviourSet*>::iterator it(behaviour_sets.begin());
+  std::list<alliance::BehaviourSetPtr> behaviour_sets(
+      robot_->getBehaviourSets());
+  std::list<alliance::BehaviourSetPtr>::iterator it(behaviour_sets.begin());
   while (it != behaviour_sets.end())
   {
-    alliance::MotivationalBehaviour* motivational_behaviour =
-        ((alliance::BehaviourSet*)*it)->getMotivationalBehaviour();
+    alliance::BehaviourSetPtr behaviour_set(*it);
+    alliance::MotivationalBehaviourPtr motivational_behaviour(
+        behaviour_set->getMotivationalBehaviour());
     BeaconSignalSubject::registerObserver(
         motivational_behaviour->getInterCommunication());
     it++;

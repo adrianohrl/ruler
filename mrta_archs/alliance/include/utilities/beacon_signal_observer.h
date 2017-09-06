@@ -12,9 +12,12 @@ public:
   BeaconSignalObserver(const std::string& id);
   BeaconSignalObserver(const BeaconSignalObserver& observer);
   virtual ~BeaconSignalObserver();
-  virtual void update(Event* event);
-  virtual void update(BeaconSignalEvent* event) = 0;
+  virtual void update(const EventConstPtr& event);
+  virtual void update(const BeaconSignalEventConstPtr& event) = 0;
 };
+
+typedef boost::shared_ptr<BeaconSignalObserver> BeaconSignalObserverPtr;
+typedef boost::shared_ptr<BeaconSignalObserver const> BeaconSignalObserverConstPtr;
 }
 
 #endif // _UTILLITIES_BEACON_SIGNAL_OBSERVER_H_

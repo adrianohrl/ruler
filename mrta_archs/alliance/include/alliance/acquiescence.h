@@ -10,8 +10,9 @@ namespace alliance
 class Acquiescence
 {
 public:
-  Acquiescence(Robot* robot, BehaviourSet* behaviour_set,
-               InterCommunication* monitor);
+  Acquiescence(const RobotPtr& robot,
+               const BehaviourSetPtr& behaviour_set,
+               const InterCommunicationPtr& monitor);
   virtual ~Acquiescence();
   ros::Duration
   getYieldingDelay(const ros::Time& timestamp = ros::Time::now()) const;
@@ -24,12 +25,15 @@ public:
                         const ros::Time& timestamp = ros::Time::now());
 
 private:
-  Robot* robot_;
-  BehaviourSet* behaviour_set_;
-  InterCommunication* monitor_;
-  utilities::functions::ContinuousSampleHolder* yielding_delay_;
-  utilities::functions::ContinuousSampleHolder* giving_up_delay_;
+  const RobotPtr robot_;
+  const BehaviourSetPtr behaviour_set_;
+  const InterCommunicationPtr monitor_;
+  const utilities::functions::ContinuousSampleHolderPtr yielding_delay_;
+  const utilities::functions::ContinuousSampleHolderPtr giving_up_delay_;
 };
+
+typedef boost::shared_ptr<Acquiescence> AcquiescencePtr;
+typedef boost::shared_ptr<Acquiescence const> AcquiescenceConstPtr;
 }
 
 #endif // _ALLIANCE_ACQUIESCENCE_H_

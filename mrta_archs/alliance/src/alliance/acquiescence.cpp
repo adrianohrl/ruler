@@ -3,34 +3,20 @@
 
 namespace alliance
 {
-Acquiescence::Acquiescence(Robot* robot, BehaviourSet* behaviour_set,
-                           InterCommunication* monitor)
-    : robot_(robot), behaviour_set_(behaviour_set), monitor_(monitor)
+Acquiescence::Acquiescence(const RobotPtr &robot,
+                           const BehaviourSetPtr &behaviour_set,
+                           const InterCommunicationPtr& monitor)
+    : robot_(robot), behaviour_set_(behaviour_set), monitor_(monitor),
+      yielding_delay_(new utilities::functions::ContinuousSampleHolder(
+          behaviour_set->getId() + "/acquiescence/yielding_delay", 0.0,
+          ros::Duration(10 * robot_->getTimeoutDuration().toSec()))),
+      giving_up_delay_(new utilities::functions::ContinuousSampleHolder(
+          behaviour_set->getId() + "/acquiescence/giving_up_delay", 0.0,
+          ros::Duration(10 * robot_->getTimeoutDuration().toSec())))
 {
-  yielding_delay_ = new utilities::functions::ContinuousSampleHolder(
-      behaviour_set->getId() + "/acquiescence/yielding_delay", 0.0,
-      ros::Duration(10 * robot_->getTimeoutDuration().toSec()));
-  giving_up_delay_ = new utilities::functions::ContinuousSampleHolder(
-      behaviour_set->getId() + "/acquiescence/giving_up_delay", 0.0,
-      ros::Duration(10 * robot_->getTimeoutDuration().toSec()));
 }
 
-Acquiescence::~Acquiescence()
-{
-  if (yielding_delay_)
-  {
-    delete yielding_delay_;
-    yielding_delay_ = NULL;
-  }
-  if (giving_up_delay_)
-  {
-    delete giving_up_delay_;
-    giving_up_delay_ = NULL;
-  }
-  robot_ = NULL;
-  behaviour_set_ = NULL;
-  monitor_ = NULL;
-}
+Acquiescence::~Acquiescence() {}
 
 ros::Duration Acquiescence::getYieldingDelay(const ros::Time& timestamp) const
 {

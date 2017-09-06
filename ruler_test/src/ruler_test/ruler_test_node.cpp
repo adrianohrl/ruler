@@ -10,7 +10,7 @@
 
 namespace ruler_test
 {
-RulerTestNode::RulerTestNode(ros::NodeHandle* nh, float loop_rate)
+RulerTestNode::RulerTestNode(ros::NodeHandlePtr nh, float loop_rate)
     : ROSNode::ROSNode(nh, loop_rate)
 {
 }
@@ -133,7 +133,7 @@ void RulerTestNode::readParameters()
 
 void RulerTestNode::init()
 {
-  ros::NodeHandle* nh = ROSNode::getNodeHandle();
+  ros::NodeHandlePtr nh(ROSNode::getNodeHandle());
   resources_pub_ =
       nh->advertise<ruler_msgs::Resource>("resources", resources_.size());
   for (int i(0); i < resources_.size(); i++)

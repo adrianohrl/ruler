@@ -7,15 +7,21 @@
 
 namespace alliance
 {
-template <typename R> class BehaviourSetInterface
+template <typename R, typename BS>
+class BehaviourSetInterface : public boost::enable_shared_from_this<BS>
 {
+
+  typedef boost::shared_ptr<R> RPtr;
+
 public:
-  BehaviourSetInterface(R* robot, Task* task, ros::Duration buffer_horizon,
-                        ros::Duration timeout_duration = ros::Duration());
+  BehaviourSetInterface(
+      const RPtr& robot, const TaskPtr& task,
+      const ros::Duration& buffer_horizon,
+      const ros::Duration& timeout_duration = ros::Duration());
   virtual ~BehaviourSetInterface();
   virtual void preProcess();
   virtual void process();
-  Task* getTask() const;
+  TaskPtr getTask() const;
   bool isActive(const ros::Time& timestamp = ros::Time::now()) const;
   ros::Time getActivationTimestamp() const;
   virtual void setActive(bool active = true,
@@ -24,58 +30,58 @@ public:
   void setBufferHorizon(const ros::Duration& buffer_horizon);
 
 protected:
-  R* robot_;
-  Task* task_;
+  const RPtr robot_;
+  const TaskPtr task_;
   ros::Time activation_timestamp_;
-  utilities::functions::UnarySampleHolder* active_;
+  const utilities::functions::UnarySampleHolderPtr active_;
 };
 
-template <typename R>
-BehaviourSetInterface<R>::BehaviourSetInterface(R* robot, Task* task,
-                                                ros::Duration buffer_horizon,
-                                                ros::Duration timeout_duration)
-    : robot_(robot), task_(task)
+template <typename R, typename BS>
+BehaviourSetInterface<R, BS>::BehaviourSetInterface(
+    const RPtr& robot, const TaskPtr& task, const ros::Duration& buffer_horizon,
+    const ros::Duration& timeout_duration)
+    : robot_(robot), task_(task),
+      active_(new utilities::functions::UnarySampleHolder(
+          robot->getId() + "/" + task->getId() + "/active", timeout_duration,
+          buffer_horizon))
 {
-  active_ = new utilities::functions::UnarySampleHolder(
-      robot->getId() + "/" + task->getId() + "/active", timeout_duration,
-      buffer_horizon);
 }
 
-template <typename R> BehaviourSetInterface<R>::~BehaviourSetInterface()
+template <typename R, typename BS>
+BehaviourSetInterface<R, BS>::~BehaviourSetInterface()
 {
-  robot_ = NULL;
-  task_ = NULL;
-  if (active_)
-  {
-    delete active_;
-    active_ = NULL;
-  }
 }
 
-template <typename R> void BehaviourSetInterface<R>::preProcess() {}
+template <typename R, typename BS>
+void BehaviourSetInterface<R, BS>::preProcess()
+{
+}
 
-template <typename R> void BehaviourSetInterface<R>::process() {}
+template <typename R, typename BS> void BehaviourSetInterface<R, BS>::process()
+{
+}
 
-template <typename R> Task* BehaviourSetInterface<R>::getTask() const
+template <typename R, typename BS>
+TaskPtr BehaviourSetInterface<R, BS>::getTask() const
 {
   return task_;
 }
 
-template <typename R>
-bool BehaviourSetInterface<R>::isActive(const ros::Time& timestamp) const
+template <typename R, typename BS>
+bool BehaviourSetInterface<R, BS>::isActive(const ros::Time& timestamp) const
 {
   return active_->getValue(timestamp);
 }
 
-template <typename R>
-ros::Time BehaviourSetInterface<R>::getActivationTimestamp() const
+template <typename R, typename BS>
+ros::Time BehaviourSetInterface<R, BS>::getActivationTimestamp() const
 {
   return activation_timestamp_;
 }
 
-template <typename R>
-void BehaviourSetInterface<R>::setActive(bool active,
-                                         const ros::Time& timestamp)
+template <typename R, typename BS>
+void BehaviourSetInterface<R, BS>::setActive(bool active,
+                                             const ros::Time& timestamp)
 {
   if (active != active_->getValue(timestamp))
   {
@@ -85,15 +91,15 @@ void BehaviourSetInterface<R>::setActive(bool active,
   }
 }
 
-template <typename R>
-void BehaviourSetInterface<R>::setTimeoutDuration(
+template <typename R, typename BS>
+void BehaviourSetInterface<R, BS>::setTimeoutDuration(
     const ros::Duration& timeout_duration)
 {
   active_->setTimeoutDuration(timeout_duration);
 }
 
-template <typename R>
-void BehaviourSetInterface<R>::setBufferHorizon(
+template <typename R, typename BS>
+void BehaviourSetInterface<R, BS>::setBufferHorizon(
     const ros::Duration& buffer_horizon)
 {
   active_->setBufferHorizon(buffer_horizon);

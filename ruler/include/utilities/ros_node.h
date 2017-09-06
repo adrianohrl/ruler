@@ -10,6 +10,7 @@
 #ifndef _UTILITIES_ROS_NODE_H_
 #define _UTILITIES_ROS_NODE_H_
 
+#include <boost/scoped_ptr.hpp>
 #include <ros/ros.h>
 #include "utilities/exception.h"
 
@@ -23,8 +24,8 @@ public:
   friend std::ostream& operator<<(std::ostream& out, const ROSNode& node);
 
 protected:
-  ROSNode(ros::NodeHandle *nh, float loop_rate); // protected constructor
-  ros::NodeHandle* getNodeHandle() const;
+  ROSNode(ros::NodeHandlePtr nh, float loop_rate); // protected constructor
+  ros::NodeHandlePtr getNodeHandle() const;
   std::string getName() const;
   bool ok() const;
   void shutdown(std::string message = "") const;
@@ -33,7 +34,7 @@ protected:
 private:
   float loop_rate_; // positive spin rate
   std::string name_; // ROS node name
-  ros::NodeHandle *nh_; // private ros node handle (has-a relationship)
+  ros::NodeHandlePtr nh_; // private ros node handle (has-a relationship)
   virtual bool isSettedUp();
   virtual void init();
   virtual void controlLoop() = 0;

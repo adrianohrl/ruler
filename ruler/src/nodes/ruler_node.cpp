@@ -10,7 +10,7 @@
 
 namespace nodes
 {
-RulerNode::RulerNode(ros::NodeHandle* nh, float loop_rate)
+RulerNode::RulerNode(ros::NodeHandlePtr nh, float loop_rate)
     : ROSNode::ROSNode(nh, loop_rate), robot_(NULL)
 {
 }
@@ -180,7 +180,7 @@ void RulerNode::readParameters()
 
 void RulerNode::init()
 {
-  ros::NodeHandle* nh = ROSNode::getNodeHandle();
+  ros::NodeHandlePtr nh(ROSNode::getNodeHandle());
   std::list<ruler::ResourceInterface*> resources(robot_->getResources());
   resources_pub_ =
       nh->advertise<ruler_msgs::Resource>("resources", resources.size());

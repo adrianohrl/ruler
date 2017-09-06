@@ -34,6 +34,9 @@ protected:
   ResourceInterface(const std::string id);
   ResourceInterface(const ResourceInterface& resource);
 };
+
+typedef boost::shared_ptr<ResourceInterface> ResourceInterfacePtr;
+typedef boost::shared_ptr<ResourceInterface const> ResourceInterfaceConstPtr;
 }
 
 #endif // _RULER_RESOURCE_INTERFACE_H_

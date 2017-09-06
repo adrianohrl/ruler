@@ -2,6 +2,7 @@
 #define _ALLIANCE_ROBOT_INTEFACE_H_
 
 #include "alliance/task.h"
+#include <boost/enable_shared_from_this.hpp>
 #include <list>
 #include <ros/common.h>
 #include <utilities/exception.h>
@@ -10,51 +11,42 @@
 namespace alliance
 {
 template <typename R, typename BS>
-class RobotInterface : public utilities::HasName
+class RobotInterface : public utilities::HasName,
+                       public boost::enable_shared_from_this<R>
 {
+
+  typedef boost::shared_ptr<BS> BSPtr;
+
 public:
   RobotInterface(const std::string& id, const std::string& name);
   virtual ~RobotInterface();
   void process();
-  std::list<BS*> getBehaviourSets() const;
-  Task* getExecutingTask() const;
+  std::list<BSPtr> getBehaviourSets() const;
+  TaskPtr getExecutingTask() const;
   bool isIdle() const;
-  virtual void addBehaviourSet(BS* behaviour_set);
+  virtual void addBehaviourSet(const BSPtr& behaviour_set);
 
 protected:
-  BS* active_behaviour_set_;
-  std::list<BS*> behaviour_sets_;
+  BSPtr active_behaviour_set_;
+  std::list<BSPtr> behaviour_sets_;
   bool contains(const BS& behaviour_set) const;
 };
 
 template <typename R, typename BS>
 RobotInterface<R, BS>::RobotInterface(const std::string& id,
                                       const std::string& name)
-    : HasName::HasName(name, id), active_behaviour_set_(NULL)
+    : HasName::HasName(name, id)
 {
 }
 
-template <typename R, typename BS> RobotInterface<R, BS>::~RobotInterface()
-{
-  active_behaviour_set_ = NULL;
-  typename std::list<BS*>::iterator it(behaviour_sets_.begin());
-  while (it != behaviour_sets_.end())
-  {
-    if (*it)
-    {
-      delete *it;
-      *it = NULL;
-    }
-    it++;
-  }
-}
+template <typename R, typename BS> RobotInterface<R, BS>::~RobotInterface() {}
 
 template <typename R, typename BS> void RobotInterface<R, BS>::process()
 {
-  typename std::list<BS*>::iterator it(behaviour_sets_.begin());
+  typename std::list<BSPtr>::iterator it(behaviour_sets_.begin());
   while (it != behaviour_sets_.end())
   {
-    BS* behaviour_set = *it;
+    BSPtr behaviour_set = *it;
     behaviour_set->preProcess();
     if (behaviour_set->isActive())
     {
@@ -72,15 +64,15 @@ template <typename R, typename BS> void RobotInterface<R, BS>::process()
 }
 
 template <typename R, typename BS>
-std::list<BS*> RobotInterface<R, BS>::getBehaviourSets() const
+std::list<boost::shared_ptr<BS> > RobotInterface<R, BS>::getBehaviourSets() const
 {
   return behaviour_sets_;
 }
 
 template <typename R, typename BS>
-Task* RobotInterface<R, BS>::getExecutingTask() const
+TaskPtr RobotInterface<R, BS>::getExecutingTask() const
 {
-  return active_behaviour_set_ ? active_behaviour_set_->getTask() : NULL;
+  return active_behaviour_set_ ? active_behaviour_set_->getTask() : TaskPtr();
 }
 
 template <typename R, typename BS> bool RobotInterface<R, BS>::isIdle() const
@@ -89,7 +81,7 @@ template <typename R, typename BS> bool RobotInterface<R, BS>::isIdle() const
 }
 
 template <typename R, typename BS>
-void RobotInterface<R, BS>::addBehaviourSet(BS* behaviour_set)
+void RobotInterface<R, BS>::addBehaviourSet(const BSPtr& behaviour_set)
 {
   if (!behaviour_set)
   {
@@ -108,7 +100,7 @@ void RobotInterface<R, BS>::addBehaviourSet(BS* behaviour_set)
 template <typename R, typename BS>
 bool RobotInterface<R, BS>::contains(const BS& behaviour_set) const
 {
-  typename std::list<BS*>::const_iterator it(behaviour_sets_.begin());
+  typename std::list<BSPtr>::const_iterator it(behaviour_sets_.begin());
   while (it != behaviour_sets_.end())
   {
     if (**it == behaviour_set)

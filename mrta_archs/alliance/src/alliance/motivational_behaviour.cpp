@@ -4,63 +4,26 @@
 
 namespace alliance
 {
-MotivationalBehaviour::MotivationalBehaviour(Robot* robot,
-                                             BehaviourSet* behaviour_set)
-    : robot_(robot)
+MotivationalBehaviour::MotivationalBehaviour(
+    const RobotPtr& robot, const BehaviourSetPtr& behaviour_set)
+    : robot_(robot),
+      threshold_(new utilities::functions::ContinuousSampleHolder(
+          behaviour_set->getId() + "/threshold", 0.0,
+          ros::Duration(10 * robot_->getTimeoutDuration().toSec()))),
+      motivation_(new utilities::functions::ContinuousSampleHolder(
+          behaviour_set->getId() + "/motivation", 0.0,
+          ros::Duration(10 * robot_->getTimeoutDuration().toSec()))),
+      inter_communication_(new InterCommunication(robot, behaviour_set)),
+      acquiescence_(
+          new Acquiescence(robot, behaviour_set, inter_communication_)),
+      activity_suppression_(new ActivitySuppression(robot, behaviour_set)),
+      impatience_(new Impatience(robot, behaviour_set, inter_communication_)),
+      impatience_reset_(new ImpatienceReset(inter_communication_)),
+      sensory_feedback_(new SensoryFeedback(behaviour_set->getTask()))
 {
-  threshold_ = new utilities::functions::ContinuousSampleHolder(
-      behaviour_set->getId() + "/threshold", 0.0,
-      ros::Duration(10 * robot_->getTimeoutDuration().toSec()));
-  motivation_ = new utilities::functions::ContinuousSampleHolder(
-      behaviour_set->getId() + "/motivation", 0.0,
-      ros::Duration(10 * robot_->getTimeoutDuration().toSec()));
-  inter_communication_ = new InterCommunication(robot, behaviour_set);
-  acquiescence_ = new Acquiescence(robot, behaviour_set, inter_communication_);
-  activity_suppression_ = new ActivitySuppression(robot, behaviour_set);
-  impatience_ = new Impatience(robot, behaviour_set, inter_communication_);
-  impatience_reset_ = new ImpatienceReset(inter_communication_);
-  sensory_feedback_ = new SensoryFeedback(behaviour_set->getTask());
 }
 
-MotivationalBehaviour::~MotivationalBehaviour()
-{
-  if (threshold_)
-  {
-    delete threshold_;
-    threshold_ = NULL;
-  }
-  if (motivation_)
-  {
-    delete motivation_;
-    motivation_ = NULL;
-  }
-  if (acquiescence_)
-  {
-    delete acquiescence_;
-    acquiescence_ = NULL;
-  }
-  if (activity_suppression_)
-  {
-    delete activity_suppression_;
-    activity_suppression_ = NULL;
-  }
-  if (impatience_)
-  {
-    delete impatience_;
-    impatience_ = NULL;
-  }
-  if (impatience_reset_)
-  {
-    delete impatience_reset_;
-    impatience_reset_ = NULL;
-  }
-  if (inter_communication_)
-  {
-    delete inter_communication_;
-    inter_communication_ = NULL;
-  }
-  robot_ = NULL;
-}
+MotivationalBehaviour::~MotivationalBehaviour() {}
 
 bool MotivationalBehaviour::active(const ros::Time& timestamp) const
 {
@@ -84,12 +47,12 @@ double MotivationalBehaviour::getLevel(const ros::Time& timestamp) const
   return motivation;
 }
 
-ActivitySuppression* MotivationalBehaviour::getActivitySuppression() const
+ActivitySuppressionPtr MotivationalBehaviour::getActivitySuppression() const
 {
   return activity_suppression_;
 }
 
-InterCommunication* MotivationalBehaviour::getInterCommunication() const
+InterCommunicationPtr MotivationalBehaviour::getInterCommunication() const
 {
   return inter_communication_;
 }

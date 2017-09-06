@@ -26,8 +26,8 @@ public:
   ros::Duration getTimeoutDuration() const;
   ros::Duration getBufferHorizon() const;
   T getValue(const ros::Time& timestamp = ros::Time::now());
-  virtual void update(Event* event);
-  void update(Event* event, Function<T>* model);
+  virtual void update(const EventConstPtr& event);
+  void update(const EventConstPtr& event, Function<T>* model);
   virtual void update(const ros::Time& timestamp);
   void update(const ros::Time& timestamp, Function<T>* model);
   void setTimeoutDuration(const ros::Duration& timeout_duration);
@@ -143,13 +143,14 @@ T BufferedFunction<T>::getValue(const ros::Time& timestamp)
   return getValue(d);
 }
 
-template <typename T> void BufferedFunction<T>::update(Event* event)
+template <typename T>
+void BufferedFunction<T>::update(const EventConstPtr& event)
 {
   update(event->getTimestamp(), model_);
 }
 
 template <typename T>
-void BufferedFunction<T>::update(Event* event, Function<T>* model)
+void BufferedFunction<T>::update(const EventConstPtr& event, Function<T>* model)
 {
   update(event->getTimestamp(), model);
   if (model_)

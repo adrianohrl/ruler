@@ -15,15 +15,21 @@ BeaconSignalSubject::BeaconSignalSubject(const BeaconSignalSubject& subject)
 
 BeaconSignalSubject::~BeaconSignalSubject() {}
 
-void BeaconSignalSubject::registerObserver(BeaconSignalObserver* observer)
+void BeaconSignalSubject::registerObserver(
+    const BeaconSignalObserverPtr& observer)
 {
   Subject::registerObserver(observer);
 }
 
+BeaconSignalSubjectPtr BeaconSignalSubject::shared_from_this()
+{
+  return boost::dynamic_pointer_cast<BeaconSignalSubject>(
+      Subject::shared_from_this());
+}
+
 void BeaconSignalSubject::notify(const alliance_msgs::BeaconSignal& msg)
 {
-  BeaconSignalEvent* event = new BeaconSignalEvent(this, msg);
+  BeaconSignalEventPtr event(new BeaconSignalEvent(shared_from_this(), msg));
   Subject::notify(event);
-  delete event;
 }
 }

@@ -1,6 +1,7 @@
 #ifndef _ALLIANCE_LAYER_H_
 #define _ALLIANCE_LAYER_H_
 
+#include <boost/shared_ptr.hpp>
 #include <string>
 
 namespace alliance
@@ -20,6 +21,9 @@ public:
 private:
   std::string name_;
 };
+
+typedef boost::shared_ptr<Layer> LayerPtr;
+typedef boost::shared_ptr<Layer const> LayerConstPtr;
 }
 
 #endif // _ALLIANCE_LAYER_H_

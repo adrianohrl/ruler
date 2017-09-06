@@ -18,12 +18,15 @@ public:
   ros::Duration getTimeoutDuration() const;
   void setBroadcastRate(const ros::Rate& broadcast_rate);
   void setTimeoutDuration(const ros::Duration& timeout_duration);
-  virtual void addBehaviourSet(BehaviourSet* behaviour_set);
+  virtual void addBehaviourSet(const BehaviourSetPtr& behaviour_set);
 
 private:
   ros::Rate broadcast_rate_;
   ros::Duration timeout_duration_;
 };
+
+typedef boost::shared_ptr<Robot> RobotPtr;
+typedef boost::shared_ptr<Robot const> RobotConstPtr;
 }
 
 #endif // _ALLIANCE_ROBOT_H_

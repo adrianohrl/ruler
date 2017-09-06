@@ -11,11 +11,14 @@ class Sensor
 public:
   Sensor();
   virtual ~Sensor();
-  bool isUpToDate(const ros::Time timestamp = ros::Time::now());
+  bool isUpToDate(const ros::Time& timestamp = ros::Time::now());
 
 private:
-  utilities::functions::UnarySampleHolder* sample_holder_;
+  utilities::functions::UnarySampleHolderPtr sample_holder_;
 };
+
+typedef boost::shared_ptr<Sensor> SensorPtr;
+typedef boost::shared_ptr<Sensor const> SensorConstPtr;
 }
 
 #endif // _ALLIANCE_SENSOR_H_

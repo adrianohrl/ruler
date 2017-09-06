@@ -10,8 +10,8 @@
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "alliance_node");
-  nodes::AllianceNode* node = new nodes::AllianceNode();
+  ros::NodeHandlePtr nh(new ros::NodeHandle());
+  nodes::AllianceNodePtr node(new nodes::AllianceNode(nh));
   node->run();
-  delete node;
   return EXIT_SUCCESS;
 }

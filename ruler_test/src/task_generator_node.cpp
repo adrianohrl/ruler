@@ -10,8 +10,8 @@
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "task_generator_node");
-  ruler_test::TaskGeneratorNode* node = new ruler_test::TaskGeneratorNode();
+  ros::NodeHandlePtr nh(new ros::NodeHandle());
+  ruler_test::TaskGeneratorNodePtr node(new ruler_test::TaskGeneratorNode(nh));
   node->run();
-  delete node;
   return EXIT_SUCCESS;
 }
