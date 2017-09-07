@@ -9,7 +9,7 @@ namespace alliance
 ActivitySuppression::ActivitySuppression(const RobotPtr& robot,
                                          const BehaviourSetPtr& behaviour_set)
     : Observer::Observer(behaviour_set->getId() + "/activity_suppression"),
-      robot_(robot),
+      robot_(robot), behaviour_set_(behaviour_set),
       suppressed_(new SampleHolder(
           behaviour_set->getId() + "/activity_suppression/suppressed",
           ros::Duration(10 * robot_->getTimeoutDuration().toSec())))

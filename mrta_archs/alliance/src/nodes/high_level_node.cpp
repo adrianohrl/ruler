@@ -1,27 +1,30 @@
-#include "nodes/alliance_node.h"
+#include "nodes/high_level_node.h"
 
 namespace nodes
 {
-AllianceNode::AllianceNode(ros::NodeHandlePtr nh, float loop_rate)
-    : ROSNode::ROSNode(nh, loop_rate),
+HighLevelNode::HighLevelNode(const ros::NodeHandlePtr& nh,
+                             const ros::Rate& rate)
+    : ROSNode::ROSNode(nh, rate),
       BeaconSignalSubject::BeaconSignalSubject(ros::this_node::getName()),
       broadcasting_(false)
 {
   beacon_signal_pub_ =
       nh->advertise<alliance_msgs::BeaconSignal>("/alliance/beacon_signal", 10);
-  beacon_signal_sub_ = nh->subscribe("/alliance/beacon_signal", 100,
-                                     &AllianceNode::beaconSignalCallback, this);
+  beacon_signal_sub_ =
+      nh->subscribe("/alliance/beacon_signal", 100,
+                    &HighLevelNode::beaconSignalCallback, this);
 }
 
-AllianceNode::~AllianceNode()
+HighLevelNode::~HighLevelNode()
 {
   broadcast_timer_.stop();
   beacon_signal_pub_.shutdown();
   beacon_signal_sub_.shutdown();
 }
 
-void AllianceNode::readParameters()
+void HighLevelNode::readParameters()
 {
+  ROSNode::readParameters();
   ros::NodeHandle pnh("~/tasks");
   int size;
   pnh.param("size", size, 0);
@@ -54,7 +57,8 @@ void AllianceNode::readParameters()
     ROSNode::shutdown("Not found robot id as a ROS parameter.");
     return;
   }
-  if (!std::equal(id.rbegin(), id.rend(),
+  std::string aux(id + "/alliance");
+  if (!std::equal(aux.rbegin(), aux.rend(),
                   ros::this_node::getNamespace().rbegin()))
   {
     ROSNode::shutdown("Invalid ROS namespace. It must end with '" + id + "'.");
@@ -154,10 +158,10 @@ void AllianceNode::readParameters()
   }
 }
 
-void AllianceNode::init()
+void HighLevelNode::init()
 {
   /** registering beacon signal message observers **/
-  for(alliance::Robot::iterator it(robot_->begin()); it != robot_->end(); it++)
+  for (alliance::Robot::iterator it(robot_->begin()); it != robot_->end(); it++)
   {
     alliance::BehaviourSetPtr behaviour_set(*it);
     alliance::MotivationalBehaviourPtr motivational_behaviour(
@@ -168,10 +172,10 @@ void AllianceNode::init()
   /** creating robot broadcast timer **/
   broadcast_timer_ = ROSNode::getNodeHandle()->createTimer(
       robot_->getBroadcastRate().expectedCycleTime(),
-      &AllianceNode::broadcastTimerCallback, this, false, false);
+      &HighLevelNode::broadcastTimerCallback, this, false, false);
 }
 
-void AllianceNode::controlLoop()
+void HighLevelNode::controlLoop()
 {
   robot_->process();
   if (!robot_->isIdle() && !broadcasting_)
@@ -182,12 +186,12 @@ void AllianceNode::controlLoop()
   }
 }
 
-void AllianceNode::beaconSignalCallback(const alliance_msgs::BeaconSignal& msg)
+void HighLevelNode::beaconSignalCallback(const alliance_msgs::BeaconSignal& msg)
 {
   BeaconSignalSubject::notify(msg);
 }
 
-void AllianceNode::broadcastTimerCallback(const ros::TimerEvent& event)
+void HighLevelNode::broadcastTimerCallback(const ros::TimerEvent& event)
 {
   if (!robot_->getExecutingTask())
   {

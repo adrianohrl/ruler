@@ -51,8 +51,8 @@ set(H_FILES
   include/alliance/sensor.h
   include/alliance/sensory_feedback.h
   include/alliance/task.h
-  include/nodes/alliance_node.h
-  include/nodes/node.h
+  include/nodes/high_level_node.h
+  include/nodes/low_level_node.h
   include/nodes/ros_sensor_message.h
   include/utilities/beacon_signal_event.h
   include/utilities/beacon_signal_observer.h
@@ -74,8 +74,8 @@ set(CPP_FILES
   src/alliance/sensor.cpp
   src/alliance/sensory_feedback.cpp
   src/alliance/task.cpp
-  src/nodes/alliance_node.cpp
-  src/nodes/node.cpp
+  src/nodes/high_level_node.cpp
+  src/nodes/low_level_node.cpp
   src/utilities/beacon_signal_event.cpp
   src/utilities/beacon_signal_observer.cpp
   src/utilities/beacon_signal_subject.cpp
@@ -97,35 +97,35 @@ target_link_libraries(${PROJECT_NAME}
   ${ruler_LIBRARIES}
 )
 
-add_executable(${PROJECT_NAME}_node
-  src/alliance_node.cpp
+add_executable(high_level_node
+  src/high_level_node.cpp
   ${CPP_FILES}
 )
 
-add_dependencies(${PROJECT_NAME}_node
+add_dependencies(high_level_node
   ${Boost_EXPORTED_TARGETS}
   ${catkin_EXPORTED_TARGETS}
   ${ruler_EXPORTED_TARGETS}
 )
 
-target_link_libraries(${PROJECT_NAME}_node
+target_link_libraries(high_level_node
   ${Boost_LIBRARIES}
   ${catkin_LIBRARIES}
   ${ruler_LIBRARIES}
 )
 
-add_executable(node
-  src/node.cpp
+add_executable(low_level_node
+  src/low_level_node.cpp
   ${CPP_FILES}
 )
 
-add_dependencies(node
+add_dependencies(low_level_node
   ${Boost_EXPORTED_TARGETS}
   ${catkin_EXPORTED_TARGETS}
   ${ruler_EXPORTED_TARGETS}
 )
 
-target_link_libraries(node
+target_link_libraries(low_level_node
   ${Boost_LIBRARIES}
   ${catkin_LIBRARIES}
   ${ruler_LIBRARIES}

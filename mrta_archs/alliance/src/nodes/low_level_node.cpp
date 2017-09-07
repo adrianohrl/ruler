@@ -1,19 +1,19 @@
-#include "nodes/node.h"
+#include "nodes/low_level_node.h"
 
 namespace nodes
 {
 
-Node::Node(ros::NodeHandlePtr nh, float loop_rate)
-    : ROSNode::ROSNode(nh, loop_rate),
+LowLevelNode::LowLevelNode(const ros::NodeHandlePtr& nh, const ros::Rate& rate)
+    : ROSNode::ROSNode(nh, rate),
       BeaconSignalSubject::BeaconSignalSubject(ros::this_node::getName())
 {
   beacon_signal_sub_ = nh->subscribe("/alliance/beacon_signal", 100,
-                                     &Node::beaconSignalCallback, this);
+                                     &LowLevelNode::beaconSignalCallback, this);
 }
 
-Node::~Node() { beacon_signal_sub_.shutdown(); }
+LowLevelNode::~LowLevelNode() { beacon_signal_sub_.shutdown(); }
 
-void Node::readParameters()
+void LowLevelNode::readParameters()
 {
   ros::NodeHandle pnh("~/tasks");
   int size;
@@ -58,7 +58,8 @@ void Node::readParameters()
     ROSNode::shutdown("Not found robot id as a ROS parameter.");
     return;
   }
-  if (!std::equal(id.rbegin(), id.rend(),
+  std::string aux(id + "/alliance");
+  if (!std::equal(aux.rbegin(), aux.rend(),
                   ros::this_node::getNamespace().rbegin()))
   {
     ROSNode::shutdown("Invalid ROS namespace. It must end with '" + id + "'.");
@@ -115,19 +116,18 @@ void Node::readParameters()
   }
 }
 
-void Node::init()
+void LowLevelNode::init()
 {
   /** registering beacon signal message observers **/
-  for (alliance::BehavedRobot::iterator it(robot_->begin());
-       it != robot_->end(); it++)
+  for (alliance::BehavedRobot::iterator it(robot_->begin()); it != robot_->end(); it++)
   {
     BeaconSignalSubject::registerObserver(*it);
   }
 }
 
-void Node::controlLoop() { robot_->process(); }
+void LowLevelNode::controlLoop() { robot_->process(); }
 
-void Node::beaconSignalCallback(const alliance_msgs::BeaconSignal& msg)
+void LowLevelNode::beaconSignalCallback(const alliance_msgs::BeaconSignal& msg)
 {
   BeaconSignalSubject::notify(msg);
 }

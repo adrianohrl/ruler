@@ -28,6 +28,7 @@ private:
   typedef utilities::functions::UnarySampleHolder SampleHolder;
   typedef utilities::functions::UnarySampleHolderPtr SampleHolderPtr;
   const RobotPtr robot_;
+  const BehaviourSetPtr behaviour_set_;
   SampleHolderPtr suppressed_;
 };
 

@@ -28,6 +28,7 @@ public:
 };
 
 typedef boost::shared_ptr<UnarySampleHolder> UnarySampleHolderPtr;
+typedef boost::shared_ptr<UnarySampleHolder const> UnarySampleHolderConstPtr;
 }
 }
 

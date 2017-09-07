@@ -1,4 +1,5 @@
 name: 'Robot 1'
+spin_rate: 2.0           # in Hertz
 broadcast_rate: 1.0      # in Hertz
 timeout_duration: 2.0    # in seconds
 buffer_horizon: 5.0      # in seconds
@@ -7,12 +8,10 @@ behaviour_sets:
   behaviour_set0:
     task_id: 'wander'
     motivational_behaviour:
-      threshold: 200.0
+      threshold: 150.0
       acquiescence:
         yielding_delay: 1000.0   # in seconds
         giving_up_delay: 1000.0  # in seconds
-      #activity_suppression:
-
       impatience:
         # nao da pra saber a priori, pq depende do numero de robos no sistema (o q eh desconhecido):
                 #slow_rates: [2.5, 5.0, 2.0]
@@ -26,8 +25,6 @@ behaviour_sets:
       acquiescence:
         yielding_delay: 500.0   # in seconds
         giving_up_delay: 420.0  # in seconds
-      #activity_suppression:
-
       impatience:
         # nao da pra saber a priori, pq depende do numero de robos no sistema (o q eh desconhecido):
                 #slow_rates: [2.5, 5.0, 2.0]
@@ -37,12 +34,10 @@ behaviour_sets:
   behaviour_set2:
     task_id: 'report'
     motivational_behaviour:
-      threshold: 200.0
+      threshold: 250.0
       acquiescence:
         yielding_delay: 120.0   # in seconds
         giving_up_delay: 420.0  # in seconds
-      #activity_suppression:
-
       impatience:
         # nao da pra saber a priori, pq depende do numero de robos no sistema (o q eh desconhecido):
                 #slow_rates: [2.5, 5.0, 2.0]

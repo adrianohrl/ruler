@@ -59,8 +59,11 @@ void BehaviourSet::setImpatience(double fast_rate)
 void BehaviourSet::registerActivitySuppression(
     const BehaviourSetPtr& behaviour_set)
 {
-  Subject::registerObserver(
-      behaviour_set->motivational_behaviour_->getActivitySuppression());
+  if (*this != *behaviour_set)
+  {
+    Subject::registerObserver(
+        behaviour_set->motivational_behaviour_->getActivitySuppression());
+  }
 }
 
 void BehaviourSet::setActive(bool active, const ros::Time& timestamp)

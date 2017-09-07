@@ -6,7 +6,7 @@ namespace alliance
 {
 MotivationalBehaviour::MotivationalBehaviour(
     const RobotPtr& robot, const BehaviourSetPtr& behaviour_set)
-    : robot_(robot),
+    : robot_(robot), behaviour_set_(behaviour_set),
       threshold_(new SampleHolder(
           behaviour_set->getId() + "/threshold", 0.0,
           ros::Duration(10 * robot_->getTimeoutDuration().toSec()))),
@@ -44,9 +44,18 @@ double MotivationalBehaviour::getThreshold(const ros::Time& timestamp) const
 double MotivationalBehaviour::getLevel(const ros::Time& timestamp) const
 {
   double motivation(motivation_->getValue());
+  double impatience(impatience_->getLevel(timestamp));
+  bool acquiescent(acquiescence_->isAcquiescent(timestamp));
+  bool suppressed(activity_suppression_->isSuppressed(timestamp));
+  bool resetted(impatience_reset_->isResetted(timestamp));
+  bool applicable(sensory_feedback_->isApplicable(timestamp));
+  ROS_WARN_STREAM("[Motivation] "
+                  << *behaviour_set_ << " m0: " << motivation << ", ipt: " << impatience
+                  << ", acq: " << acquiescent << ", sup: " << suppressed
+                  << ", res: " << resetted << ", app: " << applicable);
   motivation = (motivation + impatience_->getLevel(timestamp)) *
                acquiescence_->isAcquiescent(timestamp) *
-               activity_suppression_->isSuppressed(timestamp) *
+               !activity_suppression_->isSuppressed(timestamp) *
                impatience_reset_->isResetted(timestamp) *
                sensory_feedback_->isApplicable(timestamp);
   motivation_->update(motivation, timestamp);

@@ -13,9 +13,10 @@ namespace utilities
  * @brief ROSNode::Node builds an ROSNode object given a ROS NodeHandle
  * and also its desired spin rate.
  * @param nh must NOT be NULL.
- * @param loop_rate must be positive.
+ * @param rate must be positive.
  */
-ROSNode::ROSNode(ros::NodeHandlePtr nh, float loop_rate) : nh_(nh), loop_rate_(loop_rate)
+ROSNode::ROSNode(const ros::NodeHandlePtr& nh, const ros::Rate& rate)
+    : nh_(nh), rate_(rate), name_(ros::this_node::getName())
 {
   if (!nh)
   {
@@ -23,22 +24,13 @@ ROSNode::ROSNode(ros::NodeHandlePtr nh, float loop_rate) : nh_(nh), loop_rate_(l
     ros::shutdown();
     return;
   }
-  if (loop_rate <= 0)
-  {
-    ROS_FATAL("The node spin rate must be positive!!!");
-    ros::shutdown();
-    return;
-  }
-  name_ = ros::this_node::getName();
 }
 
 /**
  * @brief ROSNode::~ROSNode announces that this ROS node will shutdown. This
  * will not destruct the used ROS NodeHandle object.
  */
-ROSNode::~ROSNode()
-{
-}
+ROSNode::~ROSNode() {}
 
 /**
  * @brief ROSNode::run loops while there is not another instance
@@ -48,7 +40,6 @@ ROSNode::~ROSNode()
  */
 void ROSNode::run()
 {
-  ros::Rate loop_rate(loop_rate_);
   ROS_INFO_STREAM("   Reading " << *this << " parameters ...");
   try
   {
@@ -62,7 +53,7 @@ void ROSNode::run()
   while (nh_->ok() && !isSettedUp())
   {
     ros::spinOnce();
-    loop_rate.sleep();
+    rate_.sleep();
   }
   init();
   ROS_INFO_STREAM(*this << " is up and running.");
@@ -70,7 +61,7 @@ void ROSNode::run()
   {
     controlLoop();
     ros::spinOnce();
-    loop_rate.sleep();
+    rate_.sleep();
   }
 }
 
@@ -100,7 +91,13 @@ void ROSNode::reset()
 /**
  * @brief ROSNode::setParameters
  */
-void ROSNode::readParameters() {}
+void ROSNode::readParameters()
+{
+  ros::NodeHandle pnh("~");
+  double rate;
+  pnh.param("spin_rate", rate, 30.0);
+  rate_ = ros::Rate(rate > 0.0 ? rate : 30.0);
+}
 
 /**
  * @brief ROSNode::isSetted
@@ -137,7 +134,7 @@ bool ROSNode::ok() const { return nh_->ok(); }
  * @param node
  * @return
  */
-std::ostream& operator<<(std::ostream &out, const ROSNode &node)
+std::ostream& operator<<(std::ostream& out, const ROSNode& node)
 {
   out << node.name_;
   return out;

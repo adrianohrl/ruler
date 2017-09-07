@@ -1,5 +1,5 @@
-#ifndef _ALLIANCE_NODE_H_
-#define _ALLIANCE_NODE_H_
+#ifndef _ALLIANCE_HIGH_LEVEL_NODE_H_
+#define _ALLIANCE_HIGH_LEVEL_NODE_H_
 
 #include "alliance/robot.h"
 #include <alliance_msgs/BeaconSignal.h>
@@ -8,13 +8,13 @@
 
 namespace nodes
 {
-class AllianceNode : public utilities::ROSNode,
+class HighLevelNode : public utilities::ROSNode,
                      public utilities::BeaconSignalSubject
 {
 public:
-  AllianceNode(ros::NodeHandlePtr nh,
-               float loop_rate = 30.0);
-  virtual ~AllianceNode();
+  HighLevelNode(const ros::NodeHandlePtr& nh,
+               const ros::Rate& rate = ros::Rate(30.0));
+  virtual ~HighLevelNode();
 
 private:
   bool broadcasting_;
@@ -29,7 +29,7 @@ private:
   void broadcastTimerCallback(const ros::TimerEvent& event);
 };
 
-typedef boost::scoped_ptr<AllianceNode> AllianceNodePtr;
+typedef boost::scoped_ptr<HighLevelNode> HighLevelNodePtr;
 }
 
-#endif // _ALLIANCE_NODE_H_
+#endif // _ALLIANCE_HIGH_LEVEL_NODE_H_

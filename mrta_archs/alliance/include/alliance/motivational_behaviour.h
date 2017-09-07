@@ -15,7 +15,8 @@ namespace alliance
 class MotivationalBehaviour
 {
 public:
-  MotivationalBehaviour(const RobotPtr& robot, const BehaviourSetPtr& behaviour_set);
+  MotivationalBehaviour(const RobotPtr& robot,
+                        const BehaviourSetPtr& behaviour_set);
   virtual ~MotivationalBehaviour();
   void init();
   bool active(const ros::Time& timestamp = ros::Time::now()) const;
@@ -35,6 +36,7 @@ private:
   typedef utilities::functions::ContinuousSampleHolder SampleHolder;
   typedef utilities::functions::ContinuousSampleHolderPtr SampleHolderPtr;
   const RobotPtr robot_;
+  const BehaviourSetPtr behaviour_set_;
   AcquiescencePtr acquiescence_;
   ActivitySuppressionPtr activity_suppression_;
   ImpatiencePtr impatience_;
@@ -46,7 +48,8 @@ private:
 };
 
 typedef boost::shared_ptr<MotivationalBehaviour> MotivationalBehaviourPtr;
-typedef boost::shared_ptr<MotivationalBehaviour const> MotivationalBehaviourConstPtr;
+typedef boost::shared_ptr<MotivationalBehaviour const>
+    MotivationalBehaviourConstPtr;
 }
 
 #endif // _ALLIANCE_MOTIVATIONAL_BEHAVIOUR_H_

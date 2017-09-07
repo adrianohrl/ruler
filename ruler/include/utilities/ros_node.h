@@ -24,21 +24,21 @@ public:
   friend std::ostream& operator<<(std::ostream& out, const ROSNode& node);
 
 protected:
-  ROSNode(ros::NodeHandlePtr nh, float loop_rate); // protected constructor
+  ROSNode(const ros::NodeHandlePtr &nh, const ros::Rate &rate); // protected constructor
   ros::NodeHandlePtr getNodeHandle() const;
   std::string getName() const;
   bool ok() const;
   void shutdown(std::string message = "") const;
   virtual void reset();
+  virtual void readParameters();
   
 private:
-  float loop_rate_; // positive spin rate
-  std::string name_; // ROS node name
+  ros::Rate rate_; // positive spin rate
+  const std::string name_; // ROS node name
   ros::NodeHandlePtr nh_; // private ros node handle (has-a relationship)
   virtual bool isSettedUp();
   virtual void init();
   virtual void controlLoop() = 0;
-  virtual void readParameters();
 };
 }
 
