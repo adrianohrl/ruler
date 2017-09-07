@@ -14,7 +14,7 @@ typedef boost::shared_ptr<BehavedRobot> BehavedRobotPtr;
 typedef boost::shared_ptr<BehavedRobot const> BehavedRobotConstPtr;
 
 class LayeredBehaviourSet
-    : public BehaviourSetInterface<BehavedRobot, LayeredBehaviourSet>,
+    : public BehaviourSetInterface<BehavedRobot>,
       public utilities::BeaconSignalObserver
 {
 public:

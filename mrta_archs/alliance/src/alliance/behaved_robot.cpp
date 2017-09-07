@@ -3,8 +3,7 @@
 namespace alliance
 {
 BehavedRobot::BehavedRobot(const std::string& id, const std::string& name)
-    : RobotInterface<BehavedRobot, LayeredBehaviourSet>::RobotInterface(id,
-                                                                        name)
+    : RobotInterface<LayeredBehaviourSet>::RobotInterface(id, name)
 {
 }
 

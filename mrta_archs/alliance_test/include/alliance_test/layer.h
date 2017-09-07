@@ -17,9 +17,9 @@ public:
   virtual void process();
 
 protected:
-  ros::NodeHandle* nh_;
+  ros::NodeHandlePtr nh_;
   ros::Publisher velocity_pub_;
-  nodes::ROSSensorMessage<nav_msgs::Odometry>* odometry_;
+  nodes::ROSSensorMessage<nav_msgs::Odometry>::Ptr odometry_;
 };
 }
 

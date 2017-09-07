@@ -384,9 +384,4 @@ bool Task::operator==(const ruler_msgs::Task& msg) const
 {
   return getId() == msg.header.frame_id;
 }
-
-boost::shared_ptr<Task> Task::shared_from_this()
-{
-  return boost::dynamic_pointer_cast<Task>(Subject::shared_from_this());
-}
 }

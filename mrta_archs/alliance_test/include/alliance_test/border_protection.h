@@ -15,7 +15,7 @@ public:
   virtual void process();
 
 private:
-  nodes::ROSSensorMessage<sensor_msgs::PointCloud>* sonars_;
+  nodes::ROSSensorMessage<sensor_msgs::PointCloud>::Ptr sonars_;
 };
 }
 

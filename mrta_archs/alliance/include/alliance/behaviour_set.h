@@ -1,14 +1,16 @@
 #ifndef _ALLIANCE_BEHAVIOUR_SET_H_
 #define _ALLIANCE_BEHAVIOUR_SET_H_
 
+#include <boost/enable_shared_from_this.hpp>
 #include "alliance/behaviour_set_interface.h"
 #include "alliance/motivational_behaviour.h"
 #include <list>
 
 namespace alliance
 {
-class BehaviourSet : public BehaviourSetInterface<Robot, BehaviourSet>,
-                     public utilities::Subject
+class BehaviourSet : public BehaviourSetInterface<Robot>,
+                     public utilities::Subject,
+                     public boost::enable_shared_from_this<BehaviourSet>
 {
 public:
   BehaviourSet(const RobotPtr& robot, const TaskPtr& task,
@@ -25,8 +27,7 @@ public:
                          const ros::Time& timestamp = ros::Time::now());
 
 private:
-  const MotivationalBehaviourPtr motivational_behaviour_;
-  virtual BehaviourSetPtr shared_from_this();
+  MotivationalBehaviourPtr motivational_behaviour_;
 };
 
 typedef boost::shared_ptr<BehaviourSet> BehaviourSetPtr;

@@ -21,12 +21,6 @@ void BeaconSignalSubject::registerObserver(
   Subject::registerObserver(observer);
 }
 
-BeaconSignalSubjectPtr BeaconSignalSubject::shared_from_this()
-{
-  return boost::dynamic_pointer_cast<BeaconSignalSubject>(
-      Subject::shared_from_this());
-}
-
 void BeaconSignalSubject::notify(const alliance_msgs::BeaconSignal& msg)
 {
   BeaconSignalEventPtr event(new BeaconSignalEvent(shared_from_this(), msg));

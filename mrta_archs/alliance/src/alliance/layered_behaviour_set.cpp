@@ -8,7 +8,7 @@ LayeredBehaviourSet::LayeredBehaviourSet(const BehavedRobotPtr& robot,
                                          const TaskPtr& task,
                                          const ros::Duration& buffer_horizon,
                                          const ros::Duration& timeout_duration)
-    : BehaviourSetInterface<BehavedRobot, LayeredBehaviourSet>::
+    : BehaviourSetInterface<BehavedRobot>::
           BehaviourSetInterface(robot, task, buffer_horizon, timeout_duration),
       BeaconSignalObserver::BeaconSignalObserver(robot->getId() + "/" +
                                                  task->getId()),
@@ -40,7 +40,7 @@ void LayeredBehaviourSet::process()
   std::list<LayerPtr>::iterator it(layers_.begin());
   while (it != layers_.end())
   {
-    LayerPtr layer = *it;
+    LayerPtr layer(*it);
     layer->process();
     it++;
   }
@@ -87,7 +87,7 @@ bool LayeredBehaviourSet::contains(const std::string& layer_name) const
   std::list<LayerPtr>::const_iterator it(layers_.begin());
   while (it != layers_.end())
   {
-    LayerPtr layer = *it;
+    LayerPtr layer(*it);
     if (layer->getName() == layer_name)
     {
       return true;

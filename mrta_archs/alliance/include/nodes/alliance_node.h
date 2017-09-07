@@ -17,7 +17,7 @@ public:
   virtual ~AllianceNode();
 
 private:
-  bool started_broadcasting_;
+  bool broadcasting_;
   alliance::RobotPtr robot_;
   ros::Publisher beacon_signal_pub_;
   ros::Subscriber beacon_signal_sub_;

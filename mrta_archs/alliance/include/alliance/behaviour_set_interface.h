@@ -7,8 +7,8 @@
 
 namespace alliance
 {
-template <typename R, typename BS>
-class BehaviourSetInterface : public boost::enable_shared_from_this<BS>
+template <typename R>
+class BehaviourSetInterface
 {
 
   typedef boost::shared_ptr<R> RPtr;
@@ -36,8 +36,8 @@ protected:
   const utilities::functions::UnarySampleHolderPtr active_;
 };
 
-template <typename R, typename BS>
-BehaviourSetInterface<R, BS>::BehaviourSetInterface(
+template <typename R>
+BehaviourSetInterface<R>::BehaviourSetInterface(
     const RPtr& robot, const TaskPtr& task, const ros::Duration& buffer_horizon,
     const ros::Duration& timeout_duration)
     : robot_(robot), task_(task),
@@ -47,40 +47,40 @@ BehaviourSetInterface<R, BS>::BehaviourSetInterface(
 {
 }
 
-template <typename R, typename BS>
-BehaviourSetInterface<R, BS>::~BehaviourSetInterface()
+template <typename R>
+BehaviourSetInterface<R>::~BehaviourSetInterface()
 {
 }
 
-template <typename R, typename BS>
-void BehaviourSetInterface<R, BS>::preProcess()
+template <typename R>
+void BehaviourSetInterface<R>::preProcess()
 {
 }
 
-template <typename R, typename BS> void BehaviourSetInterface<R, BS>::process()
+template <typename R> void BehaviourSetInterface<R>::process()
 {
 }
 
-template <typename R, typename BS>
-TaskPtr BehaviourSetInterface<R, BS>::getTask() const
+template <typename R>
+TaskPtr BehaviourSetInterface<R>::getTask() const
 {
   return task_;
 }
 
-template <typename R, typename BS>
-bool BehaviourSetInterface<R, BS>::isActive(const ros::Time& timestamp) const
+template <typename R>
+bool BehaviourSetInterface<R>::isActive(const ros::Time& timestamp) const
 {
   return active_->getValue(timestamp);
 }
 
-template <typename R, typename BS>
-ros::Time BehaviourSetInterface<R, BS>::getActivationTimestamp() const
+template <typename R>
+ros::Time BehaviourSetInterface<R>::getActivationTimestamp() const
 {
   return activation_timestamp_;
 }
 
-template <typename R, typename BS>
-void BehaviourSetInterface<R, BS>::setActive(bool active,
+template <typename R>
+void BehaviourSetInterface<R>::setActive(bool active,
                                              const ros::Time& timestamp)
 {
   if (active != active_->getValue(timestamp))
@@ -91,15 +91,15 @@ void BehaviourSetInterface<R, BS>::setActive(bool active,
   }
 }
 
-template <typename R, typename BS>
-void BehaviourSetInterface<R, BS>::setTimeoutDuration(
+template <typename R>
+void BehaviourSetInterface<R>::setTimeoutDuration(
     const ros::Duration& timeout_duration)
 {
   active_->setTimeoutDuration(timeout_duration);
 }
 
-template <typename R, typename BS>
-void BehaviourSetInterface<R, BS>::setBufferHorizon(
+template <typename R>
+void BehaviourSetInterface<R>::setBufferHorizon(
     const ros::Duration& buffer_horizon)
 {
   active_->setBufferHorizon(buffer_horizon);

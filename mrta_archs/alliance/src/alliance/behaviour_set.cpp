@@ -6,12 +6,14 @@ namespace alliance
 {
 BehaviourSet::BehaviourSet(const RobotPtr& robot, const TaskPtr& task,
                            const ros::Duration& buffer_horizon)
-    : BehaviourSetInterface<Robot, BehaviourSet>::BehaviourSetInterface(
-          robot, task, buffer_horizon),
-      Subject::Subject(robot->getId() + "/" + task->getId()),
-      motivational_behaviour_(
-          new MotivationalBehaviour(robot, shared_from_this()))
+    : BehaviourSetInterface<Robot>::BehaviourSetInterface(robot, task,
+                                                          buffer_horizon),
+      Subject::Subject(robot->getId() + "/" + task->getId())
 {
+  ROS_WARN("[BS] before");
+  motivational_behaviour_.reset(
+      new MotivationalBehaviour(robot, shared_from_this()));
+  ROS_WARN("[BS] after");
 }
 
 BehaviourSet::~BehaviourSet() {}
@@ -58,15 +60,10 @@ void BehaviourSet::setActive(bool active, const ros::Time& timestamp)
 {
   if (active != isActive(timestamp))
   {
-    BehaviourSetInterface<Robot, BehaviourSet>::setActive(active, timestamp);
+    BehaviourSetInterface<Robot>::setActive(active, timestamp);
     utilities::ToggleEventConstPtr event(
         new utilities::ToggleEvent(shared_from_this(), active, timestamp));
     Subject::notify(event);
   }
-}
-
-BehaviourSetPtr BehaviourSet::shared_from_this()
-{
-  return boost::dynamic_pointer_cast<BehaviourSet>(Subject::shared_from_this());
 }
 }

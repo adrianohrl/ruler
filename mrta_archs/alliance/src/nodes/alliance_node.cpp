@@ -5,7 +5,7 @@ namespace nodes
 AllianceNode::AllianceNode(ros::NodeHandlePtr nh, float loop_rate)
     : ROSNode::ROSNode(nh, loop_rate),
       BeaconSignalSubject::BeaconSignalSubject(ros::this_node::getName()),
-      started_broadcasting_(false)
+      broadcasting_(false)
 {
   beacon_signal_pub_ =
       nh->advertise<alliance_msgs::BeaconSignal>("/alliance/beacon_signal", 10);
@@ -15,9 +15,9 @@ AllianceNode::AllianceNode(ros::NodeHandlePtr nh, float loop_rate)
 
 AllianceNode::~AllianceNode()
 {
+  broadcast_timer_.stop();
   beacon_signal_pub_.shutdown();
   beacon_signal_sub_.shutdown();
-  broadcast_timer_.stop();
 }
 
 void AllianceNode::readParameters()
@@ -105,8 +105,10 @@ void AllianceNode::readParameters()
       alliance::TaskPtr task(*it);
       if (task->getId() == id)
       {
+        ROS_WARN("[READING PARAMS] before");
         behaviour_set.reset(new alliance::BehaviourSet(
             robot_, task, ros::Duration(buffer_horizon)));
+        ROS_WARN("[READING PARAMS] after");
         break;
       }
       it++;
@@ -177,11 +179,11 @@ void AllianceNode::init()
 void AllianceNode::controlLoop()
 {
   robot_->process();
-  if (!robot_->isIdle() && !started_broadcasting_)
+  if (!robot_->isIdle() && !broadcasting_)
   {
     ROS_WARN_STREAM("Starting " << *robot_ << " broadcast timer.");
     broadcast_timer_.start();
-    started_broadcasting_ = true;
+    broadcasting_ = true;
   }
 }
 
@@ -196,7 +198,7 @@ void AllianceNode::broadcastTimerCallback(const ros::TimerEvent& event)
   {
     ROS_WARN_STREAM("Stoping " << *robot_ << " broadcast timer.");
     broadcast_timer_.stop();
-    started_broadcasting_ = false;
+    broadcasting_ = false;
     return;
   }
   alliance_msgs::BeaconSignal msg;

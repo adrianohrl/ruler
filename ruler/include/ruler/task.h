@@ -8,6 +8,7 @@
 #ifndef _RULER_TASK_H_
 #define _RULER_TASK_H_
 
+#include <boost/enable_shared_from_this.hpp>
 #include <geometry_msgs/Pose.h>
 #include <ros/time.h>
 #include "ruler/resource_interface.h"
@@ -24,7 +25,8 @@ class ResourceReservationRequest;
 template <typename T> class Resource;
 
 class Task : public utilities::Subject,
-             public utilities::ROSMessageConverter<ruler_msgs::Task>
+             public utilities::ROSMessageConverter<ruler_msgs::Task>,
+             public boost::enable_shared_from_this<Task>
 {
 public:
   Task(std::string id, std::string name, ros::Duration expected_duration,
@@ -78,7 +80,6 @@ private:
   std::list<utilities::Interval<ros::Time>*> interruption_intervals_;
   std::list<ResourceReservationRequest*> resource_reservation_requests_;
   std::list<geometry_msgs::Pose> waypoints_;
-  virtual boost::shared_ptr<Task> shared_from_this();
 };
 
 typedef boost::shared_ptr<Task> TaskPtr;

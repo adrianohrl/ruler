@@ -1,6 +1,7 @@
 #ifndef _ALLIANCE_ROBOT_H_
 #define _ALLIANCE_ROBOT_H_
 
+#include <boost/enable_shared_from_this.hpp>
 #include <list>
 #include <ros/time.h>
 #include <ros/rate.h>
@@ -9,7 +10,8 @@
 
 namespace alliance
 {
-class Robot : public RobotInterface<Robot, BehaviourSet>
+class Robot : public RobotInterface<BehaviourSet>,
+              public boost::enable_shared_from_this<Robot>
 {
 public:
   Robot(const std::string& id, const std::string& name);

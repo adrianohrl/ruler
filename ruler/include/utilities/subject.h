@@ -9,15 +9,13 @@
 #ifndef _UTILITIES_SUBJECT_H_
 #define _UTILITIES_SUBJECT_H_
 
-#include <boost/enable_shared_from_this.hpp>
 #include <list>
 #include <ros/common.h>
 #include "utilities/observer.h"
 
 namespace utilities
 {
-class Subject : public HasId<std::string>,
-                public boost::enable_shared_from_this<Subject>
+class Subject : public HasId<std::string>
 {
 public:
   virtual ~Subject();

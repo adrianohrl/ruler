@@ -11,32 +11,34 @@ namespace nodes
 template <typename M> class ROSSensorMessage : public alliance::Sensor
 {
 public:
-  ROSSensorMessage(ros::NodeHandle* nh, const std::string& topic_name,
+  ROSSensorMessage(const ros::NodeHandlePtr& nh, const std::string& topic_name,
                    const ros::Duration& timeout_duration);
   virtual ~ROSSensorMessage();
   void publish();
   M getMsg() const;
 
+  typedef boost::shared_ptr<ROSSensorMessage<M> > Ptr;
+
 private:
-  utilities::functions::UnarySampleHolder* applicable_;
+  utilities::functions::UnarySampleHolderPtr applicable_;
   M msg_;
-  ros::NodeHandle* nh_;
+  ros::NodeHandlePtr nh_;
   ros::Publisher feedback_pub_;
   ros::Subscriber sensor_sub_;
   void sensorCallback(const M& msg);
 };
 
 template <typename M>
-ROSSensorMessage<M>::ROSSensorMessage(ros::NodeHandle* nh,
+ROSSensorMessage<M>::ROSSensorMessage(const ros::NodeHandlePtr& nh,
                                       const std::string& topic_name,
                                       const ros::Duration& timeout_duration)
-    : nh_(nh)
+    : nh_(nh), applicable_(new utilities::functions::UnarySampleHolder(
+                   topic_name, timeout_duration,
+                   ros::Duration(10 * timeout_duration.toSec())))
 {
-  applicable_ = new utilities::functions::UnarySampleHolder(
-      topic_name, timeout_duration,
-      ros::Duration(10 * timeout_duration.toSec()));
-  feedback_pub_ =
-      nh_->advertise<alliance_msgs::SensorFeedback>("alliance/sensory_feedback", 10);
+
+  feedback_pub_ = nh_->advertise<alliance_msgs::SensorFeedback>(
+      "alliance/sensory_feedback", 10);
   sensor_sub_ = nh_->subscribe(topic_name, 10,
                                &ROSSensorMessage<M>::sensorCallback, this);
 }
@@ -45,12 +47,6 @@ template <typename M> ROSSensorMessage<M>::~ROSSensorMessage()
 {
   feedback_pub_.shutdown();
   sensor_sub_.shutdown();
-  nh_ = NULL;
-  if (applicable_)
-  {
-    delete applicable_;
-    applicable_ = NULL;
-  }
 }
 
 template <typename M> void ROSSensorMessage<M>::publish()

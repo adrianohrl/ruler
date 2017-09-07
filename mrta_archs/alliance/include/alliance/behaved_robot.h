@@ -7,7 +7,7 @@
 
 namespace alliance
 {
-class BehavedRobot : public RobotInterface<BehavedRobot, LayeredBehaviourSet>
+class BehavedRobot : public RobotInterface<LayeredBehaviourSet>
 {
 public:
   BehavedRobot(const std::string& id, const std::string& name);
