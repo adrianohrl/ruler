@@ -11,9 +11,9 @@ class Acquiescence
 {
 public:
   Acquiescence(const RobotPtr& robot,
-               const BehaviourSetPtr& behaviour_set,
-               const InterCommunicationPtr& monitor);
+               const BehaviourSetPtr& behaviour_set);
   virtual ~Acquiescence();
+  void init(const InterCommunicationPtr &monitor);
   ros::Duration
   getYieldingDelay(const ros::Time& timestamp = ros::Time::now()) const;
   ros::Duration
@@ -25,11 +25,13 @@ public:
                         const ros::Time& timestamp = ros::Time::now());
 
 private:
+  typedef utilities::functions::ContinuousSampleHolder SampleHolder;
+  typedef utilities::functions::ContinuousSampleHolderPtr SampleHolderPtr;
   const RobotPtr robot_;
   const BehaviourSetPtr behaviour_set_;
-  const InterCommunicationPtr monitor_;
-  const utilities::functions::ContinuousSampleHolderPtr yielding_delay_;
-  const utilities::functions::ContinuousSampleHolderPtr giving_up_delay_;
+  InterCommunicationPtr monitor_;
+  SampleHolderPtr yielding_delay_;
+  SampleHolderPtr giving_up_delay_;
 };
 
 typedef boost::shared_ptr<Acquiescence> AcquiescencePtr;

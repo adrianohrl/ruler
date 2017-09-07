@@ -7,15 +7,13 @@ namespace alliance_test
 {
 BorderProtection::BorderProtection() {}
 
-BorderProtection::~BorderProtection()
-{
-}
+BorderProtection::~BorderProtection() {}
 
 void BorderProtection::initialize(const std::string& name)
 {
   Layer::initialize(name);
   sonars_.reset(new nodes::ROSSensorMessage<sensor_msgs::PointCloud>(
-      nh_, "sonar", ros::Duration(1.0)));
+      name + "/sonar", nh_, "sonar", ros::Duration(1.0)));
 }
 
 void BorderProtection::process()

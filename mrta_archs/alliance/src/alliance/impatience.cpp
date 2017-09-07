@@ -4,10 +4,9 @@
 namespace alliance
 {
 Impatience::Impatience(const RobotPtr& robot,
-                       const BehaviourSetPtr& behaviour_set,
-                       const InterCommunicationPtr& monitor)
-    : robot_(robot), monitor_(monitor),
-      fast_rate_(new utilities::functions::ContinuousSampleHolder(
+                       const BehaviourSetPtr& behaviour_set)
+    : robot_(robot),
+      fast_rate_(new SampleHolder(
           behaviour_set->getId() + "/impatience/fast_rate", 0.0,
           ros::Duration(10 * robot_->getTimeoutDuration().toSec())))
 {
@@ -15,11 +14,18 @@ Impatience::Impatience(const RobotPtr& robot,
 
 Impatience::~Impatience() {}
 
+void Impatience::init(const InterCommunicationPtr& monitor)
+{
+  if (!monitor_)
+  {
+    monitor_ = monitor;
+  }
+}
+
 double Impatience::getSlowRate(const std::string& robot_id,
                                const ros::Time& timestamp) const
 {
-  utilities::functions::ContinuousSampleHolderPtr sample_holder(
-      slow_rates_.at(robot_id));
+  SampleHolderPtr sample_holder(slow_rates_.at(robot_id));
   return sample_holder->getValue(timestamp);
 }
 
@@ -32,18 +38,15 @@ ros::Duration
 Impatience::getReliabilityDuration(const std::string& robot_id,
                                    const ros::Time& timestamp) const
 {
-  utilities::functions::ContinuousSampleHolderPtr sample_holder(
-      reliability_durations_.at(robot_id));
+  SampleHolderPtr sample_holder(reliability_durations_.at(robot_id));
   return ros::Duration(sample_holder->getValue(timestamp));
 }
 
 double Impatience::getLevel(const ros::Time& timestamp) const
 {
   double level(fast_rate_->getValue(timestamp));
-  utilities::functions::ContinuousSampleHolderPtr sample_holder;
-  std::map<std::string,
-           utilities::functions::ContinuousSampleHolderPtr>::const_iterator
-      slow_rates_it(slow_rates_.begin()),
+  SampleHolderPtr sample_holder;
+  const_iterator slow_rates_it(slow_rates_.begin()),
       reliability_durations_it(reliability_durations_.begin());
   while (slow_rates_it != slow_rates_.end())
   {
@@ -79,15 +82,13 @@ void Impatience::setSlowRate(const std::string& robot_id, double slow_rate,
     throw utilities::Exception(
         "The impatience slow rate must be greater than the fast one.");
   }
-  utilities::functions::ContinuousSampleHolderPtr sample_holder;
-  std::map<std::string,
-           utilities::functions::ContinuousSampleHolderPtr>::iterator
-      it(slow_rates_.find(robot_id));
+  SampleHolderPtr sample_holder;
+  iterator it(slow_rates_.find(robot_id));
   if (it == slow_rates_.end())
   {
-    sample_holder.reset(new utilities::functions::ContinuousSampleHolder(
-        robot_->getId() + "/" + robot_id + "/slow_rate", slow_rate,
-        robot_->getTimeoutDuration(), timestamp));
+    sample_holder.reset(
+        new SampleHolder(robot_->getId() + "/" + robot_id + "/slow_rate",
+                         slow_rate, robot_->getTimeoutDuration(), timestamp));
     slow_rates_[robot_id] = sample_holder;
   }
   else
@@ -112,13 +113,11 @@ void Impatience::setReliabilityDuration(
     const std::string& robot_id, const ros::Duration& reliability_duration,
     const ros::Time& timestamp)
 {
-  utilities::functions::ContinuousSampleHolderPtr sample_holder;
-  std::map<std::string,
-           utilities::functions::ContinuousSampleHolderPtr>::iterator
-      it(reliability_durations_.find(robot_id));
+  SampleHolderPtr sample_holder;
+  iterator it(reliability_durations_.find(robot_id));
   if (it == slow_rates_.end())
   {
-    sample_holder.reset(new utilities::functions::ContinuousSampleHolder(
+    sample_holder.reset(new SampleHolder(
         robot_->getId() + "/" + robot_id + "/reliability_duration",
         reliability_duration.toSec(), robot_->getTimeoutDuration(), timestamp));
     reliability_durations_[robot_id] = sample_holder;

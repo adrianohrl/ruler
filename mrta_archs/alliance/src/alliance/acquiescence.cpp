@@ -3,20 +3,27 @@
 
 namespace alliance
 {
-Acquiescence::Acquiescence(const RobotPtr &robot,
-                           const BehaviourSetPtr &behaviour_set,
-                           const InterCommunicationPtr& monitor)
-    : robot_(robot), behaviour_set_(behaviour_set), monitor_(monitor),
-      yielding_delay_(new utilities::functions::ContinuousSampleHolder(
+Acquiescence::Acquiescence(const RobotPtr& robot,
+                           const BehaviourSetPtr& behaviour_set)
+    : robot_(robot), behaviour_set_(behaviour_set),
+      yielding_delay_(new SampleHolder(
           behaviour_set->getId() + "/acquiescence/yielding_delay", 0.0,
           ros::Duration(10 * robot_->getTimeoutDuration().toSec()))),
-      giving_up_delay_(new utilities::functions::ContinuousSampleHolder(
+      giving_up_delay_(new SampleHolder(
           behaviour_set->getId() + "/acquiescence/giving_up_delay", 0.0,
           ros::Duration(10 * robot_->getTimeoutDuration().toSec())))
 {
 }
 
 Acquiescence::~Acquiescence() {}
+
+void Acquiescence::init(const InterCommunicationPtr& monitor)
+{
+  if (!monitor_)
+  {
+    monitor_ = monitor;
+  }
+}
 
 ros::Duration Acquiescence::getYieldingDelay(const ros::Time& timestamp) const
 {

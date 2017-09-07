@@ -10,11 +10,18 @@ namespace alliance
 class Task : public utilities::HasName
 {
 public:
+  typedef std::list<std::string>::iterator iterator;
+  typedef std::list<std::string>::const_iterator const_iterator;
   Task(const std::string& id, const std::string& name);
   Task(const Task& task);
   virtual ~Task();
-  std::list<std::string> getNeededLayers() const;
   void addNeededLayer(const std::string& layer_name);
+  std::size_t size() const;
+  bool empty() const;
+  iterator begin();
+  const_iterator begin() const;
+  iterator end();
+  const_iterator end() const;
 
 private:
   std::list<std::string> needed_layers_;

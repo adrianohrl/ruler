@@ -16,6 +16,7 @@ public:
   BehaviourSet(const RobotPtr& robot, const TaskPtr& task,
                const ros::Duration& buffer_horizon);
   virtual ~BehaviourSet();
+  void init();
   virtual void preProcess();
   MotivationalBehaviourPtr getMotivationalBehaviour() const;
   void setActivationThreshold(double threshold);
@@ -27,6 +28,7 @@ public:
                          const ros::Time& timestamp = ros::Time::now());
 
 private:
+  const RobotPtr robot_;
   MotivationalBehaviourPtr motivational_behaviour_;
 };
 

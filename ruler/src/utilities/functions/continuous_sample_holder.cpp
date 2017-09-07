@@ -12,7 +12,6 @@ ContinuousSampleHolder::ContinuousSampleHolder(
           id, new ContinuousStepFunction(value, true), buffer_horizon,
           start_timestamp)
 {
-  ROS_WARN("[CSH] constructed");
 }
 
 ContinuousSampleHolder::ContinuousSampleHolder(

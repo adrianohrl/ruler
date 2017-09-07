@@ -14,8 +14,6 @@ Task::Task(const Task& task)
 
 Task::~Task() {}
 
-std::list<std::string> Task::getNeededLayers() const { return needed_layers_; }
-
 void Task::addNeededLayer(const std::string& layer_name)
 {
   if (!contains(layer_name))
@@ -24,16 +22,27 @@ void Task::addNeededLayer(const std::string& layer_name)
   }
 }
 
+std::size_t Task::size() const { return needed_layers_.size(); }
+
+bool Task::empty() const { return needed_layers_.empty(); }
+
+Task::iterator Task::begin() { return needed_layers_.begin(); }
+
+Task::const_iterator Task::begin() const { return needed_layers_.begin(); }
+
+Task::iterator Task::end() { return needed_layers_.end(); }
+
+Task::const_iterator Task::end() const { return needed_layers_.end(); }
+
 bool Task::contains(const std::string& layer_name) const
 {
-  std::list<std::string>::const_iterator it(needed_layers_.begin());
-  while (it != needed_layers_.end())
+  for (const_iterator it(needed_layers_.begin()); it != needed_layers_.end();
+       it++)
   {
     if (*it == layer_name)
     {
       return true;
     }
-    it++;
   }
   return false;
 }

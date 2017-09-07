@@ -10,10 +10,8 @@ namespace alliance
 template <typename R>
 class BehaviourSetInterface
 {
-
-  typedef boost::shared_ptr<R> RPtr;
-
 public:
+  typedef boost::shared_ptr<R> RPtr;
   BehaviourSetInterface(
       const RPtr& robot, const TaskPtr& task,
       const ros::Duration& buffer_horizon,
@@ -30,10 +28,12 @@ public:
   void setBufferHorizon(const ros::Duration& buffer_horizon);
 
 protected:
+  typedef utilities::functions::UnarySampleHolder SampleHolder;
+  typedef utilities::functions::UnarySampleHolderPtr SampleHolderPtr;
   const RPtr robot_;
   const TaskPtr task_;
   ros::Time activation_timestamp_;
-  const utilities::functions::UnarySampleHolderPtr active_;
+  SampleHolderPtr active_;
 };
 
 template <typename R>
@@ -41,7 +41,7 @@ BehaviourSetInterface<R>::BehaviourSetInterface(
     const RPtr& robot, const TaskPtr& task, const ros::Duration& buffer_horizon,
     const ros::Duration& timeout_duration)
     : robot_(robot), task_(task),
-      active_(new utilities::functions::UnarySampleHolder(
+      active_(new SampleHolder(
           robot->getId() + "/" + task->getId() + "/active", timeout_duration,
           buffer_horizon))
 {

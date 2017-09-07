@@ -8,16 +8,14 @@ LayeredBehaviourSet::LayeredBehaviourSet(const BehavedRobotPtr& robot,
                                          const TaskPtr& task,
                                          const ros::Duration& buffer_horizon,
                                          const ros::Duration& timeout_duration)
-    : BehaviourSetInterface<BehavedRobot>::
-          BehaviourSetInterface(robot, task, buffer_horizon, timeout_duration),
+    : BehaviourSetInterface<BehavedRobot>::BehaviourSetInterface(
+          robot, task, buffer_horizon, timeout_duration),
       BeaconSignalObserver::BeaconSignalObserver(robot->getId() + "/" +
                                                  task->getId()),
       loader_("alliance", "alliance::Layer")
 {
-  std::list<std::string> layers(task->getNeededLayers());
-  std::list<std::string>::const_iterator it(layers.begin());
   LayerPtr layer;
-  while (it != layers.end())
+  for (Task::const_iterator it(task->begin()); it != task->end(); it++)
   {
     try
     {
@@ -29,7 +27,6 @@ LayeredBehaviourSet::LayeredBehaviourSet(const BehavedRobotPtr& robot,
     {
       ROS_ERROR_STREAM("Could not load " << *it << ". " << ex.what());
     }
-    it++;
   }
 }
 
@@ -37,12 +34,10 @@ LayeredBehaviourSet::~LayeredBehaviourSet() {}
 
 void LayeredBehaviourSet::process()
 {
-  std::list<LayerPtr>::iterator it(layers_.begin());
-  while (it != layers_.end())
+  for (layers_iterator it(layers_.begin()); it != layers_.end(); it++)
   {
     LayerPtr layer(*it);
     layer->process();
-    it++;
   }
 }
 
@@ -84,15 +79,13 @@ void LayeredBehaviourSet::update(
 
 bool LayeredBehaviourSet::contains(const std::string& layer_name) const
 {
-  std::list<LayerPtr>::const_iterator it(layers_.begin());
-  while (it != layers_.end())
+  for (layers_const_iterator it(layers_.begin()); it != layers_.end(); it++)
   {
     LayerPtr layer(*it);
     if (layer->getName() == layer_name)
     {
       return true;
     }
-    it++;
   }
   return false;
 }

@@ -11,16 +11,18 @@ namespace nodes
 template <typename M> class ROSSensorMessage : public alliance::Sensor
 {
 public:
-  ROSSensorMessage(const ros::NodeHandlePtr& nh, const std::string& topic_name,
+  typedef boost::shared_ptr<ROSSensorMessage<M> > Ptr;
+  ROSSensorMessage(const std::string& id, const ros::NodeHandlePtr& nh,
+                   const std::string& topic_name,
                    const ros::Duration& timeout_duration);
   virtual ~ROSSensorMessage();
   void publish();
   M getMsg() const;
 
-  typedef boost::shared_ptr<ROSSensorMessage<M> > Ptr;
-
 private:
-  utilities::functions::UnarySampleHolderPtr applicable_;
+  typedef utilities::functions::UnarySampleHolder SampleHolder;
+  typedef utilities::functions::UnarySampleHolderPtr SampleHolderPtr;
+  SampleHolderPtr applicable_;
   M msg_;
   ros::NodeHandlePtr nh_;
   ros::Publisher feedback_pub_;
@@ -29,12 +31,14 @@ private:
 };
 
 template <typename M>
-ROSSensorMessage<M>::ROSSensorMessage(const ros::NodeHandlePtr& nh,
+ROSSensorMessage<M>::ROSSensorMessage(const std::string& id,
+                                      const ros::NodeHandlePtr& nh,
                                       const std::string& topic_name,
                                       const ros::Duration& timeout_duration)
-    : nh_(nh), applicable_(new utilities::functions::UnarySampleHolder(
-                   topic_name, timeout_duration,
-                   ros::Duration(10 * timeout_duration.toSec())))
+    : Sensor::Sensor(id), nh_(nh),
+      applicable_(new SampleHolder(
+          topic_name, timeout_duration,
+          ros::Duration(10 * timeout_duration.toSec())))
 {
 
   feedback_pub_ = nh_->advertise<alliance_msgs::SensorFeedback>(

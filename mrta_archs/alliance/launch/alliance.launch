@@ -9,10 +9,10 @@
       <rosparam file="$(arg robot_params)" command="load" />
       <rosparam file="$(arg tasks_params)" command="load" />
     </node>
-    <!--<node name="node" pkg="alliance" type="node" output="screen" launch-prefix="valgrind">
+    <node name="node" pkg="alliance" type="node" output="screen" launch-prefix="valgrind">
       <param name="id" type="string" value="$(arg robot_id)" />
       <rosparam file="$(arg robot_params)" command="load" />
       <rosparam file="$(arg tasks_params)" command="load" />
-    </node>-->
+    </node>
   </group>
 </launch>

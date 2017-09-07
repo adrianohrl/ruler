@@ -3,7 +3,7 @@
 namespace alliance
 {
 
-Sensor::Sensor() {}
+Sensor::Sensor(const std::string& id) : HasId<std::string>::HasId(id) {}
 
 Sensor::~Sensor() {}
 

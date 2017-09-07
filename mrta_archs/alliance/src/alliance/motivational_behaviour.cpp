@@ -7,23 +7,29 @@ namespace alliance
 MotivationalBehaviour::MotivationalBehaviour(
     const RobotPtr& robot, const BehaviourSetPtr& behaviour_set)
     : robot_(robot),
-      threshold_(new utilities::functions::ContinuousSampleHolder(
+      threshold_(new SampleHolder(
           behaviour_set->getId() + "/threshold", 0.0,
           ros::Duration(10 * robot_->getTimeoutDuration().toSec()))),
-      motivation_(new utilities::functions::ContinuousSampleHolder(
+      motivation_(new SampleHolder(
           behaviour_set->getId() + "/motivation", 0.0,
           ros::Duration(10 * robot_->getTimeoutDuration().toSec()))),
-      inter_communication_(new InterCommunication(robot, behaviour_set)),
-      acquiescence_(
-          new Acquiescence(robot, behaviour_set, inter_communication_)),
+      monitor_(new InterCommunication(robot, behaviour_set)),
+      acquiescence_(new Acquiescence(robot, behaviour_set)),
       activity_suppression_(new ActivitySuppression(robot, behaviour_set)),
-      impatience_(new Impatience(robot, behaviour_set, inter_communication_)),
-      impatience_reset_(new ImpatienceReset(inter_communication_)),
+      impatience_(new Impatience(robot, behaviour_set)),
+      impatience_reset_(new ImpatienceReset()),
       sensory_feedback_(new SensoryFeedback(behaviour_set->getTask()))
 {
 }
 
 MotivationalBehaviour::~MotivationalBehaviour() {}
+
+void MotivationalBehaviour::init()
+{
+  acquiescence_->init(monitor_);
+  impatience_->init(monitor_);
+  impatience_reset_->init(monitor_);
+}
 
 bool MotivationalBehaviour::active(const ros::Time& timestamp) const
 {
@@ -54,7 +60,7 @@ ActivitySuppressionPtr MotivationalBehaviour::getActivitySuppression() const
 
 InterCommunicationPtr MotivationalBehaviour::getInterCommunication() const
 {
-  return inter_communication_;
+  return monitor_;
 }
 
 void MotivationalBehaviour::setThreshold(double threshold,

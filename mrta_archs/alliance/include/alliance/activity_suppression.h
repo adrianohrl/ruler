@@ -25,8 +25,10 @@ public:
   bool isSuppressed(const ros::Time& timestamp = ros::Time::now()) const;
 
 private:
+  typedef utilities::functions::UnarySampleHolder SampleHolder;
+  typedef utilities::functions::UnarySampleHolderPtr SampleHolderPtr;
   const RobotPtr robot_;
-  const utilities::functions::UnarySampleHolderPtr suppressed_;
+  SampleHolderPtr suppressed_;
 };
 
 typedef boost::shared_ptr<ActivitySuppression> ActivitySuppressionPtr;

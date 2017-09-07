@@ -108,7 +108,7 @@ void Node::readParameters()
     }
     robot_->addBehaviourSet(behaviour_set);
   }
-  if (robot_->getBehaviourSets().empty())
+  if (robot_->empty())
   {
     ROSNode::shutdown("None behaviour set was imported to " + robot_->str() +
                       " robot.");
@@ -118,14 +118,10 @@ void Node::readParameters()
 void Node::init()
 {
   /** registering beacon signal message observers **/
-  std::list<alliance::LayeredBehaviourSetPtr> behaviour_sets(
-      robot_->getBehaviourSets());
-  std::list<alliance::LayeredBehaviourSetPtr>::iterator it(
-      behaviour_sets.begin());
-  while (it != behaviour_sets.end())
+  for (alliance::BehavedRobot::iterator it(robot_->begin());
+       it != robot_->end(); it++)
   {
     BeaconSignalSubject::registerObserver(*it);
-    it++;
   }
 }
 

@@ -10,7 +10,7 @@ ActivitySuppression::ActivitySuppression(const RobotPtr& robot,
                                          const BehaviourSetPtr& behaviour_set)
     : Observer::Observer(behaviour_set->getId() + "/activity_suppression"),
       robot_(robot),
-      suppressed_(new utilities::functions::UnarySampleHolder(
+      suppressed_(new SampleHolder(
           behaviour_set->getId() + "/activity_suppression/suppressed",
           ros::Duration(10 * robot_->getTimeoutDuration().toSec())))
 {

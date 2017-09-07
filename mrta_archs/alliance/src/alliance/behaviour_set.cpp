@@ -8,15 +8,22 @@ BehaviourSet::BehaviourSet(const RobotPtr& robot, const TaskPtr& task,
                            const ros::Duration& buffer_horizon)
     : BehaviourSetInterface<Robot>::BehaviourSetInterface(robot, task,
                                                           buffer_horizon),
-      Subject::Subject(robot->getId() + "/" + task->getId())
+      Subject::Subject(robot->getId() + "/" + task->getId()), robot_(robot)
 {
-  ROS_WARN("[BS] before");
-  motivational_behaviour_.reset(
-      new MotivationalBehaviour(robot, shared_from_this()));
-  ROS_WARN("[BS] after");
 }
 
 BehaviourSet::~BehaviourSet() {}
+
+void BehaviourSet::init()
+{
+  if (!motivational_behaviour_)
+  {
+    motivational_behaviour_.reset(
+        new MotivationalBehaviour(robot_, shared_from_this()));
+    motivational_behaviour_->init();
+    ROS_DEBUG_STREAM(*this << " has been initialized.");
+  }
+}
 
 void BehaviourSet::preProcess()
 {

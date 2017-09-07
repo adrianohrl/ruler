@@ -105,10 +105,9 @@ void AllianceNode::readParameters()
       alliance::TaskPtr task(*it);
       if (task->getId() == id)
       {
-        ROS_WARN("[READING PARAMS] before");
         behaviour_set.reset(new alliance::BehaviourSet(
             robot_, task, ros::Duration(buffer_horizon)));
-        ROS_WARN("[READING PARAMS] after");
+        behaviour_set->init();
         break;
       }
       it++;
@@ -148,7 +147,7 @@ void AllianceNode::readParameters()
     behaviour_set->setImpatience(fast_rate);
     robot_->addBehaviourSet(behaviour_set);
   }
-  if (robot_->getBehaviourSets().empty())
+  if (robot_->empty())
   {
     ROSNode::shutdown("None behaviour set was imported to " + robot_->str() +
                       " robot.");
@@ -158,17 +157,13 @@ void AllianceNode::readParameters()
 void AllianceNode::init()
 {
   /** registering beacon signal message observers **/
-  std::list<alliance::BehaviourSetPtr> behaviour_sets(
-      robot_->getBehaviourSets());
-  std::list<alliance::BehaviourSetPtr>::iterator it(behaviour_sets.begin());
-  while (it != behaviour_sets.end())
+  for(alliance::Robot::iterator it(robot_->begin()); it != robot_->end(); it++)
   {
     alliance::BehaviourSetPtr behaviour_set(*it);
     alliance::MotivationalBehaviourPtr motivational_behaviour(
         behaviour_set->getMotivationalBehaviour());
     BeaconSignalSubject::registerObserver(
         motivational_behaviour->getInterCommunication());
-    it++;
   }
   /** creating robot broadcast timer **/
   broadcast_timer_ = ROSNode::getNodeHandle()->createTimer(

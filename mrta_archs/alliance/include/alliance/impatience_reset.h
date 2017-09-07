@@ -10,12 +10,13 @@ namespace alliance
 class ImpatienceReset
 {
 public:
-  ImpatienceReset(const InterCommunicationPtr& monitor);
+  ImpatienceReset();
   virtual ~ImpatienceReset();
+  void init(const InterCommunicationPtr& monitor);
   bool isResetted(const ros::Time& timestamp = ros::Time::now()) const;
 
 private:
-  const InterCommunicationPtr monitor_;
+  InterCommunicationPtr monitor_;
 };
 
 typedef boost::shared_ptr<ImpatienceReset> ImpatienceResetPtr;

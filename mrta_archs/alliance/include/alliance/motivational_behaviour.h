@@ -17,6 +17,7 @@ class MotivationalBehaviour
 public:
   MotivationalBehaviour(const RobotPtr& robot, const BehaviourSetPtr& behaviour_set);
   virtual ~MotivationalBehaviour();
+  void init();
   bool active(const ros::Time& timestamp = ros::Time::now()) const;
   double getThreshold(const ros::Time& timestamp = ros::Time::now()) const;
   double getLevel(const ros::Time& timestamp = ros::Time::now()) const;
@@ -31,15 +32,17 @@ public:
                        const ros::Time& timestamp = ros::Time::now());
 
 private:
+  typedef utilities::functions::ContinuousSampleHolder SampleHolder;
+  typedef utilities::functions::ContinuousSampleHolderPtr SampleHolderPtr;
   const RobotPtr robot_;
-  const AcquiescencePtr acquiescence_;
-  const ActivitySuppressionPtr activity_suppression_;
-  const ImpatiencePtr impatience_;
-  const ImpatienceResetPtr impatience_reset_;
-  const InterCommunicationPtr inter_communication_;
-  const SensoryFeedbackPtr sensory_feedback_;
-  const utilities::functions::ContinuousSampleHolderPtr threshold_;
-  const utilities::functions::ContinuousSampleHolderPtr motivation_;
+  AcquiescencePtr acquiescence_;
+  ActivitySuppressionPtr activity_suppression_;
+  ImpatiencePtr impatience_;
+  ImpatienceResetPtr impatience_reset_;
+  InterCommunicationPtr monitor_;
+  SensoryFeedbackPtr sensory_feedback_;
+  SampleHolderPtr threshold_;
+  SampleHolderPtr motivation_;
 };
 
 typedef boost::shared_ptr<MotivationalBehaviour> MotivationalBehaviourPtr;

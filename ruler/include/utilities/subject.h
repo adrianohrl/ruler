@@ -30,6 +30,8 @@ protected:
   bool empty() const;
 
 private:
+  typedef std::list<ObserverPtr>::iterator iterator;
+  typedef std::list<ObserverPtr>::const_iterator const_iterator;
   std::list<ObserverPtr> observers_;
 };
 

@@ -29,10 +29,14 @@ public:
   ros::Time getLastUpdateTimestamp() const;
 
 private:
+  typedef utilities::functions::UnarySampleHolder SampleHolder;
+  typedef utilities::functions::UnarySampleHolderPtr SampleHolderPtr;
+  typedef std::map<std::string, SampleHolderPtr>::iterator iterator;
+  typedef std::map<std::string, SampleHolderPtr>::const_iterator const_iterator;
   const RobotPtr robot_;
   const TaskPtr task_;
   ros::Time last_update_timestamp_;
-  std::map<std::string, utilities::functions::UnarySampleHolderPtr> robots_;
+  std::map<std::string, SampleHolderPtr> robots_;
 };
 
 typedef boost::shared_ptr<InterCommunication> InterCommunicationPtr;

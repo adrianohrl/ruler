@@ -9,18 +9,25 @@
 
 namespace alliance
 {
-template <typename BS>
-class RobotInterface : public utilities::HasName
+template <typename BS> class RobotInterface : public utilities::HasName
 {
-public:
+private:
   typedef boost::shared_ptr<BS> BSPtr;
+public:
+  typedef typename std::list<BSPtr>::iterator iterator;
+  typedef typename std::list<BSPtr>::const_iterator const_iterator;
   RobotInterface(const std::string& id, const std::string& name);
   virtual ~RobotInterface();
   void process();
-  std::list<BSPtr> getBehaviourSets() const;
   TaskPtr getExecutingTask() const;
   bool isIdle() const;
   virtual void addBehaviourSet(const BSPtr& behaviour_set);
+  std::size_t size() const;
+  bool empty() const;
+  iterator begin();
+  const_iterator begin() const;
+  iterator end();
+  const_iterator end() const;
 
 protected:
   BSPtr active_behaviour_set_;
@@ -30,7 +37,7 @@ protected:
 
 template <typename BS>
 RobotInterface<BS>::RobotInterface(const std::string& id,
-                                      const std::string& name)
+                                   const std::string& name)
     : HasName::HasName(name, id)
 {
 }
@@ -39,8 +46,7 @@ template <typename BS> RobotInterface<BS>::~RobotInterface() {}
 
 template <typename BS> void RobotInterface<BS>::process()
 {
-  typename std::list<BSPtr>::iterator it(behaviour_sets_.begin());
-  while (it != behaviour_sets_.end())
+  for (iterator it(behaviour_sets_.begin()); it != behaviour_sets_.end(); it++)
   {
     BSPtr behaviour_set(*it);
     behaviour_set->preProcess();
@@ -55,18 +61,10 @@ template <typename BS> void RobotInterface<BS>::process()
       active_behaviour_set_->process();
       return;
     }
-    it++;
   }
 }
 
-template <typename BS>
-std::list<boost::shared_ptr<BS> > RobotInterface<BS>::getBehaviourSets() const
-{
-  return behaviour_sets_;
-}
-
-template <typename BS>
-TaskPtr RobotInterface<BS>::getExecutingTask() const
+template <typename BS> TaskPtr RobotInterface<BS>::getExecutingTask() const
 {
   return active_behaviour_set_ ? active_behaviour_set_->getTask() : TaskPtr();
 }
@@ -93,17 +91,50 @@ void RobotInterface<BS>::addBehaviourSet(const BSPtr& behaviour_set)
   behaviour_sets_.push_back(behaviour_set);
 }
 
+template <typename BS> std::size_t RobotInterface<BS>::size() const
+{
+  return behaviour_sets_.size();
+}
+
+template <typename BS> bool RobotInterface<BS>::empty() const
+{
+  return behaviour_sets_.empty();
+}
+
+template <typename BS>
+typename RobotInterface<BS>::iterator RobotInterface<BS>::begin()
+{
+  return behaviour_sets_.begin();
+}
+
+template <typename BS>
+typename RobotInterface<BS>::const_iterator RobotInterface<BS>::begin() const
+{
+  return behaviour_sets_.begin();
+}
+
+template <typename BS>
+typename RobotInterface<BS>::iterator RobotInterface<BS>::end()
+{
+  return behaviour_sets_.end();
+}
+
+template <typename BS>
+typename RobotInterface<BS>::const_iterator RobotInterface<BS>::end() const
+{
+  return behaviour_sets_.end();
+}
+
 template <typename BS>
 bool RobotInterface<BS>::contains(const BS& behaviour_set) const
 {
-  typename std::list<BSPtr>::const_iterator it(behaviour_sets_.begin());
-  while (it != behaviour_sets_.end())
+  for (const_iterator it(behaviour_sets_.begin()); it != behaviour_sets_.end();
+       it++)
   {
     if (**it == behaviour_set)
     {
       return true;
     }
-    it++;
   }
   return false;
 }

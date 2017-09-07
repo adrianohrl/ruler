@@ -34,14 +34,12 @@ void Subject::clearObservers() { observers_.clear(); }
 
 void Subject::notify(const EventConstPtr& event)
 {
-  std::list<ObserverPtr>::iterator it(observers_.begin());
-  while (it != observers_.end())
+  for (iterator it(observers_.begin()); it != observers_.end(); it++)
   {
     ObserverPtr observer(*it);
     observer->update(event);
     ROS_DEBUG_STREAM("Subject (" << *this << ") notified observer ("
                                  << *observer << ").");
-    it++;
   }
 }
 

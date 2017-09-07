@@ -28,6 +28,8 @@ public:
   virtual void update(const utilities::BeaconSignalEventConstPtr& event);
 
 private:
+  typedef std::list<LayerPtr>::iterator layers_iterator;
+  typedef std::list<LayerPtr>::const_iterator layers_const_iterator;
   pluginlib::ClassLoader<Layer> loader_;
   std::list<LayerPtr> layers_;
   bool contains(const std::string& layer_name) const;
