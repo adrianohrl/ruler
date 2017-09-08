@@ -3,17 +3,19 @@
 
 #include "alliance/robot.h"
 #include <alliance_msgs/BeaconSignal.h>
+#include <boost/enable_shared_from_this.hpp>
 #include "utilities/beacon_signal_subject.h"
 #include <utilities/ros_node.h>
 
 namespace nodes
 {
 class HighLevelNode : public utilities::ROSNode,
-                     public utilities::BeaconSignalSubject
+                      public utilities::BeaconSignalSubject,
+                      public boost::enable_shared_from_this<HighLevelNode>
 {
 public:
   HighLevelNode(const ros::NodeHandlePtr& nh,
-               const ros::Rate& rate = ros::Rate(30.0));
+                const ros::Rate& rate = ros::Rate(30.0));
   virtual ~HighLevelNode();
 
 private:
@@ -29,7 +31,7 @@ private:
   void broadcastTimerCallback(const ros::TimerEvent& event);
 };
 
-typedef boost::scoped_ptr<HighLevelNode> HighLevelNodePtr;
+typedef boost::shared_ptr<HighLevelNode> HighLevelNodePtr;
 }
 
 #endif // _ALLIANCE_HIGH_LEVEL_NODE_H_

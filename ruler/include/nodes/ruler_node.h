@@ -32,7 +32,7 @@ private:
   bool calculateMetrics();
 };
 
-typedef boost::scoped_ptr<RulerNode> RulerNodePtr;
+typedef boost::shared_ptr<RulerNode> RulerNodePtr;
 }
 
 #endif // _RULER_NODE_H_

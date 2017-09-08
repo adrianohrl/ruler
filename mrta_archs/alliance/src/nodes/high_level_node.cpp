@@ -17,6 +17,7 @@ HighLevelNode::HighLevelNode(const ros::NodeHandlePtr& nh,
 
 HighLevelNode::~HighLevelNode()
 {
+  ROS_ERROR_STREAM("[AHLN] destroying " << *this);
   broadcast_timer_.stop();
   beacon_signal_pub_.shutdown();
   beacon_signal_sub_.shutdown();
@@ -188,7 +189,9 @@ void HighLevelNode::controlLoop()
 
 void HighLevelNode::beaconSignalCallback(const alliance_msgs::BeaconSignal& msg)
 {
-  BeaconSignalSubject::notify(msg);
+  utilities::BeaconSignalEventConstPtr event(
+      new utilities::BeaconSignalEvent(shared_from_this(), msg));
+  notify(event);
 }
 
 void HighLevelNode::broadcastTimerCallback(const ros::TimerEvent& event)

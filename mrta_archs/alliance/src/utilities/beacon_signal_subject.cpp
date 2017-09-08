@@ -21,9 +21,8 @@ void BeaconSignalSubject::registerObserver(
   Subject::registerObserver(observer);
 }
 
-void BeaconSignalSubject::notify(const alliance_msgs::BeaconSignal& msg)
+void BeaconSignalSubject::notify(const BeaconSignalEventConstPtr& event)
 {
-  BeaconSignalEventPtr event(new BeaconSignalEvent(shared_from_this(), msg));
   Subject::notify(event);
 }
 }

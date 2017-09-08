@@ -8,7 +8,8 @@
 namespace nodes
 {
 class LowLevelNode : public utilities::ROSNode,
-                     public utilities::BeaconSignalSubject
+                     public utilities::BeaconSignalSubject,
+                     public boost::enable_shared_from_this<LowLevelNode>
 {
 public:
   LowLevelNode(const ros::NodeHandlePtr& nh,
@@ -24,7 +25,7 @@ private:
   void beaconSignalCallback(const alliance_msgs::BeaconSignal& msg);
 };
 
-typedef boost::scoped_ptr<LowLevelNode> LowLevelNodePtr;
+typedef boost::shared_ptr<LowLevelNode> LowLevelNodePtr;
 }
 
 #endif // _ALLIANCE_LOW_LEVEL_NODE_H_

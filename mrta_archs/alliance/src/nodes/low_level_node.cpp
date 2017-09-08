@@ -119,7 +119,8 @@ void LowLevelNode::readParameters()
 void LowLevelNode::init()
 {
   /** registering beacon signal message observers **/
-  for (alliance::BehavedRobot::iterator it(robot_->begin()); it != robot_->end(); it++)
+  for (alliance::BehavedRobot::iterator it(robot_->begin());
+       it != robot_->end(); it++)
   {
     BeaconSignalSubject::registerObserver(*it);
   }
@@ -129,6 +130,8 @@ void LowLevelNode::controlLoop() { robot_->process(); }
 
 void LowLevelNode::beaconSignalCallback(const alliance_msgs::BeaconSignal& msg)
 {
-  BeaconSignalSubject::notify(msg);
+  utilities::BeaconSignalEventConstPtr event(
+      new utilities::BeaconSignalEvent(shared_from_this(), msg));
+  BeaconSignalSubject::notify(event);
 }
 }
