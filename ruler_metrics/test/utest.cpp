@@ -83,29 +83,24 @@ TEST(Plugins, loading)
 void init()
 {
   robot.reset(new ruler::Robot("robot1", "robot1"));
+  std::list<geometry_msgs::Pose> waypoints;
+  geometry_msgs::Pose p;
+  waypoints.push_back(p);
+  p.position.x = 3.0;
+  waypoints.push_back(p);
+  p.position.x = 0.0;
+  p.position.y = 4.0;
+  waypoints.push_back(p);
+  p.position.y = 0.0;
+  waypoints.push_back(p);
   double d(0.5);
   ros::Time timestamp(ros::Time::now());
   utilities::NoisyTimePtr expected_start(new utilities::NoisyTime(
       timestamp + ros::Duration(0.5 * d), timestamp + ros::Duration(1.5 * d)));
   utilities::NoisyTimePtr expected_end(new utilities::NoisyTime(
       timestamp + ros::Duration(4.5 * d), timestamp + ros::Duration(5.5 * d)));
-  task.reset(new ruler::Task("t1", "task1", expected_start, expected_end));
-  geometry_msgs::Pose waypoint0;
-  waypoint0.position.x = 0;
-  waypoint0.position.x = 0;
-  task->getWaypoints().push_back(waypoint0);
-  geometry_msgs::Pose waypoint1;
-  waypoint1.position.x = 0;
-  waypoint1.position.x = 3;
-  task->getWaypoints().push_back(waypoint1);
-  geometry_msgs::Pose waypoint2;
-  waypoint2.position.x = 4;
-  waypoint2.position.x = 0;
-  task->getWaypoints().push_back(waypoint2);
-  geometry_msgs::Pose waypoint3;
-  waypoint3.position.x = 0;
-  waypoint3.position.x = 0;
-  task->getWaypoints().push_back(waypoint3);
+  task.reset(new ruler::Task("t1", "task1", expected_start, expected_end, false,
+                             waypoints));
 }
 
 int main(int argc, char** argv)

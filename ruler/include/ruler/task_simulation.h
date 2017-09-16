@@ -18,6 +18,11 @@ public:
   TaskSimulation(const TaskSimulation& simulation);
   virtual ~TaskSimulation();
   virtual void update(const ros::Time& timestamp = ros::Time::now());
+  virtual ros::Duration getTaskElapsedDuration(
+      const ros::Time& timestamp = ros::Time::now()) const;
+  virtual ros::Duration getTaskRemainingDuration(
+      const ros::Time& timestamp = ros::Time::now()) const;
+  virtual ros::Duration getTaskExpectedDuration() const;
   virtual std::string str() const;
 
 private:

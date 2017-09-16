@@ -37,37 +37,66 @@ TaskSimulation::~TaskSimulation() {}
 
 void TaskSimulation::update(const ros::Time& timestamp)
 {
-  if (!task_->hasStarted())
+  if (timestamp <= last_update_timestamp_)
   {
-    task_->start();
+    throw utilities::Exception(
+        "The simulation update timestamp must be after its last one.");
+  }
+  if (!task_->hasStarted() && timestamp >= task_start_timestamp_)
+  {
+    task_->start(timestamp);
   }
   if (task_->isRunning())
   {
     progress_level_ += progress_rate_->random();
   }
+  if (!task_->hasFinished() && progress_level_ >= 1.0)
+  {
+    progress_level_ = 1.0;
+    task_->finish(timestamp);
+  }
+  last_update_timestamp_ = timestamp;
+}
+
+ros::Duration
+TaskSimulation::getTaskElapsedDuration(const ros::Time& timestamp) const
+{
+  return task_->hasStarted() ? task_->getDuration(timestamp) : ros::Duration();
+}
+
+ros::Duration
+TaskSimulation::getTaskRemainingDuration(const ros::Time& timestamp) const
+{
+  ros::Duration elapsed_duration(getTaskElapsedDuration(timestamp));
+  return expected_duration_ > elapsed_duration ? elapsed_duration
+                                               : ros::Duration();
+}
+
+ros::Duration TaskSimulation::getTaskExpectedDuration() const
+{
+  return expected_duration_;
 }
 
 std::string TaskSimulation::str() const
 {
-  ros::Time timestamp(ros::Time::now());
   std::stringstream ss;
   ss << "[TaskSimulation] ";
-  ss << "elapsed duration: " << (timestamp - start_timestamp_).toSec()
+  ss << "elapsed duration: "
+     << getSimulationElapsedDuration(last_update_timestamp_).toSec()
      << " [s], ";
-  ros::Duration elapsed_duration;
-  if (task_->hasStarted())
-  {
-    elapsed_duration = timestamp - task_->getStartTimestamp();
-  }
-  ss << "task: elapsed duration: " << elapsed_duration.toSec() << " [s], ";
-  ros::Duration remaining_duration(expected_duration_ - elapsed_duration);
-  ss << "remaining duration: " << remaining_duration.toSec() << " [s], ";
+  ss << "task: elapsed duration: "
+     << getTaskElapsedDuration(last_update_timestamp_).toSec() << " [s], ";
+  ss << "remaining duration: "
+     << getTaskRemainingDuration(last_update_timestamp_).toSec() << " [s], ";
   ss << "expected duration: " << expected_duration_.toSec() << " [s], ";
   std::string status(!task_->hasStarted()
                          ? "NOT_STARTED"
                          : (!task_->hasFinished()) ? "STARTED" : "FINISHED");
   ss << "status: " << status << ", ";
-  ss << "progress: " << progress_level_ * 100 << " [%]";
+  if (status == "STARTED")
+  {
+    ss << "progress: " << progress_level_ * 100 << " [%]";
+  }
   return ss.str();
 }
 }

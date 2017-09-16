@@ -97,7 +97,7 @@ void TaskFunction<T>::update(const TaskEventConstPtr& event)
     if (event->getType() == types::INTERRUPTED)
     {
       ros::Time timestamp(task_->getLastInterruptionTimestamp());
-      double d0(task_->getDuration(timestamp));
+      ros::Duration d0(task_->getDuration(timestamp));
       double qf(getLevel(timestamp));
       bool ascending(quantity_function_->isAscending());
       bool negated(!quantity_function_->isNegated());
@@ -152,7 +152,7 @@ template <typename T> bool TaskFunction<T>::isNegated() const
 
 template <typename T> T TaskFunction<T>::getLevel(const ros::Time& timestmap) const
 {
-  T level(quantity_function_->getValue(task_->getDuration(timestmap)));
+  T level(quantity_function_->getValue(task_->getDuration(timestmap).toSec()));
   double duration((timestmap - task_->getStartTimestamp()).toSec());
   const_iterator it(interrupted_quantity_functions_.begin());
   while (it != interrupted_quantity_functions_.end())

@@ -69,7 +69,7 @@ void Task::resume(const ros::Time &timestamp)
   last_event_timestamp_ = timestamp;
 }
 
-double Task::getDuration(const ros::Time &timestamp) const
+ros::Duration Task::getDuration(const ros::Time &timestamp) const
 {
   double duration(
       ((!end_timestamp_.isZero() && timestamp > end_timestamp_ ? end_timestamp_ : timestamp) -

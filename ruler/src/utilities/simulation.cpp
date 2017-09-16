@@ -10,23 +10,32 @@
 namespace utilities
 {
 Simulation::Simulation()
-  : start_timestamp_(ros::Time::now())
+    : start_timestamp_(ros::Time::now()),
+      last_update_timestamp_(start_timestamp_)
 {
 }
 
 Simulation::Simulation(const Simulation& simulation)
-  : start_timestamp_(simulation.start_timestamp_)
+    : start_timestamp_(simulation.start_timestamp_),
+      last_update_timestamp_(simulation.last_update_timestamp_)
 {
 }
 
 Simulation::~Simulation() {}
 
-const char *Simulation::c_str() const
+ros::Duration Simulation::getSimulationElapsedDuration(const ros::Time &timestamp) const
 {
-  return str().c_str();
+  return last_update_timestamp_ - start_timestamp_;
 }
 
-std::ostream &operator<<(std::ostream &out, const Simulation &simulation)
+ros::Time Simulation::getSimulationStartTimestamp() const
+{
+  return start_timestamp_;
+}
+
+const char* Simulation::c_str() const { return str().c_str(); }
+
+std::ostream& operator<<(std::ostream& out, const Simulation& simulation)
 {
   out << simulation.str();
   return out;

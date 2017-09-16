@@ -20,7 +20,7 @@ public:
 
 private:
   ros::Time last_interruption_timestamp_;
-  std::list<TimeIntervalPtr> interruption_intervals_;
+  std::list<utilities::TimeIntervalPtr> interruption_intervals_;
 };
 
 typedef boost::shared_ptr<PreemptiveTask> PreemptiveTaskPtr;

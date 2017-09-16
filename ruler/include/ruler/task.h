@@ -37,7 +37,7 @@ public:
   Task(const ruler_msgs::Task& msg);
   Task(const Task& task);
   virtual ~Task();
-  void addResourceReservationRequest(const ResourceReservationRequestPtr &request);
+  void addResourceReservationRequest(const ResourceReservationRequestPtr &reservation);
   void addResource(const ResourceInterfacePtr& resource);
   void removeResource(const ResourceInterfacePtr& resource);
   void start(const ros::Time& timestamp = ros::Time::now());
@@ -45,7 +45,7 @@ public:
   void resume(const ros::Time& timestamp = ros::Time::now());
   void finish(const ros::Time& timestamp = ros::Time::now());
   void clearResources();
-  double getDuration(const ros::Time& timestamp = ros::Time::now()) const;
+  ros::Duration getDuration(const ros::Time& timestamp = ros::Time::now()) const;
   std::string getName() const;
   bool isPreemptive() const;
   ros::Time getStartTimestamp() const;
@@ -66,10 +66,13 @@ public:
   virtual bool operator==(const ruler_msgs::Task& msg) const;
   using Subject::operator!=;
 
-protected:
-  typedef utilities::Interval<ros::Time>::Ptr TimeIntervalPtr;
-
 private:
+  typedef std::list<utilities::TimeIntervalPtr>::iterator interruptions_iterator;
+  typedef std::list<utilities::TimeIntervalPtr>::const_iterator interruptions_const_iterator;
+  typedef std::list<ResourceReservationRequestPtr>::iterator reservations_iterator;
+  typedef std::list<ResourceReservationRequestPtr>::const_iterator reservations_const_iterator;
+  typedef std::list<geometry_msgs::Pose>::iterator waypoints_iterator;
+  typedef std::list<geometry_msgs::Pose>::const_iterator waypoints_const_iterator;
   std::string name_;
   bool preemptive_;
   utilities::NoisyTimePtr expected_start_;
@@ -79,8 +82,8 @@ private:
   ros::Time last_interruption_timestamp_;
   ros::Time end_timestamp_;
   ros::Time last_event_timestamp_;
-  std::list<TimeIntervalPtr> interruption_intervals_;
-  std::list<ResourceReservationRequestPtr> resource_reservation_requests_;
+  std::list<utilities::TimeIntervalPtr> interruptions_;
+  std::list<ResourceReservationRequestPtr> reservations_;
   std::list<geometry_msgs::Pose> waypoints_;
 };
 

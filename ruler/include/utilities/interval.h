@@ -9,8 +9,11 @@
 #define _UTILITIES_INTERVAL_H_
 
 #include <boost/shared_ptr.hpp>
+#include <ros/time.h>
 #include <sstream>
 #include "utilities/exception.h"
+#include "utilities/continuous_signal_type.h"
+#include "utilities/discrete_signal_type.h"
 
 namespace utilities
 {
@@ -41,6 +44,21 @@ private:
   bool including_min_;
   bool including_max_;
 };
+
+typedef Interval<ContinuousSignalType> ContinuousInterval;
+typedef ContinuousInterval::Ptr ContinuousIntervalPtr;
+typedef ContinuousInterval::ConstPtr ContinuousIntervalConstPtr;
+typedef Interval<DiscreteSignalType> DiscreteInterval;
+typedef DiscreteInterval::Ptr DiscreteIntervalPtr;
+typedef DiscreteInterval::ConstPtr DiscreteIntervalConstPtr;
+typedef Interval<ros::Duration> DurationInterval;
+typedef DurationInterval::Ptr DurationIntervalPtr;
+typedef DurationInterval::ConstPtr DurationIntervalConstPtr;
+typedef Interval<ros::Time> TimeInterval;
+typedef TimeInterval::Ptr TimeIntervalPtr;
+typedef TimeInterval::ConstPtr TimeIntervalConstPtr;
+
+// Time, Duration, Continuous, Discrete and Unary
 
 template <typename T>
 Interval<T>::Interval(const T& min, const T& max, bool including_min,

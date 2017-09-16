@@ -333,7 +333,7 @@ TEST(Task, start)
   utilities::NoisyTimePtr expected_end(new utilities::NoisyTime(
       timestamp + ros::Duration(5.0 * d), timestamp + ros::Duration(7.5 * d)));
   ruler::TaskPtr task(
-      new ruler::Task("t", "task", expected_start, expected_end));
+      new ruler::Task("t", "task", expected_start, expected_end, true));
   try
   {
     task->start();
@@ -404,7 +404,7 @@ TEST(Task, interrupt)
   utilities::NoisyTimePtr expected_end(new utilities::NoisyTime(
       timestamp + ros::Duration(5.0 * d), timestamp + ros::Duration(7.5 * d)));
   ruler::TaskPtr task(
-      new ruler::Task("t", "task", expected_start, expected_end));
+      new ruler::Task("t", "task", expected_start, expected_end, true));
   try
   {
     task->interrupt();
@@ -461,7 +461,7 @@ TEST(Task, resume)
   utilities::NoisyTimePtr expected_end(new utilities::NoisyTime(
       timestamp + ros::Duration(5.0 * d), timestamp + ros::Duration(7.5 * d)));
   ruler::TaskPtr task(
-      new ruler::Task("t", "task", expected_start, expected_end));
+      new ruler::Task("t", "task", expected_start, expected_end, true));
   try
   {
     task->resume();
@@ -532,7 +532,7 @@ TEST(Task, finish)
   utilities::NoisyTimePtr expected_end(new utilities::NoisyTime(
       timestamp + ros::Duration(5.0 * d), timestamp + ros::Duration(7.5 * d)));
   ruler::TaskPtr task(
-      new ruler::Task("t", "task", expected_start, expected_end));
+      new ruler::Task("t", "task", expected_start, expected_end, true));
   try
   {
     task->finish();
@@ -1139,7 +1139,7 @@ TEST(ResourceSharing, task1and2)
   utilities::NoisyTimePtr expected_end(new utilities::NoisyTime(
       timestamp + ros::Duration(4.5 * d), timestamp + ros::Duration(5.5 * d)));
   ruler::TaskPtr t1(
-      new ruler::Task("t1", "task1", expected_start, expected_end));
+      new ruler::Task("t1", "task1", expected_start, expected_end, true));
   ruler::TaskPtr t2(
       new ruler::Task("t2", "task2", expected_start, expected_end));
   t1->addResourceReservationRequest(
@@ -1244,21 +1244,54 @@ TEST(ResourceSharing, task1and2)
   EXPECT_EQ(5 - 0, r2->getLevel(timestamp + ros::Duration(8.0 * d)));
 }
 
-TEST(Simulation, taskSimulation)
+TEST(Task, distance)
 {
-  double d(0.5);
+  std::list<geometry_msgs::Pose> waypoints;
+  geometry_msgs::Pose p;
+  waypoints.push_back(p);
+  p.position.x = 3.0;
+  waypoints.push_back(p);
+  p.position.x = 0.0;
+  p.position.y = 4.0;
+  waypoints.push_back(p);
+  p.position.y = 0.0;
+  waypoints.push_back(p);
+  double d(1.0);
   ros::Time timestamp(ros::Time::now());
   utilities::NoisyTimePtr expected_start(new utilities::NoisyTime(
       timestamp + ros::Duration(1.0 * d), timestamp + ros::Duration(1.5 * d)));
   utilities::NoisyTimePtr expected_end(new utilities::NoisyTime(
       timestamp + ros::Duration(5.0 * d), timestamp + ros::Duration(7.5 * d)));
   ruler::TaskPtr task(
+      new ruler::Task("t", "task", expected_start, expected_end, false, waypoints));
+  EXPECT_GE(tolerance, fabs(12.0 - task->getDistance()));
+}
+
+TEST(Simulation, taskSimulation)
+{
+  double d(1.0);
+  ros::Time timestamp(ros::Time::now());
+  utilities::NoisyTimePtr expected_start(new utilities::NoisyTime(
+      timestamp + ros::Duration(9.9 * d), timestamp + ros::Duration(10.01 * d)));
+  utilities::NoisyTimePtr expected_end(new utilities::NoisyTime(
+      timestamp + ros::Duration(54.0 * d), timestamp + ros::Duration(56.0 * d)));
+  ruler::TaskPtr task(
       new ruler::Task("t", "task", expected_start, expected_end));
+  ruler::UnaryConsumableResourcePtr resource(
+      new ruler::UnaryConsumableResource("r", "resource"));
+  task->addResource(resource);
   utilities::ContinuousNoisySignalPtr expected_sample_time(
-      new utilities::ContinuousNoisySignal(d, 0.05 * d));
+      new utilities::ContinuousNoisySignal(0.5 * d, 0.005 * d));
   ruler::TaskSimulationPtr simulation(
       new ruler::TaskSimulation(task, expected_sample_time));
-  simulation->update(timestamp);
+  timestamp = simulation->getSimulationStartTimestamp();
+  ROS_WARN("%s", simulation->c_str());
+  while (!task->hasFinished())
+  {
+    timestamp += ros::Duration(expected_sample_time->random());
+    simulation->update(timestamp);
+    ROS_WARN("%s", simulation->c_str());
+  }
 }
 
 void init()

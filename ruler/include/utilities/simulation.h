@@ -17,14 +17,19 @@ class Simulation
 public:
   virtual ~Simulation();
   virtual void update(const ros::Time& timestamp) = 0;
+  ros::Duration getSimulationElapsedDuration(
+      const ros::Time& timestamp = ros::Time::now()) const;
+  ros::Time getSimulationStartTimestamp() const;
+  virtual std::string str() const = 0;
+  const char* c_str() const;
+  friend std::ostream& operator<<(std::ostream& out,
+                                  const Simulation& simulation);
 
 protected:
   ros::Time start_timestamp_;
+  ros::Time last_update_timestamp_;
   Simulation();
   Simulation(const Simulation& simulation);
-  virtual std::string str() const = 0;
-  const char* c_str() const;
-  friend std::ostream& operator<<(std::ostream& out, const Simulation& simulation);
 };
 }
 
