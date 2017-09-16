@@ -26,6 +26,9 @@ public:
   virtual bool operator&&(const UnarySignalType& signal_type) const;
   virtual bool operator||(const UnarySignalType& signal_type) const;
 };
+
+typedef boost::shared_ptr<UnarySignalType> UnarySignalTypePtr;
+typedef boost::shared_ptr<UnarySignalType const> UnarySignalTypeConstPtr;
 }
 
 #endif // _UTILITIES_UNARY_SIGNAL_TYPE_H_

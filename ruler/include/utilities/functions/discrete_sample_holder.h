@@ -21,6 +21,9 @@ public:
   DiscreteSampleHolder(const DiscreteSampleHolder& function);
   virtual ~DiscreteSampleHolder();
 };
+
+typedef boost::shared_ptr<DiscreteSampleHolder> DiscreteSampleHolderPtr;
+typedef boost::shared_ptr<DiscreteSampleHolder const> DiscreteSampleHolderConstPtr;
 }
 }
 

@@ -21,11 +21,14 @@ class UnaryStepFunction : public StepFunction<UnarySignalType>
 public:
   UnaryStepFunction(double d0 = 0.0, bool ascending = false,
                     bool negated = false);
-  UnaryStepFunction(ros::Duration d0, bool ascending = false,
+  UnaryStepFunction(const ros::Duration& d0, bool ascending = false,
                     bool negated = false);
   UnaryStepFunction(const UnaryStepFunction& function);
   virtual ~UnaryStepFunction();
 };
+
+typedef boost::shared_ptr<UnaryStepFunction> UnaryStepFunctionPtr;
+typedef boost::shared_ptr<UnaryStepFunction const> UnaryStepFunctionConstPtr;
 }
 }
 

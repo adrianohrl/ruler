@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 
+add_compile_options(-std=c++11)
+
 project(ruler_test)
 
 find_package(catkin REQUIRED COMPONENTS
@@ -39,19 +41,13 @@ set(CPP_FILES
 )
 
 add_executable(ruler_test_node src/ruler_test_node.cpp ${CPP_FILES})
-
 add_dependencies(ruler_test_node ${catkin_EXPORTED_TARGETS})
-
 target_link_libraries(ruler_test_node ${catkin_LIBRARIES} ${ruler_LIBRARIES})
 
 add_executable(task_generator_node src/task_generator_node.cpp ${CPP_FILES})
-
 add_dependencies(task_generator_node ${catkin_EXPORTED_TARGETS})
-
 target_link_libraries(task_generator_node ${catkin_LIBRARIES} ${ruler_LIBRARIES})
 
 add_executable(task_execution_simulator_node src/task_execution_simulator_node.cpp ${CPP_FILES})
-
 add_dependencies(task_execution_simulator_node ${catkin_EXPORTED_TARGETS})
-
 target_link_libraries(task_execution_simulator_node ${catkin_LIBRARIES} ${ruler_LIBRARIES})

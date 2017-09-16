@@ -18,7 +18,7 @@ class BatteryConsumptionEstimator : public MetricsEstimator
 public:
   BatteryConsumptionEstimator();
   virtual ~BatteryConsumptionEstimator();
-  virtual void initialize(Robot* robot);
+  virtual void initialize(const RobotPtr& robot);
   virtual double calculate(const Task& task) const;
 };
 }

@@ -9,8 +9,9 @@ ContinuousSampleHolder::ContinuousSampleHolder(
     const std::string& id, double value, const ros::Duration& buffer_horizon,
     const ros::Time& start_timestamp)
     : SampleHolder<ContinuousSignalType>::SampleHolder(
-          id, new ContinuousStepFunction(value, true), buffer_horizon,
-          start_timestamp)
+          id,
+          ContinuousStepFunctionPtr(new ContinuousStepFunction(value, true)),
+          buffer_horizon, start_timestamp)
 {
 }
 
@@ -18,8 +19,9 @@ ContinuousSampleHolder::ContinuousSampleHolder(
     const std::string& id, double value, const ros::Duration& timeout_duration,
     const ros::Duration& buffer_horizon, const ros::Time& start_timestamp)
     : SampleHolder<ContinuousSignalType>::SampleHolder(
-          id, new ContinuousStepFunction(value, true), timeout_duration,
-          buffer_horizon, start_timestamp)
+          id,
+          ContinuousStepFunctionPtr(new ContinuousStepFunction(value, true)),
+          timeout_duration, buffer_horizon, start_timestamp)
 {
 }
 

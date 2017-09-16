@@ -10,7 +10,8 @@
 
 namespace ruler
 {
-ResourceReservationRequest::ResourceReservationRequest(Task* task) : task_(task)
+ResourceReservationRequest::ResourceReservationRequest(const TaskPtr& task)
+    : task_(task)
 {
 }
 
@@ -20,10 +21,7 @@ ResourceReservationRequest::ResourceReservationRequest(
 {
 }
 
-ResourceReservationRequest::~ResourceReservationRequest() { task_ = NULL; }
+ResourceReservationRequest::~ResourceReservationRequest() {}
 
-Task *ResourceReservationRequest::getTask() const
-{
-  return task_;
-}
+TaskPtr ResourceReservationRequest::getTask() const { return task_; }
 }

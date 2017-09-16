@@ -10,7 +10,7 @@
 
 namespace nodes
 {
-RulerNode::RulerNode(ros::NodeHandlePtr nh, float loop_rate)
+RulerNode::RulerNode(const ros::NodeHandlePtr& nh, const ros::Rate& loop_rate)
     : ROSNode::ROSNode(nh, loop_rate), robot_(NULL)
 {
 }
@@ -18,27 +18,15 @@ RulerNode::RulerNode(ros::NodeHandlePtr nh, float loop_rate)
 RulerNode::~RulerNode()
 {
   resources_pub_.shutdown();
-  std::map<std::string, ros::Publisher>::iterator pub_it(resource_pubs_.begin());
-  while (pub_it != resource_pubs_.end())
+  for (pub_iterator it(resource_pubs_.begin()); it != resource_pubs_.end(); it++)
   {
-    ros::Publisher pub(pub_it->second);
+    ros::Publisher pub(it->second);
     pub.shutdown();
-    pub_it++;
   }
-  std::list<MetricsServiceServer*>::iterator srv_it(metrics_srvs_.begin());
-  while (srv_it != metrics_srvs_.end())
+  for (srv_iterator it(metrics_srvs_.begin()); it != metrics_srvs_.end(); it++)
   {
-    if (*srv_it)
-    {
-      delete *srv_it;
-      *srv_it = NULL;
-    }
-    srv_it++;
-  }
-  if (robot_)
-  {
-    delete robot_;
-    robot_ = NULL;
+    MetricsServiceServerPtr srv(*it);
+    srv->shutdown();
   }
 }
 
@@ -59,7 +47,7 @@ void RulerNode::readParameters()
     ROSNode::shutdown("Invalid ROS namespace. It must end with '" + id + "'.");
     return;
   }
-  robot_ = new ruler::Robot(id, name);
+  robot_.reset(new ruler::Robot(id, name));
   pnh = ros::NodeHandle("~/metrics");
   int size;
   pnh.param("size", size, 0);
@@ -73,7 +61,7 @@ void RulerNode::readParameters()
       ROS_ERROR("The service server name must not be empty.");
       continue;
     }
-    MetricsServiceServer *server = new MetricsServiceServer(getNodeHandle(), name);
+    MetricsServiceServerPtr server(new MetricsServiceServer(getNodeHandle(), name));
     server->readPlugins(robot_, pnh.getNamespace() + "/" + ss.str());
     metrics_srvs_.push_back(server);
   }
@@ -88,7 +76,7 @@ void RulerNode::readParameters()
   double latence, continuous_capacity, continuous_initial_level;
   int discrete_capacity, discrete_initial_level;
   bool unary_initial_level;
-  ruler::ResourceInterface* resource;
+  ruler::ResourceInterfacePtr resource;
   for (int i(0); i < size; i++)
   {
     std::stringstream ss;
@@ -118,15 +106,15 @@ void RulerNode::readParameters()
         pnh.param(ss.str() + "initial_level", continuous_initial_level, 0.0);
         if (type == "consumable")
         {
-          resource = new ruler::ContinuousConsumableResource(
+          resource.reset(new ruler::ContinuousConsumableResource(
               id, name, continuous_capacity, continuous_initial_level,
-              ros::Duration(latence));
+              ros::Duration(latence)));
         }
         else
         {
-          resource = new ruler::ContinuousReusableResource(
+          resource.reset(new ruler::ContinuousReusableResource(
               id, name, continuous_capacity, continuous_initial_level,
-              ros::Duration(latence));
+              ros::Duration(latence)));
         }
         break;
       case utilities::signal_types::DISCRETE:
@@ -134,28 +122,28 @@ void RulerNode::readParameters()
         pnh.param(ss.str() + "initial_level", discrete_initial_level, 0);
         if (type == "consumable")
         {
-          resource = new ruler::DiscreteConsumableResource(
+          resource.reset(new ruler::DiscreteConsumableResource(
               id, name, discrete_capacity, discrete_initial_level,
-              ros::Duration(latence));
+              ros::Duration(latence)));
         }
         else
         {
-          resource = new ruler::DiscreteReusableResource(
+          resource.reset(new ruler::DiscreteReusableResource(
               id, name, discrete_capacity, discrete_initial_level,
-              ros::Duration(latence));
+              ros::Duration(latence)));
         }
         break;
       case utilities::signal_types::UNARY:
         pnh.param(ss.str() + "initial_level", unary_initial_level, false);
         if (type == "consumable")
         {
-          resource = new ruler::UnaryConsumableResource(
-              id, name, unary_initial_level, ros::Duration(latence));
+          resource.reset(new ruler::UnaryConsumableResource(
+              id, name, unary_initial_level, ros::Duration(latence)));
         }
         else
         {
-          resource = new ruler::UnaryReusableResource(
-              id, name, unary_initial_level, ros::Duration(latence));
+          resource.reset(new ruler::UnaryReusableResource(
+              id, name, unary_initial_level, ros::Duration(latence)));
         }
       }
     }
@@ -172,7 +160,7 @@ void RulerNode::readParameters()
     ROS_INFO_STREAM("   Added resource: " << *resource << " to " << *robot_
                                           << ".");
   }
-  if (robot_->getResources().empty())
+  if (robot_->empty())
   {
     ROSNode::shutdown("None resource was imported.");
   }
@@ -181,31 +169,25 @@ void RulerNode::readParameters()
 void RulerNode::init()
 {
   ros::NodeHandlePtr nh(ROSNode::getNodeHandle());
-  std::list<ruler::ResourceInterface*> resources(robot_->getResources());
   resources_pub_ =
-      nh->advertise<ruler_msgs::Resource>("resources", resources.size());
-  std::list<ruler::ResourceInterface*>::const_iterator it(resources.begin());
-  while (it != resources.end())
+      nh->advertise<ruler_msgs::Resource>("resources", robot_->size());
+  for (ruler::Robot::const_iterator it(robot_->begin()); it != robot_->end(); it++)
   {
-    ruler::ResourceInterface* resource = *it;
+    ruler::ResourceInterfacePtr resource(*it);
     resource_pubs_.insert(std::pair<std::string, ros::Publisher>(
         resource->getId(), nh->advertise<ruler_msgs::Resource>(
                                "resources/" + resource->str(), 10)));
-    it++;
   }
 }
 
 void RulerNode::controlLoop()
 {
-  std::list<ruler::ResourceInterface*> resources(robot_->getResources());
-  std::list<ruler::ResourceInterface*>::const_iterator it(resources.begin());
-  while (it != resources.end())
+  for (ruler::Robot::iterator it(robot_->begin()); it != robot_->end(); it++)
   {
-    ruler::ResourceInterface* resource = *it;
+    ruler::ResourceInterfacePtr resource(*it);
     ruler_msgs::Resource msg(resource->toMsg());
     resources_pub_.publish(msg);
     resource_pubs_.at(resource->getId()).publish(msg);
-    it++;
   }
 }
 }

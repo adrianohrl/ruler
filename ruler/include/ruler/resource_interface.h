@@ -31,7 +31,7 @@ public:
   virtual bool operator==(const ruler_msgs::Resource& msg) const;
 
 protected:
-  ResourceInterface(const std::string id);
+  ResourceInterface(const std::string& id);
   ResourceInterface(const ResourceInterface& resource);
 };
 

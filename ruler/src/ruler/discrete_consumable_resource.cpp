@@ -10,26 +10,28 @@
 
 namespace ruler
 {
-DiscreteConsumableResource::DiscreteConsumableResource(std::string id,
-                                                       std::string name,
-                                                       long capacity,
-                                                       long initial_level,
-                                                       ros::Duration latence)
+DiscreteConsumableResource::DiscreteConsumableResource(
+    const std::string& id, const std::string& name, long capacity,
+    long initial_level, const ros::Duration& latence)
     : ConsumableResource<utilities::DiscreteSignalType>::ConsumableResource(
           id, name, utilities::DiscreteSignalType(capacity),
           utilities::DiscreteSignalType(initial_level), latence)
 {
 }
 
-DiscreteConsumableResource::DiscreteConsumableResource(std::string id, std::string name, utilities::DiscreteSignalType capacity,
-    utilities::DiscreteSignalType initial_level, ros::Duration latence)
+DiscreteConsumableResource::DiscreteConsumableResource(
+    const std::string& id, const std::string& name,
+    const utilities::DiscreteSignalType& capacity,
+    const utilities::DiscreteSignalType& initial_level,
+    const ros::Duration& latence)
     : ConsumableResource<utilities::DiscreteSignalType>::ConsumableResource(
           id, name, capacity, initial_level, latence)
 {
 }
 
-DiscreteConsumableResource::DiscreteConsumableResource(const ruler_msgs::Resource &msg)
-  : ConsumableResource<utilities::DiscreteSignalType>::ConsumableResource(msg)
+DiscreteConsumableResource::DiscreteConsumableResource(
+    const ruler_msgs::Resource& msg)
+    : ConsumableResource<utilities::DiscreteSignalType>::ConsumableResource(msg)
 {
   utilities::SignalTypeEnum signal_type(
       utilities::SignalTypes::toEnumerated(msg.signal_type));

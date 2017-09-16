@@ -18,7 +18,7 @@ class DisplacementEstimator : public MetricsEstimator
 public:
   DisplacementEstimator();
   virtual ~DisplacementEstimator();
-  virtual void initialize(Robot* robot);
+  virtual void initialize(const RobotPtr& robot);
   virtual double calculate(const Task& task) const;
 };
 }

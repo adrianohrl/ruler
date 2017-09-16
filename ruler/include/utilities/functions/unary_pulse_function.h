@@ -23,11 +23,14 @@ public:
   UnaryPulseFunction(const UnaryStepFunction& step_function, ros::Duration df);
   UnaryPulseFunction(double d0, double df, bool ascending = false,
                      bool negated = false);
-  UnaryPulseFunction(ros::Duration d0, ros::Duration df, bool ascending = false,
-                     bool negated = false);
+  UnaryPulseFunction(const ros::Duration& d0, const ros::Duration& df,
+                     bool ascending = false, bool negated = false);
   UnaryPulseFunction(const UnaryPulseFunction& function);
   virtual ~UnaryPulseFunction();
 };
+
+typedef boost::shared_ptr<UnaryPulseFunction> UnaryPulseFunctionPtr;
+typedef boost::shared_ptr<UnaryPulseFunction const> UnaryPulseFunctionConstPtr;
 }
 }
 

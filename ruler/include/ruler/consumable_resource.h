@@ -9,33 +9,47 @@
 #ifndef _RULER_CONSUMABLE_RESOURCE_H_
 #define _RULER_CONSUMABLE_RESOURCE_H_
 
+#include <boost/enable_shared_from_this.hpp>
 #include "utilities/functions/function.h"
 #include "ruler/resource.h"
 
 namespace ruler
 {
-template <typename T> class ConsumableResource : public Resource<T>
+template <typename T>
+class ConsumableResource
+    : public Resource<T>
 {
+protected:
+  typedef typename boost::enable_shared_from_this<Resource<T> > enable_shared_from_this;
+  typedef typename utilities::functions::Function<T>::Ptr FunctionPtr;
+  typedef typename utilities::functions::Function<T>::ConstPtr FunctionConstPtr;
+  typedef typename TaskFunction<T>::Ptr TaskFunctionPtr;
+  typedef typename TaskFunction<T>::ConstPtr TaskFunctionConstPtr;
+
 public:
+  typedef boost::shared_ptr<ConsumableResource<T> > Ptr;
+  typedef boost::shared_ptr<ConsumableResource<T> const> ConstPtr;
   virtual ~ConsumableResource();
   virtual bool isConsumable() const;
-  virtual void consume(Task* task,
-                       utilities::functions::Function<T>* quantity_function);
-  virtual void produce(Task* task,
-                       utilities::functions::Function<T>* quantity_function);
+  virtual void consume(const TaskPtr& task,
+                       const FunctionPtr& quantity_function);
+  virtual void produce(const TaskPtr& task,
+                       const FunctionPtr& quantity_function);
 
 protected:
-  ConsumableResource(std::string id, std::string name, T capacity,
-                     T initial_level,
-                     ros::Duration latence = ros::Duration(0.0));
+  ConsumableResource(const std::string& id, const std::string& name,
+                     const T& capacity, const T& initial_level,
+                     const ros::Duration& latence = ros::Duration(0.0));
   ConsumableResource(const ruler_msgs::Resource& msg);
   ConsumableResource(const ConsumableResource<T>& resource);
 };
 
 template <typename T>
-ConsumableResource<T>::ConsumableResource(std::string id, std::string name,
-                                          T capacity, T initial_level,
-                                          ros::Duration latence)
+ConsumableResource<T>::ConsumableResource(const std::string& id,
+                                          const std::string& name,
+                                          const T& capacity,
+                                          const T& initial_level,
+                                          const ros::Duration& latence)
     : Resource<T>::Resource(id, name, capacity, initial_level, latence)
 {
 }
@@ -64,8 +78,8 @@ template <typename T> bool ConsumableResource<T>::isConsumable() const
 }
 
 template <typename T>
-void ConsumableResource<T>::consume(
-    Task* task, utilities::functions::Function<T>* quantity_function)
+void ConsumableResource<T>::consume(const TaskPtr& task,
+                                    const FunctionPtr& quantity_function)
 {
   if (!quantity_function->saturatesEnd())
   {
@@ -82,13 +96,15 @@ void ConsumableResource<T>::consume(
   }
   quantity_function->setNegated(true);
   quantity_function->setAscending(true);
-  Resource<T>::profile_->addTaskFunction(
-      new TaskFunction<T>(this, task, quantity_function));
+  TaskFunctionPtr task_function(
+      new TaskFunction<T>(enable_shared_from_this::shared_from_this(),
+                          task, quantity_function));
+  Resource<T>::profile_->addTaskFunction(task_function);
 }
 
 template <typename T>
-void ConsumableResource<T>::produce(
-    Task* task, utilities::functions::Function<T>* quantity_function)
+void ConsumableResource<T>::produce(const TaskPtr& task,
+                                    const FunctionPtr& quantity_function)
 {
   if (!quantity_function->saturatesEnd())
   {
@@ -105,8 +121,10 @@ void ConsumableResource<T>::produce(
   }
   quantity_function->setNegated(false);
   quantity_function->setAscending(true);
-  Resource<T>::profile_->addTaskFunction(
-      new TaskFunction<T>(this, task, quantity_function));
+  TaskFunctionPtr task_function(
+      new TaskFunction<T>(enable_shared_from_this::shared_from_this(),
+                          task, quantity_function));
+  Resource<T>::profile_->addTaskFunction(task_function);
 }
 }
 

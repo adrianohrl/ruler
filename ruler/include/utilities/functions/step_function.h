@@ -18,16 +18,18 @@ namespace functions
 template <typename T> class StepFunction : public Function<T>
 {
 public:
+  typedef boost::shared_ptr<StepFunction<T> > Ptr;
+  typedef boost::shared_ptr<StepFunction<T> const> ConstPtr;
   StepFunction(double qf, bool ascending, bool negated);
   StepFunction(double d0, double qf, bool ascending, bool negated);
-  StepFunction(ros::Duration d0, double qf, bool ascending, bool negated);
+  StepFunction(const ros::Duration& d0, double qf, bool ascending, bool negated);
   StepFunction(const StepFunction<T>& function);
   virtual ~StepFunction();
   virtual StepFunction<T>* clone() const;
 
 protected:
   StepFunction(double d0, double q0, double qf, bool ascending, bool negated);
-  StepFunction(ros::Duration d0, double q0, double qf, bool ascending,
+  StepFunction(const ros::Duration& d0, double q0, double qf, bool ascending,
                bool negated);
 
 private:
@@ -48,7 +50,7 @@ StepFunction<T>::StepFunction(double d0, double qf, bool ascending,
 }
 
 template <typename T>
-StepFunction<T>::StepFunction(ros::Duration d0, double qf, bool ascending,
+StepFunction<T>::StepFunction(const ros::Duration& d0, double qf, bool ascending,
                               bool negated)
     : Function<T>::Function("Step", d0.toSec(), INFINITY, 0.0, qf, ascending,
                             negated)
@@ -63,7 +65,7 @@ StepFunction<T>::StepFunction(double d0, double q0, double qf, bool ascending,
 }
 
 template <typename T>
-StepFunction<T>::StepFunction(ros::Duration d0, double q0, double qf,
+StepFunction<T>::StepFunction(const ros::Duration &d0, double q0, double qf,
                               bool ascending, bool negated)
     : Function<T>::Function("Step", d0.toSec(), INFINITY, q0, qf, ascending,
                             negated)
@@ -78,7 +80,7 @@ StepFunction<T>::StepFunction(const StepFunction<T>& function)
 
 template <typename T> StepFunction<T>::~StepFunction() {}
 
-template <typename T> StepFunction<T> *StepFunction<T>::clone() const
+template <typename T> StepFunction<T>* StepFunction<T>::clone() const
 {
   return new StepFunction<T>(*this);
 }

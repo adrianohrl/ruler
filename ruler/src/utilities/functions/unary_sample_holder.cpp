@@ -9,7 +9,8 @@ UnarySampleHolder::UnarySampleHolder(const std::string& id,
                                      const ros::Duration& buffer_horizon,
                                      const ros::Time& start_timestamp)
     : SampleHolder<UnarySignalType>::SampleHolder(
-          id, new UnaryStepFunction(0.0, true), buffer_horizon, start_timestamp)
+          id, UnaryStepFunctionPtr(new UnaryStepFunction(0.0, true)),
+          buffer_horizon, start_timestamp)
 {
 }
 
@@ -18,8 +19,8 @@ UnarySampleHolder::UnarySampleHolder(const std::string& id,
                                      const ros::Duration& buffer_horizon,
                                      const ros::Time& start_timestamp)
     : SampleHolder<UnarySignalType>::SampleHolder(
-          id, new UnaryStepFunction(0.0, true), timeout_duration,
-          buffer_horizon, start_timestamp)
+          id, UnaryStepFunctionPtr(new UnaryStepFunction(0.0, true)),
+          timeout_duration, buffer_horizon, start_timestamp)
 {
 }
 
@@ -30,7 +31,7 @@ UnarySampleHolder::UnarySampleHolder(const UnarySampleHolder& function)
 
 UnarySampleHolder::~UnarySampleHolder() {}
 
-void UnarySampleHolder::update(ToggleEvent* event)
+void UnarySampleHolder::update(const ToggleEventConstPtr& event)
 {
   SampleHolder<UnarySignalType>::update(event->getValue(),
                                         event->getTimestamp());

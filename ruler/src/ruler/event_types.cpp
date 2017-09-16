@@ -11,7 +11,9 @@
 
 namespace ruler
 {
-EventTypes::EventTypes(EventType enumarated) : EnumConverter(enumarated) {}
+EventTypes::EventTypes(const EventType& enumarated) : EnumConverter(enumarated)
+{
+}
 
 EventTypes::~EventTypes() {}
 
@@ -20,22 +22,22 @@ EventType EventTypes::getEnumerated(int code) const
   return EventTypes::toEnumerated(code);
 }
 
-EventType EventTypes::getEnumerated(std::string name) const
+EventType EventTypes::getEnumerated(const std::string& name) const
 {
   return EventTypes::toEnumerated(name);
 }
 
-int EventTypes::getCode(std::string name) const
+int EventTypes::getCode(const std::string& name) const
 {
   return EventTypes::toCode(EventTypes::toEnumerated(name));
 }
 
-int EventTypes::getCode(EventType enumerated) const
+int EventTypes::getCode(const EventType& enumerated) const
 {
   return EventTypes::toCode(enumerated);
 }
 
-std::string EventTypes::str(EventType enumerated) const
+std::string EventTypes::str(const EventType& enumerated) const
 {
   return EventTypes::toString(enumerated);
 }
@@ -64,7 +66,7 @@ EventType EventTypes::toEnumerated(int code)
   return enumerated;
 }
 
-EventType EventTypes::toEnumerated(std::string name)
+EventType EventTypes::toEnumerated(const std::string& name)
 {
   EventType enumerated;
   if (name == "STARTED" || name == "Started" || name == "started")
@@ -92,7 +94,7 @@ EventType EventTypes::toEnumerated(std::string name)
   return enumerated;
 }
 
-int EventTypes::toCode(EventType enumerated)
+int EventTypes::toCode(const EventType& enumerated)
 {
   int code;
   switch (enumerated)
@@ -116,7 +118,7 @@ int EventTypes::toCode(EventType enumerated)
   return code;
 }
 
-std::string EventTypes::toString(EventType enumerated)
+std::string EventTypes::toString(const EventType& enumerated)
 {
   std::string name;
   switch (enumerated)
@@ -140,7 +142,7 @@ std::string EventTypes::toString(EventType enumerated)
   return name;
 }
 
-const char* EventTypes::toCString(EventType enumerated)
+const char* EventTypes::toCString(const EventType& enumerated)
 {
   return EventTypes::toString(enumerated).c_str();
 }

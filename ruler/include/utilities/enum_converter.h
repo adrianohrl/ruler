@@ -19,20 +19,20 @@ public:
   virtual ~EnumConverter();
   E getEnumerated() const;
   virtual E getEnumerated(int code) const = 0;
-  virtual E getEnumerated(std::string name) const = 0;
+  virtual E getEnumerated(const std::string& name) const = 0;
   int getCode() const;
-  virtual int getCode(std::string name) const = 0;
-  virtual int getCode(E enumerated) const = 0;
+  virtual int getCode(const std::string& name) const = 0;
+  virtual int getCode(const E& enumerated) const = 0;
   std::string str() const;
-  virtual std::string str(E enumerated) const = 0;
+  virtual std::string str(const E& enumerated) const = 0;
   const char* c_str() const;
-  const char* c_str(E enumerated) const;
+  const char* c_str(const E& enumerated) const;
   void operator=(int code);
-  void operator=(std::string nome);
-  void operator=(E enumerated);
+  void operator=(const std::string& nome);
+  void operator=(const E& enumerated);
 
 protected:
-  EnumConverter(E enumerated);
+  EnumConverter(const E& enumerated);
 
 private:
   E enumerated_;
@@ -48,7 +48,7 @@ private:
  *
  */
 template <typename E>
-EnumConverter<E>::EnumConverter(E enumerated)
+EnumConverter<E>::EnumConverter(const E &enumerated)
     : enumerated_(enumerated)
 {
 }
@@ -93,7 +93,7 @@ template <typename E> const char* EnumConverter<E>::c_str() const
 /**
  *
  */
-template <typename E> const char* EnumConverter<E>::c_str(E enumerated) const
+template <typename E> const char* EnumConverter<E>::c_str(const E& enumerated) const
 {
   return str(enumerated).c_str();
 }
@@ -109,7 +109,7 @@ template <typename E> void EnumConverter<E>::operator=(int id)
 /**
  *
  */
-template <typename E> void EnumConverter<E>::operator=(std::string nome)
+template <typename E> void EnumConverter<E>::operator=(const std::string& nome)
 {
   enumerated_ = getEnumerated(nome);
 }
@@ -117,7 +117,7 @@ template <typename E> void EnumConverter<E>::operator=(std::string nome)
 /**
  *
  */
-template <typename E> void EnumConverter<E>::operator=(E enumerated)
+template <typename E> void EnumConverter<E>::operator=(const E& enumerated)
 {
   enumerated_ = enumerated;
 }

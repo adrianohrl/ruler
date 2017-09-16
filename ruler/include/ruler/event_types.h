@@ -29,19 +29,19 @@ typedef types::EventType EventType;
 class EventTypes : public utilities::EnumConverter<EventType>
 {
 public:
-  EventTypes(EventType enumarated);
+  EventTypes(const EventType& enumarated);
   virtual ~EventTypes();
   virtual EventType getEnumerated(int code) const;
-  virtual EventType getEnumerated(std::string name) const;
-  virtual int getCode(std::string name) const;
-  virtual int getCode(EventType enumerated) const;
-  virtual std::string str(EventType enumerated) const;
+  virtual EventType getEnumerated(const std::string& name) const;
+  virtual int getCode(const std::string& name) const;
+  virtual int getCode(const EventType& enumerated) const;
+  virtual std::string str(const EventType& enumerated) const;
 
   static EventType toEnumerated(int code);
-  static EventType toEnumerated(std::string name);
-  static int toCode(EventType enumerated);
-  static std::string toString(EventType enumerated);
-  static const char* toCString(EventType enumerated);
+  static EventType toEnumerated(const std::string& name);
+  static int toCode(const EventType& enumerated);
+  static std::string toString(const EventType& enumerated);
+  static const char* toCString(const EventType& enumerated);
   static EventType getDefault();
   static std::vector<EventType> getAll();
 };

@@ -23,12 +23,18 @@ public:
   ContinuousExponentialFunction(double d0, double df, double q0, double qf,
                                 double k = 5, double base = M_E,
                                 bool ascending = false, bool negated = false);
-  ContinuousExponentialFunction(ros::Duration d0, ros::Duration df, double q0,
-                                double qf, double k = 5, double base = M_E,
+  ContinuousExponentialFunction(const ros::Duration& d0,
+                                const ros::Duration& df, double q0, double qf,
+                                double k = 5, double base = M_E,
                                 bool ascending = false, bool negated = false);
   ContinuousExponentialFunction(const ContinuousExponentialFunction& function);
   virtual ~ContinuousExponentialFunction();
 };
+
+typedef boost::shared_ptr<ContinuousExponentialFunction>
+    ContinuousExponentialFunctionPtr;
+typedef boost::shared_ptr<ContinuousExponentialFunction const>
+    ContinuousExponentialFunctionConstPtr;
 }
 }
 

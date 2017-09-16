@@ -33,9 +33,9 @@ DiscretePulseFunction::DiscretePulseFunction(double d0, double df, double qf,
 {
 }
 
-DiscretePulseFunction::DiscretePulseFunction(ros::Duration d0, ros::Duration df,
-                                             double qf, bool ascending,
-                                             bool negated)
+DiscretePulseFunction::DiscretePulseFunction(const ros::Duration& d0,
+                                             const ros::Duration& df, double qf,
+                                             bool ascending, bool negated)
     : PulseFunction<utilities::DiscreteSignalType>::PulseFunction(
           d0, df, qf, ascending, negated)
 {
@@ -49,9 +49,10 @@ DiscretePulseFunction::DiscretePulseFunction(double d0, double df, double q0,
 {
 }
 
-DiscretePulseFunction::DiscretePulseFunction(ros::Duration d0, ros::Duration df,
-                                             double q0, double qf,
-                                             bool ascending, bool negated)
+DiscretePulseFunction::DiscretePulseFunction(const ros::Duration& d0,
+                                             const ros::Duration& df, double q0,
+                                             double qf, bool ascending,
+                                             bool negated)
     : PulseFunction<utilities::DiscreteSignalType>::PulseFunction(
           d0, df, q0, qf, ascending, negated)
 {

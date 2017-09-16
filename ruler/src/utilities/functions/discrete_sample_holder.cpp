@@ -9,8 +9,8 @@ DiscreteSampleHolder::DiscreteSampleHolder(const std::string& id, long value,
                                            const ros::Duration& buffer_horizon,
                                            const ros::Time& start_timestamp)
     : SampleHolder<DiscreteSignalType>::SampleHolder(
-          id, new DiscreteStepFunction(value, true), buffer_horizon,
-          start_timestamp)
+          id, DiscreteStepFunctionPtr(new DiscreteStepFunction(value, true)),
+          buffer_horizon, start_timestamp)
 {
 }
 
@@ -18,8 +18,8 @@ DiscreteSampleHolder::DiscreteSampleHolder(
     const std::string& id, long value, const ros::Duration& timeout_duration,
     const ros::Duration& buffer_horizon, const ros::Time& start_timestamp)
     : SampleHolder<DiscreteSignalType>::SampleHolder(
-          id, new DiscreteStepFunction(value, true), timeout_duration,
-          buffer_horizon, start_timestamp)
+          id, DiscreteStepFunctionPtr(new DiscreteStepFunction(value, true)),
+          timeout_duration, buffer_horizon, start_timestamp)
 {
 }
 

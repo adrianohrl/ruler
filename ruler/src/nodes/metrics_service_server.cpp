@@ -11,8 +11,8 @@
 namespace nodes
 {
 
-MetricsServiceServer::MetricsServiceServer(ros::NodeHandlePtr nh,
-                                           std::string name)
+MetricsServiceServer::MetricsServiceServer(const ros::NodeHandlePtr& nh,
+                                           const std::string& name)
     : ROSServiceServer<ruler_msgs::CalculateMetrics::Request,
                        ruler_msgs::CalculateMetrics::Response>::
           ROSServiceServer(nh->advertiseService(
@@ -23,7 +23,8 @@ MetricsServiceServer::MetricsServiceServer(ros::NodeHandlePtr nh,
 
 MetricsServiceServer::~MetricsServiceServer() {}
 
-void MetricsServiceServer::readPlugins(ruler::Robot* robot, std::string ns)
+void MetricsServiceServer::readPlugins(const ruler::RobotPtr& robot,
+                                       const std::string& ns)
 {
   ros::NodeHandle pnh(ns + "/plugins");
   int size;
@@ -41,7 +42,7 @@ void MetricsServiceServer::readPlugins(ruler::Robot* robot, std::string ns)
     }
     try
     {
-      boost::shared_ptr<ruler::MetricsEstimator> estimator(
+      ruler::MetricsEstimatorPtr estimator(
           loader_.createInstance(name.c_str()));
       estimator->initialize(robot);
       estimators_.push_back(estimator);
@@ -62,19 +63,23 @@ void MetricsServiceServer::readPlugins(ruler::Robot* robot, std::string ns)
   }
 }
 
+void MetricsServiceServer::shutdown()
+{
+  for (iterator it(estimators_.begin()); it != estimators_.end(); it++)
+  {
+    ruler::MetricsEstimatorPtr estimator(*it);
+    estimator->shutdown();
+  }
+}
+
 bool MetricsServiceServer::callback(
     ruler_msgs::CalculateMetrics::Request& request,
     ruler_msgs::CalculateMetrics::Response& response)
 {
-  ruler_msgs::CalculateMetrics srv;
-  std::list<boost::shared_ptr<ruler::MetricsEstimator> >::const_iterator it(
-      estimators_.begin());
-  srv.response.metrics = 0.0;
-  while (it != estimators_.end())
+  for (iterator it(estimators_.begin()); it != estimators_.end(); it++)
   {
-    boost::shared_ptr<ruler::MetricsEstimator> estimator = *it;
-    srv.response.metrics += estimator->calculate(request.task);
-    it++;
+    ruler::MetricsEstimatorPtr estimator(*it);
+    response.metrics += estimator->calculate(request.task);
   }
   return true;
 }

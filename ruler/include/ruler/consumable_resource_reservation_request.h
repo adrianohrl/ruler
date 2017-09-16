@@ -11,8 +11,10 @@
 #define _RULER_CONSUMABLE_RESOURCE_RESERVATION_REQUEST_H_
 
 #include <ros/common.h>
-#include "ruler/consumable_resource.h"
+#include "ruler/unary_consumable_resource.h"
 #include "ruler/resource_reservation_request.h"
+#include "utilities/continuous_signal_type.h"
+#include "utilities/discrete_signal_type.h"
 #include "utilities/functions/unary_step_function.h"
 
 namespace ruler
@@ -20,32 +22,59 @@ namespace ruler
 template <typename T>
 class ConsumableResourceReservationRequest : public ResourceReservationRequest
 {
+protected:
+  typedef typename ConsumableResource<T>::Ptr ConsumableResourcePtr;
+  typedef typename ConsumableResource<T>::ConstPtr ConsumableResourceConstPtr;
+  typedef typename utilities::functions::Function<T>::Ptr FunctionPtr;
+  typedef typename utilities::functions::Function<T>::ConstPtr FunctionConstPtr;
+
 public:
+  typedef boost::shared_ptr<ConsumableResourceReservationRequest<T> > Ptr;
+  typedef boost::shared_ptr<ConsumableResourceReservationRequest<T> const> ConstPtr;
   ConsumableResourceReservationRequest(
-      Task* task, ConsumableResource<utilities::UnarySignalType>* resource,
+      const TaskPtr& task, const UnaryConsumableResourcePtr& resource,
       double d0 = 0.0, bool consumption = true);
-  ConsumableResourceReservationRequest(
-      Task* task, ConsumableResource<T>* resource,
-      utilities::functions::Function<T>* quantity_function,
-      bool consumption = true);
+  ConsumableResourceReservationRequest(const TaskPtr& task,
+                                       const ConsumableResourcePtr& resource,
+                                       const FunctionPtr& quantity_function,
+                                       bool consumption = true);
   ConsumableResourceReservationRequest(
       const ConsumableResourceReservationRequest<T>& request);
   virtual ~ConsumableResourceReservationRequest();
-  virtual ConsumableResource<T>* getResource() const;
+  virtual ConsumableResourcePtr getResource() const;
   virtual bool isConsumption() const;
   virtual bool isProduction() const;
   virtual void request();
 
 private:
-  ConsumableResource<T>* resource_;
-  utilities::functions::Function<T>* quantity_function_;
+  ConsumableResourcePtr resource_;
+  FunctionPtr quantity_function_;
   const bool consumption_;
 };
 
+typedef ConsumableResourceReservationRequest<utilities::ContinuousSignalType>
+    ContinuousConsumableResourceReservationRequest;
+typedef boost::shared_ptr<ContinuousConsumableResourceReservationRequest>
+    ContinuousConsumableResourceReservationRequestPtr;
+typedef boost::shared_ptr<ContinuousConsumableResourceReservationRequest const>
+    ContinuousConsumableResourceReservationRequestConstPtr;
+typedef ConsumableResourceReservationRequest<utilities::DiscreteSignalType>
+    DiscreteConsumableResourceReservationRequest;
+typedef boost::shared_ptr<DiscreteConsumableResourceReservationRequest>
+    DiscreteConsumableResourceReservationRequestPtr;
+typedef boost::shared_ptr<DiscreteConsumableResourceReservationRequest const>
+    DiscreteConsumableResourceReservationRequestConstPtr;
+typedef ConsumableResourceReservationRequest<utilities::UnarySignalType>
+    UnaryConsumableResourceReservationRequest;
+typedef boost::shared_ptr<UnaryConsumableResourceReservationRequest>
+    UnaryConsumableResourceReservationRequestPtr;
+typedef boost::shared_ptr<UnaryConsumableResourceReservationRequest const>
+    UnaryConsumableResourceReservationRequestConstPtr;
+
 template <typename T>
 ConsumableResourceReservationRequest<T>::ConsumableResourceReservationRequest(
-    Task* task, ConsumableResource<utilities::UnarySignalType>* resource,
-    double d0, bool consumption)
+    const TaskPtr& task, const UnaryConsumableResourcePtr& resource, double d0,
+    bool consumption)
     : ResourceReservationRequest::ResourceReservationRequest(task),
       resource_(resource),
       quantity_function_(new utilities::functions::UnaryStepFunction(d0)),
@@ -55,8 +84,8 @@ ConsumableResourceReservationRequest<T>::ConsumableResourceReservationRequest(
 
 template <typename T>
 ConsumableResourceReservationRequest<T>::ConsumableResourceReservationRequest(
-    Task* task, ConsumableResource<T>* resource,
-    utilities::functions::Function<T>* quantity_function, bool consumption)
+    const TaskPtr& task, const ConsumableResourcePtr& resource,
+    const FunctionPtr& quantity_function, bool consumption)
     : ResourceReservationRequest::ResourceReservationRequest(task),
       resource_(resource), quantity_function_(quantity_function),
       consumption_(consumption)
@@ -82,12 +111,10 @@ ConsumableResourceReservationRequest<T>::ConsumableResourceReservationRequest(
 template <typename T>
 ConsumableResourceReservationRequest<T>::~ConsumableResourceReservationRequest()
 {
-  resource_ = NULL;
-  quantity_function_ = NULL;
 }
 
 template <typename T>
-ConsumableResource<T>*
+typename ConsumableResource<T>::Ptr
 ConsumableResourceReservationRequest<T>::getResource() const
 {
   return resource_;

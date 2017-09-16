@@ -24,15 +24,19 @@ public:
                          bool negated = false);
   ContinuousStepFunction(double d0, double qf, bool ascending = false,
                          bool negated = false);
-  ContinuousStepFunction(ros::Duration d0, double qf, bool ascending = false,
-                         bool negated = false);
+  ContinuousStepFunction(const ros::Duration& d0, double qf,
+                         bool ascending = false, bool negated = false);
   ContinuousStepFunction(double d0, double q0, double qf,
                          bool ascending = false, bool negated = false);
-  ContinuousStepFunction(ros::Duration d0, double q0, double qf,
+  ContinuousStepFunction(const ros::Duration& d0, double q0, double qf,
                          bool ascending = false, bool negated = false);
   ContinuousStepFunction(const ContinuousStepFunction& function);
   virtual ~ContinuousStepFunction();
 };
+
+typedef boost::shared_ptr<ContinuousStepFunction> ContinuousStepFunctionPtr;
+typedef boost::shared_ptr<ContinuousStepFunction const>
+    ContinuousStepFunctionConstPtr;
 }
 }
 

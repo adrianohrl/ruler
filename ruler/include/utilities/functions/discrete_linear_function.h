@@ -22,12 +22,16 @@ class DiscreteLinearFunction
 public:
   DiscreteLinearFunction(double d0, double df, double q0, double qf,
                          bool ascending = false, bool negated = false);
-  DiscreteLinearFunction(ros::Duration d0, ros::Duration df, double q0,
-                         double qf, bool ascending = false,
+  DiscreteLinearFunction(const ros::Duration& d0, const ros::Duration& df,
+                         double q0, double qf, bool ascending = false,
                          bool negated = false);
   DiscreteLinearFunction(const DiscreteLinearFunction& function);
   virtual ~DiscreteLinearFunction();
 };
+
+typedef boost::shared_ptr<DiscreteLinearFunction> DiscreteLinearFunctionPtr;
+typedef boost::shared_ptr<DiscreteLinearFunction const>
+    DiscreteLinearFunctionConstPtr;
 }
 }
 

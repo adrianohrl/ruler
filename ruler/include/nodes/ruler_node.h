@@ -18,14 +18,19 @@ namespace nodes
 class RulerNode : public utilities::ROSNode
 {
 public:
-  RulerNode(ros::NodeHandlePtr nh, float loop_rate = 30.0);
+  RulerNode(const ros::NodeHandlePtr& nh, const ros::Rate& loop_rate = ros::Rate(30.0));
   virtual ~RulerNode();
 
 private:
-  ruler::Robot* robot_;
+  typedef std::pair<std::string, ros::Publisher> pair;
+  typedef std::map<std::string, ros::Publisher>::iterator pub_iterator;
+  typedef std::map<std::string, ros::Publisher>::const_iterator pub_const_iterator;
+  typedef std::list<MetricsServiceServerPtr>::iterator srv_iterator;
+  typedef std::list<MetricsServiceServerPtr>::const_iterator srv_const_iterator;
+  ruler::RobotPtr robot_;
   ros::Publisher resources_pub_;
   std::map<std::string, ros::Publisher> resource_pubs_;
-  std::list<MetricsServiceServer*> metrics_srvs_;
+  std::list<MetricsServiceServerPtr> metrics_srvs_;
   virtual void readParameters();
   virtual void init();
   virtual void controlLoop();

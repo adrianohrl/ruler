@@ -21,19 +21,25 @@ class DiscretePulseFunction
 {
 public:
   DiscretePulseFunction(const DiscreteStepFunction& step_function, double df);
-  DiscretePulseFunction(const DiscreteStepFunction& step_function, ros::Duration df);
+  DiscretePulseFunction(const DiscreteStepFunction& step_function,
+                        ros::Duration df);
   DiscretePulseFunction(double d0, double df, double qf, bool ascending = false,
                         bool negated = false);
-  DiscretePulseFunction(ros::Duration d0, ros::Duration df, double qf,
-                        bool ascending = false, bool negated = false);
+  DiscretePulseFunction(const ros::Duration& d0, const ros::Duration& df,
+                        double qf, bool ascending = false,
+                        bool negated = false);
   DiscretePulseFunction(double d0, double df, double q0, double qf,
                         bool ascending = false, bool negated = false);
-  DiscretePulseFunction(ros::Duration d0, ros::Duration df, double q0,
-                        double qf, bool ascending = false,
+  DiscretePulseFunction(const ros::Duration& d0, const ros::Duration& df,
+                        double q0, double qf, bool ascending = false,
                         bool negated = false);
   DiscretePulseFunction(const DiscretePulseFunction& function);
   virtual ~DiscretePulseFunction();
 };
+
+typedef boost::shared_ptr<DiscretePulseFunction> DiscretePulseFunctionPtr;
+typedef boost::shared_ptr<DiscretePulseFunction const>
+    DiscretePulseFunctionConstPtr;
 }
 }
 

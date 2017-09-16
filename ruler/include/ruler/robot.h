@@ -16,18 +16,29 @@ namespace ruler
 class Robot : public utilities::HasName
 {
 public:
-  Robot(std::string id, std::string name,
-        std::list<ResourceInterface*> resources =
-            std::list<ResourceInterface*>());
+  typedef std::list<ResourceInterfacePtr>::iterator iterator;
+  typedef std::list<ResourceInterfacePtr>::const_iterator const_iterator;
+  Robot(const std::string& id, const std::string& name,
+        const std::list<ResourceInterfacePtr>& resources =
+            std::list<ResourceInterfacePtr>());
   Robot(const Robot& robot);
   virtual ~Robot();
-  std::list<ResourceInterface*> getResources() const;
-  void addResource(ResourceInterface* resource);
+  std::list<ResourceInterfacePtr> getResources() const;
+  void addResource(const ResourceInterfacePtr& resource);
   bool contains(const ResourceInterface& resource) const;
+  std::size_t size() const;
+  bool empty() const;
+  iterator begin();
+  const_iterator begin() const;
+  iterator end();
+  const_iterator end() const;
 
 private:
-  std::list<ResourceInterface*> resources_;
+  std::list<ResourceInterfacePtr> resources_;
 };
+
+typedef boost::shared_ptr<Robot> RobotPtr;
+typedef boost::shared_ptr<Robot const> RobotConstPtr;
 }
 
 #endif // _RULER_ROBOT_H_

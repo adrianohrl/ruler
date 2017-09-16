@@ -19,10 +19,13 @@ namespace functions
 template <typename T> class ExponentialFunction : public Function<T>
 {
 public:
+  typedef boost::shared_ptr<ExponentialFunction<T> > Ptr;
+  typedef boost::shared_ptr<ExponentialFunction<T> const> ConstPtr;
   ExponentialFunction(double d0, double df, double q0, double qf, double k,
                       double base, bool ascending, bool negated);
-  ExponentialFunction(ros::Duration d0, ros::Duration df, double q0, double qf,
-                      double k, double base, bool ascending, bool negated);
+  ExponentialFunction(const ros::Duration& d0, const ros::Duration& df,
+                      double q0, double qf, double k, double base,
+                      bool ascending, bool negated);
   ExponentialFunction(const ExponentialFunction<T>& function);
   virtual ~ExponentialFunction();
   virtual ExponentialFunction<T>* clone() const;
@@ -43,10 +46,10 @@ ExponentialFunction<T>::ExponentialFunction(double d0, double df, double q0,
 }
 
 template <typename T>
-ExponentialFunction<T>::ExponentialFunction(ros::Duration d0, ros::Duration df,
-                                            double q0, double qf, double k,
-                                            double base, bool ascending,
-                                            bool negated)
+ExponentialFunction<T>::ExponentialFunction(const ros::Duration& d0,
+                                            const ros::Duration& df, double q0,
+                                            double qf, double k, double base,
+                                            bool ascending, bool negated)
     : Function<T>::Function("Exponential", d0, df, q0, qf, ascending, negated),
       base_(base), k_(fabs(k))
 {
@@ -61,7 +64,8 @@ ExponentialFunction<T>::ExponentialFunction(
 
 template <typename T> ExponentialFunction<T>::~ExponentialFunction() {}
 
-template <typename T> ExponentialFunction<T> *ExponentialFunction<T>::clone() const
+template <typename T>
+ExponentialFunction<T>* ExponentialFunction<T>::clone() const
 {
   return new ExponentialFunction<T>(*this);
 }

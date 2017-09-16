@@ -10,7 +10,7 @@
 namespace ruler
 {
 
-ResourceInterface::ResourceInterface(const std::string id)
+ResourceInterface::ResourceInterface(const std::string& id)
     : Observer::Observer(id)
 {
 }

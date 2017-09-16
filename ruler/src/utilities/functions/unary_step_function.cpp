@@ -18,7 +18,7 @@ UnaryStepFunction::UnaryStepFunction(double d0, bool ascending, bool negated)
 {
 }
 
-UnaryStepFunction::UnaryStepFunction(ros::Duration d0, bool ascending,
+UnaryStepFunction::UnaryStepFunction(const ros::Duration& d0, bool ascending,
                                      bool negated)
     : StepFunction<utilities::UnarySignalType>::StepFunction(d0.toSec(), true,
                                                              ascending, negated)

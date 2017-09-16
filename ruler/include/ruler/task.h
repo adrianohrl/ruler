@@ -10,18 +10,17 @@
 
 #include <boost/enable_shared_from_this.hpp>
 #include <geometry_msgs/Pose.h>
-#include <ros/time.h>
+#include "ruler/resource_reservation_request.h"
 #include "ruler/resource_interface.h"
 #include "ruler/task_event.h"
-#include "ruler_msgs/Task.h"
-#include "utilities/interval.h"
+#include <ruler_msgs/Task.h>
+#include "utilities/noisy_duration.h"
+#include "utilities/noisy_time.h"
 #include "utilities/ros_message_converter.h"
 #include "utilities/subject.h"
 
 namespace ruler
 {
-class ResourceReservationRequest;
-
 template <typename T> class Resource;
 
 class Task : public utilities::Subject,
@@ -29,26 +28,25 @@ class Task : public utilities::Subject,
              public boost::enable_shared_from_this<Task>
 {
 public:
-  Task(std::string id, std::string name, ros::Duration expected_duration,
+  Task(const std::string& id, const std::string& name,
+       const utilities::NoisyTimePtr& start,
+       const utilities::NoisyTimePtr& end,
        bool preemptive = false,
-       utilities::Interval<ros::Time>* start_timestamp_bounds = NULL,
-       utilities::Interval<ros::Time>* end_timestamp_bounds = NULL,
-       std::list<geometry_msgs::Pose> waypoints =
+       const std::list<geometry_msgs::Pose>& waypoints =
            std::list<geometry_msgs::Pose>());
   Task(const ruler_msgs::Task& msg);
   Task(const Task& task);
   virtual ~Task();
-  void addResourceReservationRequest(ResourceReservationRequest* request);
+  void addResourceReservationRequest(const ResourceReservationRequestPtr &request);
   void addResource(const ResourceInterfacePtr& resource);
   void removeResource(const ResourceInterfacePtr& resource);
-  void start(ros::Time timestamp = ros::Time::now());
-  void interrupt(ros::Time timestamp = ros::Time::now());
-  void resume(ros::Time timestamp = ros::Time::now());
-  void finish(ros::Time timestamp = ros::Time::now());
+  void start(const ros::Time& timestamp = ros::Time::now());
+  void interrupt(const ros::Time& timestamp = ros::Time::now());
+  void resume(const ros::Time& timestamp = ros::Time::now());
+  void finish(const ros::Time& timestamp = ros::Time::now());
   void clearResources();
-  double getDuration(ros::Time t = ros::Time::now()) const;
+  double getDuration(const ros::Time& timestamp = ros::Time::now()) const;
   std::string getName() const;
-  ros::Duration getExpectedDuration() const;
   bool isPreemptive() const;
   ros::Time getStartTimestamp() const;
   ros::Time getLastInterruptionTimestamp() const;
@@ -58,8 +56,9 @@ public:
   bool isInterrupted() const;
   bool isRunning() const;
   bool hasFinished() const;
-  utilities::Interval<ros::Time>* getStartTimestampBounds() const;
-  utilities::Interval<ros::Time>* getEndTimestampBounds() const;
+  utilities::NoisyTimePtr getExpectedStart() const;
+  utilities::NoisyTimePtr getExpectedEnd() const;
+  utilities::NoisyDurationPtr getExpectedDuration() const;
   std::list<geometry_msgs::Pose> getWaypoints() const;
   double getDistance() const;
   virtual ruler_msgs::Task toMsg() const;
@@ -67,18 +66,21 @@ public:
   virtual bool operator==(const ruler_msgs::Task& msg) const;
   using Subject::operator!=;
 
+protected:
+  typedef utilities::Interval<ros::Time>::Ptr TimeIntervalPtr;
+
 private:
   std::string name_;
-  ros::Duration expected_duration_;
   bool preemptive_;
+  utilities::NoisyTimePtr expected_start_;
+  utilities::NoisyTimePtr expected_end_;
+  utilities::NoisyDurationPtr expected_duration_;
   ros::Time start_timestamp_;
   ros::Time last_interruption_timestamp_;
   ros::Time end_timestamp_;
   ros::Time last_event_timestamp_;
-  utilities::Interval<ros::Time>* start_timestamp_bounds_;
-  utilities::Interval<ros::Time>* end_timestamp_bounds_;
-  std::list<utilities::Interval<ros::Time>*> interruption_intervals_;
-  std::list<ResourceReservationRequest*> resource_reservation_requests_;
+  std::list<TimeIntervalPtr> interruption_intervals_;
+  std::list<ResourceReservationRequestPtr> resource_reservation_requests_;
   std::list<geometry_msgs::Pose> waypoints_;
 };
 

@@ -18,13 +18,15 @@ namespace functions
 template <typename T> class LinearFunction : public Function<T>
 {
 public:
+  typedef boost::shared_ptr<LinearFunction<T> > Ptr;
+  typedef boost::shared_ptr<LinearFunction<T> const> ConstPtr;
   virtual ~LinearFunction();
 
 protected:
   LinearFunction(double d0, double df, double q0, double qf, bool ascending,
                  bool negated);
-  LinearFunction(ros::Duration d0, ros::Duration df, double q0, double qf,
-                 bool ascending, bool negated);
+  LinearFunction(const ros::Duration& d0, const ros::Duration& df, double q0,
+                 double qf, bool ascending, bool negated);
   LinearFunction(const LinearFunction<T>& function);
   virtual LinearFunction<T>* clone() const;
 
@@ -40,8 +42,9 @@ LinearFunction<T>::LinearFunction(double d0, double df, double q0, double qf,
 }
 
 template <typename T>
-LinearFunction<T>::LinearFunction(ros::Duration d0, ros::Duration df, double q0,
-                                  double qf, bool ascending, bool negated)
+LinearFunction<T>::LinearFunction(const ros::Duration& d0,
+                                  const ros::Duration& df, double q0, double qf,
+                                  bool ascending, bool negated)
     : Function<T>::Function("Linear", d0, df, q0, qf, ascending, negated)
 {
 }
@@ -52,8 +55,7 @@ LinearFunction<T>::LinearFunction(const LinearFunction<T>& function)
 {
 }
 
-template <typename T>
-LinearFunction<T> *LinearFunction<T>::clone() const
+template <typename T> LinearFunction<T>* LinearFunction<T>::clone() const
 {
   return new LinearFunction<T>(*this);
 }

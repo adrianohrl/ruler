@@ -20,7 +20,7 @@ DisplacementEstimator::DisplacementEstimator()
 
 DisplacementEstimator::~DisplacementEstimator() {}
 
-void DisplacementEstimator::initialize(Robot* robot)
+void DisplacementEstimator::initialize(const RobotPtr& robot)
 {
   MetricsEstimator::initialize(robot);
 }

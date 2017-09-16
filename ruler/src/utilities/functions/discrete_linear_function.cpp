@@ -20,10 +20,10 @@ DiscreteLinearFunction::DiscreteLinearFunction(double d0, double df, double q0,
 {
 }
 
-DiscreteLinearFunction::DiscreteLinearFunction(ros::Duration d0,
-                                               ros::Duration df, double q0,
-                                               double qf, bool ascending,
-                                               bool negated)
+DiscreteLinearFunction::DiscreteLinearFunction(const ros::Duration& d0,
+                                               const ros::Duration& df,
+                                               double q0, double qf,
+                                               bool ascending, bool negated)
     : LinearFunction<utilities::DiscreteSignalType>::LinearFunction(
           d0, df, q0, qf, ascending, negated)
 {

@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 
+add_compile_options(-std=c++11)
+
 project(ruler)
 
 find_package(Boost REQUIRED)
@@ -49,9 +51,12 @@ set(H_FILES
   include/ruler/task.h
   include/ruler/task_event.h
   include/ruler/task_function.h
+  include/ruler/task_simulation.h
   include/ruler/unary_consumable_resource.h
   include/ruler/unary_reusable_resource.h
+  include/utilities/continuous_noisy_signal.h
   include/utilities/continuous_signal_type.h
+  include/utilities/discrete_noisy_signal.h
   include/utilities/discrete_signal_type.h
   include/utilities/enum_converter.h
   include/utilities/exception.h
@@ -75,7 +80,6 @@ set(H_FILES
   include/utilities/functions/pulse_function.h
   include/utilities/functions/sample_holder.h
   include/utilities/functions/step_function.h
-  include/utilities/functions/time_probability_density_function.h
   include/utilities/functions/unary_pulse_function.h
   include/utilities/functions/unary_step_function.h
   include/utilities/functions/unary_sample_holder.h
@@ -83,12 +87,16 @@ set(H_FILES
   include/utilities/has_id.h
   include/utilities/has_name.h
   include/utilities/interval.h
+  include/utilities/noisy.h
+  include/utilities/noisy_duration.h
+  include/utilities/noisy_time.h
   include/utilities/observer.h
   include/utilities/ros_message_converter.h
   include/utilities/ros_node.h
   include/utilities/ros_service_server.h
   include/utilities/signal_type.h
   include/utilities/signal_types.h
+  include/utilities/simulation.h
   include/utilities/subject.h
   include/utilities/toggle_event.h
   include/utilities/unary_signal_type.h
@@ -109,9 +117,12 @@ set(CPP_FILES
   src/ruler/robot.cpp
   src/ruler/task.cpp
   src/ruler/task_event.cpp
+  src/ruler/task_simulation.cpp
   src/ruler/unary_consumable_resource.cpp
   src/ruler/unary_reusable_resource.cpp
+  src/utilities/continuous_noisy_signal.cpp
   src/utilities/continuous_signal_type.cpp
+  src/utilities/discrete_noisy_signal.cpp
   src/utilities/discrete_signal_type.cpp
   src/utilities/exception.cpp
   src/utilities/event.cpp
@@ -126,14 +137,16 @@ set(CPP_FILES
   src/utilities/functions/probability_density_function.cpp
   src/utilities/functions/discrete_pulse_function.cpp
   src/utilities/functions/discrete_step_function.cpp
-  src/utilities/functions/time_probability_density_function.cpp
   src/utilities/functions/unary_pulse_function.cpp
   src/utilities/functions/unary_step_function.cpp
   src/utilities/functions/unary_sample_holder.cpp
   src/utilities/has_name.cpp
+  src/utilities/noisy_duration.cpp
+  src/utilities/noisy_time.cpp
   src/utilities/observer.cpp
   src/utilities/ros_node.cpp
   src/utilities/signal_types.cpp
+  src/utilities/simulation.cpp
   src/utilities/subject.cpp
   src/utilities/toggle_event.cpp
   src/utilities/unary_signal_type.cpp

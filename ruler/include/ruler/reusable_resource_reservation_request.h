@@ -11,38 +11,63 @@
 #define _RULER_REUSABLE_RESOURCE_RESERVATION_REQUEST_H_
 
 #include "ruler/resource_reservation_request.h"
-#include "ruler/reusable_resource.h"
-#include "utilities/unary_signal_type.h"
+#include "ruler/unary_reusable_resource.h"
+#include "utilities/continuous_signal_type.h"
+#include "utilities/discrete_signal_type.h"
 
 namespace ruler
 {
 template <typename T>
 class ReusableResourceReservationRequest : public ResourceReservationRequest
 {
+protected:
+  typedef typename ReusableResource<T>::Ptr ReusableResourcePtr;
+  typedef typename ReusableResource<T>::ConstPtr ReusableResourceConstPtr;
+
 public:
-  ReusableResourceReservationRequest(
-      Task* task, ReusableResource<utilities::UnarySignalType>* resource,
-      double d0 = 0.0, double df = INFINITY);
-  ReusableResourceReservationRequest(Task* task, ReusableResource<T>* resource,
-                                     T quantity, double d0 = 0.0,
+  ReusableResourceReservationRequest(const TaskPtr& task,
+                                     const UnaryReusableResourcePtr& resource,
+                                     double d0 = 0.0, double df = INFINITY);
+  ReusableResourceReservationRequest(const TaskPtr& task,
+                                     const ReusableResourcePtr& resource,
+                                     const T& quantity, double d0 = 0.0,
                                      double df = INFINITY);
   ReusableResourceReservationRequest(
       const ReusableResourceReservationRequest<T>& request);
   virtual ~ReusableResourceReservationRequest();
-  virtual ReusableResource<T>* getResource() const;
+  virtual ReusableResourcePtr getResource() const;
   virtual void request();
 
 private:
-  ReusableResource<T>* resource_;
+  ReusableResourcePtr resource_;
   T quantity_;
   double d0_;
   double df_;
 };
 
+typedef ReusableResourceReservationRequest<utilities::ContinuousSignalType>
+    ContinuousReusableResourceReservationRequest;
+typedef boost::shared_ptr<ContinuousReusableResourceReservationRequest>
+    ContinuousReusableResourceReservationRequestPtr;
+typedef boost::shared_ptr<ContinuousReusableResourceReservationRequest const>
+    ContinuousReusableResourceReservationRequestConstPtr;
+typedef ReusableResourceReservationRequest<utilities::DiscreteSignalType>
+    DiscreteReusableResourceReservationRequest;
+typedef boost::shared_ptr<DiscreteReusableResourceReservationRequest>
+    DiscreteReusableResourceReservationRequestPtr;
+typedef boost::shared_ptr<DiscreteReusableResourceReservationRequest const>
+    DiscreteReusableResourceReservationRequestConstPtr;
+typedef ReusableResourceReservationRequest<utilities::UnarySignalType>
+    UnaryReusableResourceReservationRequest;
+typedef boost::shared_ptr<UnaryReusableResourceReservationRequest>
+    UnaryReusableResourceReservationRequestPtr;
+typedef boost::shared_ptr<UnaryReusableResourceReservationRequest const>
+    UnaryReusableResourceReservationRequestConstPtr;
+
 template <typename T>
 ReusableResourceReservationRequest<T>::ReusableResourceReservationRequest(
-    Task* task, ReusableResource<utilities::UnarySignalType>* resource,
-    double d0, double df)
+    const TaskPtr& task, const UnaryReusableResourcePtr& resource, double d0,
+    double df)
     : ResourceReservationRequest::ResourceReservationRequest(task),
       resource_(resource), quantity_(utilities::UnarySignalType(true)), d0_(d0),
       df_(df)
@@ -51,7 +76,8 @@ ReusableResourceReservationRequest<T>::ReusableResourceReservationRequest(
 
 template <typename T>
 ReusableResourceReservationRequest<T>::ReusableResourceReservationRequest(
-    Task* task, ReusableResource<T>* resource, T quantity, double d0, double df)
+    const TaskPtr& task, const ReusableResourcePtr& resource, const T& quantity,
+    double d0, double df)
     : ResourceReservationRequest::ResourceReservationRequest(task),
       resource_(resource), quantity_(quantity), d0_(d0), df_(df)
 {
@@ -75,11 +101,11 @@ ReusableResourceReservationRequest<T>::ReusableResourceReservationRequest(
 template <typename T>
 ReusableResourceReservationRequest<T>::~ReusableResourceReservationRequest()
 {
-  resource_ = NULL;
 }
 
 template <typename T>
-ReusableResource<T>* ReusableResourceReservationRequest<T>::getResource() const
+typename ReusableResource<T>::Ptr
+ReusableResourceReservationRequest<T>::getResource() const
 {
   return resource_;
 }

@@ -16,6 +16,8 @@
 #include "ruler/discrete_reusable_resource.h"
 #include "ruler/event_types.h"
 #include "ruler/metrics_estimator.h"
+#include "ruler/preemptive_task.h"
+#include "ruler/preemptive_task_simulation.h"
 #include "ruler/profile.h"
 #include "ruler/resource.h"
 #include "ruler/resource_interface.h"
@@ -25,6 +27,7 @@
 #include "ruler/robot.h"
 #include "ruler/task.h"
 #include "ruler/task_function.h"
+#include "ruler/task_simulation.h"
 #include "ruler/unary_consumable_resource.h"
 #include "ruler/unary_reusable_resource.h"
 

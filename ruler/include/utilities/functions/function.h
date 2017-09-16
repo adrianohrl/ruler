@@ -8,6 +8,7 @@
 #ifndef _UTILITIES_FUNCTION_H_
 #define _UTILITIES_FUNCTION_H_
 
+#include <boost/shared_ptr.hpp>
 #include <sstream>
 #include <ros/duration.h>
 #include "utilities/exception.h"
@@ -19,6 +20,8 @@ namespace functions
 template <typename T> class Function
 {
 public:
+  typedef boost::shared_ptr<Function<T> > Ptr;
+  typedef boost::shared_ptr<Function<T> const> ConstPtr;
   virtual ~Function();
   T getValue(double d) const;
   std::string getName() const;
@@ -29,9 +32,9 @@ public:
   bool isAscending() const;
   bool isNegated() const;
   void setD0(double d0);
-  void setD0(ros::Duration d0);
+  void setD0(const ros::Duration& d0);
   void setDf(double df);
-  void setDf(ros::Duration df);
+  void setDf(const ros::Duration& df);
   void setAscending(bool ascending);
   void setNegated(bool negated);
   bool saturatesEnd() const;
@@ -40,11 +43,12 @@ public:
   const char* c_str() const;
 
 protected:
-  Function(std::string name, double d0, double df, double q0, double qf,
+  Function(const std::string& name, double d0, double df, double q0, double qf,
            bool ascending, bool negated, bool saturate_end = true);
-  Function(std::string name, ros::Duration d0, ros::Duration df, double q0,
-           double qf, bool ascending, bool negated, bool saturate_end = true);
-  Function(std::string name, const Function<T>& function,
+  Function(const std::string& name, const ros::Duration& d0,
+           const ros::Duration& df, double q0, double qf, bool ascending,
+           bool negated, bool saturate_end = true);
+  Function(const std::string& name, const Function<T>& function,
            bool saturate_end = true);
   Function(const Function<T>& function);
   double d0_;
@@ -61,7 +65,7 @@ private:
 };
 
 template <typename T>
-Function<T>::Function(std::string name, double d0, double df, double q0,
+Function<T>::Function(const std::string& name, double d0, double df, double q0,
                       double qf, bool ascending, bool negated,
                       bool saturate_end)
     : name_(name), d0_(d0), df_(df), q0_(q0), qf_(qf), ascending_(ascending),
@@ -70,16 +74,16 @@ Function<T>::Function(std::string name, double d0, double df, double q0,
 }
 
 template <typename T>
-Function<T>::Function(std::string name, ros::Duration d0, ros::Duration df,
-                      double q0, double qf, bool ascending, bool negated,
-                      bool saturate_end)
+Function<T>::Function(const std::string& name, const ros::Duration& d0,
+                      const ros::Duration& df, double q0, double qf,
+                      bool ascending, bool negated, bool saturate_end)
     : name_(name), d0_(d0.toSec()), df_(df.toSec()), q0_(q0), qf_(qf),
       ascending_(ascending), negated_(negated), saturate_end_(saturate_end)
 {
 }
 
 template <typename T>
-Function<T>::Function(std::string name, const Function<T>& function,
+Function<T>::Function(const std::string& name, const Function<T>& function,
                       bool saturate_end)
     : name_(name), d0_(function.d0_), df_(function.df_), q0_(function.q0_),
       qf_(function.qf_), ascending_(function.ascending_),
@@ -148,7 +152,7 @@ template <typename T> void Function<T>::setD0(double d0)
   }
 }
 
-template <typename T> void Function<T>::setD0(ros::Duration d0)
+template <typename T> void Function<T>::setD0(const ros::Duration& d0)
 {
   return setD0(d0.toSec());
 }
@@ -161,7 +165,7 @@ template <typename T> void Function<T>::setDf(double df)
   }
 }
 
-template <typename T> void Function<T>::setDf(ros::Duration df)
+template <typename T> void Function<T>::setDf(const ros::Duration& df)
 {
   setDf(df.toSec());
 }

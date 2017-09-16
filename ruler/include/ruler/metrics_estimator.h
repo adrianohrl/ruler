@@ -19,20 +19,24 @@ namespace ruler
 class MetricsEstimator
 {
 public:
-  virtual void initialize(Robot* robot);
+  virtual ~MetricsEstimator();
+  virtual void initialize(const RobotPtr& robot);
   double calculate(const ruler_msgs::Task& msg) const;
   virtual double calculate(const Task& task) const = 0;
-  virtual ~MetricsEstimator();
+  virtual void shutdown();
 
 protected:
   MetricsEstimator();
-  std::list<ResourceInterface*> getResources() const;
+  std::list<ResourceInterfacePtr> getResources() const;
   bool isInitialized() const;
 
 private:
-  Robot* robot_;
+  RobotPtr robot_;
 
 };
+
+typedef boost::shared_ptr<MetricsEstimator> MetricsEstimatorPtr;
+typedef boost::shared_ptr<MetricsEstimator const> MetricsEstimatorConstPtr;
 }
 
 #endif // _RULER_METRICS_ESTIMATOR_H_

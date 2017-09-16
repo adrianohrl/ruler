@@ -8,6 +8,7 @@
 #ifndef _UTILITIES_INTERVAL_H_
 #define _UTILITIES_INTERVAL_H_
 
+#include <boost/shared_ptr.hpp>
 #include <sstream>
 #include "utilities/exception.h"
 
@@ -16,6 +17,8 @@ namespace utilities
 template <typename T> class Interval
 {
 public:
+  typedef boost::shared_ptr<Interval<T> > Ptr;
+  typedef boost::shared_ptr<Interval<T> const> ConstPtr;
   Interval(const T& min, const T& max, bool including_min = true,
            bool including_max = true);
   Interval(const Interval<T>& interval);

@@ -8,7 +8,9 @@
 #ifndef _UTILITIES_H_
 #define _UTILITIES_H_
 
+#include "utilities/continuous_noisy_signal.h"
 #include "utilities/continuous_signal_type.h"
+#include "utilities/discrete_noisy_signal.h"
 #include "utilities/discrete_signal_type.h"
 #include "utilities/enum_converter.h"
 #include "utilities/exception.h"
@@ -17,6 +19,9 @@
 #include "utilities/has_name.h"
 #include "utilities/functions/functions.h"
 #include "utilities/interval.h"
+#include "utilities/noisy.h"
+#include "utilities/noisy_duration.h"
+#include "utilities/noisy_time.h"
 #include "utilities/observer.h"
 #include "utilities/ros_message_converter.h"
 #include "utilities/ros_node.h"

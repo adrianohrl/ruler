@@ -8,6 +8,7 @@
 #ifndef _UTILITIES_SIGNAL_TYPE_H_
 #define _UTILITIES_SIGNAL_TYPE_H_
 
+#include <boost/shared_ptr.hpp>
 #include <sstream>
 
 namespace utilities

@@ -18,17 +18,22 @@ class UnaryReusableResource
     : public ReusableResource<utilities::UnarySignalType>
 {
 public:
-  UnaryReusableResource(std::string id, std::string name,
+  UnaryReusableResource(const std::string& id, const std::string& name,
                         bool initial_level = true,
-                        ros::Duration latence = ros::Duration(0.0));
-  UnaryReusableResource(std::string id, std::string name,
-                        utilities::UnarySignalType initial_level,
-                        ros::Duration latence = ros::Duration(0.0));
+                        const ros::Duration& latence = ros::Duration());
+  UnaryReusableResource(const std::string& id, const std::string& name,
+                        const utilities::UnarySignalType& initial_level,
+                        const ros::Duration& latence = ros::Duration());
   UnaryReusableResource(const ruler_msgs::Resource& msg);
   UnaryReusableResource(const UnaryReusableResource& resource);
   virtual ~UnaryReusableResource();
-  virtual void require(Task* task, double d0 = 0.0, double df = INFINITY);
+  virtual void require(const TaskPtr& task, double d0 = 0.0,
+                       double df = INFINITY);
 };
+
+typedef boost::shared_ptr<UnaryReusableResource> UnaryReusableResourcePtr;
+typedef boost::shared_ptr<UnaryReusableResource const>
+    UnaryReusableResourceConstPtr;
 }
 
 #endif // _RULER_UNARY_REUSABLE_RESOURCE_H_

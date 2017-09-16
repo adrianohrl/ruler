@@ -34,9 +34,10 @@ ContinuousPulseFunction::ContinuousPulseFunction(double d0, double df,
 {
 }
 
-ContinuousPulseFunction::ContinuousPulseFunction(ros::Duration d0,
-                                                 ros::Duration df, double qf,
-                                                 bool ascending, bool negated)
+ContinuousPulseFunction::ContinuousPulseFunction(const ros::Duration& d0,
+                                                 const ros::Duration& df,
+                                                 double qf, bool ascending,
+                                                 bool negated)
     : PulseFunction<utilities::ContinuousSignalType>::PulseFunction(
           d0, df, qf, ascending, negated)
 {
@@ -50,10 +51,10 @@ ContinuousPulseFunction::ContinuousPulseFunction(double d0, double df,
 {
 }
 
-ContinuousPulseFunction::ContinuousPulseFunction(ros::Duration d0,
-                                                 ros::Duration df, double q0,
-                                                 double qf, bool ascending,
-                                                 bool negated)
+ContinuousPulseFunction::ContinuousPulseFunction(const ros::Duration& d0,
+                                                 const ros::Duration& df,
+                                                 double q0, double qf,
+                                                 bool ascending, bool negated)
     : PulseFunction<utilities::ContinuousSignalType>::PulseFunction(
           d0, df, q0, qf, ascending, negated)
 {

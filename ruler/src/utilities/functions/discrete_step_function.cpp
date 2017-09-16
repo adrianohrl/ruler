@@ -26,7 +26,7 @@ DiscreteStepFunction::DiscreteStepFunction(double d0, double qf, bool ascending,
 {
 }
 
-DiscreteStepFunction::DiscreteStepFunction(ros::Duration d0, double qf,
+DiscreteStepFunction::DiscreteStepFunction(const ros::Duration& d0, double qf,
                                            bool ascending, bool negated)
     : StepFunction<utilities::DiscreteSignalType>::StepFunction(
           d0, qf, ascending, negated)
@@ -40,7 +40,7 @@ DiscreteStepFunction::DiscreteStepFunction(double d0, double q0, double qf,
 {
 }
 
-DiscreteStepFunction::DiscreteStepFunction(ros::Duration d0, double q0,
+DiscreteStepFunction::DiscreteStepFunction(const ros::Duration& d0, double q0,
                                            double qf, bool ascending,
                                            bool negated)
     : StepFunction<utilities::DiscreteSignalType>::StepFunction(

@@ -22,16 +22,23 @@ class MetricsServiceServer
                                          ruler_msgs::CalculateMetrics::Response>
 {
 public:
-  MetricsServiceServer(ros::NodeHandlePtr nh, std::string name);
+  MetricsServiceServer(const ros::NodeHandlePtr& nh, const std::string& name);
   virtual ~MetricsServiceServer();
-  void readPlugins(ruler::Robot *robot, std::string ns);
+  void readPlugins(const ruler::RobotPtr& robot, const std::string& ns);
+  void shutdown();
 
 private:
+  typedef std::list<ruler::MetricsEstimatorPtr>::iterator iterator;
+  typedef std::list<ruler::MetricsEstimatorPtr>::const_iterator const_iterator;
   pluginlib::ClassLoader<ruler::MetricsEstimator> loader_;
-  std::list<boost::shared_ptr<ruler::MetricsEstimator> > estimators_;
-  virtual bool callback(ruler_msgs::CalculateMetrics::Request &request,
+  std::list<ruler::MetricsEstimatorPtr> estimators_;
+  virtual bool callback(ruler_msgs::CalculateMetrics::Request& request,
                         ruler_msgs::CalculateMetrics::Response& response);
 };
+
+typedef boost::shared_ptr<MetricsServiceServer> MetricsServiceServerPtr;
+typedef boost::shared_ptr<MetricsServiceServer const>
+    MetricsServiceServerConstPtr;
 }
 
 #endif // _RULER_NODE_METRICS_SERVICE_SERVER_H_

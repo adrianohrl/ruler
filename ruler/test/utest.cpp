@@ -14,14 +14,14 @@
 
 double tolerance(1e-4);
 std::vector<double> d;
-utilities::functions::ContinuousStepFunction* continuous_step;
-utilities::functions::ContinuousLinearFunction* continuous_linear;
-utilities::functions::ContinuousExponentialFunction* continuous_exponential;
-utilities::functions::DiscreteStepFunction* discrete_step;
-utilities::functions::DiscreteLinearFunction* discrete_linear;
-utilities::functions::DiscreteExponentialFunction* discrete_exponential;
-utilities::functions::UnaryPulseFunction* unary_pulse;
-utilities::functions::UnaryStepFunction* unary_step;
+utilities::functions::ContinuousStepFunctionPtr continuous_step;
+utilities::functions::ContinuousLinearFunctionPtr continuous_linear;
+utilities::functions::ContinuousExponentialFunctionPtr continuous_exponential;
+utilities::functions::DiscreteStepFunctionPtr discrete_step;
+utilities::functions::DiscreteLinearFunctionPtr discrete_linear;
+utilities::functions::DiscreteExponentialFunctionPtr discrete_exponential;
+utilities::functions::UnaryPulseFunctionPtr unary_pulse;
+utilities::functions::UnaryStepFunctionPtr unary_step;
 std::map<double, double> q_step_asc;
 std::map<double, double> q_step_des;
 std::map<double, double> q_linear_asc;
@@ -155,10 +155,10 @@ TEST(Functions, unary_pulse)
 
 TEST(Functions, step2pulse)
 {
-  utilities::functions::DiscreteStepFunction* step =
-      new utilities::functions::DiscreteStepFunction(2.0, 25, true, true);
-  utilities::functions::DiscretePulseFunction* pulse =
-      new utilities::functions::DiscretePulseFunction(*step, 4.0);
+  utilities::functions::DiscreteStepFunctionPtr step(
+      new utilities::functions::DiscreteStepFunction(2.0, 25, true, true));
+  utilities::functions::DiscretePulseFunctionPtr pulse(
+      new utilities::functions::DiscretePulseFunction(*step, 4.0));
   // testing step
   EXPECT_EQ(0, step->getValue(0.0));
   EXPECT_EQ(0, step->getValue(1.9));
@@ -175,18 +175,14 @@ TEST(Functions, step2pulse)
   EXPECT_EQ(25, pulse->getValue(3.9));
   EXPECT_EQ(25, pulse->getValue(4.0));
   EXPECT_EQ(0, pulse->getValue(4.1));
-  delete step;
-  step = NULL;
-  delete pulse;
-  pulse = NULL;
 }
 
 TEST(Functions, unary_sample_holder)
 {
   double dt(0.25);
-  utilities::functions::UnarySampleHolder* ush =
+  utilities::functions::UnarySampleHolderPtr ush(
       new utilities::functions::UnarySampleHolder(
-          "ush", ros::Duration(1.0 * dt), ros::Duration(3.5 * dt));
+          "ush", ros::Duration(1.0 * dt), ros::Duration(3.5 * dt)));
   ros::Time timestamp = ush->getStartTimestamp();
   EXPECT_FALSE(ush->getValue(timestamp + ros::Duration(0.0 * dt)));
   EXPECT_FALSE(ush->getValue(timestamp + ros::Duration(0.25 * dt)));
@@ -212,9 +208,8 @@ TEST(Functions, unary_sample_holder)
   EXPECT_FALSE(ush->getValue(timestamp + ros::Duration(6.5 * dt)));
   EXPECT_FALSE(ush->getValue(timestamp + ros::Duration(7.0 * dt)));
   EXPECT_FALSE(ush->getValue(timestamp + ros::Duration(7.5 * dt)));
-  delete ush;
-  ush = new utilities::functions::UnarySampleHolder("ush",
-                                                    ros::Duration(3.5 * dt));
+  ush.reset(new utilities::functions::UnarySampleHolder(
+      "ush", ros::Duration(3.5 * dt)));
   timestamp = ush->getStartTimestamp();
   EXPECT_FALSE(ush->getValue(timestamp + ros::Duration(0.0 * dt)));
   EXPECT_FALSE(ush->getValue(timestamp + ros::Duration(0.25 * dt)));
@@ -240,15 +235,14 @@ TEST(Functions, unary_sample_holder)
   EXPECT_TRUE(ush->getValue(timestamp + ros::Duration(6.5 * dt)));
   EXPECT_TRUE(ush->getValue(timestamp + ros::Duration(7.0 * dt)));
   EXPECT_TRUE(ush->getValue(timestamp + ros::Duration(7.5 * dt)));
-  delete ush;
 }
 
 TEST(Functions, discrete_sample_holder)
 {
   double dt(0.25);
-  utilities::functions::DiscreteSampleHolder* dsh =
+  utilities::functions::DiscreteSampleHolderPtr dsh(
       new utilities::functions::DiscreteSampleHolder("dsh", 2,
-                                                     ros::Duration(3.5 * dt));
+                                                     ros::Duration(3.5 * dt)));
   ros::Time timestamp = dsh->getStartTimestamp();
   EXPECT_EQ(0, dsh->getValue(timestamp + ros::Duration(0.0 * dt)));
   EXPECT_EQ(0, dsh->getValue(timestamp + ros::Duration(0.25 * dt)));
@@ -274,15 +268,14 @@ TEST(Functions, discrete_sample_holder)
   EXPECT_EQ(3, dsh->getValue(timestamp + ros::Duration(6.5 * dt)));
   EXPECT_EQ(3, dsh->getValue(timestamp + ros::Duration(7.0 * dt)));
   EXPECT_EQ(3, dsh->getValue(timestamp + ros::Duration(7.5 * dt)));
-  delete dsh;
 }
 
 TEST(Functions, continuous_sample_holder)
 {
   double dt(0.25);
-  utilities::functions::ContinuousSampleHolder* csh =
-      new utilities::functions::ContinuousSampleHolder("csh", 1.8,
-                                                       ros::Duration(3.5 * dt));
+  utilities::functions::ContinuousSampleHolderPtr csh(
+      new utilities::functions::ContinuousSampleHolder(
+          "csh", 1.8, ros::Duration(3.5 * dt)));
   ros::Time timestamp = csh->getStartTimestamp();
   EXPECT_GE(tolerance,
             fabs(0.0 - csh->getValue(timestamp + ros::Duration(0.0 * dt))));
@@ -329,18 +322,24 @@ TEST(Functions, continuous_sample_holder)
             fabs(1.3 - csh->getValue(timestamp + ros::Duration(7.0 * dt))));
   EXPECT_GE(tolerance,
             fabs(1.3 - csh->getValue(timestamp + ros::Duration(7.5 * dt))));
-  delete csh;
 }
 
 TEST(Task, start)
 {
-  ruler::Task* task = new ruler::Task("t", "task", ros::Duration(10));
+  double d(0.5);
+  ros::Time timestamp(ros::Time::now());
+  utilities::NoisyTimePtr expected_start(new utilities::NoisyTime(
+      timestamp + ros::Duration(1.0 * d), timestamp + ros::Duration(1.5 * d)));
+  utilities::NoisyTimePtr expected_end(new utilities::NoisyTime(
+      timestamp + ros::Duration(5.0 * d), timestamp + ros::Duration(7.5 * d)));
+  ruler::TaskPtr task(
+      new ruler::Task("t", "task", expected_start, expected_end));
   try
   {
     task->start();
     ADD_FAILURE() << "Didn't throw exception as expected.";
   }
-  catch (utilities::Exception e)
+  catch (const utilities::Exception& e)
   {
     SUCCEED();
   }
@@ -348,8 +347,8 @@ TEST(Task, start)
   {
     FAIL() << "Uncaught exception.";
   }
-  ruler::UnaryConsumableResource* resource =
-      new ruler::UnaryConsumableResource("r", "resource");
+  ruler::UnaryConsumableResourcePtr resource(
+      new ruler::UnaryConsumableResource("r", "resource"));
   task->addResource(resource);
   task->start();
   task->interrupt();
@@ -358,7 +357,7 @@ TEST(Task, start)
     task->start();
     ADD_FAILURE() << "Didn't throw exception as expected.";
   }
-  catch (utilities::Exception e)
+  catch (const utilities::Exception& e)
   {
     SUCCEED();
   }
@@ -372,7 +371,7 @@ TEST(Task, start)
     task->start();
     ADD_FAILURE() << "Didn't throw exception as expected.";
   }
-  catch (utilities::Exception e)
+  catch (const utilities::Exception& e)
   {
     SUCCEED();
   }
@@ -386,7 +385,7 @@ TEST(Task, start)
     task->start();
     ADD_FAILURE() << "Didn't throw exception as expected.";
   }
-  catch (utilities::Exception e)
+  catch (const utilities::Exception& e)
   {
     SUCCEED();
   }
@@ -394,21 +393,24 @@ TEST(Task, start)
   {
     FAIL() << "Uncaught exception.";
   }
-  delete task;
-  task = NULL;
-  delete resource;
-  resource = NULL;
 }
 
 TEST(Task, interrupt)
 {
-  ruler::Task* task = new ruler::Task("t", "task", ros::Duration(10));
+  double d(0.5);
+  ros::Time timestamp(ros::Time::now());
+  utilities::NoisyTimePtr expected_start(new utilities::NoisyTime(
+      timestamp + ros::Duration(1.0 * d), timestamp + ros::Duration(1.5 * d)));
+  utilities::NoisyTimePtr expected_end(new utilities::NoisyTime(
+      timestamp + ros::Duration(5.0 * d), timestamp + ros::Duration(7.5 * d)));
+  ruler::TaskPtr task(
+      new ruler::Task("t", "task", expected_start, expected_end));
   try
   {
     task->interrupt();
     ADD_FAILURE() << "Didn't throw exception as expected.";
   }
-  catch (utilities::Exception e)
+  catch (const utilities::Exception& e)
   {
     SUCCEED();
   }
@@ -416,8 +418,8 @@ TEST(Task, interrupt)
   {
     FAIL() << "Uncaught exception.";
   }
-  ruler::UnaryConsumableResource* resource =
-      new ruler::UnaryConsumableResource("r", "resource");
+  ruler::UnaryConsumableResourcePtr resource(
+      new ruler::UnaryConsumableResource("r", "resource"));
   task->addResource(resource);
   task->start();
   task->interrupt();
@@ -426,7 +428,7 @@ TEST(Task, interrupt)
     task->interrupt();
     ADD_FAILURE() << "Didn't throw exception as expected.";
   }
-  catch (utilities::Exception e)
+  catch (const utilities::Exception& e)
   {
     SUCCEED();
   }
@@ -440,7 +442,7 @@ TEST(Task, interrupt)
     task->interrupt();
     ADD_FAILURE() << "Didn't throw exception as expected.";
   }
-  catch (utilities::Exception e)
+  catch (const utilities::Exception& e)
   {
     SUCCEED();
   }
@@ -448,21 +450,24 @@ TEST(Task, interrupt)
   {
     FAIL() << "Uncaught exception.";
   }
-  delete task;
-  task = NULL;
-  delete resource;
-  resource = NULL;
 }
 
 TEST(Task, resume)
 {
-  ruler::Task* task = new ruler::Task("t", "task", ros::Duration(10));
+  double d(0.5);
+  ros::Time timestamp(ros::Time::now());
+  utilities::NoisyTimePtr expected_start(new utilities::NoisyTime(
+      timestamp + ros::Duration(1.0 * d), timestamp + ros::Duration(1.5 * d)));
+  utilities::NoisyTimePtr expected_end(new utilities::NoisyTime(
+      timestamp + ros::Duration(5.0 * d), timestamp + ros::Duration(7.5 * d)));
+  ruler::TaskPtr task(
+      new ruler::Task("t", "task", expected_start, expected_end));
   try
   {
     task->resume();
     ADD_FAILURE() << "Didn't throw exception as expected.";
   }
-  catch (utilities::Exception e)
+  catch (const utilities::Exception& e)
   {
     SUCCEED();
   }
@@ -470,8 +475,8 @@ TEST(Task, resume)
   {
     FAIL() << "Uncaught exception.";
   }
-  ruler::UnaryConsumableResource* resource =
-      new ruler::UnaryConsumableResource("r", "resource");
+  ruler::UnaryConsumableResourcePtr resource(
+      new ruler::UnaryConsumableResource("r", "resource"));
   task->addResource(resource);
   task->start();
   try
@@ -479,7 +484,7 @@ TEST(Task, resume)
     task->resume();
     ADD_FAILURE() << "Didn't throw exception as expected.";
   }
-  catch (utilities::Exception e)
+  catch (const utilities::Exception& e)
   {
     SUCCEED();
   }
@@ -494,7 +499,7 @@ TEST(Task, resume)
     task->resume();
     ADD_FAILURE() << "Didn't throw exception as expected.";
   }
-  catch (utilities::Exception e)
+  catch (const utilities::Exception& e)
   {
     SUCCEED();
   }
@@ -508,7 +513,7 @@ TEST(Task, resume)
     task->resume();
     ADD_FAILURE() << "Didn't throw exception as expected.";
   }
-  catch (utilities::Exception e)
+  catch (const utilities::Exception& e)
   {
     SUCCEED();
   }
@@ -516,21 +521,24 @@ TEST(Task, resume)
   {
     FAIL() << "Uncaught exception.";
   }
-  delete task;
-  task = NULL;
-  delete resource;
-  resource = NULL;
 }
 
 TEST(Task, finish)
 {
-  ruler::Task* task = new ruler::Task("t", "task", ros::Duration(10));
+  double d(0.5);
+  ros::Time timestamp(ros::Time::now());
+  utilities::NoisyTimePtr expected_start(new utilities::NoisyTime(
+      timestamp + ros::Duration(1.0 * d), timestamp + ros::Duration(1.5 * d)));
+  utilities::NoisyTimePtr expected_end(new utilities::NoisyTime(
+      timestamp + ros::Duration(5.0 * d), timestamp + ros::Duration(7.5 * d)));
+  ruler::TaskPtr task(
+      new ruler::Task("t", "task", expected_start, expected_end));
   try
   {
     task->finish();
     ADD_FAILURE() << "Didn't throw exception as expected.";
   }
-  catch (utilities::Exception e)
+  catch (const utilities::Exception& e)
   {
     SUCCEED();
   }
@@ -538,8 +546,8 @@ TEST(Task, finish)
   {
     FAIL() << "Uncaught exception.";
   }
-  ruler::UnaryConsumableResource* resource =
-      new ruler::UnaryConsumableResource("r", "resource");
+  ruler::UnaryConsumableResourcePtr resource(
+      new ruler::UnaryConsumableResource("r", "resource"));
   task->addResource(resource);
   task->start();
   task->finish();
@@ -548,7 +556,7 @@ TEST(Task, finish)
     task->finish();
     ADD_FAILURE() << "Didn't throw exception as expected.";
   }
-  catch (utilities::Exception e)
+  catch (const utilities::Exception& e)
   {
     SUCCEED();
   }
@@ -556,23 +564,17 @@ TEST(Task, finish)
   {
     FAIL() << "Uncaught exception.";
   }
-  delete task;
-  task = NULL;
-  delete resource;
-  resource = NULL;
 }
 
 TEST(Profiles, continuous)
 {
-  ruler::Profile<utilities::ContinuousSignalType>* profile;
+  ruler::ContinuousProfilePtr profile;
   try
   {
-    profile = new ruler::Profile<utilities::ContinuousSignalType>(10.3, 12.1);
-    delete profile;
-    profile = NULL;
+    profile.reset(new ruler::ContinuousProfile(10.3, 12.1));
     ADD_FAILURE() << "Didn't throw exception as expected.";
   }
-  catch (utilities::Exception e)
+  catch (const utilities::Exception& e)
   {
     SUCCEED();
   }
@@ -580,23 +582,30 @@ TEST(Profiles, continuous)
   {
     FAIL() << "Uncaught exception.";
   }
-  ruler::Task* task = new ruler::Task("t", "task", ros::Duration(10));
+  double delta(0.5);
+  ros::Time timestamp(ros::Time::now());
+  utilities::NoisyTimePtr expected_start(
+      new utilities::NoisyTime(timestamp + ros::Duration(1.0 * delta),
+                               timestamp + ros::Duration(1.5 * delta)));
+  utilities::NoisyTimePtr expected_end(
+      new utilities::NoisyTime(timestamp + ros::Duration(5.0 * delta),
+                               timestamp + ros::Duration(7.5 * delta)));
+  ruler::TaskPtr task(
+      new ruler::Task("t", "task", expected_start, expected_end));
   double c(1000), l0(300);
-  ruler::ContinuousConsumableResource* resource =
-      new ruler::ContinuousConsumableResource("r", "resource", c, l0);
+  ruler::ContinuousConsumableResourcePtr resource(
+      new ruler::ContinuousConsumableResource("r", "resource", c, l0));
   task->addResource(resource);
   task->start();
-  ros::Time timestamp(task->getStartTimestamp());
-  profile = new ruler::Profile<utilities::ContinuousSignalType>(c, l0);
+  timestamp = task->getStartTimestamp();
+  profile.reset(new ruler::ContinuousProfile(c, l0));
+  profile->addTaskFunction(ruler::ContinuousTaskFunctionPtr(
+      new ruler::ContinuousTaskFunction(resource, task, continuous_step)));
+  profile->addTaskFunction(ruler::ContinuousTaskFunctionPtr(
+      new ruler::ContinuousTaskFunction(resource, task, continuous_linear)));
   profile->addTaskFunction(
-      new ruler::TaskFunction<utilities::ContinuousSignalType>(
-          resource, task, continuous_step));
-  profile->addTaskFunction(
-      new ruler::TaskFunction<utilities::ContinuousSignalType>(
-          resource, task, continuous_linear));
-  profile->addTaskFunction(
-      new ruler::TaskFunction<utilities::ContinuousSignalType>(
-          resource, task, continuous_exponential));
+      ruler::ContinuousTaskFunctionPtr(new ruler::ContinuousTaskFunction(
+          resource, task, continuous_exponential)));
   continuous_step->setAscending(true);
   continuous_linear->setAscending(true);
   continuous_exponential->setAscending(true);
@@ -686,34 +695,33 @@ TEST(Profiles, continuous)
     EXPECT_GE(l, 0.0);
     EXPECT_LE(l, c);
   }
-  delete profile;
-  profile = NULL;
-  delete task;
-  task = NULL;
-  delete resource;
-  resource = NULL;
 }
 
 TEST(Profiles, discrete)
 {
-  ruler::Task* task = new ruler::Task("t", "task", ros::Duration(10));
+  double delta(0.5);
+  ros::Time timestamp(ros::Time::now());
+  utilities::NoisyTimePtr expected_start(
+      new utilities::NoisyTime(timestamp + ros::Duration(1.0 * delta),
+                               timestamp + ros::Duration(1.5 * delta)));
+  utilities::NoisyTimePtr expected_end(
+      new utilities::NoisyTime(timestamp + ros::Duration(5.0 * delta),
+                               timestamp + ros::Duration(7.5 * delta)));
+  ruler::TaskPtr task(
+      new ruler::Task("t", "task", expected_start, expected_end));
   long c(1000), l0(300);
-  ruler::DiscreteConsumableResource* resource =
-      new ruler::DiscreteConsumableResource("r", "resource", c, l0);
+  ruler::DiscreteConsumableResourcePtr resource(
+      new ruler::DiscreteConsumableResource("r", "resource", c, l0));
   task->addResource(resource);
   task->start();
-  ros::Time timestamp(task->getStartTimestamp());
-  ruler::Profile<utilities::DiscreteSignalType>* profile =
-      new ruler::Profile<utilities::DiscreteSignalType>(c, l0);
-  profile->addTaskFunction(
-      new ruler::TaskFunction<utilities::DiscreteSignalType>(resource, task,
-                                                             discrete_step));
-  profile->addTaskFunction(
-      new ruler::TaskFunction<utilities::DiscreteSignalType>(resource, task,
-                                                             discrete_linear));
-  profile->addTaskFunction(
-      new ruler::TaskFunction<utilities::DiscreteSignalType>(
-          resource, task, discrete_exponential));
+  timestamp = task->getStartTimestamp();
+  ruler::DiscreteProfilePtr profile(new ruler::DiscreteProfile(c, l0));
+  profile->addTaskFunction(ruler::DiscreteTaskFunctionPtr(
+      new ruler::DiscreteTaskFunction(resource, task, discrete_step)));
+  profile->addTaskFunction(ruler::DiscreteTaskFunctionPtr(
+      new ruler::DiscreteTaskFunction(resource, task, discrete_linear)));
+  profile->addTaskFunction(ruler::DiscreteTaskFunctionPtr(
+      new ruler::DiscreteTaskFunction(resource, task, discrete_exponential)));
   discrete_step->setAscending(true);
   discrete_linear->setAscending(true);
   discrete_exponential->setAscending(true);
@@ -811,28 +819,28 @@ TEST(Profiles, discrete)
     EXPECT_GE(l, 0l);
     EXPECT_LE(l, c);
   }
-  delete profile;
-  profile = NULL;
-  delete task;
-  task = NULL;
-  delete resource;
-  resource = NULL;
 }
 
 TEST(Profiles, unary)
 {
-  ruler::Task* task = new ruler::Task("t", "task", ros::Duration(10));
-  ruler::UnaryConsumableResource* resource =
-      new ruler::UnaryConsumableResource("r", "resource");
+  double d(0.5);
+  ros::Time timestamp(ros::Time::now());
+  utilities::NoisyTimePtr expected_start(new utilities::NoisyTime(
+      timestamp + ros::Duration(1.0 * d), timestamp + ros::Duration(1.5 * d)));
+  utilities::NoisyTimePtr expected_end(new utilities::NoisyTime(
+      timestamp + ros::Duration(5.0 * d), timestamp + ros::Duration(7.5 * d)));
+  ruler::TaskPtr task(
+      new ruler::Task("t", "task", expected_start, expected_end));
+  ruler::UnaryConsumableResourcePtr resource(
+      new ruler::UnaryConsumableResource("r", "resource"));
   task->addResource(resource);
   task->start();
-  ros::Time timestamp(task->getStartTimestamp());
-  ruler::Profile<utilities::UnarySignalType>* profile =
-      new ruler::Profile<utilities::UnarySignalType>(true, false);
-  profile->addTaskFunction(new ruler::TaskFunction<utilities::UnarySignalType>(
-      resource, task, unary_pulse));
-  profile->addTaskFunction(new ruler::TaskFunction<utilities::UnarySignalType>(
-      resource, task, unary_step));
+  timestamp = task->getStartTimestamp();
+  ruler::UnaryProfilePtr profile(new ruler::UnaryProfile(true, false));
+  profile->addTaskFunction(ruler::UnaryTaskFunctionPtr(
+      new ruler::UnaryTaskFunction(resource, task, unary_pulse)));
+  profile->addTaskFunction(ruler::UnaryTaskFunctionPtr(
+      new ruler::UnaryTaskFunction(resource, task, unary_step)));
   unary_pulse->setAscending(true);
   unary_step->setAscending(true);
   EXPECT_FALSE(profile->getLevel(timestamp + ros::Duration(0.0)));
@@ -873,38 +881,44 @@ TEST(Profiles, unary)
   EXPECT_FALSE(profile->getLevel(timestamp + ros::Duration(1.25)));
   EXPECT_FALSE(profile->getLevel(timestamp + ros::Duration(1.5)));
   EXPECT_TRUE(profile->getLevel(timestamp + ros::Duration(1.75)));
-  delete profile;
-  profile = NULL;
-  delete task;
-  task = NULL;
-  delete resource;
-  resource = NULL;
 }
 
 TEST(ResourceReservationRequests, consumableProduction)
 {
-  ruler::ContinuousConsumableResource* r1 =
-      new ruler::ContinuousConsumableResource("r1", "resource 1", 10, 4);
-  ruler::DiscreteConsumableResource* r2 =
-      new ruler::DiscreteConsumableResource("r2", "resource 2", 5, 3);
-  ruler::UnaryConsumableResource* r3 =
-      new ruler::UnaryConsumableResource("r3", "resource 3", false);
-  ruler::Task* task = new ruler::Task("t", "task", ros::Duration(10));
+  ruler::ContinuousConsumableResourcePtr r1(
+      new ruler::ContinuousConsumableResource("r1", "resource 1", 10, 4));
+  ruler::DiscreteConsumableResourcePtr r2(
+      new ruler::DiscreteConsumableResource("r2", "resource 2", 5, 3));
+  ruler::UnaryConsumableResourcePtr r3(
+      new ruler::UnaryConsumableResource("r3", "resource 3", false));
+  double d(0.5);
+  ros::Time timestamp(ros::Time::now());
+  utilities::NoisyTimePtr expected_start(new utilities::NoisyTime(
+      timestamp + ros::Duration(1.0 * d), timestamp + ros::Duration(1.5 * d)));
+  utilities::NoisyTimePtr expected_end(new utilities::NoisyTime(
+      timestamp + ros::Duration(5.0 * d), timestamp + ros::Duration(7.5 * d)));
+  ruler::TaskPtr task(
+      new ruler::Task("t", "task", expected_start, expected_end));
   task->addResourceReservationRequest(
-      new ruler::ConsumableResourceReservationRequest<
-          utilities::ContinuousSignalType>(
-          task, r1, new utilities::functions::ContinuousStepFunction(1.0, 3.0),
-          false));
+      ruler::ContinuousConsumableResourceReservationRequestPtr(
+          new ruler::ContinuousConsumableResourceReservationRequest(
+              task, r1,
+              utilities::functions::ContinuousStepFunctionPtr(
+                  new utilities::functions::ContinuousStepFunction(1.0, 3.0)),
+              false)));
   task->addResourceReservationRequest(
-      new ruler::ConsumableResourceReservationRequest<
-          utilities::DiscreteSignalType>(
-          task, r2, new utilities::functions::DiscreteStepFunction(2.0, 2.0),
-          false));
+      ruler::DiscreteConsumableResourceReservationRequestPtr(
+          new ruler::DiscreteConsumableResourceReservationRequest(
+              task, r2,
+              utilities::functions::DiscreteStepFunctionPtr(
+                  new utilities::functions::DiscreteStepFunction(2.0, 2.0)),
+              false)));
   task->addResourceReservationRequest(
-      new ruler::ConsumableResourceReservationRequest<
-          utilities::UnarySignalType>(task, r3, 6.0, false));
+      ruler::UnaryConsumableResourceReservationRequestPtr(
+          new ruler::UnaryConsumableResourceReservationRequest(task, r3, 6.0,
+                                                               false)));
   task->start();
-  ros::Time timestamp(task->getStartTimestamp());
+  timestamp = task->getStartTimestamp();
   EXPECT_GE(tolerance, fabs(4 - r1->getLevel(timestamp + ros::Duration(0.0))));
   EXPECT_GE(tolerance, fabs(4 - r1->getLevel(timestamp + ros::Duration(1.0))));
   EXPECT_GE(tolerance,
@@ -951,39 +965,41 @@ TEST(ResourceReservationRequests, consumableProduction)
   EXPECT_TRUE(r3->getLevel(timestamp + ros::Duration(8.0)));
   EXPECT_TRUE(r3->getLevel(timestamp + ros::Duration(9.0)));
   EXPECT_TRUE(r3->getLevel(timestamp + ros::Duration(10.0)));
-  delete task;
-  task = NULL;
-  delete r1;
-  r1 = NULL;
-  delete r2;
-  r2 = NULL;
-  delete r3;
-  r3 = NULL;
 }
 
 TEST(ResourceReservationRequests, consumableConsumption)
 {
-  ruler::ContinuousConsumableResource* r1 =
-      new ruler::ContinuousConsumableResource("r1", "resource 1", 10, 4);
-  ruler::DiscreteConsumableResource* r2 =
-      new ruler::DiscreteConsumableResource("r2", "resource 2", 5, 3);
-  ruler::UnaryConsumableResource* r3 =
-      new ruler::UnaryConsumableResource("r3", "resource 3", true);
-  ruler::Task* task = new ruler::Task("t", "task", ros::Duration(10));
+  ruler::ContinuousConsumableResourcePtr r1(
+      new ruler::ContinuousConsumableResource("r1", "resource 1", 10, 4));
+  ruler::DiscreteConsumableResourcePtr r2(
+      new ruler::DiscreteConsumableResource("r2", "resource 2", 5, 3));
+  ruler::UnaryConsumableResourcePtr r3(
+      new ruler::UnaryConsumableResource("r3", "resource 3", true));
+  double d(0.5);
+  ros::Time timestamp(ros::Time::now());
+  utilities::NoisyTimePtr expected_start(new utilities::NoisyTime(
+      timestamp + ros::Duration(1.0 * d), timestamp + ros::Duration(1.5 * d)));
+  utilities::NoisyTimePtr expected_end(new utilities::NoisyTime(
+      timestamp + ros::Duration(5.0 * d), timestamp + ros::Duration(7.5 * d)));
+  ruler::TaskPtr task(
+      new ruler::Task("t", "task", expected_start, expected_end));
   task->addResourceReservationRequest(
-      new ruler::ConsumableResourceReservationRequest<
-          utilities::ContinuousSignalType>(
-          task, r1,
-          new utilities::functions::ContinuousStepFunction(1.0, 3.0)));
+      ruler::ContinuousConsumableResourceReservationRequestPtr(
+          new ruler::ContinuousConsumableResourceReservationRequest(
+              task, r1, utilities::functions::ContinuousStepFunctionPtr(
+                            new utilities::functions::ContinuousStepFunction(
+                                1.0, 3.0)))));
   task->addResourceReservationRequest(
-      new ruler::ConsumableResourceReservationRequest<
-          utilities::DiscreteSignalType>(
-          task, r2, new utilities::functions::DiscreteStepFunction(2.0, 2.0)));
+      ruler::DiscreteConsumableResourceReservationRequestPtr(
+          new ruler::DiscreteConsumableResourceReservationRequest(
+              task, r2,
+              utilities::functions::DiscreteStepFunctionPtr(
+                  new utilities::functions::DiscreteStepFunction(2.0, 2.0)))));
   task->addResourceReservationRequest(
-      new ruler::ConsumableResourceReservationRequest<
-          utilities::UnarySignalType>(task, r3, 6.0));
+      ruler::UnaryConsumableResourceReservationRequestPtr(
+          new ruler::UnaryConsumableResourceReservationRequest(task, r3, 6.0)));
   task->start();
-  ros::Time timestamp(task->getStartTimestamp());
+  timestamp = task->getStartTimestamp();
   EXPECT_GE(tolerance, fabs(4 - r1->getLevel(timestamp + ros::Duration(0.0))));
   EXPECT_GE(tolerance, fabs(4 - r1->getLevel(timestamp + ros::Duration(1.0))));
   EXPECT_GE(tolerance,
@@ -1030,36 +1046,37 @@ TEST(ResourceReservationRequests, consumableConsumption)
   EXPECT_FALSE(r3->getLevel(timestamp + ros::Duration(8.0)));
   EXPECT_FALSE(r3->getLevel(timestamp + ros::Duration(9.0)));
   EXPECT_FALSE(r3->getLevel(timestamp + ros::Duration(10.0)));
-  delete task;
-  task = NULL;
-  delete r1;
-  r1 = NULL;
-  delete r2;
-  r2 = NULL;
-  delete r3;
-  r3 = NULL;
 }
 
 TEST(ResourceReservationRequests, reusable)
 {
-  ruler::ContinuousReusableResource* r1 =
-      new ruler::ContinuousReusableResource("r1", "resource 1", 10, 4);
-  ruler::DiscreteReusableResource* r2 =
-      new ruler::DiscreteReusableResource("r2", "resource 2", 5, 3);
-  ruler::UnaryReusableResource* r3 =
-      new ruler::UnaryReusableResource("r3", "resource 3", true);
-  ruler::Task* task = new ruler::Task("t", "task", ros::Duration(10));
+  ruler::ContinuousReusableResourcePtr r1(
+      new ruler::ContinuousReusableResource("r1", "resource 1", 10, 4));
+  ruler::DiscreteReusableResourcePtr r2(
+      new ruler::DiscreteReusableResource("r2", "resource 2", 5, 3));
+  ruler::UnaryReusableResourcePtr r3(
+      new ruler::UnaryReusableResource("r3", "resource 3", true));
+  double d(0.5);
+  ros::Time timestamp(ros::Time::now());
+  utilities::NoisyTimePtr expected_start(new utilities::NoisyTime(
+      timestamp + ros::Duration(1.0 * d), timestamp + ros::Duration(1.5 * d)));
+  utilities::NoisyTimePtr expected_end(new utilities::NoisyTime(
+      timestamp + ros::Duration(5.0 * d), timestamp + ros::Duration(7.5 * d)));
+  ruler::TaskPtr task(
+      new ruler::Task("t", "task", expected_start, expected_end));
   task->addResourceReservationRequest(
-      new ruler::ReusableResourceReservationRequest<
-          utilities::ContinuousSignalType>(task, r1, 3.0, 1.0));
+      ruler::ContinuousReusableResourceReservationRequestPtr(
+          new ruler::ContinuousReusableResourceReservationRequest(task, r1, 3.0,
+                                                                  1.0)));
   task->addResourceReservationRequest(
-      new ruler::ReusableResourceReservationRequest<
-          utilities::DiscreteSignalType>(task, r2, 2l, 2.0));
+      ruler::DiscreteReusableResourceReservationRequestPtr(
+          new ruler::DiscreteReusableResourceReservationRequest(task, r2, 2l,
+                                                                2.0)));
   task->addResourceReservationRequest(
-      new ruler::ReusableResourceReservationRequest<utilities::UnarySignalType>(
-          task, r3, 6.0));
+      ruler::UnaryReusableResourceReservationRequestPtr(
+          new ruler::UnaryReusableResourceReservationRequest(task, r3, 6.0)));
   task->start();
-  ros::Time timestamp(task->getStartTimestamp());
+  timestamp = task->getStartTimestamp();
   EXPECT_GE(tolerance, fabs(4 - r1->getLevel(timestamp + ros::Duration(0.0))));
   EXPECT_GE(tolerance, fabs(4 - r1->getLevel(timestamp + ros::Duration(1.0))));
   EXPECT_GE(tolerance,
@@ -1106,43 +1123,44 @@ TEST(ResourceReservationRequests, reusable)
   EXPECT_FALSE(r3->getLevel(timestamp + ros::Duration(8.0)));
   EXPECT_FALSE(r3->getLevel(timestamp + ros::Duration(9.0)));
   EXPECT_FALSE(r3->getLevel(timestamp + ros::Duration(10.0)));
-  delete task;
-  task = NULL;
-  delete r1;
-  r1 = NULL;
-  delete r2;
-  r2 = NULL;
-  delete r3;
-  r3 = NULL;
 }
 
 TEST(ResourceSharing, task1and2)
 {
   tolerance *= 50;
   double d(0.5);
-  ruler::ContinuousConsumableResource* r1 =
-      new ruler::ContinuousConsumableResource("r1", "resource 1", 5.0, 3.0);
-  ruler::DiscreteReusableResource* r2 =
-      new ruler::DiscreteReusableResource("r2", "resource 2", 6, 5);
-  ruler::Task* t1 = new ruler::Task("t1", "task 1", ros::Duration(4 * d));
-  ruler::Task* t2 = new ruler::Task("t2", "task 2", ros::Duration(4 * d));
+  ruler::ContinuousConsumableResourcePtr r1(
+      new ruler::ContinuousConsumableResource("r1", "resource 1", 5.0, 3.0));
+  ruler::DiscreteReusableResourcePtr r2(
+      new ruler::DiscreteReusableResource("r2", "resource 2", 6, 5));
+  ros::Time timestamp(ros::Time::now());
+  utilities::NoisyTimePtr expected_start(new utilities::NoisyTime(
+      timestamp + ros::Duration(0.5 * d), timestamp + ros::Duration(1.5 * d)));
+  utilities::NoisyTimePtr expected_end(new utilities::NoisyTime(
+      timestamp + ros::Duration(4.5 * d), timestamp + ros::Duration(5.5 * d)));
+  ruler::TaskPtr t1(
+      new ruler::Task("t1", "task1", expected_start, expected_end));
+  ruler::TaskPtr t2(
+      new ruler::Task("t2", "task2", expected_start, expected_end));
   t1->addResourceReservationRequest(
-      new ruler::ConsumableResourceReservationRequest<
-          utilities::ContinuousSignalType>(
-          t1, r1, new utilities::functions::ContinuousLinearFunction(
-                      0.0 * d, 4.0 * d, 0.0, 4.0)));
+      ruler::ContinuousConsumableResourceReservationRequestPtr(
+          new ruler::ContinuousConsumableResourceReservationRequest(
+              t1, r1, utilities::functions::ContinuousLinearFunctionPtr(
+                          new utilities::functions::ContinuousLinearFunction(
+                              0.0 * d, 4.0 * d, 0.0, 4.0)))));
   t1->addResourceReservationRequest(
-      new ruler::ReusableResourceReservationRequest<
-          utilities::DiscreteSignalType>(t1, r2, 2l));
+      ruler::DiscreteReusableResourceReservationRequestPtr(
+          new ruler::DiscreteReusableResourceReservationRequest(t1, r2, 2l)));
   t2->addResourceReservationRequest(
-      new ruler::ConsumableResourceReservationRequest<
-          utilities::ContinuousSignalType>(
-          t2, r1, new utilities::functions::ContinuousLinearFunction(
-                      0.0 * d, 4.0 * d, 0.0, 4.0),
-          false));
+      ruler::ContinuousConsumableResourceReservationRequestPtr(
+          new ruler::ContinuousConsumableResourceReservationRequest(
+              t2, r1, utilities::functions::ContinuousLinearFunctionPtr(
+                          new utilities::functions::ContinuousLinearFunction(
+                              0.0 * d, 4.0 * d, 0.0, 4.0)),
+              false)));
   t2->addResourceReservationRequest(
-      new ruler::ReusableResourceReservationRequest<
-          utilities::DiscreteSignalType>(t2, r2, 1l));
+      ruler::DiscreteReusableResourceReservationRequestPtr(
+          new ruler::DiscreteReusableResourceReservationRequest(t2, r2, 1l)));
   ros::Duration duration(d);
   ros::Rate rate(duration);
   rate.sleep(); // t = 0
@@ -1159,7 +1177,6 @@ TEST(ResourceSharing, task1and2)
   t2->finish();
   rate.sleep(); // t = 7
   t1->finish();
-  ros::Time timestamp;
   // testing r1
   timestamp = t1->getStartTimestamp() - ros::Duration(1.0 * d);
   EXPECT_GE(tolerance,
@@ -1225,14 +1242,23 @@ TEST(ResourceSharing, task1and2)
   EXPECT_EQ(5 - 2, r2->getLevel(timestamp + ros::Duration(7.0 * d)));
   EXPECT_EQ(5 - 0, r2->getLevel(timestamp + ros::Duration(7.5 * d)));
   EXPECT_EQ(5 - 0, r2->getLevel(timestamp + ros::Duration(8.0 * d)));
-  delete t1;
-  t1 = NULL;
-  delete t2;
-  t2 = NULL;
-  delete r1;
-  r1 = NULL;
-  delete r2;
-  r2 = NULL;
+}
+
+TEST(Simulation, taskSimulation)
+{
+  double d(0.5);
+  ros::Time timestamp(ros::Time::now());
+  utilities::NoisyTimePtr expected_start(new utilities::NoisyTime(
+      timestamp + ros::Duration(1.0 * d), timestamp + ros::Duration(1.5 * d)));
+  utilities::NoisyTimePtr expected_end(new utilities::NoisyTime(
+      timestamp + ros::Duration(5.0 * d), timestamp + ros::Duration(7.5 * d)));
+  ruler::TaskPtr task(
+      new ruler::Task("t", "task", expected_start, expected_end));
+  utilities::ContinuousNoisySignalPtr expected_sample_time(
+      new utilities::ContinuousNoisySignal(d, 0.05 * d));
+  ruler::TaskSimulationPtr simulation(
+      new ruler::TaskSimulation(task, expected_sample_time));
+  simulation->update(timestamp);
 }
 
 void init()
@@ -1301,19 +1327,20 @@ void init()
   q_exponential_des.insert(std::pair<double, double>(d[7], 6.1));
   // functions
   double d0(1.5), df(5.5), q0(6.1), qf(8.1);
-  continuous_step =
-      new utilities::functions::ContinuousStepFunction(d0, q0, qf);
-  continuous_linear =
-      new utilities::functions::ContinuousLinearFunction(d0, df, q0, qf);
-  continuous_exponential =
-      new utilities::functions::ContinuousExponentialFunction(d0, df, q0, qf);
-  discrete_step = new utilities::functions::DiscreteStepFunction(d0, q0, qf);
-  discrete_linear =
-      new utilities::functions::DiscreteLinearFunction(d0, df, q0, qf);
-  discrete_exponential =
-      new utilities::functions::DiscreteExponentialFunction(d0, df, q0, qf);
-  unary_pulse = new utilities::functions::UnaryPulseFunction(1.0, 1.5);
-  unary_step = new utilities::functions::UnaryStepFunction(0.25);
+  continuous_step.reset(
+      new utilities::functions::ContinuousStepFunction(d0, q0, qf));
+  continuous_linear.reset(
+      new utilities::functions::ContinuousLinearFunction(d0, df, q0, qf));
+  continuous_exponential.reset(
+      new utilities::functions::ContinuousExponentialFunction(d0, df, q0, qf));
+  discrete_step.reset(
+      new utilities::functions::DiscreteStepFunction(d0, q0, qf));
+  discrete_linear.reset(
+      new utilities::functions::DiscreteLinearFunction(d0, df, q0, qf));
+  discrete_exponential.reset(
+      new utilities::functions::DiscreteExponentialFunction(d0, df, q0, qf));
+  unary_pulse.reset(new utilities::functions::UnaryPulseFunction(1.0, 1.5));
+  unary_step.reset(new utilities::functions::UnaryStepFunction(0.25));
 }
 
 int main(int argc, char** argv)

@@ -10,12 +10,21 @@
 
 #include <list>
 #include "ruler/task_function.h"
+#include "utilities/continuous_signal_type.h"
+#include "utilities/discrete_signal_type.h"
+#include "utilities/unary_signal_type.h"
 
 namespace ruler
 {
 template <typename T> class Profile
 {
+protected:
+  typedef typename TaskFunction<T>::Ptr TaskFunctionPtr;
+  typedef typename TaskFunction<T>::ConstPtr TaskFunctionConstPtr;
+
 public:
+  typedef boost::shared_ptr<Profile<T>> Ptr;
+  typedef boost::shared_ptr<Profile<T> const> ConstPtr;
   Profile(const T& capacity, const T& initial_level);
   Profile(const Profile<T>& profile);
   virtual ~Profile();
@@ -24,16 +33,28 @@ public:
   bool isUnary() const;
   T getCapacity() const;
   T getInitialLevel() const;
-  T getLevel(ros::Time t = ros::Time::now()) const;
-  void update(const TaskEventConstPtr &event);
-  void addTaskFunction(TaskFunction<T>* task_function);
-  void removeTaskFunction(Task* task);
+  T getLevel(const ros::Time& timestamp = ros::Time::now()) const;
+  void update(const TaskEventConstPtr& event);
+  void addTaskFunction(const TaskFunctionPtr& task_function);
+  void removeTaskFunction(const TaskPtr& task);
 
 private:
+  typedef typename std::list<TaskFunctionPtr>::iterator iterator;
+  typedef typename std::list<TaskFunctionPtr>::const_iterator const_iterator;
   T capacity_;
   T initial_level_;
-  std::list<TaskFunction<T>*> task_functions_;
+  std::list<TaskFunctionPtr> task_functions_;
 };
+
+typedef Profile<utilities::ContinuousSignalType> ContinuousProfile;
+typedef Profile<utilities::ContinuousSignalType>::Ptr ContinuousProfilePtr;
+typedef Profile<utilities::ContinuousSignalType>::ConstPtr ContinuousProfileConstPtr;
+typedef Profile<utilities::DiscreteSignalType> DiscreteProfile;
+typedef Profile<utilities::DiscreteSignalType>::Ptr DiscreteProfilePtr;
+typedef Profile<utilities::DiscreteSignalType>::ConstPtr DiscreteProfileConstPtr;
+typedef Profile<utilities::UnarySignalType> UnaryProfile;
+typedef Profile<utilities::UnarySignalType>::Ptr UnaryProfilePtr;
+typedef Profile<utilities::UnarySignalType>::ConstPtr UnaryProfileConstPtr;
 
 template <typename T>
 Profile<T>::Profile(const T& capacity, const T& initial_level)
@@ -52,19 +73,7 @@ Profile<T>::Profile(const Profile<T>& profile)
 {
 }
 
-template <typename T> Profile<T>::~Profile()
-{
-  typename std::list<TaskFunction<T>*>::iterator it(task_functions_.begin());
-  while (it != task_functions_.end())
-  {
-    if (*it)
-    {
-      delete *it;
-      *it = NULL;
-    }
-    it++;
-  }
-}
+template <typename T> Profile<T>::~Profile() {}
 
 template <typename T> bool Profile<T>::isContinuous() const
 {
@@ -88,60 +97,52 @@ template <typename T> T Profile<T>::getInitialLevel() const
   return initial_level_;
 }
 
-template <typename T> T Profile<T>::getLevel(ros::Time t) const
+template <typename T> T Profile<T>::getLevel(const ros::Time& timestamp) const
 {
   T level(initial_level_);
-  typename std::list<TaskFunction<T>*>::const_iterator it(
-      task_functions_.begin());
-  while (it != task_functions_.end())
+  for (const_iterator it(task_functions_.begin()); it != task_functions_.end();
+       it++)
   {
-    TaskFunction<T>* task_function = *it;
+    TaskFunctionPtr task_function(*it);
     if (task_function->isNegated())
     {
-      level -= task_function->getLevel(t);
+      level -= task_function->getLevel(timestamp);
     }
     else
     {
-      level += task_function->getLevel(t);
+      level += task_function->getLevel(timestamp);
     }
-    it++;
   }
   return level;
 }
 
 template <typename T> void Profile<T>::update(const TaskEventConstPtr& event)
 {
-  typename std::list<TaskFunction<T>*>::iterator it(task_functions_.begin());
-  while (it != task_functions_.end())
+  for (iterator it(task_functions_.begin()); it != task_functions_.end(); it++)
   {
-    TaskFunction<T>* task_function = *it;
+    TaskFunctionPtr task_function(*it);
     if (*task_function->getTask() == *event->getTask())
     {
       task_function->update(event);
     }
-    it++;
   }
 }
 
 template <typename T>
-void Profile<T>::addTaskFunction(TaskFunction<T>* task_function)
+void Profile<T>::addTaskFunction(const TaskFunctionPtr& task_function)
 {
   task_functions_.push_back(task_function);
 }
 
-template <typename T> void Profile<T>::removeTaskFunction(Task* task)
+template <typename T> void Profile<T>::removeTaskFunction(const TaskPtr& task)
 {
-  typename std::list<TaskFunction<T>*>::iterator it(task_functions_.begin());
-  while (it != task_functions_.end())
+  for (iterator it(task_functions_.begin()); it != task_functions_.end(); it++)
   {
-    TaskFunction<T>* task_function = *it;
-    if (task_function->getTask() == task)
+    TaskFunctionPtr task_function(*it);
+    if (*task_function->getTask() == task)
     {
-      delete *it;
-      *it = NULL;
       task_functions_.erase(it);
     }
-    it++;
   }
 }
 }

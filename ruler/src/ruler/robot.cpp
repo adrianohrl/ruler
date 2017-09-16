@@ -9,8 +9,8 @@
 
 namespace ruler
 {
-Robot::Robot(std::string id, std::string name,
-             std::list<ResourceInterface*> resources)
+Robot::Robot(const std::string& id, const std::string& name,
+             const std::list<ResourceInterfacePtr>& resources)
     : HasName::HasName(name, id), resources_(resources)
 {
 }
@@ -22,21 +22,14 @@ Robot::Robot(const Robot& robot)
 
 Robot::~Robot()
 {
-  std::list<ResourceInterface*>::iterator it(resources_.begin());
-  while (it != resources_.end())
-  {
-    if (*it)
-    {
-      delete *it;
-      *it = NULL;
-    }
-    it++;
-  }
 }
 
-std::list<ResourceInterface*> Robot::getResources() const { return resources_; }
+std::list<ResourceInterfacePtr> Robot::getResources() const
+{
+  return resources_;
+}
 
-void Robot::addResource(ResourceInterface* resource)
+void Robot::addResource(const ResourceInterfacePtr& resource)
 {
   if (contains(*resource))
   {
@@ -49,15 +42,25 @@ void Robot::addResource(ResourceInterface* resource)
 
 bool Robot::contains(const ResourceInterface& resource) const
 {
-  std::list<ResourceInterface*>::const_iterator it(resources_.begin());
-  while (it != resources_.end())
+  for (const_iterator it(resources_.begin()); it != resources_.end(); it++)
   {
     if (**it == resource)
     {
       return true;
     }
-    it++;
   }
   return false;
 }
+
+std::size_t Robot::size() const { return resources_.size(); }
+
+bool Robot::empty() const { return resources_.empty(); }
+
+Robot::iterator Robot::begin() { return resources_.begin(); }
+
+Robot::const_iterator Robot::begin() const { return resources_.begin(); }
+
+Robot::iterator Robot::end() { return resources_.end(); }
+
+Robot::const_iterator Robot::end() const { return resources_.end(); }
 }

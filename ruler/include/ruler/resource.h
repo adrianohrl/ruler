@@ -11,13 +11,15 @@
 #include <ros/duration.h>
 #include "ruler/profile.h"
 #include "ruler/resource_interface.h"
-#include <typeinfo>
 
 namespace ruler
 {
-template <typename T> class Resource : public ResourceInterface
+template <typename T> class Resource : public ResourceInterface,
+                                       public boost::enable_shared_from_this<Resource<T> >
 {
 public:
+  typedef boost::shared_ptr<Resource<T> > Ptr;
+  typedef boost::shared_ptr<Resource<T> const> ConstPtr;
   virtual ~Resource();
   virtual void update(const utilities::EventConstPtr& event);
   virtual void update(const TaskEventConstPtr& event);
@@ -28,14 +30,16 @@ public:
   virtual bool isUnary() const;
   virtual utilities::SignalTypeEnum getSignalType() const;
   std::string getName() const;
-  T getLevel(ros::Time timestamp = ros::Time::now()) const;
+  T getLevel(const ros::Time& timestamp = ros::Time::now()) const;
   ros::Duration getLatence() const;
   virtual ruler_msgs::Resource toMsg() const;
 
 protected:
-  Profile<T>* profile_;
-  Resource(std::string id, std::string name, T capacity, T initial_level,
-           ros::Duration latence = ros::Duration(0.0));
+  typedef typename Profile<T>::Ptr ProfilePtr;
+  typedef typename Profile<T>::ConstPtr ProfileConstPtr;
+  ProfilePtr profile_;
+  Resource(const std::string& id, const std::string& name, const T& capacity,
+           const T& initial_level, const ros::Duration& latence = ros::Duration());
   Resource(const ruler_msgs::Resource& msg);
   Resource(const Resource<T>& resource);
 
@@ -45,8 +49,9 @@ private:
 };
 
 template <typename T>
-Resource<T>::Resource(std::string id, std::string name, T capacity,
-                      T initial_level, ros::Duration latence)
+Resource<T>::Resource(const std::string& id, const std::string& name,
+                      const T& capacity, const T& initial_level,
+                      const ros::Duration& latence)
     : ResourceInterface::ResourceInterface(id), name_(name), latence_(latence),
       profile_(new Profile<T>(capacity, initial_level))
 {
@@ -85,14 +90,10 @@ Resource<T>::Resource(const Resource<T>& resource)
 
 template <typename T> Resource<T>::~Resource()
 {
-  if (profile_)
-  {
-    delete profile_;
-    profile_ = NULL;
-  }
 }
 
-template <typename T> void Resource<T>::update(const utilities::EventConstPtr& event)
+template <typename T>
+void Resource<T>::update(const utilities::EventConstPtr& event)
 {
   if (typeid(*event) == typeid(TaskEvent))
   {
@@ -140,7 +141,7 @@ utilities::SignalTypeEnum Resource<T>::getSignalType() const
 
 template <typename T> std::string Resource<T>::getName() const { return name_; }
 
-template <typename T> T Resource<T>::getLevel(ros::Time timestamp) const
+template <typename T> T Resource<T>::getLevel(const ros::Time& timestamp) const
 {
   return profile_->getLevel(timestamp);
 }

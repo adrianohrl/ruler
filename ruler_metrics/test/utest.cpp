@@ -13,21 +13,18 @@
 #include "ruler/metrics_plugins.h"
 
 double tolerance = 1e-5;
-ruler::Robot* robot;
-ruler::Task* task;
+ruler::RobotPtr robot;
+ruler::TaskPtr task;
 
 TEST(Plugins, calculus)
 {
-  ruler::MetricsEstimator* estimator;
-  estimator = new ruler::BatteryConsumptionEstimator();
+  ruler::MetricsEstimatorPtr estimator;
+  estimator.reset(new ruler::BatteryConsumptionEstimator());
   estimator->initialize(robot);
   EXPECT_GE(tolerance, fabs(1.0 - estimator->calculate(*task)));
-  delete estimator;
-  estimator = new ruler::DisplacementEstimator();
+  estimator.reset(new ruler::DisplacementEstimator());
   estimator->initialize(robot);
   EXPECT_GE(tolerance, fabs(12.0 - estimator->calculate(*task)));
-  delete estimator;
-  estimator = NULL;
 }
 
 TEST(Plugins, loading)
@@ -37,7 +34,7 @@ TEST(Plugins, loading)
   std::string base_class_type("ruler::MetricsEstimator");
   pluginlib::ClassLoader<ruler::MetricsEstimator> metrics_loader(
       base_class_pkg, base_class_type);
-  boost::shared_ptr<ruler::MetricsEstimator> estimator;
+  ruler::MetricsEstimatorPtr estimator;
   try
   {
     plugin_name = "ruler_metrics/battery_consumption_estimator";
@@ -81,16 +78,18 @@ TEST(Plugins, loading)
   }
   estimator->initialize(robot);
   EXPECT_GE(tolerance, fabs(12.0 - estimator->calculate(*task)));
-  delete robot;
-  robot = NULL;
-  delete task;
-  task = NULL;
 }
 
 void init()
 {
-  robot = new ruler::Robot("robot1", "robot1");
-  task = new ruler::Task("t", "task", ros::Duration(10));
+  robot.reset(new ruler::Robot("robot1", "robot1"));
+  double d(0.5);
+  ros::Time timestamp(ros::Time::now());
+  utilities::NoisyTimePtr expected_start(new utilities::NoisyTime(
+      timestamp + ros::Duration(0.5 * d), timestamp + ros::Duration(1.5 * d)));
+  utilities::NoisyTimePtr expected_end(new utilities::NoisyTime(
+      timestamp + ros::Duration(4.5 * d), timestamp + ros::Duration(5.5 * d)));
+  task.reset(new ruler::Task("t1", "task1", expected_start, expected_end));
   geometry_msgs::Pose waypoint0;
   waypoint0.position.x = 0;
   waypoint0.position.x = 0;

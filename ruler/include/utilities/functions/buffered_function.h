@@ -12,11 +12,16 @@ namespace functions
 {
 template <typename T> class BufferedFunction : public Observer
 {
+private:
+  typedef typename Function<T>::Ptr FunctionPtr;
+
 public:
-  BufferedFunction(const std::string& id, Function<T>* model,
+  typedef typename boost::shared_ptr<BufferedFunction<T> > Ptr;
+  typedef typename boost::shared_ptr<BufferedFunction<T> const> ConstPtr;
+  BufferedFunction(const std::string& id, const FunctionPtr& model,
                    const ros::Duration& buffer_horizon,
                    const ros::Time& start_timestamp = ros::Time::now());
-  BufferedFunction(const std::string& id, Function<T>* model,
+  BufferedFunction(const std::string& id, const FunctionPtr& model,
                    const ros::Duration& timeout_duration,
                    const ros::Duration& buffer_horizon,
                    const ros::Time& start_timestamp = ros::Time::now());
@@ -27,9 +32,9 @@ public:
   ros::Duration getBufferHorizon() const;
   T getValue(const ros::Time& timestamp = ros::Time::now());
   virtual void update(const EventConstPtr& event);
-  void update(const EventConstPtr& event, Function<T>* model);
+  void update(const EventConstPtr& event, const FunctionPtr& model);
   virtual void update(const ros::Time& timestamp);
-  void update(const ros::Time& timestamp, Function<T>* model);
+  void update(const ros::Time& timestamp, const FunctionPtr& model);
   void setTimeoutDuration(const ros::Duration& timeout_duration);
   void setBufferHorizon(const ros::Duration& buffer_horizon);
 
@@ -37,17 +42,20 @@ protected:
   T getValue(double d) const;
 
 private:
+  typedef typename std::list<FunctionPtr>::iterator iterator;
+  typedef typename std::list<FunctionPtr>::const_iterator const_iterator;
   ros::Time start_timestamp_;
   ros::Time last_update_timestamp_;
   ros::Duration timeout_duration_;
   ros::Duration buffer_horizon_;
-  Function<T>* model_;
-  std::list<Function<T>*> functions_;
+  FunctionPtr model_;
+  std::list<FunctionPtr> functions_;
   void cleanBuffer(double d);
 };
 
 template <typename T>
-BufferedFunction<T>::BufferedFunction(const std::string& id, Function<T>* model,
+BufferedFunction<T>::BufferedFunction(const std::string& id,
+                                      const FunctionPtr& model,
                                       const ros::Duration& buffer_horizon,
                                       const ros::Time& start_timestamp)
     : Observer::Observer(id), model_(model), start_timestamp_(start_timestamp),
@@ -56,7 +64,8 @@ BufferedFunction<T>::BufferedFunction(const std::string& id, Function<T>* model,
 }
 
 template <typename T>
-BufferedFunction<T>::BufferedFunction(const std::string& id, Function<T>* model,
+BufferedFunction<T>::BufferedFunction(const std::string& id,
+                                      const FunctionPtr& model,
                                       const ros::Duration& timeout_duration,
                                       const ros::Duration& buffer_horizon,
                                       const ros::Time& start_timestamp)
@@ -76,24 +85,7 @@ BufferedFunction<T>::BufferedFunction(const BufferedFunction<T>& function)
 {
 }
 
-template <typename T> BufferedFunction<T>::~BufferedFunction()
-{
-  typename std::list<Function<T>*>::iterator it(functions_.begin());
-  while (it != functions_.end())
-  {
-    if (*it)
-    {
-      delete *it;
-      *it = NULL;
-    }
-    it++;
-  }
-  if (model_)
-  {
-    delete model_;
-    model_ = NULL;
-  }
-}
+template <typename T> BufferedFunction<T>::~BufferedFunction() {}
 
 template <typename T> ros::Time BufferedFunction<T>::getStartTimestamp() const
 {
@@ -115,10 +107,9 @@ ros::Duration BufferedFunction<T>::getBufferHorizon() const
 template <typename T> T BufferedFunction<T>::getValue(double d) const
 {
   double q(0.0);
-  typename std::list<Function<T>*>::const_iterator it(functions_.begin());
-  while (it != functions_.end())
+  for (const_iterator it(functions_.begin()); it != functions_.end(); it++)
   {
-    Function<T>* function = *it;
+    FunctionPtr function(*it);
     if (function->getDf() >= d)
     {
       if (function->isNegated())
@@ -130,7 +121,6 @@ template <typename T> T BufferedFunction<T>::getValue(double d) const
         q += function->getValue(d);
       }
     }
-    it++;
   }
   return q;
 }
@@ -150,13 +140,10 @@ void BufferedFunction<T>::update(const EventConstPtr& event)
 }
 
 template <typename T>
-void BufferedFunction<T>::update(const EventConstPtr& event, Function<T>* model)
+void BufferedFunction<T>::update(const EventConstPtr& event,
+                                 const FunctionPtr& model)
 {
   update(event->getTimestamp(), model);
-  if (model_)
-  {
-    delete model_;
-  }
   model_ = model;
 }
 
@@ -167,7 +154,8 @@ void BufferedFunction<T>::update(const ros::Time& timestamp)
 }
 
 template <typename T>
-void BufferedFunction<T>::update(const ros::Time& timestamp, Function<T>* model)
+void BufferedFunction<T>::update(const ros::Time& timestamp,
+                                 const FunctionPtr& model)
 {
   if (timestamp <= last_update_timestamp_)
   {
@@ -176,10 +164,10 @@ void BufferedFunction<T>::update(const ros::Time& timestamp, Function<T>* model)
   }
   last_update_timestamp_ = timestamp;
   ros::Duration d(last_update_timestamp_ - start_timestamp_);
-  Function<T>* function;
+  FunctionPtr function;
   if (functions_.empty())
   {
-    function = model->clone();
+    function.reset(model->clone());
     function->setD0(d);
     if (!timeout_duration_.isZero())
     {
@@ -194,7 +182,7 @@ void BufferedFunction<T>::update(const ros::Time& timestamp, Function<T>* model)
     if (function->getQf() != model->getQf())
     {
       function->setDf(d);
-      function = model->clone();
+      function.reset(model->clone());
       function->setD0(d);
       functions_.push_back(function);
     }
@@ -202,7 +190,7 @@ void BufferedFunction<T>::update(const ros::Time& timestamp, Function<T>* model)
   }
   if (function->getDf() < d.toSec())
   {
-    function = model->clone();
+    function.reset(model->clone());
     function->setD0(d);
     function->setDf(timeout_duration_ + d);
     functions_.push_back(function);
@@ -233,16 +221,14 @@ template <typename T> void BufferedFunction<T>::cleanBuffer(double d)
     return;
   }
   d -= buffer_horizon_.toSec();
-  typename std::list<Function<T>*>::iterator it(functions_.begin());
-  while (it != functions_.end())
+  for (iterator it(functions_.begin()); it != functions_.end();
+       it = functions_.erase(it))
   {
-    Function<T>* function = *it;
+    FunctionPtr function(*it);
     if (function->getDf() > d)
     {
       return;
     }
-    delete function;
-    it = functions_.erase(it);
   }
 }
 }

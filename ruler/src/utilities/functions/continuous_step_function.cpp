@@ -25,8 +25,9 @@ ContinuousStepFunction::ContinuousStepFunction(double d0, double qf,
 {
 }
 
-ContinuousStepFunction::ContinuousStepFunction(ros::Duration d0, double qf,
-                                               bool ascending, bool negated)
+ContinuousStepFunction::ContinuousStepFunction(const ros::Duration& d0,
+                                               double qf, bool ascending,
+                                               bool negated)
     : StepFunction<utilities::ContinuousSignalType>::StepFunction(
           d0, qf, ascending, negated)
 {
@@ -39,9 +40,9 @@ ContinuousStepFunction::ContinuousStepFunction(double d0, double q0, double qf,
 {
 }
 
-ContinuousStepFunction::ContinuousStepFunction(ros::Duration d0, double q0,
-                                               double qf, bool ascending,
-                                               bool negated)
+ContinuousStepFunction::ContinuousStepFunction(const ros::Duration& d0,
+                                               double q0, double qf,
+                                               bool ascending, bool negated)
     : StepFunction<utilities::ContinuousSignalType>::StepFunction(
           d0, q0, qf, ascending, negated)
 {

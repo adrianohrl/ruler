@@ -26,7 +26,6 @@
 #include "utilities/functions/pulse_function.h"
 #include "utilities/functions/sample_holder.h"
 #include "utilities/functions/step_function.h"
-#include "utilities/functions/time_probability_density_function.h"
 #include "utilities/functions/unary_sample_holder.h"
 #include "utilities/functions/unary_pulse_function.h"
 #include "utilities/functions/unary_step_function.h"

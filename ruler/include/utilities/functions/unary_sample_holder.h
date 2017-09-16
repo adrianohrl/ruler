@@ -22,7 +22,7 @@ public:
   virtual ~UnarySampleHolder();
   using BufferedFunction<UnarySignalType>::update;
   using SampleHolder<UnarySignalType>::update;
-  void update(ToggleEvent* event);
+  void update(const ToggleEventConstPtr& event);
   bool updated(const ros::Time& t1,
                const ros::Time& t2 = ros::Time::now()) const;
 };

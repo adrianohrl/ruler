@@ -20,20 +20,27 @@ class ContinuousPulseFunction
     : public PulseFunction<utilities::ContinuousSignalType>
 {
 public:
-  ContinuousPulseFunction(const ContinuousStepFunction& step_function, double df);
-  ContinuousPulseFunction(const ContinuousStepFunction& step_function, ros::Duration df);
+  ContinuousPulseFunction(const ContinuousStepFunction& step_function,
+                          double df);
+  ContinuousPulseFunction(const ContinuousStepFunction& step_function,
+                          ros::Duration df);
   ContinuousPulseFunction(double d0, double df, double qf,
                           bool ascending = false, bool negated = false);
-  ContinuousPulseFunction(ros::Duration d0, ros::Duration df, double qf,
-                          bool ascending = false, bool negated = false);
+  ContinuousPulseFunction(const ros::Duration& d0, const ros::Duration& df,
+                          double qf, bool ascending = false,
+                          bool negated = false);
   ContinuousPulseFunction(double d0, double df, double q0, double qf,
                           bool ascending = false, bool negated = false);
-  ContinuousPulseFunction(ros::Duration d0, ros::Duration df, double q0,
-                          double qf, bool ascending = false,
+  ContinuousPulseFunction(const ros::Duration& d0, const ros::Duration& df,
+                          double q0, double qf, bool ascending = false,
                           bool negated = false);
   ContinuousPulseFunction(const ContinuousPulseFunction& function);
   virtual ~ContinuousPulseFunction();
 };
+
+typedef boost::shared_ptr<ContinuousPulseFunction> ContinuousPulseFunctionPtr;
+typedef boost::shared_ptr<ContinuousPulseFunction const>
+    ContinuousPulseFunctionConstPtr;
 }
 }
 

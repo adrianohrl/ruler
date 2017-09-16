@@ -9,7 +9,6 @@
 #define _UTILITIES_SIMULATION_H_
 
 #include <ros/time.h>
-#include "utilities/functions/time_probability_density_function.h"
 
 namespace utilities
 {
@@ -17,25 +16,15 @@ class Simulation
 {
 public:
   virtual ~Simulation();
-  virtual void update(ros::Time timestamp = ros::Time::now());
+  virtual void update(const ros::Time& timestamp) = 0;
 
 protected:
-  Simulation(
-      utilities::functions::TimeProbabilityDensityFunction* start_pdf,
-      utilities::functions::TimeProbabilityDensityFunction* end_pdf);
+  ros::Time start_timestamp_;
+  Simulation();
   Simulation(const Simulation& simulation);
-  virtual bool mayStart(ros::Time timestamp) const;
-  virtual bool mayFinish(ros::Time timestamp) const;
-
-private:
-  double start_probability_;
-  double end_probability_;
-  utilities::functions::TimeProbabilityDensityFunction* start_pdf_;
-  utilities::functions::TimeProbabilityDensityFunction* end_pdf_;
-  virtual void start(ros::Time timestamp) = 0;
-  virtual void finish(ros::Time timestamp) = 0;
-  virtual bool hasStarted(ros::Time timestamp) const = 0;
-  virtual bool hasFinished(ros::Time timestamp) const = 0;
+  virtual std::string str() const = 0;
+  const char* c_str() const;
+  friend std::ostream& operator<<(std::ostream& out, const Simulation& simulation);
 };
 }
 

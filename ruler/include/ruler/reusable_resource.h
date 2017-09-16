@@ -18,15 +18,21 @@ namespace ruler
 template <typename T> class ReusableResource : public Resource<T>
 {
 public:
+  typedef boost::shared_ptr<ReusableResource<T> > Ptr;
+  typedef boost::shared_ptr<ReusableResource<T> const> ConstPtr;
   virtual ~ReusableResource();
   virtual bool isReusable() const;
-  virtual void require(Task* task, T quantity, double d0 = 0.0,
+  virtual void require(const TaskPtr& task, const T& quantity, double d0 = 0.0,
                        double df = INFINITY);
 
 protected:
+  typedef typename boost::enable_shared_from_this<Resource<T> > enable_shared_from_this;
+  typedef typename TaskFunction<T>::Ptr TaskFunctionPtr;
+  typedef typename TaskFunction<T>::ConstPtr TaskFunctionConstPtr;
   ReusableResource(const ruler_msgs::Resource& msg);
-  ReusableResource(std::string id, std::string name, T capacity,
-                   T initial_level, ros::Duration latence = ros::Duration(0.0));
+  ReusableResource(const std::string& id, const std::string& name,
+                   const T& capacity, const T& initial_level,
+                   const ros::Duration& latence = ros::Duration(0.0));
   ReusableResource(const ReusableResource<T>& resource);
 };
 
@@ -41,9 +47,10 @@ ReusableResource<T>::ReusableResource(const ruler_msgs::Resource& msg)
 }
 
 template <typename T>
-ReusableResource<T>::ReusableResource(std::string id, std::string name,
-                                      T capacity, T initial_level,
-                                      ros::Duration latence)
+ReusableResource<T>::ReusableResource(const std::string& id,
+                                      const std::string& name,
+                                      const T& capacity, const T& initial_level,
+                                      const ros::Duration& latence)
     : Resource<T>::Resource(id, name, capacity, initial_level, latence)
 {
 }
@@ -62,27 +69,31 @@ template <typename T> bool ReusableResource<T>::isReusable() const
 }
 
 template <typename T>
-void ReusableResource<T>::require(Task* task, T quantity, double d0, double df)
+void ReusableResource<T>::require(const TaskPtr& task, const T& quantity,
+                                  double d0, double df)
 {
+  typedef typename utilities::functions::Function<T>::Ptr FunctionPtr;
+  typedef utilities::functions::PulseFunction<T> PulseFunction;
+  typedef utilities::functions::StepFunction<T> StepFunction;
   if (task->hasStarted())
   {
     throw utilities::Exception("Unable to require the " + Resource<T>::str() +
                                " resource. The " + task->str() +
                                " task has already been started.");
   }
-  utilities::functions::Function<T>* quantity_function;
+  FunctionPtr quantity_function;
   if (df < INFINITY)
   {
-    quantity_function = new utilities::functions::PulseFunction<T>(
-        d0, df, quantity, true, true);
+    quantity_function.reset(new PulseFunction(d0, df, quantity, true, true));
   }
   else
   {
-    quantity_function =
-        new utilities::functions::StepFunction<T>(d0, quantity, true, true);
+    quantity_function.reset(new StepFunction(d0, quantity, true, true));
   }
-  Resource<T>::profile_->addTaskFunction(
-      new TaskFunction<T>(this, task, quantity_function));
+  TaskFunctionPtr task_function(
+        new TaskFunction<T>(enable_shared_from_this::shared_from_this(),
+                            task, quantity_function));
+  Resource<T>::profile_->addTaskFunction(task_function);
 }
 }
 

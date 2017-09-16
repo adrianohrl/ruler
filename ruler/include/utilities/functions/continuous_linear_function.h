@@ -22,12 +22,16 @@ class ContinuousLinearFunction
 public:
   ContinuousLinearFunction(double d0, double df, double q0, double qf,
                            bool ascending = false, bool negated = false);
-  ContinuousLinearFunction(ros::Duration d0, ros::Duration df, double q0,
-                           double qf, bool ascending = false,
+  ContinuousLinearFunction(const ros::Duration& d0, const ros::Duration& df,
+                           double q0, double qf, bool ascending = false,
                            bool negated = false);
   ContinuousLinearFunction(const ContinuousLinearFunction& function);
   virtual ~ContinuousLinearFunction();
 };
+
+typedef boost::shared_ptr<ContinuousLinearFunction> ContinuousLinearFunctionPtr;
+typedef boost::shared_ptr<ContinuousLinearFunction const>
+    ContinuousLinearFunctionConstPtr;
 }
 }
 

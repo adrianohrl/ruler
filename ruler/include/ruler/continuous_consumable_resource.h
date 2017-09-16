@@ -18,17 +18,23 @@ class ContinuousConsumableResource
     : public ConsumableResource<utilities::ContinuousSignalType>
 {
 public:
-  ContinuousConsumableResource(std::string id, std::string name,
+  ContinuousConsumableResource(const std::string& id, const std::string& name,
                                double capacity, double initial_level = 0.0,
-                               ros::Duration latence = ros::Duration(0.0));
-  ContinuousConsumableResource(std::string id, std::string name,
-                               utilities::ContinuousSignalType capacity,
-                               utilities::ContinuousSignalType initial_level,
-                               ros::Duration latence = ros::Duration(0.0));
+                               const ros::Duration& latence = ros::Duration());
+  ContinuousConsumableResource(
+      const std::string& id, const std::string& name,
+      const utilities::ContinuousSignalType& capacity,
+      const utilities::ContinuousSignalType& initial_level,
+      const ros::Duration& latence = ros::Duration());
   ContinuousConsumableResource(const ruler_msgs::Resource& msg);
   ContinuousConsumableResource(const ContinuousConsumableResource& resource);
   virtual ~ContinuousConsumableResource();
 };
+
+typedef boost::shared_ptr<ContinuousConsumableResource>
+    ContinuousConsumableResourcePtr;
+typedef boost::shared_ptr<ContinuousConsumableResource const>
+    ContinuousConsumableResourceConstPtr;
 }
 
 #endif // _RULER_CONTINUOUS_CONSUMABLE_RESOURCE_H_

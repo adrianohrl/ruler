@@ -12,10 +12,10 @@
 
 namespace ruler
 {
-UnaryConsumableResource::UnaryConsumableResource(std::string id,
-                                                 std::string name,
+UnaryConsumableResource::UnaryConsumableResource(const std::string& id,
+                                                 const std::string& name,
                                                  bool initial_level,
-                                                 ros::Duration latence)
+                                                 const ros::Duration& latence)
     : ConsumableResource<utilities::UnarySignalType>::ConsumableResource(
           id, name, utilities::UnarySignalType(true),
           utilities::UnarySignalType(initial_level), latence)
@@ -23,8 +23,9 @@ UnaryConsumableResource::UnaryConsumableResource(std::string id,
 }
 
 UnaryConsumableResource::UnaryConsumableResource(
-    std::string id, std::string name, utilities::UnarySignalType initial_level,
-    ros::Duration latence)
+    const std::string& id, const std::string& name,
+    const utilities::UnarySignalType& initial_level,
+    const ros::Duration& latence)
     : ConsumableResource<utilities::UnarySignalType>::ConsumableResource(
           id, name, utilities::UnarySignalType(true), initial_level, latence)
 {
@@ -52,45 +53,45 @@ UnaryConsumableResource::UnaryConsumableResource(
 
 UnaryConsumableResource::~UnaryConsumableResource() {}
 
-void UnaryConsumableResource::consume(Task* task, double d0, double df)
+void UnaryConsumableResource::consume(const TaskPtr& task, double d0, double df)
 {
-  utilities::functions::Function<utilities::UnarySignalType>* quantity_function;
+  UnaryFunctionPtr quantity_function;
   if (df == INFINITY)
   {
-    quantity_function = new utilities::functions::UnaryStepFunction(d0);
+    quantity_function.reset(new utilities::functions::UnaryStepFunction(d0));
   }
   else
   {
-    quantity_function = new utilities::functions::UnaryPulseFunction(d0, df);
+    quantity_function.reset(
+        new utilities::functions::UnaryPulseFunction(d0, df));
   }
   consume(task, quantity_function);
 }
 
-void UnaryConsumableResource::consume(
-    Task* task, utilities::functions::Function<utilities::UnarySignalType>*
-                    quantity_function)
+void UnaryConsumableResource::consume(const TaskPtr& task,
+                                      const UnaryFunctionPtr& quantity_function)
 {
   ConsumableResource<utilities::UnarySignalType>::consume(task,
                                                           quantity_function);
 }
 
-void UnaryConsumableResource::produce(Task* task, double d0, double df)
+void UnaryConsumableResource::produce(const TaskPtr& task, double d0, double df)
 {
-  utilities::functions::Function<utilities::UnarySignalType>* quantity_function;
+  UnaryFunctionPtr quantity_function;
   if (df == INFINITY)
   {
-    quantity_function = new utilities::functions::UnaryStepFunction(d0);
+    quantity_function.reset(new utilities::functions::UnaryStepFunction(d0));
   }
   else
   {
-    quantity_function = new utilities::functions::UnaryPulseFunction(d0, df);
+    quantity_function.reset(
+        new utilities::functions::UnaryPulseFunction(d0, df));
   }
   produce(task, quantity_function);
 }
 
-void UnaryConsumableResource::produce(
-    Task* task, utilities::functions::Function<utilities::UnarySignalType>*
-                    quantity_function)
+void UnaryConsumableResource::produce(const TaskPtr& task,
+                                      const UnaryFunctionPtr& quantity_function)
 {
   ConsumableResource<utilities::UnarySignalType>::produce(task,
                                                           quantity_function);

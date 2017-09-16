@@ -21,8 +21,8 @@ ContinuousExponentialFunction::ContinuousExponentialFunction(
 }
 
 ContinuousExponentialFunction::ContinuousExponentialFunction(
-    ros::Duration d0, ros::Duration df, double q0, double qf, double k,
-    double base, bool ascending, bool negated)
+    const ros::Duration& d0, const ros::Duration& df, double q0, double qf,
+    double k, double base, bool ascending, bool negated)
     : ExponentialFunction<utilities::ContinuousSignalType>::ExponentialFunction(
           d0, df, q0, qf, k, base, ascending, negated)
 {

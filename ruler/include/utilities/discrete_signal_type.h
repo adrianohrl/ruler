@@ -29,6 +29,9 @@ public:
   virtual DiscreteSignalType operator--();
   virtual DiscreteSignalType operator--(int);
 };
+
+typedef boost::shared_ptr<DiscreteSignalType> DiscreteSignalTypePtr;
+typedef boost::shared_ptr<DiscreteSignalType const> DiscreteSignalTypeConstPtr;
 }
 
 #endif // _UTILITIES_DISCRETE_SIGNAL_TYPE_H_

@@ -11,23 +11,30 @@ namespace functions
 {
 template <typename T> class SampleHolder : public BufferedFunction<T>
 {
+protected:
+  typedef typename StepFunction<T>::Ptr StepFunctionPtr;
+  typedef typename StepFunction<T>::ConstPtr StepFunctionConstPtr;
+
 public:
-  SampleHolder(const std::string& id, StepFunction<T>* model,
+  typedef boost::shared_ptr<SampleHolder<T> > Ptr;
+  typedef boost::shared_ptr<SampleHolder<T> const> ConstPtr;
+  SampleHolder(const std::string& id, const StepFunctionPtr& model,
                const ros::Duration& buffer_horizon,
                const ros::Time& start_timestamp = ros::Time::now());
-  SampleHolder(const std::string& id, StepFunction<T>* model,
+  SampleHolder(const std::string& id, const StepFunctionPtr& model,
                const ros::Duration& timeout_duration,
                const ros::Duration& buffer_horizon,
                const ros::Time& start_timestamp = ros::Time::now());
   SampleHolder(const SampleHolder<T>& sample_holder);
   virtual ~SampleHolder();
-  void update(ValueChangeEvent<T>* event);
+  void update(const typename ValueChangeEvent<T>::ConstPtr& event);
   virtual void update(const ros::Time& timestamp);
   void update(const T& value, const ros::Time& timestamp);
 };
 
 template <typename T>
-SampleHolder<T>::SampleHolder(const std::string& id, StepFunction<T>* model,
+SampleHolder<T>::SampleHolder(const std::string& id,
+                              const StepFunctionPtr& model,
                               const ros::Duration& buffer_horizon,
                               const ros::Time& start_timestamp)
     : BufferedFunction<T>::BufferedFunction(id, model, buffer_horizon,
@@ -36,7 +43,8 @@ SampleHolder<T>::SampleHolder(const std::string& id, StepFunction<T>* model,
 }
 
 template <typename T>
-SampleHolder<T>::SampleHolder(const std::string& id, StepFunction<T>* model,
+SampleHolder<T>::SampleHolder(const std::string& id,
+                              const StepFunctionPtr& model,
                               const ros::Duration& timeout_duration,
                               const ros::Duration& buffer_horizon,
                               const ros::Time& start_timestamp)
@@ -53,7 +61,9 @@ SampleHolder<T>::SampleHolder(const SampleHolder<T>& sample_holder)
 
 template <typename T> SampleHolder<T>::~SampleHolder() {}
 
-template <typename T> void SampleHolder<T>::update(ValueChangeEvent<T>* event)
+template <typename T>
+void SampleHolder<T>::update(
+    const typename ValueChangeEvent<T>::ConstPtr& event)
 {
   BufferedFunction<T>::update(event,
                               new StepFunction<T>(event->getValue(), true));
@@ -67,8 +77,8 @@ template <typename T> void SampleHolder<T>::update(const ros::Time& timestamp)
 template <typename T>
 void SampleHolder<T>::update(const T& value, const ros::Time& timestamp)
 {
-  BufferedFunction<T>::update(timestamp,
-                              new StepFunction<T>(value, true, false));
+  BufferedFunction<T>::update(
+      timestamp, StepFunctionPtr(new StepFunction<T>(value, true, false)));
 }
 }
 }

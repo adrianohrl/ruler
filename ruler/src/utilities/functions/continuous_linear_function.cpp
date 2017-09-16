@@ -21,10 +21,10 @@ ContinuousLinearFunction::ContinuousLinearFunction(double d0, double df,
 {
 }
 
-ContinuousLinearFunction::ContinuousLinearFunction(ros::Duration d0,
-                                                   ros::Duration df, double q0,
-                                                   double qf, bool ascending,
-                                                   bool negated)
+ContinuousLinearFunction::ContinuousLinearFunction(const ros::Duration& d0,
+                                                   const ros::Duration& df,
+                                                   double q0, double qf,
+                                                   bool ascending, bool negated)
     : LinearFunction<utilities::ContinuousSignalType>::LinearFunction(
           d0, df, q0, qf, ascending, negated)
 {

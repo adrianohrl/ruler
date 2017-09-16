@@ -17,27 +17,35 @@ namespace ruler
 class UnaryConsumableResource
     : public ConsumableResource<utilities::UnarySignalType>
 {
+protected:
+  typedef utilities::functions::Function<utilities::UnarySignalType>::Ptr
+      UnaryFunctionPtr;
+  typedef utilities::functions::Function<utilities::UnarySignalType>::ConstPtr
+      UnaryFunctionConstPtr;
+
 public:
-  UnaryConsumableResource(std::string id, std::string name,
+  UnaryConsumableResource(const std::string& id, const std::string& name,
                           bool initial_level = true,
-                          ros::Duration latence = ros::Duration(0.0));
-  UnaryConsumableResource(std::string id, std::string name,
-                          utilities::UnarySignalType initial_level,
-                          ros::Duration latence = ros::Duration(0.0));
+                          const ros::Duration& latence = ros::Duration());
+  UnaryConsumableResource(const std::string& id, const std::string& name,
+                          const utilities::UnarySignalType& initial_level,
+                          const ros::Duration& latence = ros::Duration());
   UnaryConsumableResource(const ruler_msgs::Resource& msg);
   UnaryConsumableResource(const UnaryConsumableResource& resource);
   virtual ~UnaryConsumableResource();
-  virtual void consume(Task* task, double d0 = 0.0, double df = INFINITY);
-  virtual void
-  consume(Task* task,
-          utilities::functions::Function<utilities::UnarySignalType>*
-              quantity_function);
-  virtual void produce(Task* task, double d0 = 0.0, double df = INFINITY);
-  virtual void
-  produce(Task* task,
-          utilities::functions::Function<utilities::UnarySignalType>*
-              quantity_function);
+  virtual void consume(const TaskPtr& task, double d0 = 0.0,
+                       double df = INFINITY);
+  virtual void consume(const TaskPtr& task,
+                       const UnaryFunctionPtr& quantity_function);
+  virtual void produce(const TaskPtr& task, double d0 = 0.0,
+                       double df = INFINITY);
+  virtual void produce(const TaskPtr& task,
+                       const UnaryFunctionPtr& quantity_function);
 };
+
+typedef boost::shared_ptr<UnaryConsumableResource> UnaryConsumableResourcePtr;
+typedef boost::shared_ptr<UnaryConsumableResource const>
+    UnaryConsumableResourceConstPtr;
 }
 
 #endif // _RULER_UNARY_CONSUMABLE_RESOURCE_H_

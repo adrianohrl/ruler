@@ -8,7 +8,10 @@
 #ifndef _UTILITIES_PROBABILITY_DENSITY_FUNCTION_H_
 #define _UTILITIES_PROBABILITY_DENSITY_FUNCTION_H_
 
+#include <boost/shared_ptr.hpp>
+#include <random>
 #include <sstream>
+#include "utilities/interval.h"
 
 namespace utilities
 {
@@ -17,19 +20,36 @@ namespace functions
 class ProbabilityDensityFunction
 {
 public:
-  ProbabilityDensityFunction(double mu, double sigma);
-  ProbabilityDensityFunction(double neg_n_sigma, double pos_n_sigma, double n);
-  ProbabilityDensityFunction(const ProbabilityDensityFunction &pdf);
+  ProbabilityDensityFunction(double mean, double standard_deviation);
+  ProbabilityDensityFunction(double neg_n_standard_deviation,
+                             double pos_n_standard_deviation, double n);
+  ProbabilityDensityFunction(const ProbabilityDensityFunction& pdf);
   virtual ~ProbabilityDensityFunction();
-  double probability(double x);
+  double probability(double x) const;
+  double random();
+  double getMean() const;
+  double getStandardDeviation() const;
+  double getFakeMininum() const;
+  double getFakeMaximum() const;
+  Interval<double> getFakeInterval() const;
   std::string str() const;
   const char* c_str() const;
 
+protected:
+  const double mean_;
+  const double standard_deviation_;
+
 private:
-  static const double TOLERANCE = 1e-4;
-  double mu_;
-  double sigma_;
+  static constexpr double TOLERANCE = 1e-4;
+  std::default_random_engine generator_;
+  std::normal_distribution<double> distribution_;
+  Interval<double> fake_interval_;
 };
+
+typedef boost::shared_ptr<ProbabilityDensityFunction>
+    ProbabilityDensityFunctionPtr;
+typedef boost::shared_ptr<ProbabilityDensityFunction const>
+    ProbabilityDensityFunctionConstPtr;
 }
 }
 

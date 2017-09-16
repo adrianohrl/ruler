@@ -19,19 +19,21 @@ namespace functions
 template <typename T> class PulseFunction : public Function<T>
 {
 public:
+  typedef boost::shared_ptr<PulseFunction<T> > Ptr;
+  typedef boost::shared_ptr<PulseFunction<T> const> ConstPtr;
   PulseFunction(double d0, double df, double qf, bool ascending, bool negated);
-  PulseFunction(ros::Duration d0, ros::Duration df, double qf, bool ascending,
-                bool negated);
+  PulseFunction(const ros::Duration& d0, const ros::Duration& df, double qf,
+                bool ascending, bool negated);
   PulseFunction(const StepFunction<T>& step_function, double df);
-  PulseFunction(const StepFunction<T>& step_function, ros::Duration df);
+  PulseFunction(const StepFunction<T>& step_function, const ros::Duration& df);
   virtual ~PulseFunction();
   virtual PulseFunction<T>* clone() const;
 
 protected:
   PulseFunction(double d0, double df, double q0, double qf, bool ascending,
                 bool negated);
-  PulseFunction(ros::Duration d0, ros::Duration df, double q0, double qf,
-                bool ascending, bool negated);
+  PulseFunction(const ros::Duration& d0, const ros::Duration& df, double q0,
+                double qf, bool ascending, bool negated);
   PulseFunction(const PulseFunction<T>& function);
 
 private:
@@ -51,7 +53,8 @@ PulseFunction<T>::PulseFunction(double d0, double df, double qf, bool ascending,
 }
 
 template <typename T>
-PulseFunction<T>::PulseFunction(ros::Duration d0, ros::Duration df, double qf,
+PulseFunction<T>::PulseFunction(const ros::Duration& d0,
+                                const ros::Duration& df, double qf,
                                 bool ascending, bool negated)
     : Function<T>::Function("Pulse", d0, df, 0.0, qf, ascending, false, negated)
 {
@@ -71,8 +74,8 @@ PulseFunction<T>::PulseFunction(const StepFunction<T>& step_function, double df)
 
 template <typename T>
 PulseFunction<T>::PulseFunction(const StepFunction<T>& step_function,
-                                ros::Duration df)
-  : Function<T>::Function("Pulse", step_function, false)
+                                const ros::Duration& df)
+    : Function<T>::Function("Pulse", step_function, false)
 {
   Function<T>::df_ = df.toSec();
 }
@@ -90,8 +93,9 @@ PulseFunction<T>::PulseFunction(double d0, double df, double q0, double qf,
 }
 
 template <typename T>
-PulseFunction<T>::PulseFunction(ros::Duration d0, ros::Duration df, double q0,
-                                double qf, bool ascending, bool negated)
+PulseFunction<T>::PulseFunction(const ros::Duration& d0,
+                                const ros::Duration& df, double q0, double qf,
+                                bool ascending, bool negated)
     : Function<T>::Function("Pulse", d0, df, q0, qf, ascending, negated, false)
 {
   if (d0.toSec() == 0.0 || df.toSec() >= INFINITY)
@@ -109,7 +113,7 @@ PulseFunction<T>::PulseFunction(const PulseFunction<T>& function)
 
 template <typename T> PulseFunction<T>::~PulseFunction() {}
 
-template <typename T> PulseFunction<T> *PulseFunction<T>::clone() const
+template <typename T> PulseFunction<T>* PulseFunction<T>::clone() const
 {
   return new PulseFunction<T>(*this);
 }

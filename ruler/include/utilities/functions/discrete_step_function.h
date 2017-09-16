@@ -22,15 +22,19 @@ public:
   DiscreteStepFunction(double qf, bool ascending = false, bool negated = false);
   DiscreteStepFunction(double d0, double qf, bool ascending = false,
                        bool negated = false);
-  DiscreteStepFunction(ros::Duration d0, double qf, bool ascending = false,
-                       bool negated = false);
+  DiscreteStepFunction(const ros::Duration& d0, double qf,
+                       bool ascending = false, bool negated = false);
   DiscreteStepFunction(double d0, double q0, double qf, bool ascending = false,
                        bool negated = false);
-  DiscreteStepFunction(ros::Duration d0, double q0, double qf,
+  DiscreteStepFunction(const ros::Duration& d0, double q0, double qf,
                        bool ascending = false, bool negated = false);
   DiscreteStepFunction(const DiscreteStepFunction& function);
   virtual ~DiscreteStepFunction();
 };
+
+typedef boost::shared_ptr<DiscreteStepFunction> DiscreteStepFunctionPtr;
+typedef boost::shared_ptr<DiscreteStepFunction const>
+    DiscreteStepFunctionConstPtr;
 }
 }
 

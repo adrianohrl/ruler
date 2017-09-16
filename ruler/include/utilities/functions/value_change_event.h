@@ -10,8 +10,10 @@ namespace functions
 template <typename T> class ValueChangeEvent : public Event
 {
 public:
-  ValueChangeEvent(Subject* subject, T value,
-                   ros::Time timestamp = ros::Time::now());
+  typedef boost::shared_ptr<ValueChangeEvent<T> > Ptr;
+  typedef boost::shared_ptr<ValueChangeEvent<T> const> ConstPtr;
+  ValueChangeEvent(const SubjectPtr& subject, const T& value,
+                   const ros::Time& timestamp = ros::Time::now());
   ValueChangeEvent(const ValueChangeEvent& event);
   virtual ~ValueChangeEvent();
   const T getValue() const;
@@ -21,8 +23,9 @@ private:
 };
 
 template <typename T>
-ValueChangeEvent<T>::ValueChangeEvent(Subject* subject, T value,
-                                      ros::Time timestamp)
+ValueChangeEvent<T>::ValueChangeEvent(const SubjectPtr& subject,
+                                      const T& value,
+                                      const ros::Time& timestamp)
     : Event::Event(subject, timestamp), value_(value)
 {
 }

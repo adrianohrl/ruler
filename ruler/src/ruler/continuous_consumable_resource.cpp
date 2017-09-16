@@ -11,8 +11,8 @@
 namespace ruler
 {
 ContinuousConsumableResource::ContinuousConsumableResource(
-    std::string id, std::string name, double capacity, double initial_level,
-    ros::Duration latence)
+    const std::string& id, const std::string& name, double capacity,
+    double initial_level, const ros::Duration& latence)
     : ConsumableResource<utilities::ContinuousSignalType>::ConsumableResource(
           id, name, utilities::ContinuousSignalType(capacity),
           utilities::ContinuousSignalType(initial_level), latence)
@@ -20,8 +20,10 @@ ContinuousConsumableResource::ContinuousConsumableResource(
 }
 
 ContinuousConsumableResource::ContinuousConsumableResource(
-    std::string id, std::string name, utilities::ContinuousSignalType capacity,
-    utilities::ContinuousSignalType initial_level, ros::Duration latence)
+    const std::string& id, const std::string& name,
+    const utilities::ContinuousSignalType& capacity,
+    const utilities::ContinuousSignalType& initial_level,
+    const ros::Duration& latence)
     : ConsumableResource<utilities::ContinuousSignalType>::ConsumableResource(
           id, name, capacity, initial_level, latence)
 {

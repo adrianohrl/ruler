@@ -18,19 +18,23 @@ class DiscreteReusableResource
     : public ReusableResource<utilities::DiscreteSignalType>
 {
 public:
-  DiscreteReusableResource(std::string id, std::string name,
+  DiscreteReusableResource(const std::string& id, const std::string& name,
                            long capacity, long initial_level = 0,
-                           ros::Duration latence = ros::Duration(0.0));
-  DiscreteReusableResource(std::string id, std::string name,
-                           utilities::DiscreteSignalType capacity,
-                           utilities::DiscreteSignalType initial_level,
-                           ros::Duration latence = ros::Duration(0.0));
+                           const ros::Duration& latence = ros::Duration());
+  DiscreteReusableResource(const std::string& id, const std::string& name,
+                           const utilities::DiscreteSignalType& capacity,
+                           const utilities::DiscreteSignalType& initial_level,
+                           const ros::Duration& latence = ros::Duration());
   DiscreteReusableResource(const ruler_msgs::Resource& msg);
   DiscreteReusableResource(const DiscreteReusableResource& resource);
   virtual ~DiscreteReusableResource();
   using ReusableResource<utilities::DiscreteSignalType>::require;
-  virtual void require(Task *task, long quantity, double d0 = 0.0);
+  virtual void require(const TaskPtr& task, long quantity, double d0 = 0.0);
 };
+
+typedef boost::shared_ptr<DiscreteReusableResource> DiscreteReusableResourcePtr;
+typedef boost::shared_ptr<DiscreteReusableResource const>
+    DiscreteReusableResourceConstPtr;
 }
 
 #endif // _RULER_DISCRETE_REUSABLE_RESOURCE_H_

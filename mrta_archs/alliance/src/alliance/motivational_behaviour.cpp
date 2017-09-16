@@ -54,9 +54,9 @@ double MotivationalBehaviour::getLevel(const ros::Time& timestamp) const
                   << ", acq: " << acquiescent << ", sup: " << suppressed
                   << ", res: " << resetted << ", app: " << applicable);
   motivation = (motivation + impatience_->getLevel(timestamp)) *
-               acquiescence_->isAcquiescent(timestamp) *
+               !acquiescence_->isAcquiescent(timestamp) *
                !activity_suppression_->isSuppressed(timestamp) *
-               impatience_reset_->isResetted(timestamp) *
+               !impatience_reset_->isResetted(timestamp) *
                sensory_feedback_->isApplicable(timestamp);
   motivation_->update(motivation, timestamp);
   return motivation;

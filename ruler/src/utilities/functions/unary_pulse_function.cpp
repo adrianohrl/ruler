@@ -33,8 +33,9 @@ UnaryPulseFunction::UnaryPulseFunction(double d0, double df, bool ascending,
 {
 }
 
-UnaryPulseFunction::UnaryPulseFunction(ros::Duration d0, ros::Duration df,
-                                       bool ascending, bool negated)
+UnaryPulseFunction::UnaryPulseFunction(const ros::Duration& d0,
+                                       const ros::Duration& df, bool ascending,
+                                       bool negated)
     : PulseFunction<utilities::UnarySignalType>::PulseFunction(
           d0.toSec(), df.toSec(), false, true, ascending, negated)
 {

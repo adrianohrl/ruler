@@ -23,6 +23,9 @@ public:
   using SignalType<double>::operator-;
   virtual ContinuousSignalType& operator-();
 };
+
+typedef boost::shared_ptr<ContinuousSignalType> ContinuousSignalTypePtr;
+typedef boost::shared_ptr<ContinuousSignalType const> ContinuousSignalTypeConstPtr;
 }
 
 #endif // _UTILITIES_CONTINUOUS_SIGNAL_TYPE_H_

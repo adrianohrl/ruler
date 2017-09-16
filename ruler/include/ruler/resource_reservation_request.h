@@ -8,22 +8,31 @@
 #ifndef _RULER_RESOURCE_RESERVATION_REQUEST_H_
 #define _RULER_RESOURCE_RESERVATION_REQUEST_H_
 
+#include <boost/shared_ptr.hpp>
+
 namespace ruler
 {
 class Task;
+typedef boost::shared_ptr<Task> TaskPtr;
+typedef boost::shared_ptr<Task const> TaskConstPtr;
 
 class ResourceReservationRequest
 {
 public:
-  ResourceReservationRequest(Task* task);
+  ResourceReservationRequest(const TaskPtr& task);
   ResourceReservationRequest(const ResourceReservationRequest& request);
   virtual ~ResourceReservationRequest();
-  Task* getTask() const;
+  TaskPtr getTask() const;
   virtual void request() = 0;
 
 protected:
-  Task* task_;
+  TaskPtr task_;
 };
+
+typedef boost::shared_ptr<ResourceReservationRequest>
+    ResourceReservationRequestPtr;
+typedef boost::shared_ptr<ResourceReservationRequest const>
+    ResourceReservationRequestConstPtr;
 }
 
 #endif // _RULER_RESOURCE_RESERVATION_REQUEST_H_
