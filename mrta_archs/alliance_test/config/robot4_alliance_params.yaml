@@ -1,5 +1,5 @@
-name: 'Robot 1'
-spin_rate: 2.0           # in Hertz
+name: 'Robot 4'
+spin_rate: 2.5           # in Hertz
 broadcast_rate: 1.0      # in Hertz
 timeout_duration: 2.0    # in seconds
 buffer_horizon: 5.0      # in seconds

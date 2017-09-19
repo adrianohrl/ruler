@@ -9,4 +9,7 @@
   <include file="$(find alliance_test)/launch/single_robot.launch">
     <arg name="robot_id" value="robot3" />
   </include>
+  <include file="$(find alliance_test)/launch/single_robot.launch">
+    <arg name="robot_id" value="robot4" />
+  </include>
 </launch>

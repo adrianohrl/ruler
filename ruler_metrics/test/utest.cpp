@@ -99,7 +99,7 @@ void init()
       timestamp + ros::Duration(0.5 * d), timestamp + ros::Duration(1.5 * d)));
   utilities::NoisyTimePtr expected_end(new utilities::NoisyTime(
       timestamp + ros::Duration(4.5 * d), timestamp + ros::Duration(5.5 * d)));
-  task.reset(new ruler::Task("t1", "task1", expected_start, expected_end, false,
+  task.reset(new ruler::Task("t1", "task1", expected_start, expected_end,
                              waypoints));
 }
 

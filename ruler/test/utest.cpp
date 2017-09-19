@@ -332,8 +332,8 @@ TEST(Task, start)
       timestamp + ros::Duration(1.0 * d), timestamp + ros::Duration(1.5 * d)));
   utilities::NoisyTimePtr expected_end(new utilities::NoisyTime(
       timestamp + ros::Duration(5.0 * d), timestamp + ros::Duration(7.5 * d)));
-  ruler::TaskPtr task(
-      new ruler::Task("t", "task", expected_start, expected_end, true));
+  ruler::PreemptiveTaskPtr task(
+      new ruler::PreemptiveTask("t", "task", expected_start, expected_end));
   try
   {
     task->start();
@@ -403,8 +403,8 @@ TEST(Task, interrupt)
       timestamp + ros::Duration(1.0 * d), timestamp + ros::Duration(1.5 * d)));
   utilities::NoisyTimePtr expected_end(new utilities::NoisyTime(
       timestamp + ros::Duration(5.0 * d), timestamp + ros::Duration(7.5 * d)));
-  ruler::TaskPtr task(
-      new ruler::Task("t", "task", expected_start, expected_end, true));
+  ruler::PreemptiveTaskPtr task(
+      new ruler::PreemptiveTask("t", "task", expected_start, expected_end));
   try
   {
     task->interrupt();
@@ -460,8 +460,8 @@ TEST(Task, resume)
       timestamp + ros::Duration(1.0 * d), timestamp + ros::Duration(1.5 * d)));
   utilities::NoisyTimePtr expected_end(new utilities::NoisyTime(
       timestamp + ros::Duration(5.0 * d), timestamp + ros::Duration(7.5 * d)));
-  ruler::TaskPtr task(
-      new ruler::Task("t", "task", expected_start, expected_end, true));
+  ruler::PreemptiveTaskPtr task(
+      new ruler::PreemptiveTask("t", "task", expected_start, expected_end));
   try
   {
     task->resume();
@@ -531,8 +531,8 @@ TEST(Task, finish)
       timestamp + ros::Duration(1.0 * d), timestamp + ros::Duration(1.5 * d)));
   utilities::NoisyTimePtr expected_end(new utilities::NoisyTime(
       timestamp + ros::Duration(5.0 * d), timestamp + ros::Duration(7.5 * d)));
-  ruler::TaskPtr task(
-      new ruler::Task("t", "task", expected_start, expected_end, true));
+  ruler::PreemptiveTaskPtr task(
+      new ruler::PreemptiveTask("t", "task", expected_start, expected_end));
   try
   {
     task->finish();
@@ -590,8 +590,8 @@ TEST(Profiles, continuous)
   utilities::NoisyTimePtr expected_end(
       new utilities::NoisyTime(timestamp + ros::Duration(5.0 * delta),
                                timestamp + ros::Duration(7.5 * delta)));
-  ruler::TaskPtr task(
-      new ruler::Task("t", "task", expected_start, expected_end));
+  ruler::PreemptiveTaskPtr task(
+      new ruler::PreemptiveTask("t", "task", expected_start, expected_end));
   double c(1000), l0(300);
   ruler::ContinuousConsumableResourcePtr resource(
       new ruler::ContinuousConsumableResource("r", "resource", c, l0));
@@ -707,8 +707,8 @@ TEST(Profiles, discrete)
   utilities::NoisyTimePtr expected_end(
       new utilities::NoisyTime(timestamp + ros::Duration(5.0 * delta),
                                timestamp + ros::Duration(7.5 * delta)));
-  ruler::TaskPtr task(
-      new ruler::Task("t", "task", expected_start, expected_end));
+  ruler::PreemptiveTaskPtr task(
+      new ruler::PreemptiveTask("t", "task", expected_start, expected_end));
   long c(1000), l0(300);
   ruler::DiscreteConsumableResourcePtr resource(
       new ruler::DiscreteConsumableResource("r", "resource", c, l0));
@@ -829,8 +829,8 @@ TEST(Profiles, unary)
       timestamp + ros::Duration(1.0 * d), timestamp + ros::Duration(1.5 * d)));
   utilities::NoisyTimePtr expected_end(new utilities::NoisyTime(
       timestamp + ros::Duration(5.0 * d), timestamp + ros::Duration(7.5 * d)));
-  ruler::TaskPtr task(
-      new ruler::Task("t", "task", expected_start, expected_end));
+  ruler::PreemptiveTaskPtr task(
+      new ruler::PreemptiveTask("t", "task", expected_start, expected_end));
   ruler::UnaryConsumableResourcePtr resource(
       new ruler::UnaryConsumableResource("r", "resource"));
   task->addResource(resource);
@@ -897,8 +897,8 @@ TEST(ResourceReservationRequests, consumableProduction)
       timestamp + ros::Duration(1.0 * d), timestamp + ros::Duration(1.5 * d)));
   utilities::NoisyTimePtr expected_end(new utilities::NoisyTime(
       timestamp + ros::Duration(5.0 * d), timestamp + ros::Duration(7.5 * d)));
-  ruler::TaskPtr task(
-      new ruler::Task("t", "task", expected_start, expected_end));
+  ruler::PreemptiveTaskPtr task(
+      new ruler::PreemptiveTask("t", "task", expected_start, expected_end));
   task->addResourceReservationRequest(
       ruler::ContinuousConsumableResourceReservationRequestPtr(
           new ruler::ContinuousConsumableResourceReservationRequest(
@@ -981,8 +981,8 @@ TEST(ResourceReservationRequests, consumableConsumption)
       timestamp + ros::Duration(1.0 * d), timestamp + ros::Duration(1.5 * d)));
   utilities::NoisyTimePtr expected_end(new utilities::NoisyTime(
       timestamp + ros::Duration(5.0 * d), timestamp + ros::Duration(7.5 * d)));
-  ruler::TaskPtr task(
-      new ruler::Task("t", "task", expected_start, expected_end));
+  ruler::PreemptiveTaskPtr task(
+      new ruler::PreemptiveTask("t", "task", expected_start, expected_end));
   task->addResourceReservationRequest(
       ruler::ContinuousConsumableResourceReservationRequestPtr(
           new ruler::ContinuousConsumableResourceReservationRequest(
@@ -1062,8 +1062,8 @@ TEST(ResourceReservationRequests, reusable)
       timestamp + ros::Duration(1.0 * d), timestamp + ros::Duration(1.5 * d)));
   utilities::NoisyTimePtr expected_end(new utilities::NoisyTime(
       timestamp + ros::Duration(5.0 * d), timestamp + ros::Duration(7.5 * d)));
-  ruler::TaskPtr task(
-      new ruler::Task("t", "task", expected_start, expected_end));
+  ruler::PreemptiveTaskPtr task(
+      new ruler::PreemptiveTask("t", "task", expected_start, expected_end));
   task->addResourceReservationRequest(
       ruler::ContinuousReusableResourceReservationRequestPtr(
           new ruler::ContinuousReusableResourceReservationRequest(task, r1, 3.0,
@@ -1138,8 +1138,8 @@ TEST(ResourceSharing, task1and2)
       timestamp + ros::Duration(0.5 * d), timestamp + ros::Duration(1.5 * d)));
   utilities::NoisyTimePtr expected_end(new utilities::NoisyTime(
       timestamp + ros::Duration(4.5 * d), timestamp + ros::Duration(5.5 * d)));
-  ruler::TaskPtr t1(
-      new ruler::Task("t1", "task1", expected_start, expected_end, true));
+  ruler::PreemptiveTaskPtr t1(
+      new ruler::PreemptiveTask("t1", "task1", expected_start, expected_end));
   ruler::TaskPtr t2(
       new ruler::Task("t2", "task2", expected_start, expected_end));
   t1->addResourceReservationRequest(
@@ -1263,7 +1263,7 @@ TEST(Task, distance)
   utilities::NoisyTimePtr expected_end(new utilities::NoisyTime(
       timestamp + ros::Duration(5.0 * d), timestamp + ros::Duration(7.5 * d)));
   ruler::TaskPtr task(
-      new ruler::Task("t", "task", expected_start, expected_end, false, waypoints));
+      new ruler::Task("t", "task", expected_start, expected_end, waypoints));
   EXPECT_GE(tolerance, fabs(12.0 - task->getDistance()));
 }
 

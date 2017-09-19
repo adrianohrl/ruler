@@ -23,13 +23,13 @@ template <typename T> class Resource;
 template <typename T> class TaskFunction
 {
 protected:
-  typedef typename boost::shared_ptr<Resource<T> > ResourcePtr;
+  typedef typename boost::shared_ptr<Resource<T>> ResourcePtr;
   typedef typename boost::shared_ptr<Resource<T> const> ResourceConstPtr;
   typedef typename utilities::functions::Function<T>::Ptr FunctionPtr;
   typedef typename utilities::functions::Function<T>::ConstPtr FunctionConstPtr;
 
 public:
-  typedef boost::shared_ptr<TaskFunction<T> > Ptr;
+  typedef boost::shared_ptr<TaskFunction<T>> Ptr;
   typedef boost::shared_ptr<TaskFunction<T> const> ConstPtr;
   TaskFunction(const ResourcePtr& resource, const TaskPtr& task,
                const FunctionPtr& quantity_function);
@@ -51,18 +51,24 @@ private:
 };
 
 typedef TaskFunction<utilities::ContinuousSignalType> ContinuousTaskFunction;
-typedef TaskFunction<utilities::ContinuousSignalType>::Ptr ContinuousTaskFunctionPtr;
-typedef TaskFunction<utilities::ContinuousSignalType>::ConstPtr ContinuousTaskFunctionConstPtr;
+typedef TaskFunction<utilities::ContinuousSignalType>::Ptr
+    ContinuousTaskFunctionPtr;
+typedef TaskFunction<utilities::ContinuousSignalType>::ConstPtr
+    ContinuousTaskFunctionConstPtr;
 typedef TaskFunction<utilities::DiscreteSignalType> DiscreteTaskFunction;
-typedef TaskFunction<utilities::DiscreteSignalType>::Ptr DiscreteTaskFunctionPtr;
-typedef TaskFunction<utilities::DiscreteSignalType>::ConstPtr DiscreteTaskFunctionConstPtr;
+typedef TaskFunction<utilities::DiscreteSignalType>::Ptr
+    DiscreteTaskFunctionPtr;
+typedef TaskFunction<utilities::DiscreteSignalType>::ConstPtr
+    DiscreteTaskFunctionConstPtr;
 typedef TaskFunction<utilities::UnarySignalType> UnaryTaskFunction;
 typedef TaskFunction<utilities::UnarySignalType>::Ptr UnaryTaskFunctionPtr;
-typedef TaskFunction<utilities::UnarySignalType>::ConstPtr UnaryTaskFunctionConstPtr;
+typedef TaskFunction<utilities::UnarySignalType>::ConstPtr
+    UnaryTaskFunctionConstPtr;
 }
 
 #include "ruler/resource.h"
 #include "ruler/task.h"
+#include "ruler/preemptive_task.h"
 
 namespace ruler
 {
@@ -87,49 +93,63 @@ void TaskFunction<T>::update(const TaskEventConstPtr& event)
 {
   typedef utilities::functions::StepFunction<T> StepFunction;
   typedef typename utilities::functions::StepFunction<T>::Ptr StepFunctionPtr;
-  typedef typename utilities::functions::StepFunction<T>::ConstPtr StepFunctionConstPtr;
+  typedef typename utilities::functions::StepFunction<T>::ConstPtr
+      StepFunctionConstPtr;
   typedef utilities::functions::PulseFunction<T> PulseFunction;
   typedef typename utilities::functions::PulseFunction<T>::Ptr PulseFunctionPtr;
   typedef typename utilities::functions::PulseFunction<T>::ConstPtr
       PulseFunctionConstPtr;
   if (resource_->isReusable())
   {
-    if (event->getType() == types::INTERRUPTED)
+    if (task_->isPreemptive())
     {
-      ros::Time timestamp(task_->getLastInterruptionTimestamp());
-      ros::Duration d0(task_->getDuration(timestamp));
-      double qf(getLevel(timestamp));
-      bool ascending(quantity_function_->isAscending());
-      bool negated(!quantity_function_->isNegated());
-      FunctionPtr interrupted_quantity_function(
-          new utilities::functions::StepFunction<T>(d0, qf, ascending,
-                                                    negated));
-      interrupted_quantity_functions_.push_back(interrupted_quantity_function);
+      PreemptiveTaskPtr task(
+          boost::dynamic_pointer_cast<PreemptiveTask>(task_));
+      if (event->getType() == types::INTERRUPTED)
+      {
+        ros::Time timestamp(task->getLastInterruptionTimestamp());
+        ros::Duration d0(task->getDuration(timestamp));
+        double qf(getLevel(timestamp));
+        bool ascending(quantity_function_->isAscending());
+        bool negated(!quantity_function_->isNegated());
+        FunctionPtr interrupted_quantity_function(
+            new utilities::functions::StepFunction<T>(d0, qf, ascending,
+                                                      negated));
+        interrupted_quantity_functions_.push_back(
+            interrupted_quantity_function);
+      }
+      else if (event->getType() == types::RESUMED)
+      {
+        if (interrupted_quantity_functions_.empty())
+        {
+          throw utilities::Exception("Unable to resume task function. The "
+                                     "interrupted_quantity_functions list is "
+                                     "empty.");
+        }
+        if (interrupted_quantity_functions_.back()->getName() != "Step")
+        {
+          throw utilities::Exception(
+              "Unable to resume task function. The las element of the "
+              "interrupted_quantity_functions list is not a step function.");
+        }
+        StepFunctionPtr last_interrupted_quantity_function(
+            boost::dynamic_pointer_cast<StepFunction>(
+                interrupted_quantity_functions_.back()));
+        ros::Duration df(task->getLastResumeTimestamp() -
+                         task->getStartTimestamp());
+        FunctionPtr interrupted_quantity_function(
+            new PulseFunction(*last_interrupted_quantity_function, df));
+        interrupted_quantity_functions_.erase(
+            --interrupted_quantity_functions_.end());
+        interrupted_quantity_functions_.push_back(
+            interrupted_quantity_function);
+      }
     }
-    else if (event->getType() == types::RESUMED)
+    else if (event->getType() == types::INTERRUPTED ||
+             event->getType() == types::RESUMED)
     {
-      if (interrupted_quantity_functions_.empty())
-      {
-        throw utilities::Exception("Unable to resume task function. The "
-                                   "interrupted_quantity_functions list is "
-                                   "empty.");
-      }
-      if (interrupted_quantity_functions_.back()->getName() != "Step")
-      {
-        throw utilities::Exception(
-            "Unable to resume task function. The las element of the "
-            "interrupted_quantity_functions list is not a step function.");
-      }
-      StepFunctionPtr last_interrupted_quantity_function(
-          boost::dynamic_pointer_cast<StepFunction>(
-              interrupted_quantity_functions_.back()));
-      ros::Duration df(task_->getLastResumeTimestamp() -
-                       task_->getStartTimestamp());
-      FunctionPtr interrupted_quantity_function(
-          new PulseFunction(*last_interrupted_quantity_function, df));
-      interrupted_quantity_functions_.erase(
-          --interrupted_quantity_functions_.end());
-      interrupted_quantity_functions_.push_back(interrupted_quantity_function);
+      throw utilities::Exception(
+          "Non-preemptive task cannot be interrupted ot resumed.");
     }
     else if (event->getType() == types::FINISHED)
     {
@@ -150,7 +170,8 @@ template <typename T> bool TaskFunction<T>::isNegated() const
   return quantity_function_->isNegated();
 }
 
-template <typename T> T TaskFunction<T>::getLevel(const ros::Time& timestmap) const
+template <typename T>
+T TaskFunction<T>::getLevel(const ros::Time& timestmap) const
 {
   T level(quantity_function_->getValue(task_->getDuration(timestmap).toSec()));
   double duration((timestmap - task_->getStartTimestamp()).toSec());
@@ -172,7 +193,7 @@ template <typename T> T TaskFunction<T>::getLevel(const ros::Time& timestmap) co
 }
 
 template <typename T>
-boost::shared_ptr<Resource<T> > TaskFunction<T>::getResource() const
+boost::shared_ptr<Resource<T>> TaskFunction<T>::getResource() const
 {
   return resource_;
 }

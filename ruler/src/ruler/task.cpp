@@ -13,11 +13,10 @@ namespace ruler
 {
 Task::Task(const std::string& id, const std::string& name,
            const utilities::NoisyTimePtr& expected_start,
-           const utilities::NoisyTimePtr& expected_end, bool preemptive,
+           const utilities::NoisyTimePtr& expected_end,
            const std::list<geometry_msgs::Pose>& waypoints)
-    : Subject::Subject(id), name_(name), preemptive_(preemptive),
-      expected_start_(expected_start), expected_end_(expected_end),
-      waypoints_(waypoints),
+    : Subject::Subject(id), name_(name), expected_start_(expected_start),
+      expected_end_(expected_end), waypoints_(waypoints),
       expected_duration_(new utilities::NoisyDuration(
           expected_end_->getMean() - expected_start_->getMean(),
           (expected_start_->getStandardDeviation() +
@@ -26,8 +25,7 @@ Task::Task(const std::string& id, const std::string& name,
 }
 
 Task::Task(const ruler_msgs::Task& msg)
-    : Subject::Subject(msg.header.frame_id), name_(msg.name),
-      preemptive_(msg.preemptive)
+    : Subject::Subject(msg.header.frame_id), name_(msg.name)
 {
   if (msg.min_interruption_timestamps.size() !=
       msg.max_interruption_timestamps.size())
@@ -43,12 +41,6 @@ Task::Task(const ruler_msgs::Task& msg)
       expected_end_->getMean() - expected_start_->getMean(),
       (expected_start_->getStandardDeviation() +
        expected_end_->getStandardDeviation()).toSec()));
-  for (int i(0); i < msg.min_interruption_timestamps.size(); i++)
-  {
-    interruptions_.push_back(utilities::TimeIntervalPtr(
-        new utilities::TimeInterval(msg.min_interruption_timestamps[i],
-                                    msg.max_interruption_timestamps[i])));
-  }
   for (int i(0); i < msg.waypoints.size(); i++)
   {
     waypoints_.push_back(msg.waypoints[i]);
@@ -58,11 +50,10 @@ Task::Task(const ruler_msgs::Task& msg)
 Task::Task(const Task& task)
     : Subject::Subject(task), name_(task.name_),
       expected_duration_(task.expected_duration_),
-      preemptive_(task.preemptive_), start_timestamp_(task.start_timestamp_),
+      start_timestamp_(task.start_timestamp_),
       end_timestamp_(task.end_timestamp_),
       expected_start_(task.expected_start_), expected_end_(task.expected_end_),
-      interruptions_(task.interruptions_), reservations_(task.reservations_),
-      waypoints_(task.waypoints_)
+      reservations_(task.reservations_), waypoints_(task.waypoints_)
 {
 }
 
@@ -131,72 +122,6 @@ void Task::start(const ros::Time& timestamp)
   last_event_timestamp_ = timestamp;
 }
 
-void Task::interrupt(const ros::Time& timestamp)
-{
-  if (!preemptive_)
-  {
-    throw utilities::Exception(
-        "This task cannot be interrupted because it is not preemptive.");
-  }
-  if (timestamp <= last_event_timestamp_)
-  {
-    throw utilities::Exception(
-        "The input timestamp must be after the last event timestamp.");
-  }
-  if (!hasStarted())
-  {
-    throw utilities::Exception(str() + " has not been started yet.");
-  }
-  if (hasFinished())
-  {
-    throw utilities::Exception(str() + " has already been finished.");
-  }
-  if (isInterrupted())
-  {
-    throw utilities::Exception(str() + " has already been interrupted.");
-  }
-  last_interruption_timestamp_ = timestamp;
-  TaskEventConstPtr event(
-      new TaskEvent(shared_from_this(), types::INTERRUPTED, timestamp));
-  utilities::Subject::notify(event);
-  ROS_DEBUG_STREAM(*this << " has just interruped.");
-  last_event_timestamp_ = timestamp;
-}
-
-void Task::resume(const ros::Time& timestamp)
-{
-  if (!preemptive_)
-  {
-    throw utilities::Exception(
-        "This task cannot be resumed because it is not preemptive.");
-  }
-  if (timestamp <= last_event_timestamp_)
-  {
-    throw utilities::Exception(
-        "The input timestamp must be after the last event timestamp.");
-  }
-  if (!hasStarted())
-  {
-    throw utilities::Exception(str() + " has not started yet.");
-  }
-  if (hasFinished())
-  {
-    throw utilities::Exception(str() + " has already been finished.");
-  }
-  if (isRunning())
-  {
-    throw utilities::Exception(str() + " is already resuming.");
-  }
-  interruptions_.push_back(utilities::TimeIntervalPtr(
-      new utilities::TimeInterval(last_interruption_timestamp_, timestamp)));
-  last_interruption_timestamp_ = ros::Time();
-  TaskEventConstPtr event(
-      new TaskEvent(shared_from_this(), types::RESUMED, timestamp));
-  utilities::Subject::notify(event);
-  ROS_DEBUG_STREAM(*this << " has just resumed.");
-  last_event_timestamp_ = timestamp;
-}
-
 void Task::finish(const ros::Time& timestamp)
 {
   if (timestamp <= last_event_timestamp_)
@@ -213,12 +138,6 @@ void Task::finish(const ros::Time& timestamp)
     throw utilities::Exception(str() + " has already been finished.");
   }
   end_timestamp_ = timestamp;
-  if (!last_interruption_timestamp_.isZero())
-  {
-    interruptions_.push_back(
-        utilities::TimeIntervalPtr(new utilities::TimeInterval(
-            last_interruption_timestamp_, end_timestamp_)));
-  }
   TaskEventConstPtr event(
       new TaskEvent(shared_from_this(), types::FINISHED, timestamp));
   utilities::Subject::notify(event);
@@ -231,28 +150,10 @@ void Task::clearResources() { utilities::Subject::clearObservers(); }
 
 ros::Duration Task::getDuration(const ros::Time& timestamp) const
 {
-  double duration(
-      ((!end_timestamp_.isZero() && timestamp > end_timestamp_ ? end_timestamp_
-                                                               : timestamp) -
-       start_timestamp_).toSec());
-  for (interruptions_const_iterator it(interruptions_.begin());
-       it != interruptions_.end(); it++)
-  {
-    utilities::TimeIntervalPtr interruption(*it);
-    if (timestamp > interruption->getMax())
-    {
-      duration -= (interruption->getMax() - interruption->getMin()).toSec();
-    }
-    else if (interruption->belongs(timestamp))
-    {
-      duration -= (timestamp - interruption->getMin()).toSec();
-    }
-  }
-  if (!hasFinished() && isInterrupted())
-  {
-    duration -= (timestamp - last_interruption_timestamp_).toSec();
-  }
-  return ros::Duration(duration);
+  return hasStarted()
+             ? (timestamp > end_timestamp_ ? end_timestamp_ : timestamp) -
+                   start_timestamp_
+             : ros::Duration();
 }
 
 std::string Task::getName() const { return name_; }
@@ -262,40 +163,15 @@ utilities::NoisyDurationPtr Task::getExpectedDuration() const
   return expected_duration_;
 }
 
-bool Task::isPreemptive() const { return preemptive_; }
+bool Task::isPreemptive() const { return false; }
 
 ros::Time Task::getStartTimestamp() const { return start_timestamp_; }
-
-ros::Time Task::getLastInterruptionTimestamp() const
-{
-  if (isInterrupted())
-  {
-    return last_interruption_timestamp_;
-  }
-  utilities::TimeIntervalPtr last_interval(interruptions_.back());
-  return !interruptions_.empty() ? last_interval->getMin() : ros::Time();
-}
-
-ros::Time Task::getLastResumeTimestamp() const
-{
-  utilities::TimeIntervalPtr last_interval(interruptions_.back());
-  return !isInterrupted() && !interruptions_.empty() ? last_interval->getMax()
-                                                     : ros::Time();
-}
 
 ros::Time Task::getEndTimestamp() const { return end_timestamp_; }
 
 bool Task::hasStarted() const { return !start_timestamp_.isZero(); }
 
-bool Task::isInterrupted() const
-{
-  return hasStarted() && !last_interruption_timestamp_.isZero();
-}
-
-bool Task::isRunning() const
-{
-  return hasStarted() && last_interruption_timestamp_.isZero();
-}
+bool Task::isRunning() const { return hasStarted() && !hasFinished(); }
 
 bool Task::hasFinished() const { return !end_timestamp_.isZero(); }
 
@@ -341,13 +217,6 @@ ruler_msgs::Task Task::toMsg() const
   msg.max_start_timestamp = expected_start_->getFakeInterval().getMax();
   msg.min_end_timestamp = expected_end_->getFakeInterval().getMin();
   msg.max_end_timestamp = expected_end_->getFakeInterval().getMax();
-  for (interruptions_const_iterator it(interruptions_.begin());
-       it != interruptions_.end(); it++)
-  {
-    utilities::TimeIntervalPtr interruption(*it);
-    msg.min_interruption_timestamps.push_back(interruption->getMin());
-    msg.max_interruption_timestamps.push_back(interruption->getMax());
-  }
   for (waypoints_const_iterator it(waypoints_.begin()); it != waypoints_.end();
        it++)
   {

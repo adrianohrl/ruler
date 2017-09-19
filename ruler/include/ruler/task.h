@@ -29,9 +29,8 @@ class Task : public utilities::Subject,
 {
 public:
   Task(const std::string& id, const std::string& name,
-       const utilities::NoisyTimePtr& start,
-       const utilities::NoisyTimePtr& end,
-       bool preemptive = false,
+       const utilities::NoisyTimePtr& expected_start,
+       const utilities::NoisyTimePtr& expected_end,
        const std::list<geometry_msgs::Pose>& waypoints =
            std::list<geometry_msgs::Pose>());
   Task(const ruler_msgs::Task& msg);
@@ -41,20 +40,15 @@ public:
   void addResource(const ResourceInterfacePtr& resource);
   void removeResource(const ResourceInterfacePtr& resource);
   void start(const ros::Time& timestamp = ros::Time::now());
-  void interrupt(const ros::Time& timestamp = ros::Time::now());
-  void resume(const ros::Time& timestamp = ros::Time::now());
-  void finish(const ros::Time& timestamp = ros::Time::now());
+  virtual void finish(const ros::Time& timestamp = ros::Time::now());
   void clearResources();
-  ros::Duration getDuration(const ros::Time& timestamp = ros::Time::now()) const;
+  virtual ros::Duration getDuration(const ros::Time& timestamp = ros::Time::now()) const;
   std::string getName() const;
-  bool isPreemptive() const;
+  virtual bool isPreemptive() const;
   ros::Time getStartTimestamp() const;
-  ros::Time getLastInterruptionTimestamp() const;
-  ros::Time getLastResumeTimestamp() const;
   ros::Time getEndTimestamp() const;
   bool hasStarted() const;
-  bool isInterrupted() const;
-  bool isRunning() const;
+  virtual bool isRunning() const;
   bool hasFinished() const;
   utilities::NoisyTimePtr getExpectedStart() const;
   utilities::NoisyTimePtr getExpectedEnd() const;
@@ -66,23 +60,20 @@ public:
   virtual bool operator==(const ruler_msgs::Task& msg) const;
   using Subject::operator!=;
 
+protected:
+  ros::Time start_timestamp_;
+  ros::Time end_timestamp_;
+  ros::Time last_event_timestamp_;
+
 private:
-  typedef std::list<utilities::TimeIntervalPtr>::iterator interruptions_iterator;
-  typedef std::list<utilities::TimeIntervalPtr>::const_iterator interruptions_const_iterator;
   typedef std::list<ResourceReservationRequestPtr>::iterator reservations_iterator;
   typedef std::list<ResourceReservationRequestPtr>::const_iterator reservations_const_iterator;
   typedef std::list<geometry_msgs::Pose>::iterator waypoints_iterator;
   typedef std::list<geometry_msgs::Pose>::const_iterator waypoints_const_iterator;
   std::string name_;
-  bool preemptive_;
   utilities::NoisyTimePtr expected_start_;
   utilities::NoisyTimePtr expected_end_;
   utilities::NoisyDurationPtr expected_duration_;
-  ros::Time start_timestamp_;
-  ros::Time last_interruption_timestamp_;
-  ros::Time end_timestamp_;
-  ros::Time last_event_timestamp_;
-  std::list<utilities::TimeIntervalPtr> interruptions_;
   std::list<ResourceReservationRequestPtr> reservations_;
   std::list<geometry_msgs::Pose> waypoints_;
 };

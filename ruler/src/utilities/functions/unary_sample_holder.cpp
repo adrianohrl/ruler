@@ -40,15 +40,15 @@ void UnarySampleHolder::update(const ToggleEventConstPtr& event)
 bool UnarySampleHolder::updated(const ros::Time& t1, const ros::Time& t2) const
 {
   ros::Time t0(BufferedFunction<UnarySignalType>::getStartTimestamp());
-  if (t0 > t1)
-  {
-    throw utilities::Exception("t1 must be greater than t0.");
-  }
   if (t1 > t2)
   {
     throw utilities::Exception("t2 must be greater than t1.");
   }
-  ros::Duration d1(t1 - t0);
+  ros::Duration d1;
+  if (t0 > t1)
+  {
+    d1 = t1 - t0;
+  }
   ros::Duration d2(t2 - t0);
   ros::Duration delta_d(
       BufferedFunction<UnarySignalType>::getTimeoutDuration().toSec() / 2.5);

@@ -51,7 +51,7 @@ void InterCommunication::update(
   }
   std::string robot_id(event->getMsg().header.frame_id);
   iterator it(robots_.find(robot_id));
-  SampleHolderPtr sample_holder(it->second);
+  SampleHolderPtr sample_holder;
   if (it == robots_.end())
   {
     sample_holder.reset(new SampleHolder(
@@ -59,6 +59,10 @@ void InterCommunication::update(
         ros::Duration(10 * robot_->getTimeoutDuration().toSec()),
         event->getTimestamp()));
     robots_[robot_id] = sample_holder;
+  }
+  else
+  {
+    sample_holder = it->second;
   }
   ROS_DEBUG_STREAM("Updating " << *sample_holder << ".");
   sample_holder->update(event->getTimestamp());

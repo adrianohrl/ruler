@@ -1,0 +1,53 @@
+spin_rate: 10
+expected_sample_time:
+  mean: 0.1
+  standard_deviation: 0.005
+tasks:
+  size: 2
+  task0:
+    id: 't0'
+    name: 'task 0'
+    preemptive: true            # (default: false)
+    expected_start:
+      min_delay: 0.4            # in seconds (default: 0.0 [s])
+      max_delay: 0.6            # in seconds (default: 0.0 [s])
+    expected_end:
+      min_delay: 10.0           # in seconds (default: 0.0 [s])
+      max_delay: 11.0           # in seconds (default: 0.0 [s])
+    waypoints:
+      size: 4
+      waypoint0:
+        x: 0.0
+        y: 0.0
+      waypoint1:
+        x: 0.0
+        y: 3.0
+      waypoint2:
+        x: 4.0
+        y: 0.0
+      waypoint3:
+        x: 0.0
+        y: 0.0
+    #resource_reservation_requests:
+      #size: 2
+      #reservation0:
+        #resource_id: 'r0'
+        #consumption: # required if resource type is consumable
+        #function:
+
+      #reservation1:
+  task1:
+    id: 't1'
+    name: 'task 1'
+    expected_start:
+      min_delay: 0.4            # in seconds (default: 0.0 [s])
+      max_delay: 0.6            # in seconds (default: 0.0 [s])
+    expected_end:
+      min_delay: 10.0           # in seconds (default: 0.0 [s])
+      max_delay: 11.0           # in seconds (default: 0.0 [s])
+    waypoints:
+      size: 1
+      waypoint0:
+        x: 5.0
+        y: 5.0
+

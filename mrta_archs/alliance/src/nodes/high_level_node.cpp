@@ -17,7 +17,6 @@ HighLevelNode::HighLevelNode(const ros::NodeHandlePtr& nh,
 
 HighLevelNode::~HighLevelNode()
 {
-  ROS_ERROR_STREAM("[AHLN] destroying " << *this);
   broadcast_timer_.stop();
   beacon_signal_pub_.shutdown();
   beacon_signal_sub_.shutdown();
@@ -181,7 +180,7 @@ void HighLevelNode::controlLoop()
   robot_->process();
   if (!robot_->isIdle() && !broadcasting_)
   {
-    ROS_WARN_STREAM("Starting " << *robot_ << " broadcast timer.");
+    ROS_INFO_STREAM("Starting " << *robot_ << " broadcast timer.");
     broadcast_timer_.start();
     broadcasting_ = true;
   }
@@ -198,7 +197,7 @@ void HighLevelNode::broadcastTimerCallback(const ros::TimerEvent& event)
 {
   if (!robot_->getExecutingTask())
   {
-    ROS_WARN_STREAM("Stoping " << *robot_ << " broadcast timer.");
+    ROS_INFO_STREAM("Stoping " << *robot_ << " broadcast timer.");
     broadcast_timer_.stop();
     broadcasting_ = false;
     return;

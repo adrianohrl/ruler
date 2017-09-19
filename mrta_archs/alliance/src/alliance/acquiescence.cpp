@@ -40,13 +40,18 @@ bool Acquiescence::isAcquiescent(const ros::Time& timestamp)
   ros::Time activation_timestamp(behaviour_set_->getActivationTimestamp());
   if (activation_timestamp.isZero() || timestamp < activation_timestamp)
   {
-    return true;
+    return false;
   }
   double elapsed_duration((timestamp - activation_timestamp).toSec());
-  return !((elapsed_duration > yielding_delay_->getValue(timestamp) &&
+  /*ROS_ERROR_STREAM("[ACQ] elapsed: " << elapsed_duration << "[s], yielding: "
+                  << yielding_delay_->getValue(timestamp) << "[s], giving_up: "
+                  << giving_up_delay_->getValue(timestamp) << "[s], received: "
+                  << (monitor_->received(timestamp - robot_->getTimeoutDuration(),
+                                        timestamp) ? "true" : "false"));*/
+  return (elapsed_duration > yielding_delay_->getValue(timestamp) &&
             monitor_->received(timestamp - robot_->getTimeoutDuration(),
                                timestamp)) ||
-           elapsed_duration > giving_up_delay_->getValue(timestamp));
+           elapsed_duration > giving_up_delay_->getValue(timestamp);
 }
 
 void Acquiescence::setYieldingDelay(const ros::Duration& yielding_delay,

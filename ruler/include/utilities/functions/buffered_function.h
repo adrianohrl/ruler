@@ -159,7 +159,7 @@ void BufferedFunction<T>::update(const ros::Time& timestamp,
 {
   if (timestamp <= last_update_timestamp_)
   {
-    ROS_WARN_STREAM("Ignoring already past event in " << *this << ".");
+    ROS_DEBUG_STREAM("Ignoring already past event in " << *this << ".");
     return;
   }
   last_update_timestamp_ = timestamp;

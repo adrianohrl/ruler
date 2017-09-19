@@ -50,7 +50,6 @@ template <typename BS> void RobotInterface<BS>::process()
   {
     active_behaviour_set_->setActive(false);
     active_behaviour_set_.reset();
-    ROS_ERROR_STREAM("[RI] funcionou a desativacao?? " << (active_behaviour_set_ ? "nao" : "sim"));
   }
   for (iterator it(behaviour_sets_.begin()); it != behaviour_sets_.end(); it++)
   {
@@ -63,7 +62,6 @@ template <typename BS> void RobotInterface<BS>::process()
         active_behaviour_set_->setActive(false);
       }
       active_behaviour_set_ = behaviour_set;
-      ROS_ERROR_STREAM("[RI] active changed: " << *active_behaviour_set_);
       active_behaviour_set_->process();
       return;
     }

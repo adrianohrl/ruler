@@ -85,7 +85,7 @@ void BehaviourSetInterface<R>::setActive(bool active,
 {
   if (active != active_->getValue(timestamp))
   {
-    ROS_WARN_STREAM("[BSI] Updating " << *active_ << " to " << active << ".");
+    ROS_DEBUG_STREAM("Updating " << *active_ << " to " << active << ".");
     active_->update(active, timestamp);
     activation_timestamp_ = active ? timestamp : ros::Time();
   }

@@ -1,4 +1,5 @@
 name: 'Robot 3'
+spin_rate: 1.5           # in Hertz
 broadcast_rate: 0.75     # in Hertz
 timeout_duration: 3.0    # in seconds
 buffer_horizon: 8.0      # in seconds
@@ -7,45 +8,27 @@ behaviour_sets:
   behaviour_set0:
     task_id: 'wander'
     motivational_behaviour:
-      threshold: 200.0
+      threshold: 360.0
       acquiescence:
-        yielding_delay: 1000.0   # in seconds
-        giving_up_delay: 1000.0  # in seconds
-      #activity_suppression:
-
+        yielding_delay: 3.0   # in seconds
+        giving_up_delay: 50.0  # in seconds
       impatience:
-        # nao da pra saber a priori, pq depende do numero de robos no sistema (o q eh desconhecido):
-                #slow_rates: [2.5, 5.0, 2.0]
         fast_rate: 5.0
-        # nao da pra saber a priori, pq depende do numero de robos no sistema (o q eh desconhecido):
-                #reliability_durations: [1000.0 1000.0 ] # in seconds
   behaviour_set1:
     task_id: 'border_protection'
     motivational_behaviour:
       threshold: 200.0
       acquiescence:
-        yielding_delay: 500.0   # in seconds
-        giving_up_delay: 420.0  # in seconds
-      #activity_suppression:
-
+        yielding_delay: 2.0   # in seconds
+        giving_up_delay: 50.0  # in seconds
       impatience:
-        # nao da pra saber a priori, pq depende do numero de robos no sistema (o q eh desconhecido):
-                #slow_rates: [2.5, 5.0, 2.0]
         fast_rate: 10.0
-        # nao da pra saber a priori, pq depende do numero de robos no sistema (o q eh desconhecido):
-                #reliability_durations: [1000.0 1000.0 ] # in seconds
   behaviour_set2:
     task_id: 'report'
     motivational_behaviour:
-      threshold: 200.0
+      threshold: 50.0
       acquiescence:
-        yielding_delay: 120.0   # in seconds
-        giving_up_delay: 420.0  # in seconds
-      #activity_suppression:
-
+        yielding_delay: 0.2   # in seconds
+        giving_up_delay: 50.0  # in seconds
       impatience:
-        # nao da pra saber a priori, pq depende do numero de robos no sistema (o q eh desconhecido):
-                #slow_rates: [2.5, 5.0, 2.0]
-        fast_rate: 3.0
-        # nao da pra saber a priori, pq depende do numero de robos no sistema (o q eh desconhecido):
-                #reliability_durations: [1000.0 1000.0 ] # in seconds
+        fast_rate: 7.5
