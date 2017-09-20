@@ -8,7 +8,7 @@ InterCommunication::InterCommunication(const RobotPtr& robot,
                                        const BehaviourSetPtr& behaviour_set)
     : BeaconSignalObserver::BeaconSignalObserver(behaviour_set->getId() +
                                                  "/inter_communication"),
-      robot_(robot), task_(behaviour_set->getTask()),
+      robot_(robot), behaviour_set_(behaviour_set),
       last_update_timestamp_(ros::Time::now())
 {
 }
@@ -39,13 +39,20 @@ bool InterCommunication::received(const std::string& robot_id,
     return false;
   }
   SampleHolderPtr sample_holder(it->second);
+  ROS_WARN_STREAM("[Monitor] " << robot_id << ": ("
+                               << t1 - sample_holder->getStartTimestamp() << ","
+                               << t2 - sample_holder->getStartTimestamp()
+                               << ") "
+                               << (sample_holder->updated(t1, t2) ? "" : "NOT ")
+                               << "UPDATED");
   return sample_holder->updated(t1, t2);
 }
 
 void InterCommunication::update(
     const utilities::BeaconSignalEventConstPtr& event)
 {
-  if (event->isRelated(*robot_) || !event->isRelated(*task_))
+  if (event->isRelated(*robot_) ||
+      !event->isRelated(*behaviour_set_->getTask()))
   {
     return;
   }
@@ -55,8 +62,8 @@ void InterCommunication::update(
   if (it == robots_.end())
   {
     sample_holder.reset(new SampleHolder(
-        robot_id + "/sample_holder", robot_->getTimeoutDuration(),
-        ros::Duration(10 * robot_->getTimeoutDuration().toSec()),
+        getId() + "/" + robot_id + "/sample_holder",
+        robot_->getTimeoutDuration(), behaviour_set_->getBufferHorizon(),
         event->getTimestamp()));
     robots_[robot_id] = sample_holder;
   }

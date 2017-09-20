@@ -45,13 +45,13 @@ bool UnarySampleHolder::updated(const ros::Time& t1, const ros::Time& t2) const
     throw utilities::Exception("t2 must be greater than t1.");
   }
   ros::Duration d1;
-  if (t0 > t1)
+  if (t1 > t0)
   {
     d1 = t1 - t0;
   }
   ros::Duration d2(t2 - t0);
   ros::Duration delta_d(
-      BufferedFunction<UnarySignalType>::getTimeoutDuration().toSec() / 2.5);
+      0.1 * BufferedFunction<UnarySignalType>::getTimeoutDuration().toSec());
   for (ros::Duration d(d1); d <= d2; d += delta_d)
   {
     if (BufferedFunction<UnarySignalType>::getValue(d.toSec()))

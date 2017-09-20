@@ -1,0 +1,34 @@
+name: 'Robot 5'
+spin_rate: 4.5           # in Hertz
+broadcast_rate: 0.75     # in Hertz
+timeout_duration: 3.0    # in seconds
+buffer_horizon: 8.0      # in seconds
+behaviour_sets:
+  size: 3
+  behaviour_set0:
+    task_id: 'wander'
+    motivational_behaviour:
+      threshold: 360.0
+      acquiescence:
+        yielding_delay: 3.0   # in seconds
+        giving_up_delay: 50.0  # in seconds
+      impatience:
+        fast_rate: 5.0
+  behaviour_set1:
+    task_id: 'border_protection'
+    motivational_behaviour:
+      threshold: 200.0
+      acquiescence:
+        yielding_delay: 2.0   # in seconds
+        giving_up_delay: 50.0  # in seconds
+      impatience:
+        fast_rate: 10.0
+  behaviour_set2:
+    task_id: 'report'
+    motivational_behaviour:
+      threshold: 50.0
+      acquiescence:
+        yielding_delay: 0.2   # in seconds
+        giving_up_delay: 50.0  # in seconds
+      impatience:
+        fast_rate: 7.5

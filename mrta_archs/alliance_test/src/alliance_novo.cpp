@@ -232,8 +232,9 @@ void boundary_overwatch()
 void wander()
 {
   ROS_INFO("REPORT: Task WANDER is being done.");
-  if (sonar0 > inter && sonar1 > inter and sonar2 > inter && sonar3 > inter &&
-      sonar4 > inter and sonar5 > inter)
+  if (sonar0 > inter && sonar1 > inter &&
+      sonar2 > inter && sonar3 > inter &&
+      sonar4 > inter && sonar5 > inter)
   {
     vel_x = 5 * k * (std::max(sonar2, sonar3) - 1 / std::max(sonar2, sonar3));
     vel_omega = 0.005 * k / std::max(sonar2, sonar3) *

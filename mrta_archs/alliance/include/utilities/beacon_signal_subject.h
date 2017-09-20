@@ -15,8 +15,6 @@ public:
   BeaconSignalSubject(const std::string& id);
   BeaconSignalSubject(const BeaconSignalSubject& subject);
   virtual ~BeaconSignalSubject();
-
-protected:
   void notify(const BeaconSignalEventConstPtr &event);
   void registerObserver(const BeaconSignalObserverPtr& observer);
 };

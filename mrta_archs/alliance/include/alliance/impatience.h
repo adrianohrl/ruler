@@ -35,6 +35,7 @@ private:
   typedef std::map<std::string, SampleHolderPtr>::iterator iterator;
   typedef std::map<std::string, SampleHolderPtr>::const_iterator const_iterator;
   const RobotPtr robot_;
+  const BehaviourSetPtr behaviour_set_;
   InterCommunicationPtr monitor_;
   std::map<std::string, SampleHolderPtr> slow_rates_;
   SampleHolderPtr fast_rate_;

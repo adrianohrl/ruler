@@ -7,11 +7,11 @@ Acquiescence::Acquiescence(const RobotPtr& robot,
                            const BehaviourSetPtr& behaviour_set)
     : robot_(robot), behaviour_set_(behaviour_set),
       yielding_delay_(new SampleHolder(
-          behaviour_set->getId() + "/acquiescence/yielding_delay", 0.0,
-          ros::Duration(10 * robot_->getTimeoutDuration().toSec()))),
+          behaviour_set_->getId() + "/acquiescence/yielding_delay", 0.0,
+          behaviour_set_->getBufferHorizon())),
       giving_up_delay_(new SampleHolder(
-          behaviour_set->getId() + "/acquiescence/giving_up_delay", 0.0,
-          ros::Duration(10 * robot_->getTimeoutDuration().toSec())))
+          behaviour_set_->getId() + "/acquiescence/giving_up_delay", 0.0,
+          behaviour_set_->getBufferHorizon()))
 {
 }
 
@@ -46,12 +46,13 @@ bool Acquiescence::isAcquiescent(const ros::Time& timestamp)
   /*ROS_ERROR_STREAM("[ACQ] elapsed: " << elapsed_duration << "[s], yielding: "
                   << yielding_delay_->getValue(timestamp) << "[s], giving_up: "
                   << giving_up_delay_->getValue(timestamp) << "[s], received: "
-                  << (monitor_->received(timestamp - robot_->getTimeoutDuration(),
+                  << (monitor_->received(timestamp -
+     robot_->getTimeoutDuration(),
                                         timestamp) ? "true" : "false"));*/
   return (elapsed_duration > yielding_delay_->getValue(timestamp) &&
-            monitor_->received(timestamp - robot_->getTimeoutDuration(),
-                               timestamp)) ||
-           elapsed_duration > giving_up_delay_->getValue(timestamp);
+          monitor_->received(timestamp - robot_->getTimeoutDuration(),
+                             timestamp)) ||
+         elapsed_duration > giving_up_delay_->getValue(timestamp);
 }
 
 void Acquiescence::setYieldingDelay(const ros::Duration& yielding_delay,

@@ -48,8 +48,8 @@ private:
   ros::Time last_update_timestamp_;
   ros::Duration timeout_duration_;
   ros::Duration buffer_horizon_;
-  FunctionPtr model_;
   std::list<FunctionPtr> functions_;
+  FunctionPtr model_;
   void cleanBuffer(double d);
 };
 
@@ -59,7 +59,7 @@ BufferedFunction<T>::BufferedFunction(const std::string& id,
                                       const ros::Duration& buffer_horizon,
                                       const ros::Time& start_timestamp)
     : Observer::Observer(id), model_(model), start_timestamp_(start_timestamp),
-      buffer_horizon_(buffer_horizon), last_update_timestamp_(start_timestamp_)
+      buffer_horizon_(buffer_horizon)
 {
 }
 
@@ -70,8 +70,7 @@ BufferedFunction<T>::BufferedFunction(const std::string& id,
                                       const ros::Duration& buffer_horizon,
                                       const ros::Time& start_timestamp)
     : Observer::Observer(id), model_(model), start_timestamp_(start_timestamp),
-      timeout_duration_(timeout_duration), buffer_horizon_(buffer_horizon),
-      last_update_timestamp_(start_timestamp_)
+      timeout_duration_(timeout_duration), buffer_horizon_(buffer_horizon)
 {
 }
 
@@ -80,8 +79,7 @@ BufferedFunction<T>::BufferedFunction(const BufferedFunction<T>& function)
     : Observer::Observer(function), model_(function.model_),
       start_timestamp_(ros::Time::now()),
       timeout_duration_(function.timeout_duration_),
-      buffer_horizon_(function.buffer_horizon_),
-      last_update_timestamp_(start_timestamp_)
+      buffer_horizon_(function.buffer_horizon_)
 {
 }
 

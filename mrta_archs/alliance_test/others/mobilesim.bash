@@ -1,0 +1,1 @@
+MobileSim --nomap -r blue_p3dx:p3dx1 -r violet_p3dx:p3dx2 -r orange_p3dx:p3dx3 -r red_p3dx:p3dx4 -r black_p3dx:p3dx5

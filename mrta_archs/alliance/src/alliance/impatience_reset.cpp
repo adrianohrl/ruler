@@ -20,7 +20,6 @@ void ImpatienceReset::init(const InterCommunicationPtr &monitor)
 bool ImpatienceReset::isResetted(const ros::Time& timestamp) const
 {
   return monitor_->received(monitor_->getLastUpdateTimestamp(), timestamp) &&
-           !monitor_->received(ros::Time(),
-                               monitor_->getLastUpdateTimestamp());
+           !monitor_->received(ros::Time(), monitor_->getLastUpdateTimestamp());
 }
 }

@@ -34,7 +34,7 @@ private:
   typedef std::map<std::string, SampleHolderPtr>::iterator iterator;
   typedef std::map<std::string, SampleHolderPtr>::const_iterator const_iterator;
   const RobotPtr robot_;
-  const TaskPtr task_;
+  const BehaviourSetPtr behaviour_set_;
   ros::Time last_update_timestamp_;
   std::map<std::string, SampleHolderPtr> robots_;
 };

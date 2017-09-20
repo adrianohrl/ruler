@@ -22,6 +22,7 @@ public:
   TaskPtr getTask() const;
   bool isActive(const ros::Time& timestamp = ros::Time::now()) const;
   ros::Time getActivationTimestamp() const;
+  ros::Duration getBufferHorizon() const;
   virtual void setActive(bool active = true,
                          const ros::Time& timestamp = ros::Time::now());
   void setTimeoutDuration(const ros::Duration& timeout_duration);
@@ -33,6 +34,7 @@ protected:
   const RPtr robot_;
   const TaskPtr task_;
   ros::Time activation_timestamp_;
+  ros::Duration buffer_horizon_;
   SampleHolderPtr active_;
 };
 
@@ -40,10 +42,10 @@ template <typename R>
 BehaviourSetInterface<R>::BehaviourSetInterface(
     const RPtr& robot, const TaskPtr& task, const ros::Duration& buffer_horizon,
     const ros::Duration& timeout_duration)
-    : robot_(robot), task_(task),
+    : robot_(robot), task_(task), buffer_horizon_(buffer_horizon),
       active_(new SampleHolder(
           robot->getId() + "/" + task->getId() + "/active", timeout_duration,
-          buffer_horizon))
+          buffer_horizon_))
 {
 }
 
@@ -77,6 +79,12 @@ template <typename R>
 ros::Time BehaviourSetInterface<R>::getActivationTimestamp() const
 {
   return activation_timestamp_;
+}
+
+template <typename R>
+ros::Duration BehaviourSetInterface<R>::getBufferHorizon() const
+{
+  return buffer_horizon_;
 }
 
 template <typename R>

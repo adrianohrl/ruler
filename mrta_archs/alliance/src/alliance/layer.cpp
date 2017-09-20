@@ -17,14 +17,9 @@ void Layer::initialize(const std::string& name)
   readParameters();
 }
 
-void Layer::readParameters()
-{
-}
+void Layer::readParameters() {}
 
-std::string Layer::getName() const
-{
-  return name_;
-}
+std::string Layer::getName() const { return name_; }
 
 bool Layer::operator==(const Layer& layer) const
 {
