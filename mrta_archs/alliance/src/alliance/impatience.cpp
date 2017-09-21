@@ -25,8 +25,13 @@ void Impatience::init(const InterCommunicationPtr& monitor)
 double Impatience::getSlowRate(const std::string& robot_id,
                                const ros::Time& timestamp) const
 {
-  SampleHolderPtr sample_holder(slow_rates_.at(robot_id));
-  return sample_holder->getValue(timestamp);
+  const_iterator it(slow_rates_.find(robot_id));
+  if (it != slow_rates_.end())
+  {
+    SampleHolderPtr sample_holder(it->second);
+    return sample_holder->getValue(timestamp);
+  }
+  return 0.0;
 }
 
 double Impatience::getFastRate(const ros::Time& timestamp) const
@@ -38,8 +43,13 @@ ros::Duration
 Impatience::getReliabilityDuration(const std::string& robot_id,
                                    const ros::Time& timestamp) const
 {
-  SampleHolderPtr sample_holder(reliability_durations_.at(robot_id));
-  return ros::Duration(sample_holder->getValue(timestamp));
+  const_iterator it(reliability_durations_.find(robot_id));
+  if (it != reliability_durations_.end())
+  {
+    SampleHolderPtr sample_holder(it->second);
+    return ros::Duration(sample_holder->getValue(timestamp));
+  }
+  return ros::Duration();
 }
 
 double Impatience::getLevel(const ros::Time& timestamp) const

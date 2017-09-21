@@ -136,13 +136,16 @@ void Profile<T>::addTaskFunction(const TaskFunctionPtr& task_function)
 
 template <typename T> void Profile<T>::removeTaskFunction(const TaskPtr& task)
 {
-  for (iterator it(task_functions_.begin()); it != task_functions_.end(); it++)
+  iterator it(task_functions_.begin());
+  while (it != task_functions_.end())
   {
     TaskFunctionPtr task_function(*it);
     if (*task_function->getTask() == task)
     {
-      task_functions_.erase(it);
+      it = task_functions_.erase(it);
+      continue;
     }
+    it++;
   }
 }
 }

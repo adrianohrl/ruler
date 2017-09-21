@@ -19,7 +19,7 @@ Subject::~Subject() {}
 void Subject::registerObserver(const ObserverPtr& observer)
 {
   observers_.push_back(observer);
-  ROS_INFO_STREAM("Registered observer (" << *observer << ") to subject ("
+  ROS_DEBUG_STREAM("Registered observer (" << *observer << ") to subject ("
                                            << *this << ").");
 }
 
@@ -38,7 +38,7 @@ void Subject::notify(const EventConstPtr& event)
   {
     ObserverPtr observer(*it);
     observer->update(event);
-    ROS_INFO_STREAM("Subject (" << *this << ") notified observer ("
+    ROS_DEBUG_STREAM("Subject (" << *this << ") notified observer ("
                                  << *observer << ").");
   }
 }

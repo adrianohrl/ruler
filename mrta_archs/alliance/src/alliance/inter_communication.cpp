@@ -23,6 +23,7 @@ bool InterCommunication::received(const ros::Time& t1,
     SampleHolderPtr sample_holder(it->second);
     if (sample_holder->updated(t1, t2))
     {
+      ROS_WARN_STREAM("RECEIVED " << *this << " (" << t1 << ", " << t2 << ")");
       return true;
     }
   }
@@ -39,12 +40,6 @@ bool InterCommunication::received(const std::string& robot_id,
     return false;
   }
   SampleHolderPtr sample_holder(it->second);
-  ROS_WARN_STREAM("[Monitor] " << robot_id << ": ("
-                               << t1 - sample_holder->getStartTimestamp() << ","
-                               << t2 - sample_holder->getStartTimestamp()
-                               << ") "
-                               << (sample_holder->updated(t1, t2) ? "" : "NOT ")
-                               << "UPDATED");
   return sample_holder->updated(t1, t2);
 }
 

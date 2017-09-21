@@ -32,7 +32,7 @@ set(H_FILES
   include/nodes/metrics_service_server.h
   include/nodes/ruler_node.h
   include/nodes/task_simulation_node.h
-  include/ruler/plugins/metrics_calculator.h
+  include/ruler/battery_charge_simulation.h
   include/ruler/consumable_resource.h
   include/ruler/consumable_resource_reservation_request.h
   include/ruler/continuous_consumable_resource.h
@@ -109,6 +109,7 @@ set(CPP_FILES
   src/nodes/metrics_service_server.cpp
   src/nodes/ruler_node.cpp
   src/nodes/task_simulation_node.cpp
+  src/ruler/battery_charge_simulation.cpp
   src/ruler/continuous_consumable_resource.cpp
   src/ruler/continuous_reusable_resource.cpp
   src/ruler/discrete_consumable_resource.cpp
@@ -211,6 +212,21 @@ add_dependencies(${PROJECT_NAME}_utest
 )
 
 target_link_libraries(${PROJECT_NAME}_utest
+  ${Boost_LIBRARIES}
+  ${catkin_LIBRARIES}
+)
+
+catkin_add_gtest(simulations_utest
+  test/simulations_utest.cpp
+  ${CPP_FILES}
+)
+
+add_dependencies(simulations_utest
+  ${Boost_EXPORTED_TARGETS}
+  ${catkin_EXPORTED_TARGETS}
+)
+
+target_link_libraries(simulations_utest
   ${Boost_LIBRARIES}
   ${catkin_LIBRARIES}
 )

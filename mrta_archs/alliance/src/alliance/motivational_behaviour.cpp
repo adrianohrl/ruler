@@ -66,6 +66,16 @@ ActivitySuppressionPtr MotivationalBehaviour::getActivitySuppression() const
   return activity_suppression_;
 }
 
+ImpatiencePtr MotivationalBehaviour::getImpatience() const
+{
+  return impatience_;
+}
+
+ImpatienceResetPtr MotivationalBehaviour::getImpatienceReset() const
+{
+  return impatience_reset_;
+}
+
 InterCommunicationPtr MotivationalBehaviour::getInterCommunication() const
 {
   return monitor_;

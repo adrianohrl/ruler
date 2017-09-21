@@ -151,7 +151,7 @@ void Task::clearResources() { utilities::Subject::clearObservers(); }
 ros::Duration Task::getDuration(const ros::Time& timestamp) const
 {
   return hasStarted()
-             ? (timestamp > end_timestamp_ ? end_timestamp_ : timestamp) -
+             ? (hasFinished() && timestamp > end_timestamp_ ? end_timestamp_ : timestamp) -
                    start_timestamp_
              : ros::Duration();
 }

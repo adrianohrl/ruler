@@ -52,10 +52,12 @@ bool UnarySampleHolder::updated(const ros::Time& t1, const ros::Time& t2) const
   ros::Duration d2(t2 - t0);
   ros::Duration delta_d(
       0.1 * BufferedFunction<UnarySignalType>::getTimeoutDuration().toSec());
+  ROS_WARN_STREAM("[BUF] " << *this << " t1: " << t1 << ", t2: " << t2 << ", delta: " << delta_d);
   for (ros::Duration d(d1); d <= d2; d += delta_d)
   {
     if (BufferedFunction<UnarySignalType>::getValue(d.toSec()))
     {
+      ROS_WARN_STREAM("[BUF] " << *this << " updated");
       return true;
     }
   }

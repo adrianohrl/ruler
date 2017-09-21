@@ -14,11 +14,12 @@
 
 namespace ruler
 {
-template <typename T> class Resource : public ResourceInterface,
-                                       public boost::enable_shared_from_this<Resource<T> >
+template <typename T>
+class Resource : public ResourceInterface,
+                 public boost::enable_shared_from_this<Resource<T>>
 {
 public:
-  typedef boost::shared_ptr<Resource<T> > Ptr;
+  typedef boost::shared_ptr<Resource<T>> Ptr;
   typedef boost::shared_ptr<Resource<T> const> ConstPtr;
   virtual ~Resource();
   virtual void update(const utilities::EventConstPtr& event);
@@ -31,6 +32,7 @@ public:
   virtual utilities::SignalTypeEnum getSignalType() const;
   std::string getName() const;
   T getLevel(const ros::Time& timestamp = ros::Time::now()) const;
+  T getCapacity() const;
   ros::Duration getLatence() const;
   virtual ruler_msgs::Resource toMsg() const;
 
@@ -39,7 +41,8 @@ protected:
   typedef typename Profile<T>::ConstPtr ProfileConstPtr;
   ProfilePtr profile_;
   Resource(const std::string& id, const std::string& name, const T& capacity,
-           const T& initial_level, const ros::Duration& latence = ros::Duration());
+           const T& initial_level,
+           const ros::Duration& latence = ros::Duration());
   Resource(const ruler_msgs::Resource& msg);
   Resource(const Resource<T>& resource);
 
@@ -88,9 +91,7 @@ Resource<T>::Resource(const Resource<T>& resource)
 {
 }
 
-template <typename T> Resource<T>::~Resource()
-{
-}
+template <typename T> Resource<T>::~Resource() {}
 
 template <typename T>
 void Resource<T>::update(const utilities::EventConstPtr& event)
@@ -144,6 +145,11 @@ template <typename T> std::string Resource<T>::getName() const { return name_; }
 template <typename T> T Resource<T>::getLevel(const ros::Time& timestamp) const
 {
   return profile_->getLevel(timestamp);
+}
+
+template <typename T> T Resource<T>::getCapacity() const
+{
+  return profile_->getCapacity();
 }
 
 template <typename T> ros::Duration Resource<T>::getLatence() const

@@ -23,6 +23,8 @@ public:
   double getThreshold(const ros::Time& timestamp = ros::Time::now()) const;
   double getLevel(const ros::Time& timestamp = ros::Time::now()) const;
   ActivitySuppressionPtr getActivitySuppression() const;
+  ImpatiencePtr getImpatience() const;
+  ImpatienceResetPtr getImpatienceReset() const;
   InterCommunicationPtr getInterCommunication() const;
   void setThreshold(double threshold,
                     const ros::Time& timestamp = ros::Time::now());

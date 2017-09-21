@@ -1267,33 +1267,6 @@ TEST(Task, distance)
   EXPECT_GE(tolerance, fabs(12.0 - task->getDistance()));
 }
 
-TEST(Simulation, taskSimulation)
-{
-  double d(1.0);
-  ros::Time timestamp(ros::Time::now());
-  utilities::NoisyTimePtr expected_start(new utilities::NoisyTime(
-      timestamp + ros::Duration(9.9 * d), timestamp + ros::Duration(10.01 * d)));
-  utilities::NoisyTimePtr expected_end(new utilities::NoisyTime(
-      timestamp + ros::Duration(54.0 * d), timestamp + ros::Duration(56.0 * d)));
-  ruler::TaskPtr task(
-      new ruler::Task("t", "task", expected_start, expected_end));
-  ruler::UnaryConsumableResourcePtr resource(
-      new ruler::UnaryConsumableResource("r", "resource"));
-  task->addResource(resource);
-  utilities::ContinuousNoisySignalPtr expected_sample_time(
-      new utilities::ContinuousNoisySignal(0.5 * d, 0.005 * d));
-  ruler::TaskSimulationPtr simulation(
-      new ruler::TaskSimulation(task, expected_sample_time));
-  timestamp = simulation->getSimulationStartTimestamp();
-  ROS_WARN("%s", simulation->c_str());
-  while (!task->hasFinished())
-  {
-    timestamp += ros::Duration(expected_sample_time->random());
-    simulation->update(timestamp);
-    ROS_WARN("%s", simulation->c_str());
-  }
-}
-
 void init()
 {
   d.push_back(0.0);

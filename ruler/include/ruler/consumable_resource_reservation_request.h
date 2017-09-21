@@ -29,8 +29,9 @@ protected:
   typedef typename utilities::functions::Function<T>::ConstPtr FunctionConstPtr;
 
 public:
-  typedef boost::shared_ptr<ConsumableResourceReservationRequest<T> > Ptr;
-  typedef boost::shared_ptr<ConsumableResourceReservationRequest<T> const> ConstPtr;
+  typedef boost::shared_ptr<ConsumableResourceReservationRequest<T>> Ptr;
+  typedef boost::shared_ptr<ConsumableResourceReservationRequest<T> const>
+      ConstPtr;
   ConsumableResourceReservationRequest(
       const TaskPtr& task, const UnaryConsumableResourcePtr& resource,
       double d0 = 0.0, bool consumption = true);
@@ -138,15 +139,15 @@ template <typename T> void ConsumableResourceReservationRequest<T>::request()
   if (consumption_)
   {
     resource_->consume(task_, quantity_function_);
-    ROS_DEBUG_STREAM("Requested " << resource_
-                                  << " resource consumption during " << task_
-                                  << " task execution.");
+    ROS_DEBUG_STREAM("Requested " << *resource_
+                                 << " resource consumption during " << *task_
+                                 << " task execution.");
   }
   else
   {
     resource_->produce(task_, quantity_function_);
-    ROS_DEBUG_STREAM("Requested " << resource_ << " resource production during "
-                                  << task_ << " task execution.");
+    ROS_DEBUG_STREAM("Requested " << *resource_ << " resource production during "
+                                 << *task_ << " task execution.");
   }
 }
 }
