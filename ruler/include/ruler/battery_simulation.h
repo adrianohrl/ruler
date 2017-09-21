@@ -1,5 +1,5 @@
-#ifndef _RULER_BATTERY_CHARGE_SIMULATION_H_
-#define _RULER_BATTERY_CHARGE_SIMULATION_H_
+#ifndef _RULER_BATTERY_SIMULATION_H_
+#define _RULER_BATTERY_SIMULATION_H_
 
 #include <ros/rate.h>
 #include "ruler/continuous_consumable_resource.h"
@@ -7,17 +7,17 @@
 
 namespace ruler
 {
-class BatteryChargeSimulation : public utilities::Simulation
+class BatterySimulation : public utilities::Simulation
 {
 public:
-  BatteryChargeSimulation(
+  BatterySimulation(
       const std::string& robot_id,
       const utilities::ContinuousNoisySignalPtr& expected_sample_time,
       double slow_discharging_rate = 0.001, double low_threshold = 0.15,
       double critical_threshold = 0.05,
       const ros::Rate& low_warning_rate = ros::Rate(0.25),
       const ros::Rate& critical_warning_rate = ros::Rate(1.0));
-  virtual ~BatteryChargeSimulation();
+  virtual ~BatterySimulation();
   virtual void update(const ros::Time& timestamp = ros::Time::now());
   void recharge();
   void stop(const ros::Time& timestamp = ros::Time::now());
@@ -45,9 +45,9 @@ private:
   ros::Rate critical_warning_rate_;
 };
 
-typedef boost::shared_ptr<BatteryChargeSimulation> BatteryChargeSimulationPtr;
-typedef boost::shared_ptr<BatteryChargeSimulation const>
-    BatteryChargeSimulationConstPtr;
+typedef boost::shared_ptr<BatterySimulation> BatterySimulationPtr;
+typedef boost::shared_ptr<BatterySimulation const>
+    BatterySimulationConstPtr;
 }
 
-#endif // _RULER_BATTERY_CHARGE_SIMULATION_H_
+#endif // _RULER_BATTERY_SIMULATION_H_

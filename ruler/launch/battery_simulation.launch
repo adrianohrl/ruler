@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="robot_id" />
+  <arg name="battery_params" />
+  <group ns="$(arg battery_params)">
+    <node name="battery_simulation_node" pkg="ruler" type="battery_simulation_node" output="screen">
+      <param name="id" type="string" value="$(arg robot_id)" />
+      <rosparam file="$(arg battery_params)" command="load" />
+    </node>
+  </group>
+</launch>

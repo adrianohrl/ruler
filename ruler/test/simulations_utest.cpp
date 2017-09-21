@@ -30,12 +30,12 @@ TEST(Simulation, taskSimulation)
   ruler::TaskSimulationPtr simulation(
       new ruler::TaskSimulation(task, expected_sample_time));
   timestamp = simulation->getSimulationStartTimestamp();
-  //ROS_WARN("%s", simulation->c_str());
+  ROS_WARN("%s", simulation->c_str());
   while (!task->hasFinished())
   {
     timestamp += ros::Duration(expected_sample_time->random());
     simulation->update(timestamp);
-    //ROS_WARN("%s", simulation->c_str());
+    ROS_WARN("%s", simulation->c_str());
   }
 }
 
@@ -50,10 +50,6 @@ TEST(Simulation, batteryChargeSimulation)
   {
     timestamp += ros::Duration(expected_sample_time->random());
     battery->update(timestamp);
-    if (!battery->isFull(timestamp))
-    {
-      ROS_WARN("%s", battery->c_str());
-    }
   }
 }
 

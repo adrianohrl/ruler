@@ -1,10 +1,10 @@
-#include "ruler/battery_charge_simulation.h"
+#include "ruler/battery_simulation.h"
 #include "ruler/consumable_resource_reservation_request.h"
 #include "utilities/functions/continuous_linear_function.h"
 
 namespace ruler
 {
-BatteryChargeSimulation::BatteryChargeSimulation(
+BatterySimulation::BatterySimulation(
     const std::string& robot_id,
     const utilities::ContinuousNoisySignalPtr& expected_sample_time,
     double slow_discharging_rate, double low_threshold,
@@ -62,16 +62,13 @@ BatteryChargeSimulation::BatteryChargeSimulation(
                   new utilities::functions::ContinuousLinearFunction(
                       start_timestamp - timestamp, end_timestamp - timestamp,
                       0.0, 1.0)))));
-  ROS_WARN_STREAM("[BATTERY_SIM] d0: " << start_timestamp - timestamp
-                                       << ", df: "
-                                       << end_timestamp - timestamp);
   slowly_discharge_.reset(
       new TaskSimulation(slowly_discharge, expected_sample_time));
 }
 
-BatteryChargeSimulation::~BatteryChargeSimulation() {}
+BatterySimulation::~BatterySimulation() {}
 
-void BatteryChargeSimulation::update(const ros::Time& timestamp)
+void BatterySimulation::update(const ros::Time& timestamp)
 {
   if (!recharging_)
   {
@@ -102,45 +99,45 @@ void BatteryChargeSimulation::update(const ros::Time& timestamp)
   }
 }
 
-void BatteryChargeSimulation::recharge() { recharging_ = true; }
+void BatterySimulation::recharge() { recharging_ = true; }
 
-void BatteryChargeSimulation::stop(const ros::Time& timestamp)
+void BatterySimulation::stop(const ros::Time& timestamp)
 {
   recharging_ = false;
 }
 
-bool BatteryChargeSimulation::isRecharging(const ros::Time& timestamp) const
+bool BatterySimulation::isRecharging(const ros::Time& timestamp) const
 {
   return recharging_;
 }
 
-bool BatteryChargeSimulation::isEmpty(const ros::Time& timestamp) const
+bool BatterySimulation::isEmpty(const ros::Time& timestamp) const
 {
   return battery_charge_->getLevel(timestamp) == 0.0;
 }
 
-bool BatteryChargeSimulation::isLowLevel(const ros::Time& timestamp) const
+bool BatterySimulation::isLowLevel(const ros::Time& timestamp) const
 {
   return battery_charge_->getLevel(timestamp) <= low_threshold_;
 }
 
-bool BatteryChargeSimulation::isCriticalLevel(const ros::Time& timestamp) const
+bool BatterySimulation::isCriticalLevel(const ros::Time& timestamp) const
 {
   return battery_charge_->getLevel(timestamp) <= critical_threshold_;
 }
 
-bool BatteryChargeSimulation::isFull(const ros::Time& timestamp) const
+bool BatterySimulation::isFull(const ros::Time& timestamp) const
 {
   return battery_charge_->getLevel(timestamp) == 1.0;
 }
 
 double
-BatteryChargeSimulation::getRemainingCharge(const ros::Time& timestamp) const
+BatterySimulation::getRemainingCharge(const ros::Time& timestamp) const
 {
   return battery_charge_->getLevel(timestamp);
 }
 
-void BatteryChargeSimulation::setLowThreshold(double low_threshold)
+void BatterySimulation::setLowThreshold(double low_threshold)
 {
   if (low_threshold > critical_threshold_)
   {
@@ -148,7 +145,7 @@ void BatteryChargeSimulation::setLowThreshold(double low_threshold)
   }
 }
 
-void BatteryChargeSimulation::setCriticalThreshold(double critical_threshold)
+void BatterySimulation::setCriticalThreshold(double critical_threshold)
 {
   if (critical_threshold < low_threshold_)
   {
@@ -156,7 +153,7 @@ void BatteryChargeSimulation::setCriticalThreshold(double critical_threshold)
   }
 }
 
-std::string BatteryChargeSimulation::str() const
+std::string BatterySimulation::str() const
 {
   std::stringstream ss;
   ss << "battery remaining charge: " << 100.0 * battery_charge_->getLevel()
@@ -164,13 +161,13 @@ std::string BatteryChargeSimulation::str() const
   return ss.str();
 }
 
-void BatteryChargeSimulation::setLowWarningRate(
+void BatterySimulation::setLowWarningRate(
     const ros::Rate& low_warning_rate)
 {
   low_warning_rate_ = low_warning_rate;
 }
 
-void BatteryChargeSimulation::setCriticalWarningRate(
+void BatterySimulation::setCriticalWarningRate(
     const ros::Rate& critical_warning_rate)
 {
   critical_warning_rate_ = critical_warning_rate;

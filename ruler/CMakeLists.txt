@@ -29,10 +29,11 @@ include_directories(
 )
 
 set(H_FILES
+  include/nodes/battery_simulation_node.h
   include/nodes/metrics_service_server.h
   include/nodes/ruler_node.h
   include/nodes/task_simulation_node.h
-  include/ruler/battery_charge_simulation.h
+  include/ruler/battery_simulation.h
   include/ruler/consumable_resource.h
   include/ruler/consumable_resource_reservation_request.h
   include/ruler/continuous_consumable_resource.h
@@ -106,10 +107,11 @@ set(H_FILES
 )
 
 set(CPP_FILES
+  src/nodes/battery_simulation_node.cpp
   src/nodes/metrics_service_server.cpp
   src/nodes/ruler_node.cpp
   src/nodes/task_simulation_node.cpp
-  src/ruler/battery_charge_simulation.cpp
+  src/ruler/battery_simulation.cpp
   src/ruler/continuous_consumable_resource.cpp
   src/ruler/continuous_reusable_resource.cpp
   src/ruler/discrete_consumable_resource.cpp
@@ -182,6 +184,21 @@ add_dependencies(${PROJECT_NAME}_node
 )
 
 target_link_libraries(${PROJECT_NAME}_node
+  ${Boost_LIBRARIES}
+  ${catkin_LIBRARIES}
+)
+
+add_executable(battery_simulation_node
+  src/battery_simulation_node.cpp
+  ${CPP_FILES}
+)
+
+add_dependencies(battery_simulation_node
+  ${Boost_EXPORTED_TARGETS}
+  ${catkin_EXPORTED_TARGETS}
+)
+
+target_link_libraries(battery_simulation_node
   ${Boost_LIBRARIES}
   ${catkin_LIBRARIES}
 )

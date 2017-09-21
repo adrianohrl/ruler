@@ -8,7 +8,7 @@
 #ifndef _RULER_H_
 #define _RULER_H_
 
-#include "ruler/battery_charge_simulation.h"
+#include "ruler/battery_simulation.h"
 #include "ruler/consumable_resource.h"
 #include "ruler/consumable_resource_reservation_request.h"
 #include "ruler/continuous_consumable_resource.h"
