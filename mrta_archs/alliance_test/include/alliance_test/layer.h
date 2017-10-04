@@ -3,8 +3,8 @@
 
 #include <alliance/layer.h>
 #include <geometry_msgs/Twist.h>
-#include <nav_msgs/Odometry.h>
-#include <nodes/ros_sensor_message.h>
+#include "sensors/odometry.h"
+#include "sensors/sonar.h"
 
 namespace alliance_test
 {
@@ -13,13 +13,18 @@ class Layer : public alliance::Layer
 public:
   Layer();
   virtual ~Layer();
-  virtual void initialize(const std::string& name);
+  virtual void initialize(const std::string &ns, const std::string& name);
   virtual void process();
 
 protected:
   ros::NodeHandlePtr nh_;
+  sensors::OdometryPtr odometry_;
+  sensors::SonarPtr sonars_;
   ros::Publisher velocity_pub_;
-  nodes::ROSSensorMessage<nav_msgs::Odometry>::Ptr odometry_;
+  void setVelocity(double vx = 0.0, double wz = 0.0);
+
+private:
+  geometry_msgs::Twist velocity_msg_;
 };
 }
 

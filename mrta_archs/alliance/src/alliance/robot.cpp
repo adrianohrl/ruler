@@ -2,8 +2,9 @@
 
 namespace alliance
 {
-Robot::Robot(const std::string& id, const std::string& name)
-    : RobotInterface<BehaviourSet>::RobotInterface(id, name),
+Robot::Robot(const std::string& id, const std::string& name,
+             const std::string& ns)
+    : RobotInterface<BehaviourSet>::RobotInterface(id, name, ns),
       broadcast_rate_(0.0), timeout_duration_(0.0)
 {
 }

@@ -12,7 +12,7 @@ LayeredBehaviourSet::LayeredBehaviourSet(const BehavedRobotPtr& robot,
           robot, task, buffer_horizon, timeout_duration),
       BeaconSignalObserver::BeaconSignalObserver(robot->getId() + "/" +
                                                  task->getId()),
-      loader_("alliance", "alliance::Layer")
+      robot_(robot), loader_("alliance", "alliance::Layer")
 {
   LayerPtr layer;
   for (Task::const_iterator it(task->begin()); it != task->end(); it++)
@@ -20,6 +20,8 @@ LayeredBehaviourSet::LayeredBehaviourSet(const BehavedRobotPtr& robot,
     try
     {
       layer = loader_.createInstance(it->c_str());
+      layer->initialize(robot_->getNamespace(), *it);
+      addLayer(layer);
       ROS_DEBUG_STREAM("Loaded " << *it << " layer plugin to execute " << *task
                                  << " task.");
     }
@@ -46,7 +48,7 @@ void LayeredBehaviourSet::addLayer(const std::string& layer_name)
   try
   {
     LayerPtr layer(loader_.createInstance(layer_name.c_str()));
-    layer->initialize(getId() + "/" + layer_name);
+    layer->initialize(robot_->getNamespace(), getId() + "/" + layer_name);
     addLayer(layer);
   }
   catch (const pluginlib::PluginlibException& ex)

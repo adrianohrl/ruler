@@ -10,7 +10,8 @@ namespace alliance
 class BehavedRobot : public RobotInterface<LayeredBehaviourSet>
 {
 public:
-  BehavedRobot(const std::string& id, const std::string& name);
+  BehavedRobot(const std::string& id, const std::string& name,
+               const std::string& ns);
   virtual ~BehavedRobot();
 };
 

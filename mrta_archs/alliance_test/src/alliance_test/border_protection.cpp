@@ -9,13 +9,6 @@ BorderProtection::BorderProtection() {}
 
 BorderProtection::~BorderProtection() {}
 
-void BorderProtection::initialize(const std::string& name)
-{
-  Layer::initialize(name);
-  sonars_.reset(new nodes::ROSSensorMessage<sensor_msgs::PointCloud>(
-      name + "/sonar", nh_, "sonar", ros::Duration(1.0)));
-}
-
 void BorderProtection::process()
 {
   Layer::process();

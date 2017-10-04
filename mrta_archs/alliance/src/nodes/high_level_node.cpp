@@ -57,14 +57,16 @@ void HighLevelNode::readParameters()
     ROSNode::shutdown("Not found robot id as a ROS parameter.");
     return;
   }
-  std::string aux(id + "/alliance");
+  std::string ns(ros::this_node::getNamespace()), aux(id + "/alliance");
   if (!std::equal(aux.rbegin(), aux.rend(),
-                  ros::this_node::getNamespace().rbegin()))
+                  ns.rbegin()))
   {
     ROSNode::shutdown("Invalid ROS namespace. It must end with '" + id + "'.");
     return;
   }
-  robot_.reset(new alliance::Robot(id, name));
+  aux = "/alliance";
+  ns = ns.substr(0, ns.size() - aux.size());
+  robot_.reset(new alliance::Robot(id, name, ns));
   double broadcast_rate;
   pnh.param("broadcast_rate", broadcast_rate, 0.0);
   if (broadcast_rate <= 0.0)

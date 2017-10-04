@@ -12,6 +12,9 @@
   <group ns="$(arg robot_id)">
     <node name="RosAria" pkg="rosaria" type="RosAria" output="screen">
       <rosparam file="$(arg rosaria_params)" command="load" />
+      <remap from="~sonar" to="/$(arg robot_id)/sonar" />
+      <remap from="~pose" to="/$(arg robot_id)/odom" />
+      <remap from="~cmd_vel" to="/$(arg robot_id)/cmd_vel" />
     </node>
   </group>
 </launch>

@@ -6,12 +6,12 @@
 
 namespace alliance
 {
-class  Layer
+class Layer
 {
 public:
   Layer();
   virtual ~Layer();
-  virtual void initialize(const std::string& name);
+  virtual void initialize(const std::string& ns, const std::string& name);
   virtual void readParameters();
   virtual void process() = 0;
   std::string getName() const;

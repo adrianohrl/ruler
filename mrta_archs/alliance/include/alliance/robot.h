@@ -12,7 +12,7 @@ namespace alliance
 class Robot : public RobotInterface<BehaviourSet>
 {
 public:
-  Robot(const std::string& id, const std::string& name);
+  Robot(const std::string& id, const std::string& name, const std::string& ns);
   virtual ~Robot();
   ros::Rate getBroadcastRate() const;
   ros::Duration getTimeoutDuration() const;

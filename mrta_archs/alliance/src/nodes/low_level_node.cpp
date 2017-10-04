@@ -58,14 +58,16 @@ void LowLevelNode::readParameters()
     ROSNode::shutdown("Not found robot id as a ROS parameter.");
     return;
   }
-  std::string aux(id + "/alliance");
+  std::string ns(ros::this_node::getNamespace()), aux(id + "/alliance");
   if (!std::equal(aux.rbegin(), aux.rend(),
-                  ros::this_node::getNamespace().rbegin()))
+                  ns.rbegin()))
   {
     ROSNode::shutdown("Invalid ROS namespace. It must end with '" + id + "'.");
     return;
   }
-  robot_.reset(new alliance::BehavedRobot(id, name));
+  aux = "/alliance";
+  ns = ns.substr(0, ns.size() - aux.size());
+  robot_.reset(new alliance::BehavedRobot(id, name, ns));
   pnh = ros::NodeHandle("~/behaviour_sets");
   pnh.param("size", size, 0);
   for (int i(0); i < size; i++)

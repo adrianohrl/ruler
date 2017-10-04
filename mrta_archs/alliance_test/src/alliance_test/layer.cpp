@@ -6,13 +6,24 @@ Layer::Layer() : nh_(new ros::NodeHandle()) {}
 
 Layer::~Layer() { velocity_pub_.shutdown(); }
 
-void Layer::initialize(const std::string& name)
+void Layer::initialize(const std::string& ns, const std::string& name)
 {
-  alliance::Layer::initialize(name);
-  odometry_.reset(new nodes::ROSSensorMessage<nav_msgs::Odometry>(
-      name + "/odom", nh_, "odom", ros::Duration(1.0)));
-  velocity_pub_ = nh_->advertise<geometry_msgs::Twist>("cmd_vel", 10);
+  alliance::Layer::initialize(ns, name);
+  odometry_.reset(new sensors::Odometry(name, nh_, ns));
+  sonars_.reset(new sensors::Sonar(name, nh_, ns));
+  velocity_pub_ = nh_->advertise<geometry_msgs::Twist>(ns + "/cmd_vel", 10);
 }
 
-void Layer::process() { odometry_->publish(); }
+void Layer::process()
+{
+  odometry_->publish();
+  sonars_->publish();
+  velocity_pub_.publish(velocity_msg_);
+}
+
+void Layer::setVelocity(double vx, double wz)
+{
+  velocity_msg_.linear.x = vx;
+  velocity_msg_.angular.z = wz;
+}
 }

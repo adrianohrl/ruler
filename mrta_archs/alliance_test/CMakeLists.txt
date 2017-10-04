@@ -34,6 +34,8 @@ set(H_FILES
   include/alliance_test/border_protection.h
   include/alliance_test/report.h
   include/alliance_test/wander.h
+  include/sensors/odometry.h
+  include/sensors/sonar.h
 )
 
 set(CPP_FILES
@@ -41,6 +43,8 @@ set(CPP_FILES
   src/alliance_test/border_protection.cpp
   src/alliance_test/report.cpp
   src/alliance_test/wander.cpp
+  src/sensors/odometry.cpp
+  src/sensors/sonar.cpp
 )
 
 add_library(${PROJECT_NAME}

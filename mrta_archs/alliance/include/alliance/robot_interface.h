@@ -13,12 +13,15 @@ template <typename BS> class RobotInterface : public utilities::HasName
 {
 private:
   typedef boost::shared_ptr<BS> BSPtr;
+
 public:
   typedef typename std::list<BSPtr>::iterator iterator;
   typedef typename std::list<BSPtr>::const_iterator const_iterator;
-  RobotInterface(const std::string& id, const std::string& name);
+  RobotInterface(const std::string& id, const std::string& name,
+                 const std::string& ns);
   virtual ~RobotInterface();
   void process();
+  std::string getNamespace() const;
   TaskPtr getExecutingTask() const;
   bool isIdle() const;
   virtual void addBehaviourSet(const BSPtr& behaviour_set);
@@ -30,6 +33,7 @@ public:
   const_iterator end() const;
 
 protected:
+  std::string ns_;
   BSPtr active_behaviour_set_;
   std::list<BSPtr> behaviour_sets_;
   bool contains(const BS& behaviour_set) const;
@@ -37,8 +41,9 @@ protected:
 
 template <typename BS>
 RobotInterface<BS>::RobotInterface(const std::string& id,
-                                   const std::string& name)
-    : HasName::HasName(name, id)
+                                   const std::string& name,
+                                   const std::string& ns)
+    : HasName::HasName(name, id), ns_(ns)
 {
 }
 
@@ -66,6 +71,11 @@ template <typename BS> void RobotInterface<BS>::process()
       return;
     }
   }
+}
+
+template <typename BS> std::string RobotInterface<BS>::getNamespace() const
+{
+  return ns_;
 }
 
 template <typename BS> TaskPtr RobotInterface<BS>::getExecutingTask() const

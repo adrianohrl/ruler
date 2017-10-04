@@ -11,6 +11,13 @@ public:
   Wander();
   virtual ~Wander();
   virtual void process();
+
+private:
+  static const double SAFE_DISTANCE = 1.5;
+  static const double TOLERANCE = 5e-2;
+  static const double GAIN = 0.5;
+  bool isSafe() const;
+  bool isInDanger() const;
 };
 }
 

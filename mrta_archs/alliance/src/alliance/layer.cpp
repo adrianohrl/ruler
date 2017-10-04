@@ -7,7 +7,7 @@ Layer::Layer() {}
 
 Layer::~Layer() {}
 
-void Layer::initialize(const std::string& name)
+void Layer::initialize(const std::string& ns, const std::string& name)
 {
   if (name.empty())
   {
