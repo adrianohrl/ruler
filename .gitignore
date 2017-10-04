@@ -1,6 +1,7 @@
 *~
 *.svn
 
+###################
 # Compiled source #
 ###################
 *.com
@@ -10,6 +11,7 @@
 *.o
 *.so
  
+############
 # Packages #
 ############
 # it's better to unpack these files and commit the raw source
@@ -23,12 +25,14 @@
 *.tar
 *.zip
  
+######################
 # Logs and databases #
 ######################
 *.log
 *.sql
 *.sqlite
  
+######################
 # OS generated files #
 ######################
 .DS_Store
@@ -39,14 +43,16 @@
 ehthumbs.db
 Thumbs.db 
 
-# ROS Bags#
-###########
+############
+# ROS Bags #
+############
 bag/*
 bags/*
 *.bag
 *.pyc
 ./CMakeLists.txt
 
+#############
 # QtCreator #
 #############
 CMakeLists.txt.user
@@ -56,3 +62,10 @@ CMakeLists.txt.*
 *.creator
 *.files
 *.includes
+
+##############
+# Test files #
+##############
+
+*low_level.launch
+*high_level.launch

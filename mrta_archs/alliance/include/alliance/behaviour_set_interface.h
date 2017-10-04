@@ -7,8 +7,7 @@
 
 namespace alliance
 {
-template <typename R>
-class BehaviourSetInterface
+template <typename R> class BehaviourSetInterface
 {
 public:
   typedef boost::shared_ptr<R> RPtr;
@@ -43,28 +42,18 @@ BehaviourSetInterface<R>::BehaviourSetInterface(
     const RPtr& robot, const TaskPtr& task, const ros::Duration& buffer_horizon,
     const ros::Duration& timeout_duration)
     : robot_(robot), task_(task), buffer_horizon_(buffer_horizon),
-      active_(new SampleHolder(
-          robot->getId() + "/" + task->getId() + "/active", timeout_duration,
-          buffer_horizon_))
+      active_(new SampleHolder(robot->getId() + "/" + task->getId() + "/active",
+                               timeout_duration, buffer_horizon_))
 {
 }
 
-template <typename R>
-BehaviourSetInterface<R>::~BehaviourSetInterface()
-{
-}
+template <typename R> BehaviourSetInterface<R>::~BehaviourSetInterface() {}
 
-template <typename R>
-void BehaviourSetInterface<R>::preProcess()
-{
-}
+template <typename R> void BehaviourSetInterface<R>::preProcess() {}
 
-template <typename R> void BehaviourSetInterface<R>::process()
-{
-}
+template <typename R> void BehaviourSetInterface<R>::process() {}
 
-template <typename R>
-TaskPtr BehaviourSetInterface<R>::getTask() const
+template <typename R> TaskPtr BehaviourSetInterface<R>::getTask() const
 {
   return task_;
 }
@@ -89,11 +78,11 @@ ros::Duration BehaviourSetInterface<R>::getBufferHorizon() const
 
 template <typename R>
 void BehaviourSetInterface<R>::setActive(bool active,
-                                             const ros::Time& timestamp)
+                                         const ros::Time& timestamp)
 {
   if (active != active_->getValue(timestamp))
   {
-    ROS_DEBUG_STREAM("Updating " << *active_ << " to " << active << ".");
+    ROS_INFO_STREAM("Updating " << *active_ << " to " << active << ".");
     active_->update(active, timestamp);
     activation_timestamp_ = active ? timestamp : ros::Time();
   }

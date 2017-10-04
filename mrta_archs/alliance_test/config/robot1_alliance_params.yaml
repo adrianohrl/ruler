@@ -4,7 +4,7 @@ broadcast_rate: 1.0      # in Hertz
 timeout_duration: 2.0    # in seconds
 buffer_horizon: 5.0      # in seconds
 behaviour_sets:
-  size: 3
+  size: 2 # alter to 3, simplified to 2 for tests
   behaviour_set0:
     task_id: 'wander'
     motivational_behaviour:

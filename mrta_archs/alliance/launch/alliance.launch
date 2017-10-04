@@ -5,12 +5,12 @@
   <arg name="tasks_params" />
   <group ns="$(arg robot_id)">
     <group ns="alliance">
-      <!--<node name="high_level_node" pkg="alliance" type="high_level_node" output="screen" launch-prefix="valgrind">
+      <node name="high_level_node" pkg="alliance" type="high_level_node" output="screen">
         <param name="id" type="string" value="$(arg robot_id)" />
         <rosparam file="$(arg robot_params)" command="load" />
         <rosparam file="$(arg tasks_params)" command="load" />
-      </node>-->
-      <node name="low_level_node" pkg="alliance" type="low_level_node" output="screen" launch-prefix="valgrind">
+      </node>
+      <node name="low_level_node" pkg="alliance" type="low_level_node" output="screen">
         <param name="id" type="string" value="$(arg robot_id)" />
         <rosparam file="$(arg robot_params)" command="load" />
         <rosparam file="$(arg tasks_params)" command="load" />

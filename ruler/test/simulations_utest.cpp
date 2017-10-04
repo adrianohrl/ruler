@@ -39,12 +39,12 @@ TEST(Simulation, taskSimulation)
   }
 }
 
-TEST(Simulation, batteryChargeSimulation)
+TEST(Simulation, batterySimulation)
 {
   utilities::ContinuousNoisySignalPtr expected_sample_time(
       new utilities::ContinuousNoisySignal(0.05, 0.01));
-  ruler::BatteryChargeSimulationPtr battery(
-      new ruler::BatteryChargeSimulation("r1", expected_sample_time, 0.1));
+  ruler::BatterySimulationPtr battery(
+      new ruler::BatterySimulation("r1", expected_sample_time, 0.1));
   ros::Time timestamp(battery->getSimulationStartTimestamp());
   while (!battery->isEmpty(timestamp))
   {

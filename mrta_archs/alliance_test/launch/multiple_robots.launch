@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <launch>
-  <include file="$(find alliance_test)/launch/single_robot.launch">
+  <include file="$(find alliance_test)/launch/single_robot.launch" >
     <arg name="robot_id" value="robot1" />
   </include>
   <include file="$(find alliance_test)/launch/single_robot.launch">
