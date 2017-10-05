@@ -1,33 +1,36 @@
 #ifndef _ALLIANCE_SENSORY_FEEDBACK_H_
 #define _ALLIANCE_SENSORY_FEEDBACK_H_
 
-#include "alliance/sensor.h"
 #include "alliance/task.h"
 #include <list>
 #include <ros/time.h>
+#include <utilities/functions/unary_sample_holder.h>
+#include "nodes/alliance_observer.h"
 
 namespace alliance
 {
-class SensoryFeedback
+class Robot;
+typedef boost::shared_ptr<Robot> RobotPtr;
+typedef boost::shared_ptr<Robot const> RobotConstPtr;
+
+class BehaviourSet;
+typedef boost::shared_ptr<BehaviourSet> BehaviourSetPtr;
+typedef boost::shared_ptr<BehaviourSet const> BehaviourSetConstPtr;
+
+class SensoryFeedback : public nodes::SensoryFeedbackObserver
 {
 public:
-  typedef std::list<SensorPtr>::iterator iterator;
-  typedef std::list<SensorPtr>::const_iterator const_iterator;
-  SensoryFeedback(const TaskPtr& task);
+  SensoryFeedback(const RobotPtr& robot, const BehaviourSetPtr& behaviour_set);
   virtual ~SensoryFeedback();
-  bool isApplicable(const ros::Time& timestamp = ros::Time::now()) const;
-  void addSensor(const SensorPtr& sensor);
-  std::size_t size() const;
-  bool empty() const;
-  iterator begin();
-  const_iterator begin() const;
-  iterator end();
-  const_iterator end() const;
+  virtual void update(const nodes::SensoryFeedbackEventConstPtr &event);
+  bool isApplicable(const ros::Time& timestamp = ros::Time::now());
 
 private:
-  const TaskPtr task_;
-  std::list<SensorPtr> sensors_;
-  bool contains(const Sensor& sensor) const;
+  typedef utilities::functions::UnarySampleHolder SampleHolder;
+  typedef utilities::functions::UnarySampleHolderPtr SampleHolderPtr;
+  const RobotPtr robot_;
+  const BehaviourSetPtr behaviour_set_;
+  SampleHolderPtr applicable_;
 };
 
 typedef boost::shared_ptr<SensoryFeedback> SensoryFeedbackPtr;

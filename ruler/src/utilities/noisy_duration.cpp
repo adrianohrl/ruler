@@ -43,7 +43,8 @@ ros::Duration NoisyDuration::getMean() const
 
 Interval<ros::Duration> NoisyDuration::getFakeInterval() const
 {
-  return Interval<ros::Duration>(ros::Duration(mean_ - 3 * standard_deviation_),
-                                 ros::Duration(mean_ + 3 * standard_deviation_));
+  return Interval<ros::Duration>(
+      ros::Duration(mean_ - 3 * standard_deviation_),
+      ros::Duration(mean_ + 3 * standard_deviation_));
 }
 }

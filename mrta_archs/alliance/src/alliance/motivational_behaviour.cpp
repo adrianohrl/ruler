@@ -1,5 +1,5 @@
-#include "alliance/behaviour_set.h"
 #include "alliance/motivational_behaviour.h"
+#include "alliance/behaviour_set.h"
 #include "alliance/robot.h"
 
 namespace alliance
@@ -11,12 +11,12 @@ MotivationalBehaviour::MotivationalBehaviour(
                                   behaviour_set_->getBufferHorizon())),
       motivation_(new SampleHolder(behaviour_set->getId() + "/motivation", 0.0,
                                    behaviour_set_->getBufferHorizon())),
-      monitor_(new InterCommunication(robot, behaviour_set)),
+      monitor_(new InterRobotCommunication(robot, behaviour_set)),
       acquiescence_(new Acquiescence(robot, behaviour_set)),
       activity_suppression_(new ActivitySuppression(robot, behaviour_set)),
       impatience_(new Impatience(robot, behaviour_set)),
       impatience_reset_(new ImpatienceReset()),
-      sensory_feedback_(new SensoryFeedback(behaviour_set->getTask()))
+      sensory_feedback_(new SensoryFeedback(robot, behaviour_set))
 {
 }
 
@@ -29,9 +29,9 @@ void MotivationalBehaviour::init()
   impatience_reset_->init(monitor_);
 }
 
-bool MotivationalBehaviour::active(const ros::Time& timestamp) const
+bool MotivationalBehaviour::isActive(const ros::Time& timestamp) const
 {
-  return getLevel(timestamp) >= threshold_->getValue(timestamp);
+  return getLevel(timestamp) >= getThreshold(timestamp);
 }
 
 double MotivationalBehaviour::getThreshold(const ros::Time& timestamp) const
@@ -42,7 +42,7 @@ double MotivationalBehaviour::getThreshold(const ros::Time& timestamp) const
 double MotivationalBehaviour::getLevel(const ros::Time& timestamp) const
 {
   double motivation(motivation_->getValue(timestamp));
-  double impatience(impatience_->getLevel(timestamp));
+  /*double impatience(impatience_->getLevel(timestamp));
   bool acquiescent(acquiescence_->isAcquiescent(timestamp));
   bool suppressed(activity_suppression_->isSuppressed(timestamp));
   bool resetted(impatience_reset_->isResetted(timestamp));
@@ -51,7 +51,7 @@ double MotivationalBehaviour::getLevel(const ros::Time& timestamp) const
                   << *behaviour_set_ << " m0: " << motivation
                   << ", ipt: " << impatience << ", acq: " << acquiescent
                   << ", sup: " << suppressed << ", res: " << resetted
-                  << ", app: " << applicable);
+                  << ", app: " << applicable);*/
   motivation = (motivation + impatience_->getLevel(timestamp)) *
                !acquiescence_->isAcquiescent(timestamp) *
                !activity_suppression_->isSuppressed(timestamp) *
@@ -76,9 +76,15 @@ ImpatienceResetPtr MotivationalBehaviour::getImpatienceReset() const
   return impatience_reset_;
 }
 
-InterCommunicationPtr MotivationalBehaviour::getInterCommunication() const
+InterRobotCommunicationPtr
+MotivationalBehaviour::getInterRobotCommunication() const
 {
   return monitor_;
+}
+
+SensoryFeedbackPtr MotivationalBehaviour::getSensoryFeedback() const
+{
+  return sensory_feedback_;
 }
 
 void MotivationalBehaviour::setThreshold(double threshold,

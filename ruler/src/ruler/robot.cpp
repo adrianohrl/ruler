@@ -20,9 +20,7 @@ Robot::Robot(const Robot& robot)
 {
 }
 
-Robot::~Robot()
-{
-}
+Robot::~Robot() {}
 
 std::list<ResourceInterfacePtr> Robot::getResources() const
 {

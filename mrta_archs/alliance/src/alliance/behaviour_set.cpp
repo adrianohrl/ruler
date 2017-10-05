@@ -27,7 +27,7 @@ void BehaviourSet::init()
 
 void BehaviourSet::preProcess()
 {
-  setActive(motivational_behaviour_->active());
+  setActive(motivational_behaviour_->isActive());
 }
 
 MotivationalBehaviourPtr BehaviourSet::getMotivationalBehaviour() const

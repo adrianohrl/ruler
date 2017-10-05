@@ -1,5 +1,6 @@
 /**
- *  This source file implements the main function that runs the TaskSimulationNode class.
+ *  This source file implements the main function that runs the
+ *TaskSimulationNode class.
  *
  *  Author: Adriano Henrique Rossette Leite (adrianohrl@unifei.edu.br)
  *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)

@@ -5,8 +5,8 @@
  *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)
  */
 
-#include <cmath>
 #include "utilities/functions/probability_density_function.h"
+#include <cmath>
 
 namespace utilities
 {
@@ -83,7 +83,7 @@ Interval<double> ProbabilityDensityFunction::getFakeInterval() const
 std::string ProbabilityDensityFunction::str() const
 {
   std::stringstream ss;
-  ss << "X ~ N(" << mean_ << "; " << standard_deviation_* standard_deviation_
+  ss << "X ~ N(" << mean_ << "; " << standard_deviation_ * standard_deviation_
      << ")";
   return ss.str();
 }

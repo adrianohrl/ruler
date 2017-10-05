@@ -7,8 +7,8 @@
  */
 
 #include "ruler/unary_consumable_resource.h"
-#include "utilities/functions/unary_step_function.h"
 #include "utilities/functions/unary_pulse_function.h"
+#include "utilities/functions/unary_step_function.h"
 
 namespace ruler
 {

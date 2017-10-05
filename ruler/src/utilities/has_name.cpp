@@ -9,7 +9,7 @@
 
 namespace utilities
 {
-HasName::HasName(const std::string &name, const std::string &id)
+HasName::HasName(const std::string& name, const std::string& id)
     : HasId<std::string>::HasId(id.empty() ? name : id), name_(name)
 {
   if (id.empty())

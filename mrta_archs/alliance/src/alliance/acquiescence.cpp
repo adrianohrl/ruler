@@ -17,7 +17,7 @@ Acquiescence::Acquiescence(const RobotPtr& robot,
 
 Acquiescence::~Acquiescence() {}
 
-void Acquiescence::init(const InterCommunicationPtr& monitor)
+void Acquiescence::init(const InterRobotCommunicationPtr& monitor)
 {
   if (!monitor_)
   {
@@ -43,12 +43,6 @@ bool Acquiescence::isAcquiescent(const ros::Time& timestamp)
     return false;
   }
   double elapsed_duration((timestamp - activation_timestamp).toSec());
-  /*ROS_ERROR_STREAM("[ACQ] elapsed: " << elapsed_duration << "[s], yielding: "
-                  << yielding_delay_->getValue(timestamp) << "[s], giving_up: "
-                  << giving_up_delay_->getValue(timestamp) << "[s], received: "
-                  << (monitor_->received(timestamp -
-     robot_->getTimeoutDuration(),
-                                        timestamp) ? "true" : "false"));*/
   return (elapsed_duration > yielding_delay_->getValue(timestamp) &&
           monitor_->received(timestamp - robot_->getTimeoutDuration(),
                              timestamp)) ||

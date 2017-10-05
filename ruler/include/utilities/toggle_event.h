@@ -8,7 +8,7 @@ namespace utilities
 class ToggleEvent : public Event
 {
 public:
-  ToggleEvent(SubjectPtr subject, bool value,
+  ToggleEvent(const SubjectPtr& subject, bool value,
               const ros::Time& timestamp = ros::Time::now());
   ToggleEvent(const ToggleEvent& event);
   virtual ~ToggleEvent();

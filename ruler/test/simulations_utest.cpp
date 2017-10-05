@@ -5,10 +5,10 @@
  *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)
  */
 
-#include <gtest/gtest.h>
-#include <ros/ros.h>
 #include "ruler/ruler.h"
 #include "utilities/utilities.h"
+#include <gtest/gtest.h>
+#include <ros/ros.h>
 
 TEST(Simulation, taskSimulation)
 {
@@ -53,9 +53,7 @@ TEST(Simulation, batterySimulation)
   }
 }
 
-void init()
-{
-}
+void init() {}
 
 int main(int argc, char** argv)
 {

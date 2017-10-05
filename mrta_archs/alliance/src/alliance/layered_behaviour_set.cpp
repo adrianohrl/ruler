@@ -1,5 +1,5 @@
-#include "alliance/behaved_robot.h"
 #include "alliance/layered_behaviour_set.h"
+#include "alliance/behaved_robot.h"
 #include <utilities/exception.h>
 
 namespace alliance
@@ -10,8 +10,8 @@ LayeredBehaviourSet::LayeredBehaviourSet(const BehavedRobotPtr& robot,
                                          const ros::Duration& timeout_duration)
     : BehaviourSetInterface<BehavedRobot>::BehaviourSetInterface(
           robot, task, buffer_horizon, timeout_duration),
-      BeaconSignalObserver::BeaconSignalObserver(robot->getId() + "/" +
-                                                 task->getId()),
+      AllianceObserver<alliance_msgs::InterRobotCommunication>::
+          AllianceObserver(robot->getId() + "/" + task->getId()),
       robot_(robot), loader_("alliance", "alliance::Layer")
 {
   LayerPtr layer;
@@ -70,7 +70,7 @@ void LayeredBehaviourSet::addLayer(const LayerPtr& layer)
 }
 
 void LayeredBehaviourSet::update(
-    const utilities::BeaconSignalEventConstPtr& event)
+    const nodes::InterRobotCommunicationEventConstPtr& event)
 {
   if (!event->isRelated(*robot_) || !event->isRelated(*task_))
   {

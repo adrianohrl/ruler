@@ -3,7 +3,7 @@
 
 #include "alliance/layered_behaviour_set.h"
 #include "alliance/robot_interface.h"
-#include <alliance_msgs/BeaconSignal.h>
+#include <alliance_msgs/InterRobotCommunication.h>
 
 namespace alliance
 {

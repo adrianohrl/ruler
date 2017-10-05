@@ -3,13 +3,11 @@
 
 namespace alliance
 {
-ImpatienceReset::ImpatienceReset()
-{
-}
+ImpatienceReset::ImpatienceReset() {}
 
 ImpatienceReset::~ImpatienceReset() {}
 
-void ImpatienceReset::init(const InterCommunicationPtr &monitor)
+void ImpatienceReset::init(const InterRobotCommunicationPtr& monitor)
 {
   if (!monitor_)
   {
@@ -19,9 +17,7 @@ void ImpatienceReset::init(const InterCommunicationPtr &monitor)
 
 bool ImpatienceReset::isResetted(const ros::Time& timestamp) const
 {
-  ROS_WARN_STREAM("[RESET] " << monitor_->getId() << "/reset last: " << monitor_->getLastUpdateTimestamp() <<
-                  ", stamp: " << timestamp);
   return monitor_->received(monitor_->getLastUpdateTimestamp(), timestamp) &&
-           !monitor_->received(ros::Time(), monitor_->getLastUpdateTimestamp());
+         !monitor_->received(ros::Time(), monitor_->getLastUpdateTimestamp());
 }
 }

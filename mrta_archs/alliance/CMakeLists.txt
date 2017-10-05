@@ -44,7 +44,7 @@ set(H_FILES
   include/alliance/behaviour_set_interface.h
   include/alliance/impatience.h
   include/alliance/impatience_reset.h
-  include/alliance/inter_communication.h
+  include/alliance/inter_robot_communication.h
   include/alliance/layer.h
   include/alliance/layered_behaviour_set.h
   include/alliance/motivational_behaviour.h
@@ -53,12 +53,13 @@ set(H_FILES
   include/alliance/sensor.h
   include/alliance/sensory_feedback.h
   include/alliance/task.h
+  include/nodes/alliance_event.h
   include/nodes/high_level_node.h
   include/nodes/low_level_node.h
+  include/nodes/alliance_observer.h
+  include/nodes/alliance_node.h
+  include/nodes/alliance_subject.h
   include/nodes/ros_sensor_message.h
-  include/utilities/beacon_signal_event.h
-  include/utilities/beacon_signal_observer.h
-  include/utilities/beacon_signal_subject.h
 )
 
 set(CPP_FILES
@@ -68,7 +69,7 @@ set(CPP_FILES
   src/alliance/behaviour_set.cpp
   src/alliance/impatience.cpp
   src/alliance/impatience_reset.cpp
-  src/alliance/inter_communication.cpp
+  src/alliance/inter_robot_communication.cpp
   src/alliance/layer.cpp
   src/alliance/layered_behaviour_set.cpp
   src/alliance/motivational_behaviour.cpp
@@ -78,9 +79,6 @@ set(CPP_FILES
   src/alliance/task.cpp
   src/nodes/high_level_node.cpp
   src/nodes/low_level_node.cpp
-  src/utilities/beacon_signal_event.cpp
-  src/utilities/beacon_signal_observer.cpp
-  src/utilities/beacon_signal_subject.cpp
 )
 
 add_library(${PROJECT_NAME}
@@ -99,35 +97,35 @@ target_link_libraries(${PROJECT_NAME}
   ${ruler_LIBRARIES}
 )
 
-add_executable(high_level_node
-  src/high_level_node.cpp
+add_executable(high_level
+  src/high_level.cpp
   ${CPP_FILES}
 )
 
-add_dependencies(high_level_node
+add_dependencies(high_level
   ${Boost_EXPORTED_TARGETS}
   ${catkin_EXPORTED_TARGETS}
   ${ruler_EXPORTED_TARGETS}
 )
 
-target_link_libraries(high_level_node
+target_link_libraries(high_level
   ${Boost_LIBRARIES}
   ${catkin_LIBRARIES}
   ${ruler_LIBRARIES}
 )
 
-add_executable(low_level_node
-  src/low_level_node.cpp
+add_executable(low_level
+  src/low_level.cpp
   ${CPP_FILES}
 )
 
-add_dependencies(low_level_node
+add_dependencies(low_level
   ${Boost_EXPORTED_TARGETS}
   ${catkin_EXPORTED_TARGETS}
   ${ruler_EXPORTED_TARGETS}
 )
 
-target_link_libraries(low_level_node
+target_link_libraries(low_level
   ${Boost_LIBRARIES}
   ${catkin_LIBRARIES}
   ${ruler_LIBRARIES}

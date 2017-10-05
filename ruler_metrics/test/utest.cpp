@@ -5,12 +5,12 @@
  *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)
  */
 
+#include "ruler/metrics_plugins.h"
 #include <boost/shared_ptr.hpp>
 #include <gtest/gtest.h>
 #include <pluginlib/class_loader.h>
 #include <ros/ros.h>
 #include <ruler/ruler.h>
-#include "ruler/metrics_plugins.h"
 
 double tolerance = 1e-5;
 ruler::RobotPtr robot;
@@ -99,8 +99,8 @@ void init()
       timestamp + ros::Duration(0.5 * d), timestamp + ros::Duration(1.5 * d)));
   utilities::NoisyTimePtr expected_end(new utilities::NoisyTime(
       timestamp + ros::Duration(4.5 * d), timestamp + ros::Duration(5.5 * d)));
-  task.reset(new ruler::Task("t1", "task1", expected_start, expected_end,
-                             waypoints));
+  task.reset(
+      new ruler::Task("t1", "task1", expected_start, expected_end, waypoints));
 }
 
 int main(int argc, char** argv)

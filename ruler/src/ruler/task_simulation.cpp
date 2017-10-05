@@ -1,5 +1,5 @@
-#include <cmath>
 #include "ruler/task_simulation.h"
+#include <cmath>
 
 namespace ruler
 {

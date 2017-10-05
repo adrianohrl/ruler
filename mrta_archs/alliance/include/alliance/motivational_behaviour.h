@@ -6,7 +6,7 @@
 #include "alliance/activity_suppression.h"
 #include "alliance/impatience.h"
 #include "alliance/impatience_reset.h"
-#include "alliance/inter_communication.h"
+#include "alliance/inter_robot_communication.h"
 #include "alliance/sensory_feedback.h"
 #include <utilities/functions/continuous_sample_holder.h>
 
@@ -19,13 +19,14 @@ public:
                         const BehaviourSetPtr& behaviour_set);
   virtual ~MotivationalBehaviour();
   void init();
-  bool active(const ros::Time& timestamp = ros::Time::now()) const;
+  bool isActive(const ros::Time& timestamp = ros::Time::now()) const;
   double getThreshold(const ros::Time& timestamp = ros::Time::now()) const;
   double getLevel(const ros::Time& timestamp = ros::Time::now()) const;
   ActivitySuppressionPtr getActivitySuppression() const;
   ImpatiencePtr getImpatience() const;
   ImpatienceResetPtr getImpatienceReset() const;
-  InterCommunicationPtr getInterCommunication() const;
+  InterRobotCommunicationPtr getInterRobotCommunication() const;
+  SensoryFeedbackPtr getSensoryFeedback() const;
   void setThreshold(double threshold,
                     const ros::Time& timestamp = ros::Time::now());
   void setImpatience(double fast_rate,
@@ -43,7 +44,7 @@ private:
   ActivitySuppressionPtr activity_suppression_;
   ImpatiencePtr impatience_;
   ImpatienceResetPtr impatience_reset_;
-  InterCommunicationPtr monitor_;
+  InterRobotCommunicationPtr monitor_;
   SensoryFeedbackPtr sensory_feedback_;
   SampleHolderPtr threshold_;
   SampleHolderPtr motivation_;

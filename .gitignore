@@ -63,6 +63,12 @@ CMakeLists.txt.*
 *.files
 *.includes
 
+################
+# Clang Format #
+################
+
+.clang_format
+
 ##############
 # Test files #
 ##############

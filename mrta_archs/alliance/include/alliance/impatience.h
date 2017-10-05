@@ -1,7 +1,7 @@
 #ifndef _ALLIANCE_IMPATIENCE_H_
 #define _ALLIANCE_IMPATIENCE_H_
 
-#include "alliance/inter_communication.h"
+#include "alliance/inter_robot_communication.h"
 #include <map>
 #include <ros/time.h>
 #include <utilities/functions/continuous_sample_holder.h>
@@ -13,7 +13,7 @@ class Impatience
 public:
   Impatience(const RobotPtr& robot, const BehaviourSetPtr& behaviour_set);
   virtual ~Impatience();
-  void init(const InterCommunicationPtr& monitor);
+  void init(const InterRobotCommunicationPtr& monitor);
   double getSlowRate(const std::string& robot_id,
                      const ros::Time& timestamp = ros::Time::now()) const;
   double getFastRate(const ros::Time& timestamp) const;
@@ -36,7 +36,7 @@ private:
   typedef std::map<std::string, SampleHolderPtr>::const_iterator const_iterator;
   const RobotPtr robot_;
   const BehaviourSetPtr behaviour_set_;
-  InterCommunicationPtr monitor_;
+  InterRobotCommunicationPtr monitor_;
   std::map<std::string, SampleHolderPtr> slow_rates_;
   SampleHolderPtr fast_rate_;
   std::map<std::string, SampleHolderPtr> reliability_durations_;

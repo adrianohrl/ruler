@@ -1,17 +1,13 @@
-#ifndef _ALLIANCE_HIGH_LEVEL_NODE_H_
-#define _ALLIANCE_HIGH_LEVEL_NODE_H_
+#ifndef _NODES_ALLIANCE_HIGH_LEVEL_NODE_H_
+#define _NODES_ALLIANCE_HIGH_LEVEL_NODE_H_
 
 #include "alliance/robot.h"
-#include <alliance_msgs/BeaconSignal.h>
-#include <boost/enable_shared_from_this.hpp>
-#include "utilities/beacon_signal_subject.h"
-#include <utilities/ros_node.h>
+#include "nodes/alliance_node.h"
 
 namespace nodes
 {
-class HighLevelNode : public utilities::ROSNode,
-                      public utilities::BeaconSignalSubject,
-                      public boost::enable_shared_from_this<HighLevelNode>
+class HighLevelNode : public nodes::AllianceNode<alliance::Robot, HighLevelNode>,
+                      public SensoryFeedbackSubject
 {
 public:
   HighLevelNode(const ros::NodeHandlePtr& nh,
@@ -20,18 +16,17 @@ public:
 
 private:
   bool broadcasting_;
-  alliance::RobotPtr robot_;
-  ros::Publisher beacon_signal_pub_;
-  ros::Subscriber beacon_signal_sub_;
+  ros::Publisher inter_robot_communication_pub_;
+  ros::Subscriber sensory_feedback_sub_;
   ros::Timer broadcast_timer_;
   virtual void readParameters();
   virtual void init();
   virtual void controlLoop();
-  void beaconSignalCallback(const alliance_msgs::BeaconSignal& msg);
   void broadcastTimerCallback(const ros::TimerEvent& event);
+  void sensoryFeedbackCallback(const alliance_msgs::SensoryFeedback& msg);
 };
 
 typedef boost::shared_ptr<HighLevelNode> HighLevelNodePtr;
 }
 
-#endif // _ALLIANCE_HIGH_LEVEL_NODE_H_
+#endif // _NODES_ALLIANCE_HIGH_LEVEL_NODE_H_

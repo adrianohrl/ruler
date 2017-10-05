@@ -3,23 +3,21 @@
 namespace nodes
 {
 HighLevelNode::HighLevelNode(const ros::NodeHandlePtr& nh,
-                             const ros::Rate& rate)
-    : ROSNode::ROSNode(nh, rate),
-      BeaconSignalSubject::BeaconSignalSubject(ros::this_node::getName()),
+                                             const ros::Rate& rate)
+    : AllianceNode<alliance::Robot, HighLevelNode>::AllianceNode(nh, rate),
+      AllianceSubject<alliance_msgs::SensoryFeedback>::AllianceSubject(
+          ros::this_node::getName() + "/sensory_feedback"),
       broadcasting_(false)
 {
-  beacon_signal_pub_ =
-      nh->advertise<alliance_msgs::BeaconSignal>("/alliance/beacon_signal", 10);
-  beacon_signal_sub_ =
-      nh->subscribe("/alliance/beacon_signal", 100,
-                    &HighLevelNode::beaconSignalCallback, this);
+  inter_robot_communication_pub_ =
+      nh->advertise<alliance_msgs::InterRobotCommunication>(
+          "/alliance/inter_robot_communication", 10);
 }
 
 HighLevelNode::~HighLevelNode()
 {
   broadcast_timer_.stop();
-  beacon_signal_pub_.shutdown();
-  beacon_signal_sub_.shutdown();
+  inter_robot_communication_pub_.shutdown();
 }
 
 void HighLevelNode::readParameters()
@@ -58,8 +56,7 @@ void HighLevelNode::readParameters()
     return;
   }
   std::string ns(ros::this_node::getNamespace()), aux(id + "/alliance");
-  if (!std::equal(aux.rbegin(), aux.rend(),
-                  ns.rbegin()))
+  if (!std::equal(aux.rbegin(), aux.rend(), ns.rbegin()))
   {
     ROSNode::shutdown("Invalid ROS namespace. It must end with '" + id + "'.");
     return;
@@ -162,37 +159,35 @@ void HighLevelNode::readParameters()
 
 void HighLevelNode::init()
 {
+  AllianceNode<alliance::Robot, HighLevelNode>::init();
   /** registering beacon signal message observers **/
   for (alliance::Robot::iterator it(robot_->begin()); it != robot_->end(); it++)
   {
     alliance::BehaviourSetPtr behaviour_set(*it);
     alliance::MotivationalBehaviourPtr motivational_behaviour(
         behaviour_set->getMotivationalBehaviour());
-    BeaconSignalSubject::registerObserver(
-        motivational_behaviour->getInterCommunication());
+    AllianceSubject<alliance_msgs::InterRobotCommunication>::registerObserver(
+        motivational_behaviour->getInterRobotCommunication());
+    AllianceSubject<alliance_msgs::SensoryFeedback>::registerObserver(
+        motivational_behaviour->getSensoryFeedback());
   }
   /** creating robot broadcast timer **/
-  broadcast_timer_ = ROSNode::getNodeHandle()->createTimer(
+  broadcast_timer_ = nh_->createTimer(
       robot_->getBroadcastRate().expectedCycleTime(),
       &HighLevelNode::broadcastTimerCallback, this, false, false);
+  sensory_feedback_sub_ = nh_->subscribe("/alliance/sensory_feedback", 100,
+                                         &HighLevelNode::sensoryFeedbackCallback, this);
 }
 
 void HighLevelNode::controlLoop()
 {
-  robot_->process();
+  AllianceNode<alliance::Robot, HighLevelNode>::controlLoop();
   if (!robot_->isIdle() && !broadcasting_)
   {
     ROS_INFO_STREAM("Starting " << *robot_ << " broadcast timer.");
     broadcast_timer_.start();
     broadcasting_ = true;
   }
-}
-
-void HighLevelNode::beaconSignalCallback(const alliance_msgs::BeaconSignal& msg)
-{
-  utilities::BeaconSignalEventConstPtr event(
-      new utilities::BeaconSignalEvent(shared_from_this(), msg));
-  notify(event);
 }
 
 void HighLevelNode::broadcastTimerCallback(const ros::TimerEvent& event)
@@ -204,10 +199,18 @@ void HighLevelNode::broadcastTimerCallback(const ros::TimerEvent& event)
     broadcasting_ = false;
     return;
   }
-  alliance_msgs::BeaconSignal msg;
+  alliance_msgs::InterRobotCommunication msg;
   msg.header.stamp = ros::Time::now();
   msg.header.frame_id = robot_->getId();
   msg.task_id = robot_->getExecutingTask()->getId();
-  beacon_signal_pub_.publish(msg);
+  inter_robot_communication_pub_.publish(msg);
+}
+
+void HighLevelNode::sensoryFeedbackCallback(
+    const alliance_msgs::SensoryFeedback& msg)
+{
+  SensoryFeedbackEventConstPtr event(
+      new SensoryFeedbackEvent(shared_from_this(), msg));
+  AllianceSubject<alliance_msgs::SensoryFeedback>::notify(event);
 }
 }

@@ -2,7 +2,7 @@
 
 namespace utilities
 {
-ToggleEvent::ToggleEvent(SubjectPtr subject, bool value,
+ToggleEvent::ToggleEvent(const SubjectPtr& subject, bool value,
                          const ros::Time& timestamp)
     : Event::Event(subject, timestamp), value_(value)
 {

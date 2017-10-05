@@ -18,7 +18,8 @@ RulerNode::RulerNode(const ros::NodeHandlePtr& nh, const ros::Rate& loop_rate)
 RulerNode::~RulerNode()
 {
   resources_pub_.shutdown();
-  for (pub_iterator it(resource_pubs_.begin()); it != resource_pubs_.end(); it++)
+  for (pub_iterator it(resource_pubs_.begin()); it != resource_pubs_.end();
+       it++)
   {
     ros::Publisher pub(it->second);
     pub.shutdown();
@@ -61,7 +62,8 @@ void RulerNode::readParameters()
       ROS_ERROR("The service server name must not be empty.");
       continue;
     }
-    MetricsServiceServerPtr server(new MetricsServiceServer(getNodeHandle(), name));
+    MetricsServiceServerPtr server(
+        new MetricsServiceServer(getNodeHandle(), name));
     server->readPlugins(robot_, pnh.getNamespace() + "/" + ss.str());
     metrics_srvs_.push_back(server);
   }
@@ -171,7 +173,8 @@ void RulerNode::init()
   ros::NodeHandlePtr nh(ROSNode::getNodeHandle());
   resources_pub_ =
       nh->advertise<ruler_msgs::Resource>("resources", robot_->size());
-  for (ruler::Robot::const_iterator it(robot_->begin()); it != robot_->end(); it++)
+  for (ruler::Robot::const_iterator it(robot_->begin()); it != robot_->end();
+       it++)
   {
     ruler::ResourceInterfacePtr resource(*it);
     resource_pubs_.insert(std::pair<std::string, ros::Publisher>(

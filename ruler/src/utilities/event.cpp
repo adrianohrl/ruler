@@ -7,8 +7,8 @@
  */
 
 #include "utilities/event.h"
-#include "utilities/subject.h"
 #include "utilities/exception.h"
+#include "utilities/subject.h"
 
 namespace utilities
 {

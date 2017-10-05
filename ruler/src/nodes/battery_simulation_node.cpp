@@ -78,11 +78,10 @@ void BatterySimulationNode::readParameters()
     ROS_WARN("The battery critical level warning rate must be positive.");
     critical_warning_rate = 1.0;
   }
-  battery_.reset(
-        new ruler::BatterySimulation(robot_id_, expected_sample_time,
-                                     slow_discharging_rate, low_threshold,
-                                     critical_threshold, ros::Rate(low_warning_rate),
-                                     ros::Rate(critical_warning_rate)));
+  battery_.reset(new ruler::BatterySimulation(
+      robot_id_, expected_sample_time, slow_discharging_rate, low_threshold,
+      critical_threshold, ros::Rate(low_warning_rate),
+      ros::Rate(critical_warning_rate)));
 }
 
 void BatterySimulationNode::controlLoop()

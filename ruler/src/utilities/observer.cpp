@@ -11,7 +11,7 @@
 
 namespace utilities
 {
-Observer::Observer(const std::string &id) : HasId<std::string>::HasId(id)
+Observer::Observer(const std::string& id) : HasId<std::string>::HasId(id)
 {
   if (id.empty())
   {

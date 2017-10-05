@@ -1,10 +1,10 @@
-#ifndef _ALLIANCE_INTER_COMMUNICATION_H_
-#define _ALLIANCE_INTER_COMMUNICATION_H_
+#ifndef _ALLIANCE_INTER_ROBOT_COMMUNICATION_H_
+#define _ALLIANCE_INTER_ROBOT_COMMUNICATION_H_
 
 #include <map>
 #include "alliance/task.h"
 #include <utilities/functions/unary_sample_holder.h>
-#include <utilities/beacon_signal_observer.h>
+#include "nodes/alliance_observer.h"
 
 namespace alliance
 {
@@ -16,16 +16,16 @@ class BehaviourSet;
 typedef boost::shared_ptr<BehaviourSet> BehaviourSetPtr;
 typedef boost::shared_ptr<BehaviourSet const> BehaviourSetConstPtr;
 
-class InterCommunication : public utilities::BeaconSignalObserver
+class InterRobotCommunication : public nodes::InterRobotCommunicationObserver
 {
 public:
-  InterCommunication(const RobotPtr& robot,
+  InterRobotCommunication(const RobotPtr& robot,
                      const BehaviourSetPtr& behaviour_set);
-  virtual ~InterCommunication();
+  virtual ~InterRobotCommunication();
   bool received(const ros::Time& t1, const ros::Time& t2) const;
   bool received(const std::string& robot_id, const ros::Time& t1,
                 const ros::Time& t2) const;
-  virtual void update(const utilities::BeaconSignalEventConstPtr& event);
+  virtual void update(const nodes::InterRobotCommunicationEventConstPtr& event);
   ros::Time getLastUpdateTimestamp() const;
 
 private:
@@ -39,8 +39,8 @@ private:
   std::map<std::string, SampleHolderPtr> robots_;
 };
 
-typedef boost::shared_ptr<InterCommunication> InterCommunicationPtr;
-typedef boost::shared_ptr<InterCommunication const> InterCommunicationConstPtr;
+typedef boost::shared_ptr<InterRobotCommunication> InterRobotCommunicationPtr;
+typedef boost::shared_ptr<InterRobotCommunication const> InterRobotCommunicationConstPtr;
 }
 
-#endif // _ALLIANCE_INTER_COMMUNICATION_H_
+#endif // _ALLIANCE_INTER_ROBOT_COMMUNICATION_H_

@@ -10,9 +10,9 @@ ActivitySuppression::ActivitySuppression(const RobotPtr& robot,
                                          const BehaviourSetPtr& behaviour_set)
     : Observer::Observer(behaviour_set->getId() + "/activity_suppression"),
       robot_(robot), behaviour_set_(behaviour_set),
-      suppressed_(new SampleHolder(
-          behaviour_set_->getId() + "/activity_suppression/suppressed",
-          behaviour_set_->getBufferHorizon()))
+      suppressed_(new SampleHolder(behaviour_set_->getId() +
+                                       "/activity_suppression/suppressed",
+                                   behaviour_set_->getBufferHorizon()))
 {
 }
 
@@ -25,7 +25,7 @@ void ActivitySuppression::update(const utilities::EventConstPtr& event)
   if (toggle_event)
   {
     ROS_DEBUG_STREAM("Updating " << *suppressed_ << " to "
-                                 << toggle_event->getValue() << ".");
+                                 << (toggle_event->getValue()? "true." : "false."));
     suppressed_->update(toggle_event);
   }
 }

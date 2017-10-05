@@ -1,12 +1,12 @@
-#include <math.h>
-#include <sstream>
-#include <ros/ros.h>
 #include <alliance_msgs/Message.h>
 #include <alliance_msgs/Motivation.h>
-#include <geometry_msgs/Twist.h>
 #include <geometry_msgs/PoseStamped.h>
+#include <geometry_msgs/Twist.h>
+#include <math.h>
 #include <nav_msgs/Odometry.h>
+#include <ros/ros.h>
 #include <sensor_msgs/PointCloud.h>
+#include <sstream>
 #include <std_msgs/String.h>
 #include <tf/transform_broadcaster.h>
 #include <tf/transform_datatypes.h>
@@ -194,8 +194,10 @@ void boundary_overwatch()
 {
   ROS_INFO("REPORT: Task BORDER PROTECTION is being done.");
   // Achando a parede: WANDER enquanto a parede está longe
-  if (current_position.pose.position.x < 9.0 && current_position.pose.position.x > -7.0 &&
-      current_position.pose.position.y < 6.0 && current_position.pose.position.y > -6.0)
+  if (current_position.pose.position.x < 9.0 &&
+      current_position.pose.position.x > -7.0 &&
+      current_position.pose.position.y < 6.0 &&
+      current_position.pose.position.y > -6.0)
   {
     vel_x = k * (std::max(sonar2, sonar3) - 1 / std::max(sonar2, sonar3));
     vel_omega = 0.5 * k / std::min(sonar2, sonar3) *
@@ -232,8 +234,7 @@ void boundary_overwatch()
 void wander()
 {
   ROS_INFO("REPORT: Task WANDER is being done.");
-  if (sonar0 > inter && sonar1 > inter &&
-      sonar2 > inter && sonar3 > inter &&
+  if (sonar0 > inter && sonar1 > inter && sonar2 > inter && sonar3 > inter &&
       sonar4 > inter && sonar5 > inter)
   {
     vel_x = 5 * k * (std::max(sonar2, sonar3) - 1 / std::max(sonar2, sonar3));
@@ -510,7 +511,8 @@ int main(int argc, char** argv)
   ros::Rate loop_rate(rho1);
   while (ros::ok() && task_done[3] == 0)
   {
-    switch (current_behaviour) {
+    switch (current_behaviour)
+    {
     case 0:
       idle();
       break;

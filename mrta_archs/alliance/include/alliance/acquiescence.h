@@ -1,7 +1,7 @@
 #ifndef _ALLIANCE_ACQUIESCENCE_H_
 #define _ALLIANCE_ACQUIESCENCE_H_
 
-#include "alliance/inter_communication.h"
+#include "alliance/inter_robot_communication.h"
 #include <ros/time.h>
 #include <utilities/functions/continuous_sample_holder.h>
 
@@ -10,10 +10,9 @@ namespace alliance
 class Acquiescence
 {
 public:
-  Acquiescence(const RobotPtr& robot,
-               const BehaviourSetPtr& behaviour_set);
+  Acquiescence(const RobotPtr& robot, const BehaviourSetPtr& behaviour_set);
   virtual ~Acquiescence();
-  void init(const InterCommunicationPtr &monitor);
+  void init(const InterRobotCommunicationPtr& monitor);
   ros::Duration
   getYieldingDelay(const ros::Time& timestamp = ros::Time::now()) const;
   ros::Duration
@@ -29,7 +28,7 @@ private:
   typedef utilities::functions::ContinuousSampleHolderPtr SampleHolderPtr;
   const RobotPtr robot_;
   const BehaviourSetPtr behaviour_set_;
-  InterCommunicationPtr monitor_;
+  InterRobotCommunicationPtr monitor_;
   SampleHolderPtr yielding_delay_;
   SampleHolderPtr giving_up_delay_;
 };

@@ -95,7 +95,8 @@ void TaskSimulationNode::readParameters()
 
 void TaskSimulationNode::controlLoop()
 {
-  for (iterator it(scheduled_simulations_.begin()); it != scheduled_simulations_.end(); it++)
+  for (iterator it(scheduled_simulations_.begin());
+       it != scheduled_simulations_.end(); it++)
   {
     ruler::TaskSimulationPtr simulation(*it);
     simulation->update();

@@ -6,8 +6,8 @@
  *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)
  */
 
-#include <cmath>
 #include "utilities/discrete_signal_type.h"
+#include <cmath>
 
 namespace utilities
 {

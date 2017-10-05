@@ -131,8 +131,7 @@ bool BatterySimulation::isFull(const ros::Time& timestamp) const
   return battery_charge_->getLevel(timestamp) == 1.0;
 }
 
-double
-BatterySimulation::getRemainingCharge(const ros::Time& timestamp) const
+double BatterySimulation::getRemainingCharge(const ros::Time& timestamp) const
 {
   return battery_charge_->getLevel(timestamp);
 }
@@ -161,8 +160,7 @@ std::string BatterySimulation::str() const
   return ss.str();
 }
 
-void BatterySimulation::setLowWarningRate(
-    const ros::Rate& low_warning_rate)
+void BatterySimulation::setLowWarningRate(const ros::Rate& low_warning_rate)
 {
   low_warning_rate_ = low_warning_rate;
 }

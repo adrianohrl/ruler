@@ -2,7 +2,7 @@
 #define _ALLIANCE_NODE_ROS_SENSOR_MESSAGE_H_
 
 #include "alliance/sensor.h"
-#include <alliance_msgs/SensorFeedback.h>
+#include <alliance_msgs/SensoryFeedback.h>
 #include <ros/node_handle.h>
 #include <utilities/functions/unary_sample_holder.h>
 
@@ -43,8 +43,7 @@ ROSSensorMessage<M>::ROSSensorMessage(const std::string& id,
           new SampleHolder(topic_name, timeout_duration,
                            ros::Duration(10 * timeout_duration.toSec())))
 {
-
-  feedback_pub_ = nh_->advertise<alliance_msgs::SensorFeedback>(
+  feedback_pub_ = nh_->advertise<alliance_msgs::SensoryFeedback>(
       "/alliance/sensory_feedback", 10);
   sensor_sub_ = nh_->subscribe(topic_name, 10,
                                &ROSSensorMessage<M>::sensorCallback, this);
@@ -58,8 +57,9 @@ template <typename M> ROSSensorMessage<M>::~ROSSensorMessage()
 
 template <typename M> void ROSSensorMessage<M>::publish()
 {
-  alliance_msgs::SensorFeedback msg;
+  alliance_msgs::SensoryFeedback msg;
   msg.header.stamp = ros::Time::now();
+  msg.task_id = "?????????????????";
   msg.applicable = applicable_->getValue();
   feedback_pub_.publish(msg);
 }

@@ -8,7 +8,7 @@
 #include "alliance/behaviour_set_interface.h"
 #include "alliance/impatience.h"
 #include "alliance/impatience_reset.h"
-#include "alliance/inter_communication.h"
+#include "alliance/inter_robot_communication.h"
 #include "alliance/layer.h"
 #include "alliance/layered_behaviour_set.h"
 #include "alliance/motivational_behaviour.h"

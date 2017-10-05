@@ -6,8 +6,8 @@
  */
 
 #include "alliance/alliance.h"
+#include "utilities/alliance_subject.h"
 #include "utilities/utilities.h"
-#include "utilities/beacon_signal_subject.h"
 #include <gtest/gtest.h>
 
 using namespace alliance;
@@ -17,21 +17,21 @@ TaskPtr t1, t2;
 RobotPtr r1, r2, r3;
 MotivationalBehaviourPtr r1bs1_mb, r1bs2_mb, r2bs1_mb, r2bs2_mb, r3bs1_mb,
     r3bs2_mb;
-utilities::BeaconSignalSubjectPtr r1_subject, r2_subject, r3_subject;
+utilities::InterRobotCommunicationSubjectPtr r1_subject, r2_subject, r3_subject;
 
 void notify(const RobotPtr& robot, const TaskPtr& task,
             const ros::Time& timestamp)
 {
-  alliance_msgs::BeaconSignal msg;
+  alliance_msgs::InterRobotCommunication msg;
   msg.header.frame_id = robot->getId();
   msg.task_id = task->getId();
   msg.header.stamp = timestamp;
-  utilities::BeaconSignalEventPtr event;
-  event.reset(new utilities::BeaconSignalEvent(r1_subject, msg));
+  utilities::InterRobotCommunicationEventPtr event;
+  event.reset(new utilities::InterRobotCommunicationEvent(r1_subject, msg));
   r1_subject->notify(event);
-  event.reset(new utilities::BeaconSignalEvent(r2_subject, msg));
+  event.reset(new utilities::InterRobotCommunicationEvent(r2_subject, msg));
   r2_subject->notify(event);
-  event.reset(new utilities::BeaconSignalEvent(r3_subject, msg));
+  event.reset(new utilities::InterRobotCommunicationEvent(r3_subject, msg));
   r3_subject->notify(event);
 }
 
@@ -52,14 +52,16 @@ TEST(MotivationalBehaviour, impatience_reset)
   EXPECT_FALSE(r3bs1_reset->isResetted(timestamp));
   EXPECT_FALSE(r3bs2_reset->isResetted(timestamp));*/
   notify(r1, t1, timestamp + ros::Duration(0.5));
-  ROS_WARN_STREAM("timestamp + ros::Duration(0.5): " << timestamp + ros::Duration(0.5));
-  ROS_WARN_STREAM("timestamp + ros::Duration(0.51): " << timestamp + ros::Duration(0.51));
+  ROS_WARN_STREAM("timestamp + ros::Duration(0.5): " << timestamp +
+                                                            ros::Duration(0.5));
+  ROS_WARN_STREAM(
+      "timestamp + ros::Duration(0.51): " << timestamp + ros::Duration(0.51));
   /*EXPECT_FALSE(r1bs1_reset->isResetted(timestamp + ros::Duration(0.51)));
   EXPECT_FALSE(r1bs2_reset->isResetted(timestamp + ros::Duration(0.51)));*/
   EXPECT_TRUE(r2bs1_reset->isResetted(timestamp + ros::Duration(0.55)));
-  //EXPECT_FALSE(r2bs2_reset->isResetted(timestamp + ros::Duration(0.51)));
+  // EXPECT_FALSE(r2bs2_reset->isResetted(timestamp + ros::Duration(0.51)));
   EXPECT_TRUE(r3bs1_reset->isResetted(timestamp + ros::Duration(0.55)));
-  //EXPECT_FALSE(r3bs2_reset->isResetted(timestamp + ros::Duration(0.51)));
+  // EXPECT_FALSE(r3bs2_reset->isResetted(timestamp + ros::Duration(0.51)));
   /*EXPECT_FALSE(r2bs1_reset->isResetted(timestamp + ros::Duration(0.75)));
   EXPECT_FALSE(r3bs1_reset->isResetted(timestamp + ros::Duration(0.75)));
   /*notify(r1, t1, timestamp + ros::Duration(1.0));
@@ -114,9 +116,9 @@ TEST(MotivationalBehaviour, impatience)
   int counter(0);
   for (ros::Time t(t0);
        t - t0 < r2->getTimeoutDuration() &&
-           t - t0 < r2bs1_impatience->getReliabilityDuration(r1->getId(), t) &&
-           t - t0 < r3->getTimeoutDuration() &&
-           t - t0 < r3bs1_impatience->getReliabilityDuration(r1->getId(), t);
+       t - t0 < r2bs1_impatience->getReliabilityDuration(r1->getId(), t) &&
+       t - t0 < r3->getTimeoutDuration() &&
+       t - t0 < r3bs1_impatience->getReliabilityDuration(r1->getId(), t);
        t += r1->getBroadcastRate().expectedCycleTime())
   {
     notify(r1, t1, t);
@@ -133,9 +135,9 @@ TEST(MotivationalBehaviour, impatience)
   counter = 0;
   for (ros::Time t(t0);
        t - t0 < r1->getTimeoutDuration() &&
-           t - t0 < r1bs2_impatience->getReliabilityDuration(r2->getId(), t) &&
-           t - t0 < r3->getTimeoutDuration() &&
-           t - t0 < r3bs2_impatience->getReliabilityDuration(r2->getId(), t);
+       t - t0 < r1bs2_impatience->getReliabilityDuration(r2->getId(), t) &&
+       t - t0 < r3->getTimeoutDuration() &&
+       t - t0 < r3bs2_impatience->getReliabilityDuration(r2->getId(), t);
        t += r2->getBroadcastRate().expectedCycleTime())
   {
     notify(r2, t2, t);
@@ -153,12 +155,18 @@ TEST(MotivationalBehaviour, impatience)
 
 TEST(MotivationalBehaviour, inter_communication_monitor)
 {
-  InterCommunicationPtr r1bs1_monitor(r1bs1_mb->getInterCommunication());
-  InterCommunicationPtr r1bs2_monitor(r1bs2_mb->getInterCommunication());
-  InterCommunicationPtr r2bs1_monitor(r2bs1_mb->getInterCommunication());
-  InterCommunicationPtr r2bs2_monitor(r2bs2_mb->getInterCommunication());
-  InterCommunicationPtr r3bs1_monitor(r3bs1_mb->getInterCommunication());
-  InterCommunicationPtr r3bs2_monitor(r3bs2_mb->getInterCommunication());
+  InterRobotCommunicationPtr r1bs1_monitor(
+      r1bs1_mb->getInterRobotCommunication());
+  InterRobotCommunicationPtr r1bs2_monitor(
+      r1bs2_mb->getInterRobotCommunication());
+  InterRobotCommunicationPtr r2bs1_monitor(
+      r2bs1_mb->getInterRobotCommunication());
+  InterRobotCommunicationPtr r2bs2_monitor(
+      r2bs2_mb->getInterRobotCommunication());
+  InterRobotCommunicationPtr r3bs1_monitor(
+      r3bs1_mb->getInterRobotCommunication());
+  InterRobotCommunicationPtr r3bs2_monitor(
+      r3bs2_mb->getInterRobotCommunication());
   ros::Time timestamp(ros::Time::now() + ros::Duration(200.0));
   notify(r1, t1, timestamp + ros::Duration(0.5));
   notify(r2, t1, timestamp + ros::Duration(0.5));
@@ -220,9 +228,9 @@ void init()
 {
   t1.reset(new Task("t1", "task1"));
   t2.reset(new Task("t2", "task2"));
-  r1_subject.reset(new utilities::BeaconSignalSubject("r1/subject"));
-  r2_subject.reset(new utilities::BeaconSignalSubject("r2/subject"));
-  r3_subject.reset(new utilities::BeaconSignalSubject("r3/subject"));
+  r1_subject.reset(new utilities::InterRobotCommunicationSubject("r1/subject"));
+  r2_subject.reset(new utilities::InterRobotCommunicationSubject("r2/subject"));
+  r3_subject.reset(new utilities::InterRobotCommunicationSubject("r3/subject"));
 
   r1.reset(new Robot("r1", "robot 1"));
   r1->setBroadcastRate(ros::Rate(1.0));
@@ -233,7 +241,7 @@ void init()
   r1bs1->setAcquiescence(ros::Duration(0.75), ros::Duration(7.5));
   r1bs1->setImpatience(2.5);
   r1bs1_mb = r1bs1->getMotivationalBehaviour();
-  r1_subject->registerObserver(r1bs1_mb->getInterCommunication());
+  r1_subject->registerObserver(r1bs1_mb->getInterRobotCommunication());
   r1->addBehaviourSet(r1bs1);
   BehaviourSetPtr r1bs2(new BehaviourSet(r1, t2, ros::Duration(5.0)));
   r1bs2->init();
@@ -241,7 +249,7 @@ void init()
   r1bs2->setAcquiescence(ros::Duration(0.6), ros::Duration(6.0));
   r1bs2->setImpatience(1.0);
   r1bs2_mb = r1bs2->getMotivationalBehaviour();
-  r1_subject->registerObserver(r1bs2_mb->getInterCommunication());
+  r1_subject->registerObserver(r1bs2_mb->getInterRobotCommunication());
   r1->addBehaviourSet(r1bs2);
 
   r2.reset(new Robot("r2", "robot 2"));
@@ -253,7 +261,7 @@ void init()
   r2bs1->setAcquiescence(ros::Duration(0.75), ros::Duration(7.5));
   r2bs1->setImpatience(2.5);
   r2bs1_mb = r2bs1->getMotivationalBehaviour();
-  r2_subject->registerObserver(r2bs1_mb->getInterCommunication());
+  r2_subject->registerObserver(r2bs1_mb->getInterRobotCommunication());
   r2->addBehaviourSet(r2bs1);
   BehaviourSetPtr r2bs2(new BehaviourSet(r2, t2, ros::Duration(5.0)));
   r2bs2->init();
@@ -261,7 +269,7 @@ void init()
   r2bs2->setAcquiescence(ros::Duration(0.6), ros::Duration(6.0));
   r2bs2->setImpatience(1.0);
   r2bs2_mb = r2bs2->getMotivationalBehaviour();
-  r2_subject->registerObserver(r2bs2_mb->getInterCommunication());
+  r2_subject->registerObserver(r2bs2_mb->getInterRobotCommunication());
   r2->addBehaviourSet(r2bs2);
 
   r3.reset(new Robot("r3", "robot 3"));
@@ -273,7 +281,7 @@ void init()
   r3bs1->setAcquiescence(ros::Duration(0.75), ros::Duration(7.5));
   r3bs1->setImpatience(2.5);
   r3bs1_mb = r3bs1->getMotivationalBehaviour();
-  r3_subject->registerObserver(r3bs1_mb->getInterCommunication());
+  r3_subject->registerObserver(r3bs1_mb->getInterRobotCommunication());
   r1->addBehaviourSet(r3bs1);
   BehaviourSetPtr r3bs2(new BehaviourSet(r3, t2, ros::Duration(5.0)));
   r3bs2->init();
@@ -281,7 +289,7 @@ void init()
   r3bs2->setAcquiescence(ros::Duration(0.6), ros::Duration(6.0));
   r3bs2->setImpatience(1.0);
   r3bs2_mb = r3bs2->getMotivationalBehaviour();
-  r3_subject->registerObserver(r3bs2_mb->getInterCommunication());
+  r3_subject->registerObserver(r3bs2_mb->getInterRobotCommunication());
   r3->addBehaviourSet(r3bs2);
 }
 

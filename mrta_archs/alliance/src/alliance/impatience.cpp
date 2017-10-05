@@ -6,15 +6,15 @@ namespace alliance
 Impatience::Impatience(const RobotPtr& robot,
                        const BehaviourSetPtr& behaviour_set)
     : robot_(robot), behaviour_set_(behaviour_set),
-      fast_rate_(new SampleHolder(
-          behaviour_set_->getId() + "/impatience/fast_rate", 0.0,
-          behaviour_set_->getBufferHorizon()))
+      fast_rate_(
+          new SampleHolder(behaviour_set_->getId() + "/impatience/fast_rate",
+                           0.0, behaviour_set_->getBufferHorizon()))
 {
 }
 
 Impatience::~Impatience() {}
 
-void Impatience::init(const InterCommunicationPtr& monitor)
+void Impatience::init(const InterRobotCommunicationPtr& monitor)
 {
   if (!monitor_)
   {

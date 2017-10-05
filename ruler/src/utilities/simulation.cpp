@@ -23,7 +23,8 @@ Simulation::Simulation(const Simulation& simulation)
 
 Simulation::~Simulation() {}
 
-ros::Duration Simulation::getSimulationElapsedDuration(const ros::Time &timestamp) const
+ros::Duration
+Simulation::getSimulationElapsedDuration(const ros::Time& timestamp) const
 {
   return last_update_timestamp_ - start_timestamp_;
 }

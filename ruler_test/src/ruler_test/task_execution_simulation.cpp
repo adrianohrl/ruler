@@ -11,7 +11,8 @@ namespace ruler_test
 {
 
 TaskExecutionSimulation::TaskExecutionSimulation(ruler::Task* task)
-    : Simulation::Simulation(), task_(task), interruption_pdf_(NULL), resuming_pdf_(NULL)
+    : Simulation::Simulation(), task_(task), interruption_pdf_(NULL),
+      resuming_pdf_(NULL)
 
 {
   start_pdf_ = new utilities::functions::TimeProbabilityDensityFunction(

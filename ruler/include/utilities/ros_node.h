@@ -24,6 +24,7 @@ public:
   friend std::ostream& operator<<(std::ostream& out, const ROSNode& node);
 
 protected:
+  ros::NodeHandlePtr nh_; // private ros node handle (has-a relationship)
   ROSNode(const ros::NodeHandlePtr &nh, const ros::Rate &rate); // protected constructor
   ros::NodeHandlePtr getNodeHandle() const;
   std::string getName() const;
@@ -35,7 +36,6 @@ protected:
 private:
   ros::Rate rate_; // positive spin rate
   const std::string name_; // ROS node name
-  ros::NodeHandlePtr nh_; // private ros node handle (has-a relationship)
   virtual bool isSettedUp();
   virtual void init();
   virtual void controlLoop() = 0;

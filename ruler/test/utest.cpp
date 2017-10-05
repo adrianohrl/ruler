@@ -5,12 +5,12 @@
  *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)
  */
 
-#include <map>
-#include <vector>
-#include <gtest/gtest.h>
-#include <ros/ros.h>
 #include "ruler/ruler.h"
 #include "utilities/utilities.h"
+#include <gtest/gtest.h>
+#include <map>
+#include <ros/ros.h>
+#include <vector>
 
 double tolerance(1e-4);
 std::vector<double> d;

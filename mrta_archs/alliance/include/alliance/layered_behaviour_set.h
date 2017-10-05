@@ -5,7 +5,7 @@
 #include "alliance/layer.h"
 #include <list>
 #include <pluginlib/class_loader.h>
-#include "utilities/beacon_signal_observer.h"
+#include "nodes/alliance_observer.h"
 
 namespace alliance
 {
@@ -15,7 +15,7 @@ typedef boost::shared_ptr<BehavedRobot const> BehavedRobotConstPtr;
 
 class LayeredBehaviourSet
     : public BehaviourSetInterface<BehavedRobot>,
-      public utilities::BeaconSignalObserver
+      public nodes::InterRobotCommunicationObserver
 {
 public:
   LayeredBehaviourSet(const BehavedRobotPtr& robot, const TaskPtr& task,
@@ -25,7 +25,7 @@ public:
   virtual void process();
   void addLayer(const std::string& layer_name);
   void addLayer(const LayerPtr& layer);
-  virtual void update(const utilities::BeaconSignalEventConstPtr& event);
+  virtual void update(const nodes::InterRobotCommunicationEventConstPtr& event);
 
 private:
   typedef std::list<LayerPtr>::iterator layers_iterator;

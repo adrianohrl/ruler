@@ -9,12 +9,13 @@ USAGE="Usage: run_alliance_test_mobilesim <map name>
                Robot System (MRS) application simulations.
 "
 
+MAP_PATH=""
 if [[ ${#} = 0 ]]; then
 	echo "${USAGE}"
 	exit
 fi
 
-MAP_PATH="others/map/${1}.map"
+MAP_PATH="map/${1}.map"
 ROS_PKG="alliance_test"
 NUMBER_ROBOTS=3
 

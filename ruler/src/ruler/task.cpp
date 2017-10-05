@@ -5,8 +5,8 @@
  *  Maintainer: Expertinos UNIFEI (expertinos.unifei@gmail.com)
  */
 
-#include "ruler/resource_reservation_request.h"
 #include "ruler/task.h"
+#include "ruler/resource_reservation_request.h"
 #include "utilities/exception.h"
 
 namespace ruler
@@ -20,7 +20,8 @@ Task::Task(const std::string& id, const std::string& name,
       expected_duration_(new utilities::NoisyDuration(
           expected_end_->getMean() - expected_start_->getMean(),
           (expected_start_->getStandardDeviation() +
-           expected_end_->getStandardDeviation()).toSec()))
+           expected_end_->getStandardDeviation())
+              .toSec()))
 {
 }
 
@@ -40,7 +41,8 @@ Task::Task(const ruler_msgs::Task& msg)
   expected_duration_.reset(new utilities::NoisyDuration(
       expected_end_->getMean() - expected_start_->getMean(),
       (expected_start_->getStandardDeviation() +
-       expected_end_->getStandardDeviation()).toSec()));
+       expected_end_->getStandardDeviation())
+          .toSec()));
   for (int i(0); i < msg.waypoints.size(); i++)
   {
     waypoints_.push_back(msg.waypoints[i]);
@@ -151,7 +153,8 @@ void Task::clearResources() { utilities::Subject::clearObservers(); }
 ros::Duration Task::getDuration(const ros::Time& timestamp) const
 {
   return hasStarted()
-             ? (hasFinished() && timestamp > end_timestamp_ ? end_timestamp_ : timestamp) -
+             ? (hasFinished() && timestamp > end_timestamp_ ? end_timestamp_
+                                                            : timestamp) -
                    start_timestamp_
              : ros::Duration();
 }

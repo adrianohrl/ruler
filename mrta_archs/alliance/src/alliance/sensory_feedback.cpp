@@ -1,59 +1,36 @@
 #include "alliance/sensory_feedback.h"
+#include "alliance/robot.h"
 
 namespace alliance
 {
-SensoryFeedback::SensoryFeedback(const TaskPtr& task) : task_(task) {}
+SensoryFeedback::SensoryFeedback(const RobotPtr& robot,
+                                 const BehaviourSetPtr& behaviour_set)
+    : AllianceObserver<alliance_msgs::SensoryFeedback>::AllianceObserver(
+          behaviour_set->getId() + "/activity_suppression"),
+      robot_(robot), behaviour_set_(behaviour_set),
+      applicable_(new SampleHolder(
+          behaviour_set_->getId() + "/sensory_feedback/applicable",
+          robot_->getTimeoutDuration(), behaviour_set_->getBufferHorizon()))
+{
+}
 
 SensoryFeedback::~SensoryFeedback() {}
 
-bool SensoryFeedback::isApplicable(const ros::Time& timestamp) const
+void SensoryFeedback::update(const nodes::SensoryFeedbackEventConstPtr& event)
 {
-  for (const_iterator it(sensors_.begin()); it != sensors_.end(); it++)
+  if (!event->isRelated(*robot_) ||
+      !event->isRelated(*behaviour_set_->getTask()))
   {
-    SensorPtr sensor(*it);
-    if (!sensor->isUpToDate(timestamp))
-    {
-      return false;
-    }
+    return;
   }
-  return true;
+  alliance_msgs::SensoryFeedback msg = event->getMsg();
+  ROS_DEBUG_STREAM("Updating " << *applicable_ << " to "
+                               << (msg.applicable ? "true." : "false."));
+  applicable_->update(msg.applicable, event->getTimestamp());
 }
 
-void SensoryFeedback::addSensor(const SensorPtr& sensor)
+bool SensoryFeedback::isApplicable(const ros::Time& timestamp)
 {
-  if (!contains(*sensor))
-  {
-    sensors_.push_back(sensor);
-  }
-}
-
-std::size_t SensoryFeedback::size() const { return sensors_.size(); }
-
-bool SensoryFeedback::empty() const { return sensors_.empty(); }
-
-SensoryFeedback::iterator SensoryFeedback::begin() { return sensors_.begin(); }
-
-SensoryFeedback::const_iterator SensoryFeedback::begin() const
-{
-  return sensors_.begin();
-}
-
-SensoryFeedback::iterator SensoryFeedback::end() { return sensors_.end(); }
-
-SensoryFeedback::const_iterator SensoryFeedback::end() const
-{
-  return sensors_.end();
-}
-
-bool SensoryFeedback::contains(const Sensor& sensor) const
-{
-  for (const_iterator it(sensors_.begin()); it != sensors_.end(); it++)
-  {
-    if (**it == sensor)
-    {
-      return true;
-    }
-  }
-  return false;
+  return applicable_->getValue(timestamp);
 }
 }
