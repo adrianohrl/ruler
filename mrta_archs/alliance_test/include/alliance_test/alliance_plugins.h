@@ -5,5 +5,6 @@
 #include "alliance_test/layer.h"
 #include "alliance_test/report.h"
 #include "alliance_test/wander.h"
+#include "sensors/sensors.h"
 
 #endif // _ALLIANCE_PLUGINS_H_

@@ -21,5 +21,19 @@
         Wander layer for ALLIANCE MRTA architecture.
       </description>
     </class>
+    <class name="nav_msgs/Odometry"
+           type="sensors::Odometry"
+           base_class_type="alliance::Sensors">
+      <description>
+        nav_msgs/Odometry message wrapper for sensor data receiving.
+      </description>
+    </class>
+    <class name="sensor_msgs/PointCloud"
+           type="sensors::PointCloud"
+           base_class_type="alliance::Sensors">
+      <description>
+        sensor_msgs/PointCloud message wrapper for sensor data receiving.
+      </description>
+    </class>
   </library>
 </class_libraries>

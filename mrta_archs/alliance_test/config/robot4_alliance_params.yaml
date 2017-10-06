@@ -32,3 +32,15 @@ behaviour_sets:
         giving_up_delay: 20.0  # in seconds
       impatience:
         fast_rate: 3.0
+sensors:
+  size: 2
+  sensor0:
+    message_type: 'nav_msgs/Odometry'
+    topic_name: 'odom'
+    timeout_duration: 2.0
+    buffer_horizon: 5.0
+  sensor1:
+    message_type: 'sensors_msgs/PointCloud'
+    topic_name: 'sonar'
+    timeout_duration: 2.0
+    buffer_horizon: 5.0

@@ -12,7 +12,7 @@ Wander::~Wander() {}
 void Wander::process()
 {
   Layer::process();
-  if (!sonars_->isApplicable())
+  if (!sonars_->isUpToDate())
   {
     Layer::setVelocity();
     return;

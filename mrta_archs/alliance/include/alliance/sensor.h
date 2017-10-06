@@ -1,30 +1,30 @@
-#ifndef _ALLIANCE_SENSOR_H_
-#define _ALLIANCE_SENSOR_H_
+#ifndef _ALLIANCE_SENSOR_INTERFACE_H_
+#define _ALLIANCE_SENSOR_INTERFACE_H_
 
 #include <ros/time.h>
-#include <utilities/functions/unary_sample_holder.h>
-#include <utilities/has_id.h>
-//#include "utilities/sensory_feedback_observer.h"
 
 namespace alliance
 {
-class Sensor : public utilities::HasId<std::string>/*,
-               public utilities::SensoryFeedbackObserver*/
+class Sensor
 {
 public:
-  Sensor(const std::string& id);
+  Sensor();
   virtual ~Sensor();
-  virtual bool isApplicable(const ros::Time& timestamp = ros::Time::now());
-  void update(const ros::Time& timestamp = ros::Time::now());
+  virtual void initialize(const std::string& ns, const std::string& name,
+                          const std::string& id);
+  virtual void readParameters();
+  std::string getNamespace() const;
+  std::string getName() const;
+  std::string getId() const;
 
-private:
-  typedef utilities::functions::UnarySampleHolder SampleHolder;
-  typedef utilities::functions::UnarySampleHolderPtr SampleHolderPtr;
-  SampleHolderPtr applicable_;
+protected:
+  std::string ns_;
+  std::string name_;
+  std::string id_;
 };
 
 typedef boost::shared_ptr<Sensor> SensorPtr;
 typedef boost::shared_ptr<Sensor const> SensorConstPtr;
 }
 
-#endif // _ALLIANCE_SENSOR_H_
+#endif // _ALLIANCE_SENSOR_INTERFACE_H_

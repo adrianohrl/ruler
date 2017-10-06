@@ -51,6 +51,7 @@ set(H_FILES
   include/alliance/robot.h
   include/alliance/robot_interface.h
   include/alliance/sensor.h
+  include/alliance/sensory_evaluator.h
   include/alliance/sensory_feedback.h
   include/alliance/task.h
   include/nodes/alliance_event.h
@@ -75,6 +76,7 @@ set(CPP_FILES
   src/alliance/motivational_behaviour.cpp
   src/alliance/robot.cpp
   src/alliance/sensor.cpp
+  src/alliance/sensory_evaluator.cpp
   src/alliance/sensory_feedback.cpp
   src/alliance/task.cpp
   src/nodes/high_level_node.cpp

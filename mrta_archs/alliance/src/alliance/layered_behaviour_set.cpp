@@ -43,12 +43,12 @@ void LayeredBehaviourSet::process()
   }
 }
 
-void LayeredBehaviourSet::addLayer(const std::string& layer_name)
+void LayeredBehaviourSet::addLayer(const std::string& plugin_name)
 {
   try
   {
-    LayerPtr layer(loader_.createInstance(layer_name.c_str()));
-    layer->initialize(robot_->getNamespace(), getId() + "/" + layer_name);
+    LayerPtr layer(loader_.createInstance(plugin_name.c_str()));
+    layer->initialize(robot_->getNamespace(), getId() + "/" + plugin_name);
     addLayer(layer);
   }
   catch (const pluginlib::PluginlibException& ex)
@@ -56,7 +56,7 @@ void LayeredBehaviourSet::addLayer(const std::string& layer_name)
     ROS_ERROR("The plugin failed to load for some reason. Error: %s",
               ex.what());
   }
-  if (contains(layer_name))
+  if (contains(plugin_name))
   {
     throw utilities::Exception("This layer already exists.");
   }
@@ -79,12 +79,12 @@ void LayeredBehaviourSet::update(
   setActive(true, event->getTimestamp());
 }
 
-bool LayeredBehaviourSet::contains(const std::string& layer_name) const
+bool LayeredBehaviourSet::contains(const std::string& plugin_name) const
 {
   for (layers_const_iterator it(layers_.begin()); it != layers_.end(); it++)
   {
     LayerPtr layer(*it);
-    if (layer->getName() == layer_name)
+    if (layer->getName() == plugin_name)
     {
       return true;
     }

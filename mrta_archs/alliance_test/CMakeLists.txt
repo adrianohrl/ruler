@@ -35,7 +35,7 @@ set(H_FILES
   include/alliance_test/report.h
   include/alliance_test/wander.h
   include/sensors/odometry.h
-  include/sensors/sonar.h
+  include/sensors/point_cloud.h
 )
 
 set(CPP_FILES
@@ -44,7 +44,7 @@ set(CPP_FILES
   src/alliance_test/report.cpp
   src/alliance_test/wander.cpp
   src/sensors/odometry.cpp
-  src/sensors/sonar.cpp
+  src/sensors/point_cloud.cpp
 )
 
 add_library(${PROJECT_NAME}

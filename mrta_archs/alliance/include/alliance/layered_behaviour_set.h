@@ -23,7 +23,7 @@ public:
                       const ros::Duration& timeout_duration);
   virtual ~LayeredBehaviourSet();
   virtual void process();
-  void addLayer(const std::string& layer_name);
+  void addLayer(const std::string& plugin_name);
   void addLayer(const LayerPtr& layer);
   virtual void update(const nodes::InterRobotCommunicationEventConstPtr& event);
 
@@ -33,7 +33,7 @@ private:
   BehavedRobotPtr robot_;
   pluginlib::ClassLoader<Layer> loader_;
   std::list<LayerPtr> layers_;
-  bool contains(const std::string& layer_name) const;
+  bool contains(const std::string& plugin_name) const;
 };
 
 typedef boost::shared_ptr<LayeredBehaviourSet> LayeredBehaviourSetPtr;

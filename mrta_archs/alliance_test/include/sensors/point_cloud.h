@@ -6,15 +6,13 @@
 
 namespace sensors
 {
-class Sonar : public nodes::ROSSensorMessage<sensor_msgs::PointCloud>
+class PointCloud : public nodes::ROSSensorMessage<sensor_msgs::PointCloud>
 {
 public:
   typedef std::vector<geometry_msgs::Point32>::iterator iterator;
   typedef std::vector<geometry_msgs::Point32>::const_iterator const_iterator;
-  Sonar(const std::string& id, const ros::NodeHandlePtr& nh,
-        const std::string& ns, const std::string& topic_name = "sonar",
-        const ros::Duration& timeout_duration = ros::Duration(1.0));
-  virtual ~Sonar();
+  PointCloud();
+  virtual ~PointCloud();
   double operator[](int index) const;
   double getDistance(int index) const;
   geometry_msgs::Point32 getPoint(int index) const;
@@ -26,8 +24,8 @@ public:
   const_iterator end() const;
 };
 
-typedef boost::shared_ptr<Sonar> SonarPtr;
-typedef boost::shared_ptr<Sonar const> SonarConstPtr;
+typedef boost::shared_ptr<PointCloud> PointCloudPtr;
+typedef boost::shared_ptr<PointCloud const> PointCloudConstPtr;
 }
 
 #endif // _SENSORS_SONAR_H_

@@ -9,9 +9,7 @@ namespace sensors
 class Odometry : public nodes::ROSSensorMessage<nav_msgs::Odometry>
 {
 public:
-  Odometry(const std::string& id, const ros::NodeHandlePtr& nh,
-           const std::string& ns, const std::string& topic_name = "odom",
-           const ros::Duration& timeout_duration = ros::Duration(1.0));
+  Odometry();
   virtual ~Odometry();
   double getX() const;
   double getY() const;

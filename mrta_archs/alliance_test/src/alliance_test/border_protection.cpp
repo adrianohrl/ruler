@@ -12,6 +12,5 @@ BorderProtection::~BorderProtection() {}
 void BorderProtection::process()
 {
   Layer::process();
-  sonars_->publish();
 }
 }

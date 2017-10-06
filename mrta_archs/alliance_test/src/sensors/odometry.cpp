@@ -1,15 +1,12 @@
 #include "sensors/odometry.h"
 #include <tf/transform_datatypes.h>
+#include <pluginlib/class_list_macros.h>
+
+PLUGINLIB_EXPORT_CLASS(sensors::Odometry, alliance::Sensor)
 
 namespace sensors
 {
-Odometry::Odometry(const std::string& id, const ros::NodeHandlePtr& nh,
-                   const std::string& ns, const std::string& topic_name,
-                   const ros::Duration& timeout_duration)
-    : ROSSensorMessage<nav_msgs::Odometry>::ROSSensorMessage(
-          id + "/" + topic_name, nh, ns + "/" + topic_name, timeout_duration)
-{
-}
+Odometry::Odometry() {}
 
 Odometry::~Odometry() {}
 

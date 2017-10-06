@@ -15,6 +15,7 @@
 #include "alliance/robot.h"
 #include "alliance/robot_interface.h"
 #include "alliance/sensor.h"
+#include "alliance/sensory_evaluator.h"
 #include "alliance/sensory_feedback.h"
 #include "alliance/task.h"
 

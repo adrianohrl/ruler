@@ -9,15 +9,13 @@ Layer::~Layer() { velocity_pub_.shutdown(); }
 void Layer::initialize(const std::string& ns, const std::string& name)
 {
   alliance::Layer::initialize(ns, name);
-  odometry_.reset(new sensors::Odometry(name, nh_, ns));
-  sonars_.reset(new sensors::Sonar(name, nh_, ns));
+  //odometry_.reset(new sensors::Odometry(name, nh_, ns));
+  //sonars_.reset(new sensors::PointCloud(name, nh_, ns));
   velocity_pub_ = nh_->advertise<geometry_msgs::Twist>(ns + "/cmd_vel", 10);
 }
 
 void Layer::process()
 {
-  odometry_->publish();
-  sonars_->publish();
   velocity_pub_.publish(velocity_msg_);
 }
 

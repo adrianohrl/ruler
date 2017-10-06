@@ -4,15 +4,29 @@
 #include "alliance/layered_behaviour_set.h"
 #include "alliance/robot_interface.h"
 #include <alliance_msgs/InterRobotCommunication.h>
+#include "nodes/ros_sensor_message.h"
 
 namespace alliance
 {
 class BehavedRobot : public RobotInterface<LayeredBehaviourSet>
 {
 public:
+  typedef std::list<SensorPtr>::iterator sensors_iterator;
+  typedef std::list<SensorPtr>::const_iterator sensors_const_iterator;
   BehavedRobot(const std::string& id, const std::string& name,
                const std::string& ns);
   virtual ~BehavedRobot();
+//  sensors_iterator beginSensors();
+//  sensors_const_iterator beginSensors() const;
+//  sensors_iterator endSensors();
+//  sensors_const_iterator endSensors() const;
+  void addSensor(const std::string& plugin_name, const std::string &topic_name);
+  void addSensor(const SensorPtr& sensor);
+
+private:
+  std::list<SensorPtr> sensors_;
+  pluginlib::ClassLoader<Sensor> loader_;
+  bool contains(const std::string& plugin_name) const;
 };
 
 typedef boost::shared_ptr<BehavedRobot> BehavedRobotPtr;

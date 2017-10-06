@@ -65,6 +65,27 @@ void LowLevelNode::readParameters()
   aux = "/alliance";
   ns = ns.substr(0, ns.size() - aux.size());
   robot_.reset(new alliance::BehavedRobot(id, name, ns));
+  /*pnh = ros::NodeHandle("~/sensors");
+  pnh.param("size", size, 0);
+  for (int i(0); i < size; i++)
+  {
+    std::stringstream ss;
+    ss << "sensor" << i << "/";
+    std::string plugin_name, topic_name;
+    pnh.param(ss.str() + "message_type", plugin_name, std::string(""));
+    if (plugin_name.empty())
+    {
+      ROS_ERROR("The sensor plugin name parameter must not be empty.");
+      continue;
+    }
+    pnh.param(ss.str() + "topic_name", topic_name, std::string(""));
+    if (plugin_name.empty())
+    {
+      ROS_ERROR("The sensor topic name parameter must not be empty.");
+      continue;
+    }
+    robot_->addSensor(plugin_name, topic_name);
+  }*/
   pnh = ros::NodeHandle("~/behaviour_sets");
   pnh.param("size", size, 0);
   for (int i(0); i < size; i++)
@@ -122,7 +143,7 @@ void LowLevelNode::init()
   for (alliance::BehavedRobot::iterator it(robot_->begin());
        it != robot_->end(); it++)
   {
-    AllianceSubject::registerObserver(*it);
+    AllianceSubject<alliance_msgs::InterRobotCommunication>::registerObserver(*it);
   }
 }
 }

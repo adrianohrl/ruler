@@ -1,6 +1,7 @@
 #ifndef _ALLIANCE_NODE_ROS_SENSOR_MESSAGE_H_
 #define _ALLIANCE_NODE_ROS_SENSOR_MESSAGE_H_
 
+#include <sstream>
 #include "alliance/sensor.h"
 #include <alliance_msgs/SensoryFeedback.h>
 #include <ros/node_handle.h>
@@ -12,13 +13,12 @@ template <typename M> class ROSSensorMessage : public alliance::Sensor
 {
 public:
   typedef boost::shared_ptr<ROSSensorMessage<M> > Ptr;
-  ROSSensorMessage(const std::string& id, const ros::NodeHandlePtr& nh,
-                   const std::string& topic_name,
-                   const ros::Duration& timeout_duration);
+  typedef boost::shared_ptr<ROSSensorMessage<M> const> ConstPtr;
+  ROSSensorMessage();
   virtual ~ROSSensorMessage();
-  void publish();
+  virtual void readParameters();
   M getMsg() const;
-  bool isApplicable() const;
+  bool isUpToDate() const;
 
 protected:
   M msg_;
@@ -26,54 +26,74 @@ protected:
 private:
   typedef utilities::functions::UnarySampleHolder SampleHolder;
   typedef utilities::functions::UnarySampleHolderPtr SampleHolderPtr;
-  SampleHolderPtr applicable_;
+  SampleHolderPtr up_to_date_;
   ros::NodeHandlePtr nh_;
-  ros::Publisher feedback_pub_;
   ros::Subscriber sensor_sub_;
   void sensorCallback(const M& msg);
 };
 
 template <typename M>
-ROSSensorMessage<M>::ROSSensorMessage(const std::string& id,
-                                      const ros::NodeHandlePtr& nh,
-                                      const std::string& topic_name,
-                                      const ros::Duration& timeout_duration)
-    : Sensor::Sensor(id), nh_(nh),
-      applicable_(
-          new SampleHolder(topic_name, timeout_duration,
-                           ros::Duration(10 * timeout_duration.toSec())))
+ROSSensorMessage<M>::ROSSensorMessage() {}
+
+template <typename M> ROSSensorMessage<M>::~ROSSensorMessage()
 {
-  feedback_pub_ = nh_->advertise<alliance_msgs::SensoryFeedback>(
-      "/alliance/sensory_feedback", 10);
+  sensor_sub_.shutdown();
+}
+
+template <typename M> void ROSSensorMessage<M>::readParameters()
+{
+  ros::NodeHandle pnh("~/sensors");
+  int size;
+  pnh.param("size", size, 0);
+  std::string topic_name;
+  std::stringstream ss;
+  for (int i(0); i < size; i++)
+  {
+    ss << "sensor" << i << "/";
+    pnh.param(ss.str() + "topic_name", topic_name, std::string(""));
+    topic_name = ns_ + "/" + topic_name;
+    if (topic_name == id_)
+    {
+      nh_.reset(new ros::NodeHandle());
+      break;
+    }
+    ss.str("");
+  }
+  if (!nh_)
+  {
+    throw utilities::Exception("There is no parameters of the " + id_ + " sensor.");
+  }
+  double buffer_horizon, timeout_duration;
+  pnh.param("buffer_horizon", buffer_horizon, 5.0);
+  if (buffer_horizon <= 0.0)
+  {
+    ROS_WARN(
+        "The sensor buffer horizon must be positive.");
+    buffer_horizon = 5.0;
+  }
+  pnh.param("timeout_duration", timeout_duration, 1.0);
+  if (timeout_duration < 0.0)
+  {
+    ROS_WARN(
+        "The sensor message timeout duration must be positive.");
+    timeout_duration = 1.0;
+  }
+  up_to_date_.reset(
+      new SampleHolder(ns_ + "/" + topic_name, ros::Duration(timeout_duration), ros::Duration(buffer_horizon)));
   sensor_sub_ = nh_->subscribe(topic_name, 10,
                                &ROSSensorMessage<M>::sensorCallback, this);
 }
 
-template <typename M> ROSSensorMessage<M>::~ROSSensorMessage()
-{
-  feedback_pub_.shutdown();
-  sensor_sub_.shutdown();
-}
-
-template <typename M> void ROSSensorMessage<M>::publish()
-{
-  alliance_msgs::SensoryFeedback msg;
-  msg.header.stamp = ros::Time::now();
-  msg.task_id = "?????????????????";
-  msg.applicable = applicable_->getValue();
-  feedback_pub_.publish(msg);
-}
-
 template <typename M> M ROSSensorMessage<M>::getMsg() const { return msg_; }
 
-template <typename M> bool ROSSensorMessage<M>::isApplicable() const
+template <typename M> bool ROSSensorMessage<M>::isUpToDate() const
 {
-  return applicable_->getValue();
+  return up_to_date_->getValue();
 }
 
 template <typename M> void ROSSensorMessage<M>::sensorCallback(const M& msg)
 {
-  applicable_->update(ros::Time::now());
+  up_to_date_->update(ros::Time::now());
   msg_ = msg;
 }
 }
