@@ -18,6 +18,7 @@ public:
   virtual ~BehaviourSetInterface();
   virtual void preProcess();
   virtual void process();
+  std::string getNamespace() const;
   TaskPtr getTask() const;
   bool isActive(const ros::Time& timestamp = ros::Time::now()) const;
   ros::Time getActivationTimestamp() const;
@@ -30,6 +31,7 @@ public:
 protected:
   typedef utilities::functions::UnarySampleHolder SampleHolder;
   typedef utilities::functions::UnarySampleHolderPtr SampleHolderPtr;
+  const std::string ns_;
   const RPtr robot_;
   const TaskPtr task_;
   ros::Time activation_timestamp_;
@@ -41,9 +43,10 @@ template <typename R>
 BehaviourSetInterface<R>::BehaviourSetInterface(
     const RPtr& robot, const TaskPtr& task, const ros::Duration& buffer_horizon,
     const ros::Duration& timeout_duration)
-    : robot_(robot), task_(task), buffer_horizon_(buffer_horizon),
-      active_(new SampleHolder(robot->getId() + "/" + task->getId() + "/active",
-                               timeout_duration, buffer_horizon_))
+    : robot_(robot), ns_(robot->getId() + "/" + task->getId()), task_(task),
+      buffer_horizon_(buffer_horizon),
+      active_(
+          new SampleHolder(ns_ + "/active", timeout_duration, buffer_horizon_))
 {
 }
 
@@ -52,6 +55,11 @@ template <typename R> BehaviourSetInterface<R>::~BehaviourSetInterface() {}
 template <typename R> void BehaviourSetInterface<R>::preProcess() {}
 
 template <typename R> void BehaviourSetInterface<R>::process() {}
+
+template <typename R> std::string BehaviourSetInterface<R>::getNamespace() const
+{
+  return ns_;
+}
 
 template <typename R> TaskPtr BehaviourSetInterface<R>::getTask() const
 {
@@ -82,7 +90,8 @@ void BehaviourSetInterface<R>::setActive(bool active,
 {
   if (active != active_->getValue(timestamp))
   {
-    ROS_INFO_STREAM("Updating " << *active_ << " to " << active << ".");
+    ROS_DEBUG_STREAM("Updating " << *active_ << " to "
+                                 << (active ? "true." : "false."));
     active_->update(active, timestamp);
     activation_timestamp_ = active ? timestamp : ros::Time();
   }

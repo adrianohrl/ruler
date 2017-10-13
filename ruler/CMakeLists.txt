@@ -36,7 +36,7 @@ set(H_FILES
   include/ruler/battery_simulation.h
   include/ruler/consumable_resource.h
   include/ruler/consumable_resource_reservation_request.h
-  include/ruler/continuous_consumable_resource.h
+  #include/ruler/continuous_consumable_resource.h
   include/ruler/continuous_reusable_resource.h
   include/ruler/discrete_consumable_resource.h
   include/ruler/discrete_reusable_resource.h
@@ -112,7 +112,7 @@ set(CPP_FILES
   src/nodes/ruler_node.cpp
   src/nodes/task_simulation_node.cpp
   src/ruler/battery_simulation.cpp
-  src/ruler/continuous_consumable_resource.cpp
+  #src/ruler/continuous_consumable_resource.cpp
   src/ruler/continuous_reusable_resource.cpp
   src/ruler/discrete_consumable_resource.cpp
   src/ruler/discrete_reusable_resource.cpp

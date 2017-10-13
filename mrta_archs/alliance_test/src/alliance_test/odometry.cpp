@@ -1,10 +1,10 @@
-#include "sensors/odometry.h"
+#include "alliance_test/odometry.h"
 #include <tf/transform_datatypes.h>
 #include <pluginlib/class_list_macros.h>
 
-PLUGINLIB_EXPORT_CLASS(sensors::Odometry, alliance::Sensor)
+PLUGINLIB_EXPORT_CLASS(alliance_test::Odometry, alliance::Sensor)
 
-namespace sensors
+namespace alliance_test
 {
 Odometry::Odometry() {}
 

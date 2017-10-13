@@ -4,7 +4,7 @@
 #include <nodes/ros_sensor_message.h>
 #include <sensor_msgs/PointCloud.h>
 
-namespace sensors
+namespace alliance_test
 {
 class PointCloud : public nodes::ROSSensorMessage<sensor_msgs::PointCloud>
 {

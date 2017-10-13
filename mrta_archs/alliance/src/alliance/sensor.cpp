@@ -11,7 +11,7 @@ void Sensor::initialize(const std::string& ns, const std::string& name,
 {
   ns_ = ns;
   name_ = name;
-  id_ = id;
+  id_ = ns + "/" + id;
   readParameters();
 }
 
@@ -22,4 +22,16 @@ std::string Sensor::getNamespace() const { return ns_; }
 std::string Sensor::getName() const { return name_; }
 
 std::string Sensor::getId() const { return id_; }
+
+bool Sensor::isUpToDate() const { return true; }
+
+bool Sensor::operator==(const Sensor& sensor) const
+{
+  return id_ == sensor.id_;
+}
+
+bool Sensor::operator!=(const Sensor& sensor) const
+{
+  return !(*this == sensor);
+}
 }

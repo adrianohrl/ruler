@@ -9,12 +9,21 @@ BatterySimulationNode::BatterySimulationNode(const ros::NodeHandlePtr& nh,
   battery_pub_ = nh->advertise<sensor_msgs::BatteryState>("battery_state", 1);
   recharge_srv_ = nh->advertiseService(
       "recharge", &BatterySimulationNode::rechargeCallback, this);
+  recharge_abort_srv_ = nh->advertiseService(
+      "recharge/abort", &BatterySimulationNode::rechargeAbortCallback, this);
+  discharge_srv_ = nh->advertiseService(
+      "discharge", &BatterySimulationNode::dischargeCallback, this);
+  discharge_abort_srv_ = nh->advertiseService(
+      "discharge/abort", &BatterySimulationNode::dischargeAbortCallback, this);
 }
 
 BatterySimulationNode::~BatterySimulationNode()
 {
   battery_pub_.shutdown();
   recharge_srv_.shutdown();
+  recharge_abort_srv_.shutdown();
+  discharge_srv_.shutdown();
+  discharge_abort_srv_.shutdown();
 }
 
 void BatterySimulationNode::readParameters()
@@ -28,7 +37,7 @@ void BatterySimulationNode::readParameters()
     return;
   }
   if (!std::equal(robot_id_.rbegin(), robot_id_.rend(),
-                  ros::this_node::getNamespace().rbegin()))
+                  ros::this_node::getName().rbegin()))
   {
     ROSNode::shutdown("Invalid ROS namespace. It must end with '" + robot_id_ +
                       "'.");
@@ -40,7 +49,14 @@ void BatterySimulationNode::readParameters()
   utilities::ContinuousNoisySignalPtr expected_sample_time(
       new utilities::ContinuousNoisySignal(sample_time, sample_time_std));
   pnh = ros::NodeHandle("~/battery");
-  double slow_discharging_rate;
+  double recharging_rate, slow_discharging_rate;
+  pnh.param("recharging_rate", recharging_rate, 0.1);
+  if (recharging_rate <= 0.0 || recharging_rate >= 1.0)
+  {
+    ROS_WARN("The battery recharging rate must be within the (0.0; 1.0) "
+             "interval.");
+    recharging_rate = 0.1;
+  }
   pnh.param("slow_discharging_rate", slow_discharging_rate, 0.001);
   if (slow_discharging_rate <= 0.0 || slow_discharging_rate >= 1.0)
   {
@@ -79,9 +95,10 @@ void BatterySimulationNode::readParameters()
     critical_warning_rate = 1.0;
   }
   battery_.reset(new ruler::BatterySimulation(
-      robot_id_, expected_sample_time, slow_discharging_rate, low_threshold,
+      robot_id_, expected_sample_time, recharging_rate, slow_discharging_rate, low_threshold,
       critical_threshold, ros::Rate(low_warning_rate),
       ros::Rate(critical_warning_rate)));
+  battery_->init();
 }
 
 void BatterySimulationNode::controlLoop()
@@ -98,6 +115,25 @@ bool BatterySimulationNode::rechargeCallback(
     std_srvs::Trigger::Request& request, std_srvs::Trigger::Response& response)
 {
   battery_->recharge();
-  response.success = !battery_->isFull();
+  response.success = battery_->isRecharging();
+  return true;
+}
+
+bool BatterySimulationNode::rechargeAbortCallback(std_srvs::Trigger::Request &request, std_srvs::Trigger::Response &response)
+{
+  return false;
+}
+
+bool BatterySimulationNode::dischargeCallback(ruler_msgs::DischargeBattery::Request &request, ruler_msgs::DischargeBattery::Response &response)
+{
+  utilities::NoisyDurationPtr expected_duration(new utilities::NoisyDuration(request.expected_duration, request.expected_duration_std));
+  battery_->discharge(request.task_id, expected_duration);
+  response.success = !battery_->isEmpty();
+  return !battery_->isEmpty();
+}
+
+bool BatterySimulationNode::dischargeAbortCallback(ruler_msgs::DischargeBattery::Request &request, ruler_msgs::DischargeBattery::Response &response)
+{
+  return false;
 }
 }

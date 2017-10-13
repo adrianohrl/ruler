@@ -4,7 +4,7 @@
 #include <nav_msgs/Odometry.h>
 #include <nodes/ros_sensor_message.h>
 
-namespace sensors
+namespace alliance_test
 {
 class Odometry : public nodes::ROSSensorMessage<nav_msgs::Odometry>
 {

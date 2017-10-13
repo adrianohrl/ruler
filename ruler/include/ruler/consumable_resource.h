@@ -29,20 +29,25 @@ protected:
 public:
   typedef boost::shared_ptr<ConsumableResource<T> > Ptr;
   typedef boost::shared_ptr<ConsumableResource<T> const> ConstPtr;
+  ConsumableResource(const std::string& id, const std::string& name,
+                     const T& capacity, const T& initial_level,
+                     const ros::Duration& latence = ros::Duration(0.0));
+  ConsumableResource(const ruler_msgs::Resource& msg);
+  ConsumableResource(const ConsumableResource<T>& resource);
   virtual ~ConsumableResource();
   virtual bool isConsumable() const;
   virtual void consume(const TaskPtr& task,
                        const FunctionPtr& quantity_function);
   virtual void produce(const TaskPtr& task,
                        const FunctionPtr& quantity_function);
-
-protected:
-  ConsumableResource(const std::string& id, const std::string& name,
-                     const T& capacity, const T& initial_level,
-                     const ros::Duration& latence = ros::Duration(0.0));
-  ConsumableResource(const ruler_msgs::Resource& msg);
-  ConsumableResource(const ConsumableResource<T>& resource);
 };
+
+typedef ConsumableResource<utilities::ContinuousSignalType>
+    ContinuousConsumableResource;
+typedef boost::shared_ptr<ContinuousConsumableResource>
+    ContinuousConsumableResourcePtr;
+typedef boost::shared_ptr<ContinuousConsumableResource const>
+    ContinuousConsumableResourceConstPtr;
 
 template <typename T>
 ConsumableResource<T>::ConsumableResource(const std::string& id,

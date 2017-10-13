@@ -8,7 +8,7 @@ BehaviourSet::BehaviourSet(const RobotPtr& robot, const TaskPtr& task,
                            const ros::Duration& buffer_horizon)
     : BehaviourSetInterface<Robot>::BehaviourSetInterface(robot, task,
                                                           buffer_horizon),
-      Subject::Subject(robot->getId() + "/" + task->getId()), robot_(robot)
+      Subject::Subject(ns_), robot_(robot)
 {
 }
 

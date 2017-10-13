@@ -3,8 +3,8 @@
 
 #include <alliance/layer.h>
 #include <geometry_msgs/Twist.h>
-#include "sensors/odometry.h"
-#include "sensors/point_cloud.h"
+#include "alliance_test/odometry.h"
+#include "alliance_test/point_cloud.h"
 
 namespace alliance_test
 {
@@ -18,8 +18,8 @@ public:
 
 protected:
   ros::NodeHandlePtr nh_;
-  sensors::OdometryPtr odometry_;
-  sensors::PointCloudPtr sonars_;
+  OdometryPtr odometry_;
+  PointCloudPtr sonars_;
   ros::Publisher velocity_pub_;
   void setVelocity(double vx = 0.0, double wz = 0.0);
 

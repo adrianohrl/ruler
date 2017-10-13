@@ -3,6 +3,18 @@ spin_rate: 2.0           # in Hertz
 broadcast_rate: 1.0      # in Hertz
 timeout_duration: 2.0    # in seconds
 buffer_horizon: 5.0      # in seconds
+sensors:
+  size: 2
+  sensor0:
+    plugin_name: 'alliance_test/odometry'
+    topic_name: 'odom'
+    timeout_duration: 2.0
+    buffer_horizon: 5.0
+  sensor1:
+    plugin_name: 'alliance_test/point_cloud'
+    topic_name: 'sonar'
+    timeout_duration: 2.0
+    buffer_horizon: 5.0
 behaviour_sets:
   size: 1 # alter to 3, simplified to 1 for tests
   behaviour_set0:
@@ -14,6 +26,12 @@ behaviour_sets:
         giving_up_delay: 20.0  # in seconds
       impatience:
         fast_rate: 5.0
+      sensory_feedback:
+        plugin_name: 'alliance_test/updated_sensory'
+        sensors:
+          size: 1
+          sensor0:
+            topic_name: 'sonar'
   behaviour_set1:
     task_id: 'border_protection'
     motivational_behaviour:
@@ -23,6 +41,14 @@ behaviour_sets:
         giving_up_delay: 20.0  # in seconds
       impatience:
         fast_rate: 10.0
+      sensory_feedback:
+        plugin_name: 'alliance_test/updated_sensory'
+        sensors:
+          size: 2
+          sensor0:
+            topic_name: 'sonar'
+          sensor1:
+            topic_name: 'odom'
   behaviour_set2:
     task_id: 'report'
     motivational_behaviour:
@@ -32,15 +58,11 @@ behaviour_sets:
         giving_up_delay: 20.0  # in seconds
       impatience:
         fast_rate: 3.0
-sensors:
-  size: 2
-  sensor0:
-    message_type: 'nav_msgs/Odometry'
-    topic_name: 'odom'
-    timeout_duration: 2.0
-    buffer_horizon: 5.0
-  sensor1:
-    message_type: 'sensors_msgs/PointCloud'
-    topic_name: 'sonar'
-    timeout_duration: 2.0
-    buffer_horizon: 5.0
+      sensory_feedback:
+        plugin_name: 'alliance_test/updated_sensory'
+        sensors:
+          size: 2
+          sensor0:
+            topic_name: 'odom'
+          sensor1:
+            topic_name: 'sonar'

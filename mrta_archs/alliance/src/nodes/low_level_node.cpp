@@ -56,7 +56,8 @@ void LowLevelNode::readParameters()
     ROSNode::shutdown("Not found robot id as a ROS parameter.");
     return;
   }
-  std::string ns(ros::this_node::getNamespace()), aux(id + "/alliance");
+  std::string ns(ros::this_node::getName()), aux(id + "/alliance");
+  ns.replace(ns.find_last_of('/'), ns.npos, "");
   if (!std::equal(aux.rbegin(), aux.rend(), ns.rbegin()))
   {
     ROSNode::shutdown("Invalid ROS namespace. It must end with '" + id + "'.");
@@ -64,15 +65,30 @@ void LowLevelNode::readParameters()
   }
   aux = "/alliance";
   ns = ns.substr(0, ns.size() - aux.size());
-  robot_.reset(new alliance::BehavedRobot(id, name, ns));
-  /*pnh = ros::NodeHandle("~/sensors");
+  robot_.reset(new alliance::BehavedRobot(ns, name, ns));
+  double buffer_horizon, timeout_duration;
+  pnh.param("buffer_horizon", buffer_horizon, 5.0);
+  if (buffer_horizon <= 0.0)
+  {
+    ROS_WARN(
+        "The active buffer horizon of the behaviour set must be positive.");
+    buffer_horizon = 5.0;
+  }
+  pnh.param("timeout_duration", timeout_duration, 2.0);
+  if (timeout_duration < 0.0)
+  {
+    ROS_WARN("The active timeout duration of the behaviour set must not be "
+             "negative.");
+    timeout_duration = 2.0;
+  }
+  pnh = ros::NodeHandle("~/sensors");
   pnh.param("size", size, 0);
   for (int i(0); i < size; i++)
   {
     std::stringstream ss;
     ss << "sensor" << i << "/";
     std::string plugin_name, topic_name;
-    pnh.param(ss.str() + "message_type", plugin_name, std::string(""));
+    pnh.param(ss.str() + "plugin_name", plugin_name, std::string(""));
     if (plugin_name.empty())
     {
       ROS_ERROR("The sensor plugin name parameter must not be empty.");
@@ -85,7 +101,7 @@ void LowLevelNode::readParameters()
       continue;
     }
     robot_->addSensor(plugin_name, topic_name);
-  }*/
+  }
   pnh = ros::NodeHandle("~/behaviour_sets");
   pnh.param("size", size, 0);
   for (int i(0); i < size; i++)
@@ -98,20 +114,30 @@ void LowLevelNode::readParameters()
       ROS_ERROR("The behaviour set's task id must not be empty.");
       continue;
     }
-    double buffer_horizon, timeout_duration;
-    pnh.param("buffer_horizon", buffer_horizon, 5.0);
-    if (buffer_horizon <= 0.0)
+    ss << "motivational_behaviour/sensory_feedback/";
+    std::string plugin_name;
+    pnh.param(ss.str() + "plugin_name", plugin_name, std::string(""));
+    if (plugin_name.empty())
     {
-      ROS_WARN(
-          "The active buffer horizon of the behaviour set must be positive.");
-      buffer_horizon = 5.0;
+      ROS_ERROR("The sensor evaluator plugin name parameter must not be empty.");
+      continue;
     }
-    pnh.param("timeout_duration", timeout_duration, 2.0);
-    if (timeout_duration < 0.0)
+    ss << "sensors/";
+    int sensors_size;
+    pnh.param(ss.str() + "size", sensors_size, 0);
+    std::list<std::string> sensors;
+    std::string topic_name;
+    for (int j(0); j < sensors_size; j++)
     {
-      ROS_WARN("The active timeout duration of the behaviour set must not be "
-               "negative.");
-      timeout_duration = 2.0;
+      std::stringstream sss;
+      sss << ss.str() << "sensor" << j << "/";
+      pnh.param(sss.str() + "topic_name", topic_name, std::string(""));
+      if (topic_name.empty())
+      {
+        ROS_ERROR("The sensor evaluator plugin name parameter must not be empty.");
+        continue;
+      }
+      sensors.push_back(topic_name);
     }
     std::list<alliance::TaskPtr>::const_iterator it(tasks.begin());
     alliance::LayeredBehaviourSetPtr behaviour_set;
@@ -123,6 +149,7 @@ void LowLevelNode::readParameters()
         behaviour_set.reset(new alliance::LayeredBehaviourSet(
             robot_, task, ros::Duration(buffer_horizon),
             ros::Duration(timeout_duration)));
+        behaviour_set->setSensoryEvaluator(nh_, plugin_name, sensors);
         break;
       }
       it++;

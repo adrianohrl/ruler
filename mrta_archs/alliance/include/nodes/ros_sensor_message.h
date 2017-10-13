@@ -18,7 +18,7 @@ public:
   virtual ~ROSSensorMessage();
   virtual void readParameters();
   M getMsg() const;
-  bool isUpToDate() const;
+  virtual bool isUpToDate() const;
 
 protected:
   M msg_;
@@ -79,7 +79,7 @@ template <typename M> void ROSSensorMessage<M>::readParameters()
     timeout_duration = 1.0;
   }
   up_to_date_.reset(
-      new SampleHolder(ns_ + "/" + topic_name, ros::Duration(timeout_duration), ros::Duration(buffer_horizon)));
+      new SampleHolder(topic_name, ros::Duration(timeout_duration), ros::Duration(buffer_horizon)));
   sensor_sub_ = nh_->subscribe(topic_name, 10,
                                &ROSSensorMessage<M>::sensorCallback, this);
 }

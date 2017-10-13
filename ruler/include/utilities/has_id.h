@@ -29,12 +29,10 @@ public:
   friend std::ostream& operator<<(std::ostream& out, const HasId<U>& has_id);
 
 protected:
+  const K id_;
   HasId(const K& id);
   HasId(const HasId<K>& has_id);
   void setId(const K& id);
-
-private:
-  const K id_;
 };
 
 template <typename K> HasId<K>::HasId(const K& id) : id_(id) {}

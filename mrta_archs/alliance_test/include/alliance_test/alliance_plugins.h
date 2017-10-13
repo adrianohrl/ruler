@@ -3,8 +3,10 @@
 
 #include "alliance_test/border_protection.h"
 #include "alliance_test/layer.h"
+#include "alliance_test/odometry.h"
+#include "alliance_test/point_cloud.h"
 #include "alliance_test/report.h"
+#include "alliance_test/updated_sensory.h"
 #include "alliance_test/wander.h"
-#include "sensors/sensors.h"
 
 #endif // _ALLIANCE_PLUGINS_H_

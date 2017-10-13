@@ -20,6 +20,7 @@ add_service_files(
   DIRECTORY srv
   FILES
     CalculateMetrics.srv
+    DischargeBattery.srv
 )
 
 generate_messages(

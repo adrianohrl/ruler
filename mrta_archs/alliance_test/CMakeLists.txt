@@ -32,19 +32,21 @@ include_directories(
 set(H_FILES
   include/alliance_test/layer.h
   include/alliance_test/border_protection.h
+  include/alliance_test/odometry.h
+  include/alliance_test/point_cloud.h
   include/alliance_test/report.h
+  include/alliance_test/updated_sensory.h
   include/alliance_test/wander.h
-  include/sensors/odometry.h
-  include/sensors/point_cloud.h
 )
 
 set(CPP_FILES
   src/alliance_test/layer.cpp
   src/alliance_test/border_protection.cpp
+  src/alliance_test/odometry.cpp
+  src/alliance_test/point_cloud.cpp
   src/alliance_test/report.cpp
+  src/alliance_test/updated_sensory.cpp
   src/alliance_test/wander.cpp
-  src/sensors/odometry.cpp
-  src/sensors/point_cloud.cpp
 )
 
 add_library(${PROJECT_NAME}

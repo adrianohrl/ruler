@@ -6,7 +6,7 @@
  */
 
 #include "alliance/alliance.h"
-#include "utilities/alliance_subject.h"
+#include "nodes/alliance_subject.h"
 #include "utilities/utilities.h"
 #include <gtest/gtest.h>
 
@@ -17,7 +17,7 @@ TaskPtr t1, t2;
 RobotPtr r1, r2, r3;
 MotivationalBehaviourPtr r1bs1_mb, r1bs2_mb, r2bs1_mb, r2bs2_mb, r3bs1_mb,
     r3bs2_mb;
-utilities::InterRobotCommunicationSubjectPtr r1_subject, r2_subject, r3_subject;
+nodes::InterRobotCommunicationSubjectPtr r1_subject, r2_subject, r3_subject;
 
 void notify(const RobotPtr& robot, const TaskPtr& task,
             const ros::Time& timestamp)
@@ -26,12 +26,12 @@ void notify(const RobotPtr& robot, const TaskPtr& task,
   msg.header.frame_id = robot->getId();
   msg.task_id = task->getId();
   msg.header.stamp = timestamp;
-  utilities::InterRobotCommunicationEventPtr event;
-  event.reset(new utilities::InterRobotCommunicationEvent(r1_subject, msg));
+  nodes::InterRobotCommunicationEventPtr event;
+  event.reset(new nodes::InterRobotCommunicationEvent(r1_subject, msg));
   r1_subject->notify(event);
-  event.reset(new utilities::InterRobotCommunicationEvent(r2_subject, msg));
+  event.reset(new nodes::InterRobotCommunicationEvent(r2_subject, msg));
   r2_subject->notify(event);
-  event.reset(new utilities::InterRobotCommunicationEvent(r3_subject, msg));
+  event.reset(new nodes::InterRobotCommunicationEvent(r3_subject, msg));
   r3_subject->notify(event);
 }
 
@@ -228,11 +228,11 @@ void init()
 {
   t1.reset(new Task("t1", "task1"));
   t2.reset(new Task("t2", "task2"));
-  r1_subject.reset(new utilities::InterRobotCommunicationSubject("r1/subject"));
-  r2_subject.reset(new utilities::InterRobotCommunicationSubject("r2/subject"));
-  r3_subject.reset(new utilities::InterRobotCommunicationSubject("r3/subject"));
+  r1_subject.reset(new nodes::InterRobotCommunicationSubject("r1/subject"));
+  r2_subject.reset(new nodes::InterRobotCommunicationSubject("r2/subject"));
+  r3_subject.reset(new nodes::InterRobotCommunicationSubject("r3/subject"));
 
-  r1.reset(new Robot("r1", "robot 1"));
+  r1.reset(new Robot("r1", "robot 1", "r1"));
   r1->setBroadcastRate(ros::Rate(1.0));
   r1->setTimeoutDuration(ros::Duration(1.5));
   BehaviourSetPtr r1bs1(new BehaviourSet(r1, t1, ros::Duration(10.0)));
@@ -252,7 +252,7 @@ void init()
   r1_subject->registerObserver(r1bs2_mb->getInterRobotCommunication());
   r1->addBehaviourSet(r1bs2);
 
-  r2.reset(new Robot("r2", "robot 2"));
+  r2.reset(new Robot("r2", "robot 2", "r2"));
   r2->setBroadcastRate(ros::Rate(1.0));
   r2->setTimeoutDuration(ros::Duration(1.5));
   BehaviourSetPtr r2bs1(new BehaviourSet(r2, t1, ros::Duration(10.0)));
@@ -272,7 +272,7 @@ void init()
   r2_subject->registerObserver(r2bs2_mb->getInterRobotCommunication());
   r2->addBehaviourSet(r2bs2);
 
-  r3.reset(new Robot("r3", "robot 3"));
+  r3.reset(new Robot("r3", "robot 3", "r3"));
   r3->setBroadcastRate(ros::Rate(1.0));
   r3->setTimeoutDuration(ros::Duration(1.5));
   BehaviourSetPtr r3bs1(new BehaviourSet(r3, t1, ros::Duration(10.0)));

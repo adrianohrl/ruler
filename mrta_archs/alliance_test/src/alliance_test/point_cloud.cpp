@@ -1,9 +1,9 @@
-#include "sensors/point_cloud.h"
+#include "alliance_test/point_cloud.h"
 #include <pluginlib/class_list_macros.h>
 
-PLUGINLIB_EXPORT_CLASS(sensors::PointCloud, alliance::Sensor)
+PLUGINLIB_EXPORT_CLASS(alliance_test::PointCloud, alliance::Sensor)
 
-namespace sensors
+namespace alliance_test
 {
 PointCloud::PointCloud() {}
 

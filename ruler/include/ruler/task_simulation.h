@@ -17,12 +17,14 @@ public:
       const utilities::ContinuousNoisySignalPtr& expected_sample_time);
   TaskSimulation(const TaskSimulation& simulation);
   virtual ~TaskSimulation();
+  virtual void abort(const ros::Time& timestamp = ros::Time::now());
   virtual void update(const ros::Time& timestamp = ros::Time::now());
   virtual ros::Duration getTaskElapsedDuration(
       const ros::Time& timestamp = ros::Time::now()) const;
   virtual ros::Duration getTaskRemainingDuration(
       const ros::Time& timestamp = ros::Time::now()) const;
   virtual ros::Duration getTaskExpectedDuration() const;
+  TaskConstPtr getTask() const;
   virtual std::string str() const;
 
 private:
@@ -30,6 +32,7 @@ private:
   ros::Time task_start_timestamp_;
   ros::Duration expected_duration_;
   double progress_level_;
+  bool aborted_;
   utilities::ContinuousNoisySignalPtr progress_rate_;
 };
 

@@ -11,28 +11,27 @@ LayeredBehaviourSet::LayeredBehaviourSet(const BehavedRobotPtr& robot,
     : BehaviourSetInterface<BehavedRobot>::BehaviourSetInterface(
           robot, task, buffer_horizon, timeout_duration),
       AllianceObserver<alliance_msgs::InterRobotCommunication>::
-          AllianceObserver(robot->getId() + "/" + task->getId()),
-      robot_(robot), loader_("alliance", "alliance::Layer")
+          AllianceObserver(ns_),
+      robot_(robot), task_(task), layer_loader_("alliance", "alliance::Layer"),
+      sensory_evaluator_loader_("alliance", "alliance::SensoryEvaluator")
 {
-  LayerPtr layer;
   for (Task::const_iterator it(task->begin()); it != task->end(); it++)
   {
-    try
-    {
-      layer = loader_.createInstance(it->c_str());
-      layer->initialize(robot_->getNamespace(), *it);
-      addLayer(layer);
-      ROS_DEBUG_STREAM("Loaded " << *it << " layer plugin to execute " << *task
-                                 << " task.");
-    }
-    catch (const pluginlib::PluginlibException& ex)
-    {
-      ROS_ERROR_STREAM("Could not load " << *it << ". " << ex.what());
-    }
+    addLayer(*it);
   }
 }
 
 LayeredBehaviourSet::~LayeredBehaviourSet() {}
+
+void LayeredBehaviourSet::preProcess()
+{
+  if (!sensory_evaluator_)
+  {
+    throw utilities::Exception("The sensory evaluator of " + str() +
+                               " layered behaviour set has not been setted.");
+  }
+  sensory_evaluator_->process();
+}
 
 void LayeredBehaviourSet::process()
 {
@@ -43,22 +42,32 @@ void LayeredBehaviourSet::process()
   }
 }
 
+void LayeredBehaviourSet::update(
+    const nodes::InterRobotCommunicationEventConstPtr& event)
+{
+  if (!event->isRelated(*robot_) || !event->isRelated(*task_))
+  {
+    return;
+  }
+  setActive(true, event->getTimestamp());
+}
+
 void LayeredBehaviourSet::addLayer(const std::string& plugin_name)
 {
+  if (contains(plugin_name))
+  {
+    throw utilities::Exception("This layer already exists.");
+  }
   try
   {
-    LayerPtr layer(loader_.createInstance(plugin_name.c_str()));
-    layer->initialize(robot_->getNamespace(), getId() + "/" + plugin_name);
+    LayerPtr layer(layer_loader_.createInstance(plugin_name.c_str()));
+    layer->initialize(robot_->getId(), plugin_name);
     addLayer(layer);
   }
   catch (const pluginlib::PluginlibException& ex)
   {
     ROS_ERROR("The plugin failed to load for some reason. Error: %s",
               ex.what());
-  }
-  if (contains(plugin_name))
-  {
-    throw utilities::Exception("This layer already exists.");
   }
 }
 
@@ -69,14 +78,24 @@ void LayeredBehaviourSet::addLayer(const LayerPtr& layer)
                              << *this << " behaviour set.");
 }
 
-void LayeredBehaviourSet::update(
-    const nodes::InterRobotCommunicationEventConstPtr& event)
+void LayeredBehaviourSet::setSensoryEvaluator(
+    const ros::NodeHandlePtr& nh, const std::string& plugin_name,
+    const std::list<std::string>& sensors)
 {
-  if (!event->isRelated(*robot_) || !event->isRelated(*task_))
+  try
   {
-    return;
+    sensory_evaluator_ =
+        sensory_evaluator_loader_.createInstance(plugin_name.c_str());
+    ROS_WARN_STREAM("[LayeredBehaviourSet] plugin: " << plugin_name);
+    sensory_evaluator_->initialize(nh, robot_, *task_, sensors);
+    ROS_DEBUG_STREAM("Loaded " << plugin_name
+                               << " sensory evaluator plugin to publish "
+                               << *task_ << "'s sensory feedback.");
   }
-  setActive(true, event->getTimestamp());
+  catch (const pluginlib::PluginlibException& ex)
+  {
+    ROS_ERROR_STREAM("Could not load " << plugin_name << ". " << ex.what());
+  }
 }
 
 bool LayeredBehaviourSet::contains(const std::string& plugin_name) const

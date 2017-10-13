@@ -3,7 +3,8 @@ expected_sample_time:
   mean: 0.1                      # in [s]
   standard_deviation: 0.005      # in [s]
 battery:
-  slow_discharging_rate: 0.001   # in [%] (default: 0.001 [%])
+  recharging_rate: 0.1   # in [%] (default: 0.1 [%/s])
+  slow_discharging_rate: 0.001   # in [%] (default: 0.001 [%/s])
   low_threshold: 0.15            # in [%] (default: 0.15 [%])
   critical_threshold: 0.05       # in [%] (default: 0.05 [%])
   low_warning_rate: 0.25         # in [Hz] (default: 0.25 [Hz])

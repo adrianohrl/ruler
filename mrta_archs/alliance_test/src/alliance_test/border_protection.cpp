@@ -9,8 +9,5 @@ BorderProtection::BorderProtection() {}
 
 BorderProtection::~BorderProtection() {}
 
-void BorderProtection::process()
-{
-  Layer::process();
-}
+void BorderProtection::process() { Layer::process(); }
 }

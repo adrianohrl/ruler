@@ -9,8 +9,8 @@ Layer::~Layer() { velocity_pub_.shutdown(); }
 void Layer::initialize(const std::string& ns, const std::string& name)
 {
   alliance::Layer::initialize(ns, name);
-  //odometry_.reset(new sensors::Odometry(name, nh_, ns));
-  //sonars_.reset(new sensors::PointCloud(name, nh_, ns));
+  //odometry_.reset(new Odometry(name, nh_, ns));
+  //sonars_.reset(new PointCloud(name, nh_, ns));
   velocity_pub_ = nh_->advertise<geometry_msgs::Twist>(ns + "/cmd_vel", 10);
 }
 

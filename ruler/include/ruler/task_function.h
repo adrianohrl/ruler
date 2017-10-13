@@ -153,8 +153,9 @@ void TaskFunction<T>::update(const TaskEventConstPtr& event)
     }
     else if (event->getType() == types::FINISHED)
     {
+      ROS_WARN("[TaskFunction] TERMINOU!!!");
       ros::Time timestamp(task_->getEndTimestamp());
-      ros::Duration d0(task_->getEndTimestamp() - task_->getStartTimestamp());
+      ros::Duration d0(timestamp - task_->getStartTimestamp());
       double qf(getLevel(timestamp));
       bool ascending(quantity_function_->isAscending());
       bool negated(!quantity_function_->isNegated());

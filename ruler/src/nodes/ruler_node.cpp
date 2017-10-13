@@ -43,7 +43,7 @@ void RulerNode::readParameters()
     return;
   }
   if (!std::equal(id.rbegin(), id.rend(),
-                  ros::this_node::getNamespace().rbegin()))
+                  ros::this_node::getName().rbegin()))
   {
     ROSNode::shutdown("Invalid ROS namespace. It must end with '" + id + "'.");
     return;

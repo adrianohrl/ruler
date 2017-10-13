@@ -16,6 +16,9 @@ public:
   std::string getNamespace() const;
   std::string getName() const;
   std::string getId() const;
+  virtual bool isUpToDate() const;
+  virtual bool operator==(const Sensor& sensor) const;
+  virtual bool operator!=(const Sensor& sensor) const;
 
 protected:
   std::string ns_;

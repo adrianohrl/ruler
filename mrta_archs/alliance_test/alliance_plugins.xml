@@ -21,18 +21,25 @@
         Wander layer for ALLIANCE MRTA architecture.
       </description>
     </class>
-    <class name="nav_msgs/Odometry"
-           type="sensors::Odometry"
-           base_class_type="alliance::Sensors">
+    <class name="alliance_test/odometry"
+           type="alliance_test::Odometry"
+           base_class_type="alliance::Sensor">
       <description>
         nav_msgs/Odometry message wrapper for sensor data receiving.
       </description>
     </class>
-    <class name="sensor_msgs/PointCloud"
-           type="sensors::PointCloud"
-           base_class_type="alliance::Sensors">
+    <class name="alliance_test/point_cloud"
+           type="alliance_test::PointCloud"
+           base_class_type="alliance::Sensor">
       <description>
         sensor_msgs/PointCloud message wrapper for sensor data receiving.
+      </description>
+    </class>
+    <class name="alliance_test/updated_sensory"
+           type="alliance_test::UpdatedSensory"
+           base_class_type="alliance::SensoryEvaluator">
+      <description>
+        This evaluator verifies if all sensors are up-to-date.
       </description>
     </class>
   </library>

@@ -45,7 +45,11 @@ TEST(Simulation, batterySimulation)
       new utilities::ContinuousNoisySignal(0.05, 0.01));
   ruler::BatterySimulationPtr battery(
       new ruler::BatterySimulation("r1", expected_sample_time, 0.1));
+  battery->init();
   ros::Time timestamp(battery->getSimulationStartTimestamp());
+  utilities::NoisyDurationPtr expected_duration(
+      new utilities::NoisyDuration(ros::Duration(25), 8));
+  battery->discharge("t1", expected_duration, timestamp + ros::Duration(100));
   while (!battery->isEmpty(timestamp))
   {
     timestamp += ros::Duration(expected_sample_time->random());

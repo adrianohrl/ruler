@@ -6,7 +6,7 @@ HighLevelNode::HighLevelNode(const ros::NodeHandlePtr& nh,
                                              const ros::Rate& rate)
     : AllianceNode<alliance::Robot, HighLevelNode>::AllianceNode(nh, rate),
       AllianceSubject<alliance_msgs::SensoryFeedback>::AllianceSubject(
-          ros::this_node::getName() + "/sensory_feedback"),
+          ros::this_node::getName()),
       broadcasting_(false)
 {
   inter_robot_communication_pub_ =
@@ -55,7 +55,8 @@ void HighLevelNode::readParameters()
     ROSNode::shutdown("Not found robot id as a ROS parameter.");
     return;
   }
-  std::string ns(ros::this_node::getNamespace()), aux(id + "/alliance");
+  std::string ns(ros::this_node::getName()), aux(id + "/alliance");
+  ns.replace(ns.find_last_of('/'), ns.npos, "");
   if (!std::equal(aux.rbegin(), aux.rend(), ns.rbegin()))
   {
     ROSNode::shutdown("Invalid ROS namespace. It must end with '" + id + "'.");
@@ -63,7 +64,7 @@ void HighLevelNode::readParameters()
   }
   aux = "/alliance";
   ns = ns.substr(0, ns.size() - aux.size());
-  robot_.reset(new alliance::Robot(id, name, ns));
+  robot_.reset(new alliance::Robot(ns, name, ns));
   double broadcast_rate;
   pnh.param("broadcast_rate", broadcast_rate, 0.0);
   if (broadcast_rate <= 0.0)

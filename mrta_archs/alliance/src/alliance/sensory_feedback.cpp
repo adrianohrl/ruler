@@ -6,7 +6,7 @@ namespace alliance
 SensoryFeedback::SensoryFeedback(const RobotPtr& robot,
                                  const BehaviourSetPtr& behaviour_set)
     : AllianceObserver<alliance_msgs::SensoryFeedback>::AllianceObserver(
-          behaviour_set->getId() + "/activity_suppression"),
+          behaviour_set->getId() + "/sensory_feedback"),
       robot_(robot), behaviour_set_(behaviour_set),
       applicable_(new SampleHolder(
           behaviour_set_->getId() + "/sensory_feedback/applicable",

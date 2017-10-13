@@ -8,7 +8,7 @@ TaskSimulation::TaskSimulation(
     const utilities::ContinuousNoisySignalPtr& expected_sample_time)
     : task_(task), task_start_timestamp_(task_->getExpectedStart()->random()),
       expected_duration_(task->getExpectedDuration()->random()),
-      progress_level_(0.0)
+      progress_level_(0.0), aborted_(false)
 {
   double sample_time(expected_sample_time->random());
   double mean(sample_time / expected_duration_.toSec());
@@ -35,8 +35,24 @@ TaskSimulation::TaskSimulation(const TaskSimulation& simulation)
 
 TaskSimulation::~TaskSimulation() {}
 
+void TaskSimulation::abort(const ros::Time& timestamp)
+{
+  if (aborted_)
+  {
+    ROS_WARN_STREAM(task_->getId() << " is already aborted!!!");
+    return;
+  }
+  aborted_ = true;
+  task_->finish(timestamp);
+  ROS_INFO_STREAM(task_->getId() << " has been aborted!!!");
+}
+
 void TaskSimulation::update(const ros::Time& timestamp)
 {
+  if (aborted_)
+  {
+    return;
+  }
   if (timestamp <= last_update_timestamp_)
   {
     throw utilities::Exception(
@@ -75,6 +91,11 @@ TaskSimulation::getTaskRemainingDuration(const ros::Time& timestamp) const
 ros::Duration TaskSimulation::getTaskExpectedDuration() const
 {
   return expected_duration_;
+}
+
+TaskConstPtr TaskSimulation::getTask() const
+{
+  return task_;
 }
 
 std::string TaskSimulation::str() const

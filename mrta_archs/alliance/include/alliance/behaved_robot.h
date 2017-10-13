@@ -16,17 +16,14 @@ public:
   BehavedRobot(const std::string& id, const std::string& name,
                const std::string& ns);
   virtual ~BehavedRobot();
-//  sensors_iterator beginSensors();
-//  sensors_const_iterator beginSensors() const;
-//  sensors_iterator endSensors();
-//  sensors_const_iterator endSensors() const;
+  SensorPtr getSensor(const std::string& sensor_id) const;
   void addSensor(const std::string& plugin_name, const std::string &topic_name);
   void addSensor(const SensorPtr& sensor);
 
 private:
   std::list<SensorPtr> sensors_;
   pluginlib::ClassLoader<Sensor> loader_;
-  bool contains(const std::string& plugin_name) const;
+  bool contains(const std::string& sensor_id) const;
 };
 
 typedef boost::shared_ptr<BehavedRobot> BehavedRobotPtr;
