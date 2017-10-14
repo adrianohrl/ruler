@@ -23,6 +23,7 @@ public:
                           const std::list<std::string> &sensors);
   void process();
   virtual bool isApplicable() = 0;
+  virtual SensorPtr getSensor(const std::string& sensor_id) const;
 
 protected:
   typedef std::list<SensorPtr>::iterator iterator;

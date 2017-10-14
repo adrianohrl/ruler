@@ -91,6 +91,11 @@ void LayeredBehaviourSet::setSensoryEvaluator(
     ROS_DEBUG_STREAM("Loaded " << plugin_name
                                << " sensory evaluator plugin to publish "
                                << *task_ << "'s sensory feedback.");
+    for (layers_iterator it(layers_.begin()); it != layers_.end(); it++)
+    {
+      LayerPtr layer(*it);
+      layer->setEvaluator(sensory_evaluator_);
+    }
   }
   catch (const pluginlib::PluginlibException& ex)
   {

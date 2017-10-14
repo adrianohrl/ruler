@@ -51,6 +51,7 @@ template <typename BS> RobotInterface<BS>::~RobotInterface() {}
 
 template <typename BS> void RobotInterface<BS>::process()
 {
+  ROS_WARN_STREAM("[RobotInterface] active: " << (active_behaviour_set_ ? active_behaviour_set_->str() : ""));
   if (active_behaviour_set_ && !active_behaviour_set_->isActive())
   {
     active_behaviour_set_->setActive(false);

@@ -8,16 +8,21 @@ Layer::~Layer() { velocity_pub_.shutdown(); }
 
 void Layer::initialize(const std::string& ns, const std::string& name)
 {
-  alliance::Layer::initialize(ns, name);
-  //odometry_.reset(new Odometry(name, nh_, ns));
-  //sonars_.reset(new PointCloud(name, nh_, ns));
+  ns_ = ns;
+  alliance::Layer::initialize(ns_, name);
   velocity_pub_ = nh_->advertise<geometry_msgs::Twist>(ns + "/cmd_vel", 10);
 }
 
-void Layer::process()
+void Layer::setEvaluator(const alliance::SensoryEvaluatorPtr& evaluator)
 {
-  velocity_pub_.publish(velocity_msg_);
+  alliance::Layer::setEvaluator(evaluator);
+  odometry_ = boost::dynamic_pointer_cast<Odometry>(
+      evaluator->getSensor(ns_ + "/odom"));
+  sonars_ = boost::dynamic_pointer_cast<PointCloud>(
+      evaluator->getSensor(ns_ + "/sonar"));
 }
+
+void Layer::process() { velocity_pub_.publish(velocity_msg_); }
 
 void Layer::setVelocity(double vx, double wz)
 {

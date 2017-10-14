@@ -13,10 +13,12 @@ class Layer : public alliance::Layer
 public:
   Layer();
   virtual ~Layer();
-  virtual void initialize(const std::string &ns, const std::string& name);
+  virtual void initialize(const std::string& ns, const std::string& name);
+  virtual void setEvaluator(const alliance::SensoryEvaluatorPtr& evaluator);
   virtual void process();
 
 protected:
+  std::string ns_;
   ros::NodeHandlePtr nh_;
   OdometryPtr odometry_;
   PointCloudPtr sonars_;

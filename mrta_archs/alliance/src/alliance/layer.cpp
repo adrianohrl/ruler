@@ -17,6 +17,11 @@ void Layer::initialize(const std::string& ns, const std::string& name)
   readParameters();
 }
 
+void Layer::setEvaluator(const SensoryEvaluatorPtr &evaluator)
+{
+  evaluator_ = evaluator;
+}
+
 void Layer::readParameters() {}
 
 std::string Layer::getName() const { return name_; }

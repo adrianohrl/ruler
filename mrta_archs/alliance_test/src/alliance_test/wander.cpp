@@ -14,6 +14,7 @@ void Wander::process()
   Layer::process();
   if (!sonars_->isUpToDate())
   {
+    ROS_INFO("stopping!!!");
     Layer::setVelocity();
     return;
   }

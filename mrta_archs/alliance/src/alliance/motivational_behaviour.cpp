@@ -42,7 +42,7 @@ double MotivationalBehaviour::getThreshold(const ros::Time& timestamp) const
 double MotivationalBehaviour::getLevel(const ros::Time& timestamp) const
 {
   double motivation(motivation_->getValue(timestamp));
-  /*double impatience(impatience_->getLevel(timestamp));
+  double impatience(impatience_->getLevel(timestamp));
   bool acquiescent(acquiescence_->isAcquiescent(timestamp));
   bool suppressed(activity_suppression_->isSuppressed(timestamp));
   bool resetted(impatience_reset_->isResetted(timestamp));
@@ -51,9 +51,7 @@ double MotivationalBehaviour::getLevel(const ros::Time& timestamp) const
                   << *behaviour_set_ << " m0: " << motivation
                   << ", ipt: " << impatience << ", acq: " << acquiescent
                   << ", sup: " << suppressed << ", res: " << resetted
-                  << ", app: " << applicable);*/
-  ROS_WARN_STREAM("[MotivationalBehaviour]" << *sensory_feedback_ << ": "
-                  << (sensory_feedback_->isApplicable(timestamp) ? "true": "false"));
+                  << ", app: " << applicable);
   motivation = (motivation + impatience_->getLevel(timestamp)) *
                !acquiescence_->isAcquiescent(timestamp) *
                !activity_suppression_->isSuppressed(timestamp) *

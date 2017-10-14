@@ -41,6 +41,19 @@ void SensoryEvaluator::process()
   sensory_feedback_pub_.publish(sensory_feedback_msg_);
 }
 
+SensorPtr SensoryEvaluator::getSensor(const std::string &sensor_id) const
+{
+  for (const_iterator it(sensors_.begin()); it != sensors_.end(); it++)
+  {
+    SensorPtr sensor(*it);
+    if (sensor->getId() == sensor_id)
+    {
+      return sensor;
+    }
+  }
+  return SensorPtr();
+}
+
 bool SensoryEvaluator::contains(const std::string& sensor_id) const
 {
   for (const_iterator it(sensors_.begin()); it != sensors_.end(); it++)
