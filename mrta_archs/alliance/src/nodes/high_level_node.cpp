@@ -3,21 +3,20 @@
 namespace nodes
 {
 HighLevelNode::HighLevelNode(const ros::NodeHandlePtr& nh,
-                                             const ros::Rate& rate)
+                             const ros::Rate& rate)
     : AllianceNode<alliance::Robot, HighLevelNode>::AllianceNode(nh, rate),
       AllianceSubject<alliance_msgs::SensoryFeedback>::AllianceSubject(
           ros::this_node::getName()),
       broadcasting_(false)
 {
-  inter_robot_communication_pub_ =
-      nh->advertise<alliance_msgs::InterRobotCommunication>(
-          "/alliance/inter_robot_communication", 10);
 }
 
 HighLevelNode::~HighLevelNode()
 {
   broadcast_timer_.stop();
   inter_robot_communication_pub_.shutdown();
+  motivation_pub_.shutdown();
+  sensory_feedback_sub_.shutdown();
 }
 
 void HighLevelNode::readParameters()
@@ -176,8 +175,14 @@ void HighLevelNode::init()
   broadcast_timer_ = nh_->createTimer(
       robot_->getBroadcastRate().expectedCycleTime(),
       &HighLevelNode::broadcastTimerCallback, this, false, false);
-  sensory_feedback_sub_ = nh_->subscribe("/alliance/sensory_feedback", 100,
-                                         &HighLevelNode::sensoryFeedbackCallback, this);
+  inter_robot_communication_pub_ =
+      nh_->advertise<alliance_msgs::InterRobotCommunication>(
+          "/alliance/inter_robot_communication", 10);
+  motivation_pub_ =
+      nh_->advertise<alliance_msgs::Motivation>("/alliance/motivation", 10);
+  sensory_feedback_sub_ =
+      nh_->subscribe("/alliance/sensory_feedback", 100,
+                     &HighLevelNode::sensoryFeedbackCallback, this);
 }
 
 void HighLevelNode::controlLoop()
@@ -188,6 +193,11 @@ void HighLevelNode::controlLoop()
     ROS_INFO_STREAM("Starting " << *robot_ << " broadcast timer.");
     broadcast_timer_.start();
     broadcasting_ = true;
+  }
+  for (alliance::Robot::iterator it(robot_->begin()); it != robot_->end(); it++)
+  {
+    alliance::BehaviourSetPtr behaviour_set(*it);
+    motivation_pub_.publish(behaviour_set->getMotivationalBehaviour()->toMsg());
   }
 }
 

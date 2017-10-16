@@ -59,7 +59,7 @@ if [[ ${#} = 0 ]]; then
 	exit
 fi
 
-MAP_PATH=""
+MAP_PATH="";
 NUMBER_OF_ROBOTS=2;
 PACKAGE_NAME="";
 while [[ ${#} -gt 0 ]]; do

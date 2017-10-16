@@ -18,6 +18,9 @@ MotivationalBehaviour::MotivationalBehaviour(
       impatience_reset_(new ImpatienceReset()),
       sensory_feedback_(new SensoryFeedback(robot, behaviour_set))
 {
+  msg_.header.frame_id = robot_->getId();
+  msg_.task_id = behaviour_set_->getTask()->getId();
+  msg_.motivation = 0.0;
 }
 
 MotivationalBehaviour::~MotivationalBehaviour() {}
@@ -29,7 +32,7 @@ void MotivationalBehaviour::init()
   impatience_reset_->init(monitor_);
 }
 
-bool MotivationalBehaviour::isActive(const ros::Time& timestamp) const
+bool MotivationalBehaviour::isActive(const ros::Time& timestamp)
 {
   return getLevel(timestamp) >= getThreshold(timestamp);
 }
@@ -39,26 +42,18 @@ double MotivationalBehaviour::getThreshold(const ros::Time& timestamp) const
   return threshold_->getValue(timestamp);
 }
 
-double MotivationalBehaviour::getLevel(const ros::Time& timestamp) const
+double MotivationalBehaviour::getLevel(const ros::Time& timestamp)
 {
-  double motivation(motivation_->getValue(timestamp));
-  double impatience(impatience_->getLevel(timestamp));
-  bool acquiescent(acquiescence_->isAcquiescent(timestamp));
-  bool suppressed(activity_suppression_->isSuppressed(timestamp));
-  bool resetted(impatience_reset_->isResetted(timestamp));
-  bool applicable(sensory_feedback_->isApplicable(timestamp));
-  ROS_WARN_STREAM("[Motivation] "
-                  << *behaviour_set_ << " m0: " << motivation
-                  << ", ipt: " << impatience << ", acq: " << acquiescent
-                  << ", sup: " << suppressed << ", res: " << resetted
-                  << ", app: " << applicable);
-  motivation = (motivation + impatience_->getLevel(timestamp)) *
-               !acquiescence_->isAcquiescent(timestamp) *
-               !activity_suppression_->isSuppressed(timestamp) *
-               !impatience_reset_->isResetted(timestamp) *
-               sensory_feedback_->isApplicable(timestamp);
-  motivation_->update(motivation, timestamp);
-  return motivation;
+  msg_.header.stamp = timestamp;
+  msg_.impatience = impatience_->getLevel(timestamp);
+  msg_.acquiescent = acquiescence_->isAcquiescent(timestamp);
+  msg_.suppressed = activity_suppression_->isSuppressed(timestamp);
+  msg_.resetted = impatience_reset_->isResetted(timestamp);
+  msg_.aplicable = sensory_feedback_->isApplicable(timestamp);
+  msg_.motivation = (msg_.motivation + msg_.impatience) * !msg_.acquiescent *
+                    !msg_.suppressed * !msg_.resetted * msg_.aplicable;
+  motivation_->update(msg_.motivation, timestamp);
+  return msg_.motivation;
 }
 
 ActivitySuppressionPtr MotivationalBehaviour::getActivitySuppression() const
@@ -111,5 +106,12 @@ void MotivationalBehaviour::setAcquiescence(
 {
   acquiescence_->setYieldingDelay(yielding_delay, timestamp);
   acquiescence_->setGivingUpDelay(giving_up_delay, timestamp);
+}
+
+bool MotivationalBehaviour::
+operator==(const alliance_msgs::Motivation& msg) const
+{
+  return msg.header.frame_id == robot_->getId() &&
+         msg.task_id == behaviour_set_->getTask()->getId();
 }
 }

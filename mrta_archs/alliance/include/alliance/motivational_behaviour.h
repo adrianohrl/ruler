@@ -8,20 +8,23 @@
 #include "alliance/impatience_reset.h"
 #include "alliance/inter_robot_communication.h"
 #include "alliance/sensory_feedback.h"
+#include <alliance_msgs/Motivation.h>
 #include <utilities/functions/continuous_sample_holder.h>
+#include <utilities/ros_message_converter.h>
 
 namespace alliance
 {
 class MotivationalBehaviour
+    : public utilities::ROSMessageConverter<alliance_msgs::Motivation>
 {
 public:
   MotivationalBehaviour(const RobotPtr& robot,
                         const BehaviourSetPtr& behaviour_set);
   virtual ~MotivationalBehaviour();
   void init();
-  bool isActive(const ros::Time& timestamp = ros::Time::now()) const;
+  bool isActive(const ros::Time& timestamp = ros::Time::now());
   double getThreshold(const ros::Time& timestamp = ros::Time::now()) const;
-  double getLevel(const ros::Time& timestamp = ros::Time::now()) const;
+  double getLevel(const ros::Time& timestamp = ros::Time::now());
   ActivitySuppressionPtr getActivitySuppression() const;
   ImpatiencePtr getImpatience() const;
   ImpatienceResetPtr getImpatienceReset() const;
@@ -34,6 +37,7 @@ public:
   void setAcquiescence(const ros::Duration& yielding_delay,
                        const ros::Duration& giving_up_delay,
                        const ros::Time& timestamp = ros::Time::now());
+  virtual bool operator==(const alliance_msgs::Motivation& msg) const;
 
 private:
   typedef utilities::functions::ContinuousSampleHolder SampleHolder;

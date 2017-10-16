@@ -11,6 +11,7 @@ add_message_files(
   DIRECTORY msg
   FILES
     InterRobotCommunication.msg
+    Motivation.msg
     SensoryFeedback.msg
 )
 

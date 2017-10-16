@@ -22,10 +22,19 @@ namespace utilities
 template <typename T> class ROSMessageConverter
 {
 public:
-  virtual T toMsg() const = 0;
+  virtual T toMsg() const;
   virtual bool operator==(const T& msg) const = 0;
   virtual bool operator!=(const T& msg) const;
+
+protected:
+  T msg_;
 };
+
+template <typename T>
+T ROSMessageConverter<T>::toMsg() const
+{
+  return msg_;
+}
 
 template <typename T>
 bool ROSMessageConverter<T>::operator!=(const T& msg) const
