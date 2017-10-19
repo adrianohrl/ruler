@@ -46,8 +46,8 @@ Thumbs.db
 ############
 # ROS Bags #
 ############
-bag/*
-bags/*
+*/bag/*
+*/bags/*
 *.bag
 *.pyc
 ./CMakeLists.txt

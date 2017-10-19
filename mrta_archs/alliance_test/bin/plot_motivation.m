@@ -25,11 +25,11 @@ function plot_motivation(robot_id, task_id, filename)
 	fprintf(fid, '%s\n', csv_file_header);
  fclose(fid);
  csvwrite(new_filename, [t csv_file(:, 2 : end)], '-append');
- ylabels = ['Impatience'; 'Acquiescent'; 'Suppressed'; 'Resetted'; 'Applicable'; 'Motivation'; 'Threshold'; 'Active'];
+ ylabels = {'Impatience'; 'Acquiescent'; 'Suppressed'; 'Resetted'; 'Applicable'; 'Motivation'; 'Threshold'; 'Active'};
 	for i = 1 : rows(ylabels)
-  graphes.(ylabels(i, :)) = i + 1;
+  graphes.(ylabels{i}) = i + 1;
 	end;
- ylabels = {{'Impatience'}; {'Acquiescent'}; {'Resetted'}; {'Motivation'; 'Threshold'}; {'Active'}};
+ ylabels = {{'Impatience'}; {'Acquiescent'}; {'Resetted'}; {'Motivation'; 'Threshold'}};
 	n = rows(ylabels);
 	figure;
 	title(['Motivation of the ' robot_id '/' task_id ' behaviour set']);
@@ -37,10 +37,10 @@ function plot_motivation(robot_id, task_id, filename)
 		subplot(n, 1, i);
   hold on;
   for j = 1 : rows(ylabels{i})
-    plot(t, csv_file(:, graphes.(ylabels{i}{j})));
+    plot(t, csv_file(:, graphes.(ylabels{i}{1})));
   end;
-		grid on;
-		ylabel(ylabels(i, :));
+  ylabel(ylabels{i}{1});
+  grid on;
 	end;
 	xlabel('t (s)');
 end
