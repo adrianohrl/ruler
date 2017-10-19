@@ -1,16 +1,46 @@
-function plot_motivation(filename, robot_id, task_id)
+function plot_motivation(robot_id, task_id, filename)
 
-	csv_file = csvread(filename, 1, 0);
+	if nargin < 2
+		error('Please, enter at least the desired robot_id and the desired task_id.');
+	end;
+	if nargin == 2 || ~exist('filename') || isempty(filename)
+		filename = ['../bag/' robot_id '-' task_id '-motivation.csv']; 
+	end;
+	if exist(filename, 'file') ~= 2
+		error(['The input filename does not exist: ' filename ' .']);
+	end;
+	try
+		csv_file = csvread(filename, 1, 0);
+	catch
+		disp(['No data available in:' filename]);
+		return;
+	end;
 	t = csv_file(:, 1);
 	t = 10e-9 * (t - min(t) * ones(size(t)));
+	fid = fopen(filename);
+	csv_file_header = fgetl(fid);
+	fclose(fid);
+	new_filename = strrep(filename, '.csv', '-new.csv');
+	fid = fopen(new_filename, 'w');
+	fprintf(fid, '%s\n', csv_file_header);
+ fclose(fid);
+ csvwrite(new_filename, [t csv_file(:, 2 : end)], '-append');
+ ylabels = ['Impatience'; 'Acquiescent'; 'Suppressed'; 'Resetted'; 'Applicable'; 'Motivation'; 'Threshold'; 'Active'];
+	for i = 1 : rows(ylabels)
+  graphes.(ylabels(i, :)) = i + 1;
+	end;
+ ylabels = {{'Impatience'}; {'Acquiescent'}; {'Resetted'}; {'Motivation'; 'Threshold'}; {'Active'}};
+	n = rows(ylabels);
 	figure;
 	title(['Motivation of the ' robot_id '/' task_id ' behaviour set']);
-	subplot(6, 1, 1); plot(t, csv_file(:, 2)); grid on; ylabel('Impatience');
-	subplot(6, 1, 2); plot(t, csv_file(:, 3)); grid on; ylabel('Acquiescent');
-	subplot(6, 1, 3); plot(t, csv_file(:, 4)); grid on; ylabel('Suppressed');
-	subplot(6, 1, 4); plot(t, csv_file(:, 5)); grid on; ylabel('Resetted');
-	subplot(6, 1, 5); plot(t, csv_file(:, 6)); grid on; ylabel('Applicable');
-	subplot(6, 1, 6); plot(t, csv_file(:, 7)); grid on; ylabel('Motivation');
+	for i = 1 : n
+		subplot(n, 1, i);
+  hold on;
+  for j = 1 : rows(ylabels{i})
+    plot(t, csv_file(:, graphes.(ylabels{i}{j})));
+  end;
+		grid on;
+		ylabel(ylabels(i, :));
+	end;
 	xlabel('t (s)');
-
 end

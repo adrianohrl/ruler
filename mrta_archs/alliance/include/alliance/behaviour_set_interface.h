@@ -20,9 +20,11 @@ public:
   virtual void process();
   std::string getNamespace() const;
   TaskPtr getTask() const;
+  ros::Duration getTaskExpectedDuration() const;
   bool isActive(const ros::Time& timestamp = ros::Time::now()) const;
   ros::Time getActivationTimestamp() const;
   ros::Duration getBufferHorizon() const;
+  void setTaskExpectedDuration(const ros::Duration& expected_duration);
   virtual void setActive(bool active = true,
                          const ros::Time& timestamp = ros::Time::now());
   void setTimeoutDuration(const ros::Duration& timeout_duration);
@@ -34,6 +36,7 @@ protected:
   const std::string ns_;
   const RPtr robot_;
   const TaskPtr task_;
+  ros::Duration expected_duration_;
   ros::Time activation_timestamp_;
   ros::Duration buffer_horizon_;
   SampleHolderPtr active_;
@@ -67,6 +70,12 @@ template <typename R> TaskPtr BehaviourSetInterface<R>::getTask() const
 }
 
 template <typename R>
+ros::Duration BehaviourSetInterface<R>::getTaskExpectedDuration() const
+{
+  return expected_duration_;
+}
+
+template <typename R>
 bool BehaviourSetInterface<R>::isActive(const ros::Time& timestamp) const
 {
   return active_->getValue(timestamp);
@@ -82,6 +91,13 @@ template <typename R>
 ros::Duration BehaviourSetInterface<R>::getBufferHorizon() const
 {
   return buffer_horizon_;
+}
+
+template <typename R>
+void BehaviourSetInterface<R>::setTaskExpectedDuration(
+    const ros::Duration& expected_duration)
+{
+  expected_duration_ = expected_duration;
 }
 
 template <typename R>

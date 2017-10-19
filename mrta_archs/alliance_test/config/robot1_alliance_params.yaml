@@ -19,11 +19,12 @@ behaviour_sets:
   size: 1 # alter to 3, simplified to 1 for tests
   behaviour_set0:
     task_id: 'wander'
+    task_expected_duration: 100.0 # in seconds
     motivational_behaviour:
       threshold: 150.0
       acquiescence:
-        yielding_delay: 1.0    # in seconds
-        giving_up_delay: 20.0  # in seconds
+        yielding_delay: 2.5    # in seconds
+        giving_up_delay: 110.0  # in seconds
       impatience:
         fast_rate: 5.0
       sensory_feedback:
@@ -34,11 +35,12 @@ behaviour_sets:
             topic_name: 'sonar'
   behaviour_set1:
     task_id: 'border_protection'
+    task_expected_duration: 200.0 # in seconds
     motivational_behaviour:
       threshold: 200.0
       acquiescence:
-        yielding_delay: 0.5   # in seconds
-        giving_up_delay: 20.0  # in seconds
+        yielding_delay: 1.0   # in seconds
+        giving_up_delay: 220.0  # in seconds
       impatience:
         fast_rate: 10.0
       sensory_feedback:
@@ -51,6 +53,7 @@ behaviour_sets:
             topic_name: 'odom'
   behaviour_set2:
     task_id: 'report'
+    task_expected_duration: 500.0 # in seconds
     motivational_behaviour:
       threshold: 250.0
       acquiescence:

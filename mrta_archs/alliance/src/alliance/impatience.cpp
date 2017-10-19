@@ -5,10 +5,11 @@ namespace alliance
 {
 Impatience::Impatience(const RobotPtr& robot,
                        const BehaviourSetPtr& behaviour_set)
-    : robot_(robot), behaviour_set_(behaviour_set),
-      fast_rate_(
-          new SampleHolder(behaviour_set_->getId() + "/impatience/fast_rate",
-                           0.0, behaviour_set_->getBufferHorizon()))
+    : AllianceObserver<alliance_msgs::InterRobotCommunication>::
+          AllianceObserver(behaviour_set->getId() + "/impatience"),
+      robot_(robot), behaviour_set_(behaviour_set),
+      fast_rate_(new SampleHolder(id_ + "/fast_rate", 0.0,
+                                  behaviour_set_->getBufferHorizon()))
 {
 }
 
@@ -125,7 +126,7 @@ void Impatience::setReliabilityDuration(
 {
   SampleHolderPtr sample_holder;
   iterator it(reliability_durations_.find(robot_id));
-  if (it == slow_rates_.end())
+  if (it == reliability_durations_.end())
   {
     sample_holder.reset(new SampleHolder(
         robot_->getId() + "/" + robot_id + "/reliability_duration",
@@ -139,5 +140,27 @@ void Impatience::setReliabilityDuration(
   ROS_DEBUG_STREAM("Updating " << *sample_holder << " to "
                                << reliability_duration.toSec() << " [s].");
   sample_holder->update(reliability_duration.toSec(), timestamp);
+}
+
+void Impatience::update(
+    const nodes::InterRobotCommunicationEventConstPtr& event)
+{
+  if (event->isRelated(*robot_) ||
+      !event->isRelated(*behaviour_set_->getTask()))
+  {
+    return;
+  }
+  std::string robot_id(event->getMsg().header.frame_id);
+  ros::Time timestamp(event->getTimestamp());
+  ros::Duration reliability_duration(event->getMsg().expected_duration);
+  if (reliability_duration == getReliabilityDuration(robot_id, timestamp))
+  {
+    return;
+  }
+  double slow_rate(
+      behaviour_set_->getMotivationalBehaviour()->getThreshold(timestamp) /
+      reliability_duration.toSec());
+  setReliabilityDuration(robot_id, reliability_duration, timestamp);
+  setSlowRate(robot_id, slow_rate, timestamp);
 }
 }

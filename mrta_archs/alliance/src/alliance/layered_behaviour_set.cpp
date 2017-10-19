@@ -86,7 +86,6 @@ void LayeredBehaviourSet::setSensoryEvaluator(
   {
     sensory_evaluator_ =
         sensory_evaluator_loader_.createInstance(plugin_name.c_str());
-    ROS_WARN_STREAM("[LayeredBehaviourSet] plugin: " << plugin_name);
     sensory_evaluator_->initialize(nh, robot_, *task_, sensors);
     ROS_DEBUG_STREAM("Loaded " << plugin_name
                                << " sensory evaluator plugin to publish "

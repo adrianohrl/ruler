@@ -6,3 +6,5 @@ bool suppressed
 bool resetted
 bool aplicable
 float64 motivation
+float64 threshold
+bool active

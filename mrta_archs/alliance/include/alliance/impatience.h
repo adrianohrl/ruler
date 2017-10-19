@@ -8,7 +8,7 @@
 
 namespace alliance
 {
-class Impatience
+class Impatience : public nodes::InterRobotCommunicationObserver
 {
 public:
   Impatience(const RobotPtr& robot, const BehaviourSetPtr& behaviour_set);
@@ -28,6 +28,7 @@ public:
   void setReliabilityDuration(const std::string& robot_id,
                               const ros::Duration& reliability_duration,
                               const ros::Time& timestamp = ros::Time::now());
+  virtual void update(const nodes::InterRobotCommunicationEventConstPtr& event);
 
 private:
   typedef utilities::functions::ContinuousSampleHolder SampleHolder;

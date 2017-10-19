@@ -13,9 +13,10 @@ public:
   ImpatienceReset();
   virtual ~ImpatienceReset();
   void init(const InterRobotCommunicationPtr& monitor);
-  bool isResetted(const ros::Time& timestamp = ros::Time::now()) const;
+  bool isResetted(const ros::Time& timestamp = ros::Time::now());
 
 private:
+  bool resetted_;
   InterRobotCommunicationPtr monitor_;
 };
 

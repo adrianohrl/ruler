@@ -115,6 +115,19 @@ void HighLevelNode::readParameters()
       }
       it++;
     }
+    if (!behaviour_set)
+    {
+      ROS_ERROR("The behaviour set's task id is unknown.");
+      continue;
+    }
+    double expected_duration;
+    pnh.param(ss.str() + "task_expected_duration", expected_duration, 0.0);
+    if (expected_duration <= 0.0)
+    {
+      ROS_ERROR("The behaviour set's task expected duration must be positive.");
+      continue;
+    }
+    behaviour_set->setTaskExpectedDuration(ros::Duration(expected_duration));
     ss << "motivational_behaviour/";
     double threshold;
     pnh.param(ss.str() + "threshold", threshold, 0.0);
@@ -168,6 +181,8 @@ void HighLevelNode::init()
         behaviour_set->getMotivationalBehaviour());
     AllianceSubject<alliance_msgs::InterRobotCommunication>::registerObserver(
         motivational_behaviour->getInterRobotCommunication());
+    AllianceSubject<alliance_msgs::InterRobotCommunication>::registerObserver(
+        motivational_behaviour->getImpatience());
     AllianceSubject<alliance_msgs::SensoryFeedback>::registerObserver(
         motivational_behaviour->getSensoryFeedback());
   }
@@ -214,6 +229,7 @@ void HighLevelNode::broadcastTimerCallback(const ros::TimerEvent& event)
   msg.header.stamp = ros::Time::now();
   msg.header.frame_id = robot_->getId();
   msg.task_id = robot_->getExecutingTask()->getId();
+  msg.expected_duration = robot_->getExecutingTaskExpectedDuration();
   inter_robot_communication_pub_.publish(msg);
 }
 

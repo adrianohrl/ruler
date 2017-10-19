@@ -13,6 +13,10 @@ public:
   virtual void process();
 
 private:
+  bool align_left_;
+  bool align_right_;
+  static const double DANGEROUS_DISTANCE = 0.5;
+  static const double GAIN = 0.5;
 };
 }
 

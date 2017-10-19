@@ -7,6 +7,7 @@ behaviour_sets:
   size: 3
   behaviour_set0:
     task_id: 'wander'
+    task_expected_duration: 2250.0 # in seconds
     motivational_behaviour:
       threshold: 360.0
       acquiescence:
@@ -16,6 +17,7 @@ behaviour_sets:
         fast_rate: 5.0
   behaviour_set1:
     task_id: 'border_protection'
+    task_expected_duration: 3250.0 # in seconds
     motivational_behaviour:
       threshold: 200.0
       acquiescence:
@@ -25,6 +27,7 @@ behaviour_sets:
         fast_rate: 10.0
   behaviour_set2:
     task_id: 'report'
+    task_expected_duration: 750.0 # in seconds
     motivational_behaviour:
       threshold: 50.0
       acquiescence:

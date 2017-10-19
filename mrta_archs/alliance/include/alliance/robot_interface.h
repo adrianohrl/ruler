@@ -23,6 +23,7 @@ public:
   void process();
   std::string getNamespace() const;
   TaskPtr getExecutingTask() const;
+  ros::Duration getExecutingTaskExpectedDuration() const;
   bool isIdle() const;
   virtual void addBehaviourSet(const BSPtr& behaviour_set);
   std::size_t size() const;
@@ -51,7 +52,6 @@ template <typename BS> RobotInterface<BS>::~RobotInterface() {}
 
 template <typename BS> void RobotInterface<BS>::process()
 {
-  ROS_WARN_STREAM("[RobotInterface] active: " << (active_behaviour_set_ ? active_behaviour_set_->str() : ""));
   if (active_behaviour_set_ && !active_behaviour_set_->isActive())
   {
     active_behaviour_set_->setActive(false);
@@ -82,6 +82,14 @@ template <typename BS> std::string RobotInterface<BS>::getNamespace() const
 template <typename BS> TaskPtr RobotInterface<BS>::getExecutingTask() const
 {
   return active_behaviour_set_ ? active_behaviour_set_->getTask() : TaskPtr();
+}
+
+template <typename BS>
+ros::Duration RobotInterface<BS>::getExecutingTaskExpectedDuration() const
+{
+  return active_behaviour_set_
+             ? active_behaviour_set_->getTaskExpectedDuration()
+             : ros::Duration();
 }
 
 template <typename BS> bool RobotInterface<BS>::isIdle() const

@@ -34,7 +34,13 @@ void MotivationalBehaviour::init()
 
 bool MotivationalBehaviour::isActive(const ros::Time& timestamp)
 {
-  return getLevel(timestamp) >= getThreshold(timestamp);
+  msg_.threshold = getThreshold(timestamp);
+  msg_.active = getLevel(timestamp) >= msg_.threshold;
+  if (msg_.active)
+  {
+    msg_.motivation = msg_.threshold;
+  }
+  return msg_.active;
 }
 
 double MotivationalBehaviour::getThreshold(const ros::Time& timestamp) const
