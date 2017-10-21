@@ -98,7 +98,7 @@ void Impatience::setSlowRate(const std::string& robot_id, double slow_rate,
   if (it == slow_rates_.end())
   {
     sample_holder.reset(
-        new SampleHolder(robot_->getId() + "/" + robot_id + "/slow_rate",
+        new SampleHolder(robot_->getId() + robot_id + "/slow_rate",
                          slow_rate, robot_->getTimeoutDuration(), timestamp));
     slow_rates_[robot_id] = sample_holder;
   }
@@ -129,7 +129,7 @@ void Impatience::setReliabilityDuration(
   if (it == reliability_durations_.end())
   {
     sample_holder.reset(new SampleHolder(
-        robot_->getId() + "/" + robot_id + "/reliability_duration",
+        robot_->getId() + robot_id + "/reliability_duration",
         reliability_duration.toSec(), robot_->getTimeoutDuration(), timestamp));
     reliability_durations_[robot_id] = sample_holder;
   }

@@ -1,10 +1,10 @@
 name: 'Robot 2'
-spin_rate: 3.0           # in Hertz
+spin_rate: 5.0           # in Hertz
 broadcast_rate: 0.5      # in Hertz
 timeout_duration: 2.5    # in seconds
 buffer_horizon: 10.0     # in seconds
 sensors:
-  size: 2
+  size: 3
   sensor0:
     plugin_name: 'alliance_test/odometry'
     topic_name: 'odom'
@@ -23,7 +23,7 @@ behaviour_sets:
     motivational_behaviour:
       threshold: 100.0
       acquiescence:
-        yielding_delay: 2.0   # in seconds
+        yielding_delay: 180.0   # in seconds
         giving_up_delay: 200.0  # in seconds
       impatience:
         fast_rate: 10.0
@@ -39,7 +39,7 @@ behaviour_sets:
     motivational_behaviour:
       threshold: 300.0
       acquiescence:
-        yielding_delay: 1.5   # in seconds
+        yielding_delay: 200.0   # in seconds
         giving_up_delay: 350.0  # in seconds
       impatience:
         fast_rate: 5.0
@@ -57,7 +57,7 @@ behaviour_sets:
     motivational_behaviour:
       threshold: 250.0
       acquiescence:
-        yielding_delay: 0.5   # in seconds
+        yielding_delay: 20.0   # in seconds
         giving_up_delay: 50.0  # in seconds
       impatience:
         fast_rate: 4.0  

@@ -24,8 +24,9 @@ void ActivitySuppression::update(const utilities::EventConstPtr& event)
       boost::dynamic_pointer_cast<utilities::ToggleEvent const>(event));
   if (toggle_event)
   {
-    ROS_DEBUG_STREAM("Updating " << *suppressed_ << " to "
-                                 << (toggle_event->getValue()? "true." : "false."));
+    ROS_DEBUG_STREAM("Updating "
+                     << *suppressed_ << " to "
+                     << (toggle_event->getValue() ? "true." : "false."));
     suppressed_->update(toggle_event);
   }
 }

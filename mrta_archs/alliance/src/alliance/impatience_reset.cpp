@@ -21,9 +21,10 @@ bool ImpatienceReset::isResetted(const ros::Time& timestamp)
   {
     return false;
   }
+  ros::Time last_update_timestamp(monitor_->getLastUpdateTimestamp());
   resetted_ =
-      monitor_->received(monitor_->getLastUpdateTimestamp(), timestamp) &&
-      !monitor_->received(ros::Time(), monitor_->getLastUpdateTimestamp());
+      monitor_->received(last_update_timestamp, timestamp) &&
+      !monitor_->received(ros::Time(), last_update_timestamp);
   return resetted_;
 }
 }

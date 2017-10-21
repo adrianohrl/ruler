@@ -69,7 +69,6 @@ template <typename BS> void RobotInterface<BS>::process()
       }
       active_behaviour_set_ = behaviour_set;
       active_behaviour_set_->process();
-      return;
     }
   }
 }

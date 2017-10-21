@@ -20,7 +20,7 @@ if [[ ${#} -gt 0 ]]; then
   MAP_PATH="map/${1}.map"
 fi
 ROS_PKG="alliance_test"
-NUMBER_ROBOTS=2
+NUMBER_ROBOTS=3
 if [[ ${#} -gt 1 ]]; then
   NUMBER_ROBOTS=${2}
 fi

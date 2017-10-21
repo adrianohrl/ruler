@@ -27,7 +27,8 @@ void BehaviourSet::init()
 
 void BehaviourSet::preProcess()
 {
-  setActive(motivational_behaviour_->isActive());
+  ros::Time timestamp(ros::Time::now());
+  setActive(motivational_behaviour_->isActive(timestamp), timestamp);
 }
 
 MotivationalBehaviourPtr BehaviourSet::getMotivationalBehaviour() const
