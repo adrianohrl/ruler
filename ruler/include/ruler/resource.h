@@ -16,10 +16,10 @@ namespace ruler
 {
 template <typename T>
 class Resource : public ResourceInterface,
-                 public boost::enable_shared_from_this<Resource<T>>
+                 public boost::enable_shared_from_this<Resource<T> >
 {
 public:
-  typedef boost::shared_ptr<Resource<T>> Ptr;
+  typedef boost::shared_ptr<Resource<T> > Ptr;
   typedef boost::shared_ptr<Resource<T> const> ConstPtr;
   virtual ~Resource();
   virtual void update(const utilities::EventConstPtr& event);
@@ -81,6 +81,12 @@ Resource<T>::Resource(const ruler_msgs::Resource& msg)
   if (latence_.toSec() < 0.0)
   {
     throw utilities::Exception("Resource latence must not be negative.");
+  }
+  if (utilities::SignalTypes::toEnumerated(msg.signal_type) != getSignalType())
+  {
+    throw utilities::Exception(
+        "Not an " + utilities::SignalTypes::toString(getSignalType()) +
+        " signal type resource ros message.");
   }
 }
 
@@ -166,8 +172,8 @@ template <typename T> ruler_msgs::Resource Resource<T>::toMsg() const
   msg.consumable = isConsumable();
   msg.name = name_;
   msg.latence = latence_;
-  msg.capacity = profile_->getCapacity();
-  msg.level = getLevel(msg.header.stamp);
+  msg.capacity = profile_->getCapacity().getValue();
+  msg.level = getLevel(msg.header.stamp).getValue();
   return msg;
 }
 }

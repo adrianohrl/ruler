@@ -88,13 +88,13 @@ void RulerTestNode::readParameters()
         if (type == "consumable")
         {
           resource = new ruler::DiscreteConsumableResource(
-              id, name, discrete_capacity, discrete_initial_level,
+              id, name, (long) discrete_capacity, (long) discrete_initial_level,
               ros::Duration(latence));
         }
         else
         {
           resource = new ruler::DiscreteReusableResource(
-              id, name, discrete_capacity, discrete_initial_level,
+              id, name, (long) discrete_capacity, (long) discrete_initial_level,
               ros::Duration(latence));
         }
         break;

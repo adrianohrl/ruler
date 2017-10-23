@@ -26,7 +26,7 @@ public:
   void setValue(const T& value);
   virtual std::string str() const;
   const char* c_str() const;
-  virtual bool operator<(const T& value) const;
+  /*virtual bool operator<(const T& value) const;
   virtual bool operator<(const SignalType<T>& signal_type) const;
   virtual bool operator<=(const T& value) const;
   virtual bool operator<=(const SignalType<T>& signal_type) const;
@@ -45,7 +45,7 @@ public:
   virtual SignalType<T>& operator*(const T& value);
   virtual SignalType<T>& operator*(const SignalType<T>& signal_type);
   virtual SignalType<T>& operator/(const T& value);
-  virtual SignalType<T>& operator/(const SignalType<T>& signal_type);
+  virtual SignalType<T>& operator/(const SignalType<T>& signal_type);*/
   virtual SignalType<T>& operator=(const T& value);
   virtual SignalType<T>& operator=(const SignalType<T>& signal_type);
   virtual SignalType<T>& operator+=(const T& value);
@@ -101,7 +101,7 @@ template <typename T> const char* SignalType<T>::c_str() const
 {
   return str().c_str();
 }
-
+/*
 template <typename T> bool SignalType<T>::operator<(const T& value) const
 {
   return value_ < value;
@@ -172,7 +172,7 @@ bool SignalType<T>::operator>(const SignalType<T>& signal_type) const
 {
   value_ = -value_;
   return *this;
-}*/
+}*//*
 
 template <typename T> SignalType<T>& SignalType<T>::operator+(const T& value)
 {
@@ -225,7 +225,7 @@ SignalType<T>& SignalType<T>::operator/(const SignalType<T>& signal_type)
   value_ /= signal_type.value_;
   return *this;
 }
-
+*/
 template <typename T> SignalType<T>& SignalType<T>::operator=(const T& value)
 {
   value_ = value;

@@ -37,7 +37,7 @@ void BatterySimulationNode::readParameters()
     return;
   }
   if (!std::equal(robot_id_.rbegin(), robot_id_.rend(),
-                  ros::this_node::getName().rbegin()))
+                  ros::this_node::getNamespace().rbegin()))
   {
     ROSNode::shutdown("Invalid ROS namespace. It must end with '" + robot_id_ +
                       "'.");

@@ -20,6 +20,11 @@ template <typename T> class ReusableResource : public Resource<T>
 public:
   typedef boost::shared_ptr<ReusableResource<T> > Ptr;
   typedef boost::shared_ptr<ReusableResource<T> const> ConstPtr;
+  ReusableResource(const ruler_msgs::Resource& msg);
+  ReusableResource(const std::string& id, const std::string& name,
+                   const T& capacity, const T& initial_level,
+                   const ros::Duration& latence = ros::Duration(0.0));
+  ReusableResource(const ReusableResource<T>& resource);
   virtual ~ReusableResource();
   virtual bool isReusable() const;
   virtual void require(const TaskPtr& task, const T& quantity, double d0 = 0.0,
@@ -29,12 +34,26 @@ protected:
   typedef typename boost::enable_shared_from_this<Resource<T> > enable_shared_from_this;
   typedef typename TaskFunction<T>::Ptr TaskFunctionPtr;
   typedef typename TaskFunction<T>::ConstPtr TaskFunctionConstPtr;
-  ReusableResource(const ruler_msgs::Resource& msg);
-  ReusableResource(const std::string& id, const std::string& name,
-                   const T& capacity, const T& initial_level,
-                   const ros::Duration& latence = ros::Duration(0.0));
-  ReusableResource(const ReusableResource<T>& resource);
 };
+
+/*typedef ReusableResource<utilities::ContinuousSignalType>
+    ContinuousReusableResource;
+typedef boost::shared_ptr<ContinuousReusableResource>
+    ContinuousReusableResourcePtr;
+typedef boost::shared_ptr<ContinuousReusableResource const>
+    ContinuousReusableResourceConstPtr;
+typedef ReusableResource<utilities::DiscreteSignalType>
+    DiscreteReusableResource;
+typedef boost::shared_ptr<DiscreteReusableResource>
+    DiscreteReusableResourcePtr;
+typedef boost::shared_ptr<DiscreteReusableResource const>
+    DiscreteReusableResourceConstPtr;*//*
+typedef ReusableResource<utilities::UnarySignalType>
+    UnaryReusableResource;
+typedef boost::shared_ptr<UnaryReusableResource>
+    UnaryReusableResourcePtr;
+typedef boost::shared_ptr<UnaryReusableResource const>
+    UnaryReusableResourceConstPtr;*/
 
 template <typename T>
 ReusableResource<T>::ReusableResource(const ruler_msgs::Resource& msg)

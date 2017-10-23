@@ -25,10 +25,7 @@ protected:
 
 public:
   UnaryConsumableResource(const std::string& id, const std::string& name,
-                          bool initial_level = true,
-                          const ros::Duration& latence = ros::Duration());
-  UnaryConsumableResource(const std::string& id, const std::string& name,
-                          const utilities::UnarySignalType& initial_level,
+                          const utilities::UnarySignalType& initial_level = true,
                           const ros::Duration& latence = ros::Duration());
   UnaryConsumableResource(const ruler_msgs::Resource& msg);
   UnaryConsumableResource(const UnaryConsumableResource& resource);

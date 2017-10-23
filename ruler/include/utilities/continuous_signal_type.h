@@ -20,8 +20,6 @@ public:
   ContinuousSignalType(const ContinuousSignalType& signal_type);
   virtual ~ContinuousSignalType();
   virtual bool isContinuous() const;
-  using SignalType<double>::operator-;
-  virtual ContinuousSignalType& operator-();
 };
 
 typedef boost::shared_ptr<ContinuousSignalType> ContinuousSignalTypePtr;

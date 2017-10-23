@@ -38,16 +38,32 @@ public:
   virtual bool isConsumable() const;
   virtual void consume(const TaskPtr& task,
                        const FunctionPtr& quantity_function);
+  virtual void consume(const TaskPtr& task, const T& quantity, double d0 = 0.0,
+                       double df = INFINITY);
   virtual void produce(const TaskPtr& task,
                        const FunctionPtr& quantity_function);
+  virtual void produce(const TaskPtr& task, const T& quantity, double d0 = 0.0,
+                       double df = INFINITY);
 };
 
-typedef ConsumableResource<utilities::ContinuousSignalType>
+/*typedef ConsumableResource<utilities::ContinuousSignalType>
     ContinuousConsumableResource;
 typedef boost::shared_ptr<ContinuousConsumableResource>
     ContinuousConsumableResourcePtr;
 typedef boost::shared_ptr<ContinuousConsumableResource const>
     ContinuousConsumableResourceConstPtr;
+typedef ConsumableResource<utilities::DiscreteSignalType>
+    DiscreteConsumableResource;
+typedef boost::shared_ptr<DiscreteConsumableResource>
+    DiscreteConsumableResourcePtr;
+typedef boost::shared_ptr<DiscreteConsumableResource const>
+    DiscreteConsumableResourceConstPtr;*//*
+typedef ConsumableResource<utilities::UnarySignalType>
+    UnaryConsumableResource;
+typedef boost::shared_ptr<UnaryConsumableResource>
+    UnaryConsumableResourcePtr;
+typedef boost::shared_ptr<UnaryConsumableResource const>
+    UnaryConsumableResourceConstPtr;*/
 
 template <typename T>
 ConsumableResource<T>::ConsumableResource(const std::string& id,
@@ -108,6 +124,22 @@ void ConsumableResource<T>::consume(const TaskPtr& task,
 }
 
 template <typename T>
+void ConsumableResource<T>::consume(const TaskPtr &task, const T &quantity, double d0, double df)
+{
+  /*utilities::functions::StepFunction<T>::Ptr quantity_function;
+  if (df == INFINITY)
+  {
+    quantity_function.reset(new utilities::functions::StepFunction(d0));
+  }
+  else
+  {
+    quantity_function.reset(
+        new utilities::functions::StepFunction(d0, df));
+  }
+  consume(task, quantity_function);*/
+}
+
+template <typename T>
 void ConsumableResource<T>::produce(const TaskPtr& task,
                                     const FunctionPtr& quantity_function)
 {
@@ -130,6 +162,22 @@ void ConsumableResource<T>::produce(const TaskPtr& task,
       new TaskFunction<T>(enable_shared_from_this::shared_from_this(),
                           task, quantity_function));
   Resource<T>::profile_->addTaskFunction(task_function);
+}
+
+template <typename T>
+void ConsumableResource<T>::produce(const TaskPtr &task, const T &quantity, double d0, double df)
+{
+  /*UnaryFunctionPtr quantity_function;
+  if (df == INFINITY)
+  {
+    quantity_function.reset(new utilities::functions::UnaryStepFunction(d0));
+  }
+  else
+  {
+    quantity_function.reset(
+        new utilities::functions::UnaryPulseFunction(d0, df));
+  }
+  produce(task, quantity_function);*/
 }
 }
 

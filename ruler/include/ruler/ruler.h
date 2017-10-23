@@ -11,7 +11,7 @@
 #include "ruler/battery_simulation.h"
 #include "ruler/consumable_resource.h"
 #include "ruler/consumable_resource_reservation_request.h"
-//#include "ruler/continuous_consumable_resource.h"
+#include "ruler/continuous_consumable_resource.h"
 #include "ruler/continuous_reusable_resource.h"
 #include "ruler/discrete_consumable_resource.h"
 #include "ruler/discrete_reusable_resource.h"

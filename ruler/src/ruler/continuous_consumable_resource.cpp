@@ -11,15 +11,6 @@
 namespace ruler
 {
 ContinuousConsumableResource::ContinuousConsumableResource(
-    const std::string& id, const std::string& name, double capacity,
-    double initial_level, const ros::Duration& latence)
-    : ConsumableResource<utilities::ContinuousSignalType>::ConsumableResource(
-          id, name, utilities::ContinuousSignalType(capacity),
-          utilities::ContinuousSignalType(initial_level), latence)
-{
-}
-
-ContinuousConsumableResource::ContinuousConsumableResource(
     const std::string& id, const std::string& name,
     const utilities::ContinuousSignalType& capacity,
     const utilities::ContinuousSignalType& initial_level,
@@ -34,13 +25,6 @@ ContinuousConsumableResource::ContinuousConsumableResource(
     : ConsumableResource<utilities::ContinuousSignalType>::ConsumableResource(
           msg)
 {
-  utilities::SignalTypeEnum signal_type(
-      utilities::SignalTypes::toEnumerated(msg.signal_type));
-  if (signal_type != utilities::signal_types::CONTINUOUS)
-  {
-    throw utilities::Exception(
-        "Not a continuous signal type resource ros message.");
-  }
 }
 
 ContinuousConsumableResource::ContinuousConsumableResource(

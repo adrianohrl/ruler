@@ -10,17 +10,6 @@
 
 namespace ruler
 {
-DiscreteReusableResource::DiscreteReusableResource(const std::string& id,
-                                                   const std::string& name,
-                                                   long capacity,
-                                                   long initial_level,
-                                                   const ros::Duration& latence)
-    : ReusableResource<utilities::DiscreteSignalType>::ReusableResource(
-          id, name, utilities::DiscreteSignalType(capacity),
-          utilities::DiscreteSignalType(initial_level), latence)
-{
-}
-
 DiscreteReusableResource::DiscreteReusableResource(
     const std::string& id, const std::string& name,
     const utilities::DiscreteSignalType& capacity,
@@ -35,13 +24,6 @@ DiscreteReusableResource::DiscreteReusableResource(
     const ruler_msgs::Resource& msg)
     : ReusableResource<utilities::DiscreteSignalType>::ReusableResource(msg)
 {
-  utilities::SignalTypeEnum signal_type(
-      utilities::SignalTypes::toEnumerated(msg.signal_type));
-  if (signal_type != utilities::signal_types::DISCRETE)
-  {
-    throw utilities::Exception(
-        "Not a discrete signal type resource ros message.");
-  }
 }
 
 DiscreteReusableResource::DiscreteReusableResource(
@@ -52,11 +34,4 @@ DiscreteReusableResource::DiscreteReusableResource(
 }
 
 DiscreteReusableResource::~DiscreteReusableResource() {}
-
-void DiscreteReusableResource::require(const TaskPtr& task, long quantity,
-                                       double d0)
-{
-  ReusableResource<utilities::DiscreteSignalType>::require(
-      task, utilities::DiscreteSignalType(quantity), d0);
-}
 }

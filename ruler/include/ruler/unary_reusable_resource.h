@@ -19,10 +19,7 @@ class UnaryReusableResource
 {
 public:
   UnaryReusableResource(const std::string& id, const std::string& name,
-                        bool initial_level = true,
-                        const ros::Duration& latence = ros::Duration());
-  UnaryReusableResource(const std::string& id, const std::string& name,
-                        const utilities::UnarySignalType& initial_level,
+                        const utilities::UnarySignalType& initial_level = true,
                         const ros::Duration& latence = ros::Duration());
   UnaryReusableResource(const ruler_msgs::Resource& msg);
   UnaryReusableResource(const UnaryReusableResource& resource);

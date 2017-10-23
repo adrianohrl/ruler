@@ -18,18 +18,13 @@ class ContinuousReusableResource
     : public ReusableResource<utilities::ContinuousSignalType>
 {
 public:
-  ContinuousReusableResource(const std::string& id, const std::string& name, double capacity,
-                             double initial_level = 0.0,
-                             const ros::Duration& latence = ros::Duration());
   ContinuousReusableResource(const std::string& id, const std::string& name,
                              const utilities::ContinuousSignalType& capacity,
-                             const utilities::ContinuousSignalType& initial_level,
+                             const utilities::ContinuousSignalType& initial_level = 0.0,
                              const ros::Duration& latence = ros::Duration());
   ContinuousReusableResource(const ruler_msgs::Resource& msg);
   ContinuousReusableResource(const ContinuousReusableResource& resource);
   virtual ~ContinuousReusableResource();
-  using ReusableResource<utilities::ContinuousSignalType>::require;
-  virtual void require(const TaskPtr& task, double quantity, double d0 = 0.0);
 };
 
 typedef boost::shared_ptr<ContinuousReusableResource>
