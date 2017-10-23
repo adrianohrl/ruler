@@ -35,13 +35,13 @@ private:
 
 template <typename R, typename N>
 AllianceNode<R, N>::AllianceNode(const ros::NodeHandlePtr& nh,
-                              const ros::Rate& rate)
+                                 const ros::Rate& rate)
     : ROSNode::ROSNode(nh, rate),
       AllianceSubject<alliance_msgs::InterRobotCommunication>::AllianceSubject(
           ros::this_node::getName() + "/inter_robot_comunication")
 {
   inter_robot_communication_sub_ =
-      nh->subscribe("/alliance/inter_robot_communication", 100,
+      nh->subscribe("/alliance/inter_robot_communication", 25,
                     &AllianceNode<R, N>::interRobotCommunicationCallback, this);
 }
 
@@ -68,8 +68,8 @@ template <typename R, typename N>
 void AllianceNode<R, N>::interRobotCommunicationCallback(
     const alliance_msgs::InterRobotCommunication& msg)
 {
-  InterRobotCommunicationEventConstPtr event(
-      new InterRobotCommunicationEvent(boost::enable_shared_from_this<N>::shared_from_this(), msg));
+  InterRobotCommunicationEventConstPtr event(new InterRobotCommunicationEvent(
+      boost::enable_shared_from_this<N>::shared_from_this(), msg));
   AllianceSubject<alliance_msgs::InterRobotCommunication>::notify(event);
 }
 }

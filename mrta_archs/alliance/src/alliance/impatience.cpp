@@ -86,12 +86,12 @@ void Impatience::setSlowRate(const std::string& robot_id, double slow_rate,
 {
   if (slow_rate <= 0.0)
   {
-    throw utilities::Exception("The impatience slow rate must be positive.");
+    throw utilities::Exception("The " + id_ + " impatience slow rate must be positive.");
   }
   if (slow_rate >= fast_rate_->getValue(timestamp))
   {
     throw utilities::Exception(
-        "The impatience slow rate must be greater than the fast one.");
+        "The " + id_ + " slow rate must be greater than the fast one.");
   }
   SampleHolderPtr sample_holder;
   iterator it(slow_rates_.find(robot_id));

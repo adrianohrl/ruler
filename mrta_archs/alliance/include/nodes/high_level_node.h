@@ -6,8 +6,9 @@
 
 namespace nodes
 {
-class HighLevelNode : public nodes::AllianceNode<alliance::Robot, HighLevelNode>,
-                      public SensoryFeedbackSubject
+class HighLevelNode
+    : public nodes::AllianceNode<alliance::Robot, HighLevelNode>,
+      public SensoryFeedbackSubject
 {
 public:
   HighLevelNode(const ros::NodeHandlePtr& nh,

@@ -18,8 +18,7 @@ SensoryFeedback::~SensoryFeedback() {}
 
 void SensoryFeedback::update(const nodes::SensoryFeedbackEventConstPtr& event)
 {
-  if (!event->isRelated(*robot_) ||
-      !event->isRelated(*behaviour_set_->getTask()))
+  if (!event->isRelated(*behaviour_set_->getTask()))
   {
     return;
   }

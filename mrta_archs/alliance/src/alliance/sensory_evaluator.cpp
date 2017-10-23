@@ -14,7 +14,7 @@ void SensoryEvaluator::initialize(const ros::NodeHandlePtr& nh,
 {
   nh_ = nh;
   sensory_feedback_pub_ = nh_->advertise<alliance_msgs::SensoryFeedback>(
-      "/alliance/sensory_feedback", 10);
+      robot->getNamespace() + "/alliance/sensory_feedback", 1);
   sensory_feedback_msg_.header.frame_id = robot->getId();
   sensory_feedback_msg_.task_id = task.getId();
   for (std::list<std::string>::const_iterator it(sensors.begin());

@@ -80,7 +80,7 @@ template <typename M> void ROSSensorMessage<M>::readParameters()
   }
   up_to_date_.reset(
       new SampleHolder(topic_name, ros::Duration(timeout_duration), ros::Duration(buffer_horizon)));
-  sensor_sub_ = nh_->subscribe(topic_name, 10,
+  sensor_sub_ = nh_->subscribe(topic_name, 1,
                                &ROSSensorMessage<M>::sensorCallback, this);
 }
 

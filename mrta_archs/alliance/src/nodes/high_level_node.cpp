@@ -192,11 +192,11 @@ void HighLevelNode::init()
       &HighLevelNode::broadcastTimerCallback, this, false, false);
   inter_robot_communication_pub_ =
       nh_->advertise<alliance_msgs::InterRobotCommunication>(
-          "/alliance/inter_robot_communication", 10);
+          "/alliance/inter_robot_communication", robot_->size());
   motivation_pub_ =
-      nh_->advertise<alliance_msgs::Motivation>("/alliance/motivation", 10);
+      nh_->advertise<alliance_msgs::Motivation>("/alliance/motivation", 1);
   sensory_feedback_sub_ =
-      nh_->subscribe("/alliance/sensory_feedback", 100,
+      nh_->subscribe(robot_->getNamespace() + "/alliance/sensory_feedback", 10,
                      &HighLevelNode::sensoryFeedbackCallback, this);
 }
 
@@ -205,9 +205,10 @@ void HighLevelNode::controlLoop()
   AllianceNode<alliance::Robot, HighLevelNode>::controlLoop();
   if (!robot_->isIdle() && !broadcasting_)
   {
-    ROS_INFO_STREAM("Starting " << *robot_ << " broadcast timer.");
     broadcast_timer_.start();
     broadcasting_ = true;
+    ROS_INFO_STREAM("Started " << *robot_ << " broadcast timer for "
+                                << *robot_->getExecutingTask() << ".");
   }
   for (alliance::Robot::iterator it(robot_->begin()); it != robot_->end(); it++)
   {
@@ -220,9 +221,9 @@ void HighLevelNode::broadcastTimerCallback(const ros::TimerEvent& event)
 {
   if (!robot_->getExecutingTask())
   {
-    ROS_INFO_STREAM("Stoping " << *robot_ << " broadcast timer.");
     broadcast_timer_.stop();
     broadcasting_ = false;
+    ROS_INFO_STREAM("Stopped " << *robot_ << " broadcast timer.");
     return;
   }
   alliance_msgs::InterRobotCommunication msg;

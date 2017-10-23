@@ -1,22 +1,22 @@
 name: 'Robot 2'
-spin_rate: 5.0           # in Hertz
-broadcast_rate: 0.5      # in Hertz
+spin_rate: 1.0           # in Hertz
+broadcast_rate: 0.6      # in Hertz
 timeout_duration: 2.5    # in seconds
 buffer_horizon: 10.0     # in seconds
 sensors:
-  size: 3
+  size: 2
   sensor0:
     plugin_name: 'alliance_test/odometry'
     topic_name: 'odom'
-    timeout_duration: 2.5
+    timeout_duration: 6.0
     buffer_horizon: 5.5
   sensor1:
     plugin_name: 'alliance_test/point_cloud'
     topic_name: 'sonar'
-    timeout_duration: 3.0
+    timeout_duration: 4.0
     buffer_horizon: 6.0
 behaviour_sets:
-  size: 2
+  size: 3
   behaviour_set0:
     task_id: 'wander'
     task_expected_duration: 150.0 # in seconds
@@ -60,7 +60,7 @@ behaviour_sets:
         yielding_delay: 20.0   # in seconds
         giving_up_delay: 50.0  # in seconds
       impatience:
-        fast_rate: 4.0  
+        fast_rate: 15.0
       sensory_feedback:
         plugin_name: 'alliance_test/updated_sensory'
         sensors:

@@ -3,8 +3,7 @@
 namespace nodes
 {
 
-LowLevelNode::LowLevelNode(const ros::NodeHandlePtr& nh,
-                                           const ros::Rate& rate)
+LowLevelNode::LowLevelNode(const ros::NodeHandlePtr& nh, const ros::Rate& rate)
     : AllianceNode<alliance::BehavedRobot, LowLevelNode>::AllianceNode(nh, rate)
 {
 }
@@ -119,7 +118,8 @@ void LowLevelNode::readParameters()
     pnh.param(ss.str() + "plugin_name", plugin_name, std::string(""));
     if (plugin_name.empty())
     {
-      ROS_ERROR("The sensor evaluator plugin name parameter must not be empty.");
+      ROS_ERROR(
+          "The sensor evaluator plugin name parameter must not be empty.");
       continue;
     }
     ss << "sensors/";
@@ -134,7 +134,8 @@ void LowLevelNode::readParameters()
       pnh.param(sss.str() + "topic_name", topic_name, std::string(""));
       if (topic_name.empty())
       {
-        ROS_ERROR("The sensor evaluator plugin name parameter must not be empty.");
+        ROS_ERROR(
+            "The sensor evaluator plugin name parameter must not be empty.");
         continue;
       }
       sensors.push_back(topic_name);
@@ -170,7 +171,8 @@ void LowLevelNode::init()
   for (alliance::BehavedRobot::iterator it(robot_->begin());
        it != robot_->end(); it++)
   {
-    AllianceSubject<alliance_msgs::InterRobotCommunication>::registerObserver(*it);
+    AllianceSubject<alliance_msgs::InterRobotCommunication>::registerObserver(
+        *it);
   }
 }
 }

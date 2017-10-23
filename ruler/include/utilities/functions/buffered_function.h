@@ -36,6 +36,7 @@ public:
   void update(const EventConstPtr& event, const FunctionPtr& model);
   virtual void update(const ros::Time& timestamp);
   void update(const ros::Time& timestamp, const FunctionPtr& model);
+  ros::Time getLastUpdateTimestamp() const;
   void setTimeoutDuration(const ros::Duration& timeout_duration);
   void setBufferHorizon(const ros::Duration& buffer_horizon);
 
@@ -103,8 +104,7 @@ ros::Duration BufferedFunction<T>::getBufferHorizon() const
   return buffer_horizon_;
 }
 
-template <typename T>
-bool BufferedFunction<T>::expires() const
+template <typename T> bool BufferedFunction<T>::expires() const
 {
   return !timeout_duration_.isZero();
 }
@@ -164,14 +164,14 @@ void BufferedFunction<T>::update(const ros::Time& timestamp,
 {
   if (timestamp <= last_update_timestamp_)
   {
-    ROS_DEBUG_STREAM("Ignoring already past event in " << *this << ".");
+    ROS_WARN_STREAM("Ignoring already past event in " << *this << ".");
     return;
   }
   if (timestamp < start_timestamp_)
   {
     if (expires() && start_timestamp_ - timestamp > timeout_duration_)
     {
-      ROS_DEBUG_STREAM("Ignoring already past event in " << *this << ".");
+      ROS_WARN_STREAM("Ignoring already past event in " << *this << ".");
       return;
     }
     last_update_timestamp_ = start_timestamp_;
@@ -212,10 +212,23 @@ void BufferedFunction<T>::update(const ros::Time& timestamp,
     function->setDf(timeout_duration_ + d);
     functions_.push_back(function);
   }
+  else if (function->getQf() != model->getQf())
+  {
+    function->setDf(d);
+    function.reset(model->clone());
+    function->setD0(d);
+    functions_.push_back(function);
+  }
   else
   {
     function->setDf(timeout_duration_ + d);
   }
+}
+
+template <typename T>
+ros::Time BufferedFunction<T>::getLastUpdateTimestamp() const
+{
+  return last_update_timestamp_;
 }
 
 template <typename T>

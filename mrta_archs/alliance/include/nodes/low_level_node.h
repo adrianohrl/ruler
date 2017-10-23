@@ -6,11 +6,12 @@
 
 namespace nodes
 {
-class LowLevelNode : public nodes::AllianceNode<alliance::BehavedRobot, LowLevelNode>
+class LowLevelNode
+    : public nodes::AllianceNode<alliance::BehavedRobot, LowLevelNode>
 {
 public:
   LowLevelNode(const ros::NodeHandlePtr& nh,
-                       const ros::Rate& rate = ros::Rate(30.0));
+               const ros::Rate& rate = ros::Rate(30.0));
   virtual ~LowLevelNode();
 
 private:
