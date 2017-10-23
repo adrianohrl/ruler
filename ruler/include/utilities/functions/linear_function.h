@@ -9,6 +9,8 @@
 #ifndef _UTILITIES_LINEAR_FUNCTION_H_
 #define _UTILITIES_LINEAR_FUNCTION_H_
 
+#include "utilities/continuous_signal_type.h"
+#include "utilities/discrete_signal_type.h"
 #include "utilities/functions/function.h"
 
 namespace utilities
@@ -20,31 +22,40 @@ template <typename T> class LinearFunction : public Function<T>
 public:
   typedef boost::shared_ptr<LinearFunction<T> > Ptr;
   typedef boost::shared_ptr<LinearFunction<T> const> ConstPtr;
-  virtual ~LinearFunction();
-
-protected:
-  LinearFunction(double d0, double df, double q0, double qf, bool ascending,
-                 bool negated);
+  LinearFunction(double d0, double df, double q0, double qf,
+                 bool ascending = false, bool negated = false);
   LinearFunction(const ros::Duration& d0, const ros::Duration& df, double q0,
-                 double qf, bool ascending, bool negated);
+                 double qf, bool ascending = false, bool negated = false);
   LinearFunction(const LinearFunction<T>& function);
+  virtual ~LinearFunction();
   virtual LinearFunction<T>* clone() const;
 
+protected:
 private:
   virtual double calculate(double d) const;
 };
 
+typedef LinearFunction<utilities::ContinuousSignalType>
+    ContinuousLinearFunction;
+typedef boost::shared_ptr<ContinuousLinearFunction> ContinuousLinearFunctionPtr;
+typedef boost::shared_ptr<ContinuousLinearFunction const>
+    ContinuousLinearFunctionConstPtr;
+typedef LinearFunction<utilities::DiscreteSignalType> DiscreteLinearFunction;
+typedef boost::shared_ptr<DiscreteLinearFunction> DiscreteLinearFunctionPtr;
+typedef boost::shared_ptr<DiscreteLinearFunction const>
+    DiscreteLinearFunctionConstPtr;
+
 template <typename T>
-LinearFunction<T>::LinearFunction(double d0, double df, double q0, double qf,
-                                  bool ascending, bool negated)
+LinearFunction<T>::LinearFunction(double d0, double df, double q0,
+                                  double qf, bool ascending, bool negated)
     : Function<T>::Function("Linear", d0, df, q0, qf, ascending, negated)
 {
 }
 
 template <typename T>
 LinearFunction<T>::LinearFunction(const ros::Duration& d0,
-                                  const ros::Duration& df, double q0, double qf,
-                                  bool ascending, bool negated)
+                                  const ros::Duration& df, double q0,
+                                  double qf, bool ascending, bool negated)
     : Function<T>::Function("Linear", d0, df, q0, qf, ascending, negated)
 {
 }

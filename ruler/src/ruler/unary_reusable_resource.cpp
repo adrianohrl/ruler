@@ -34,7 +34,6 @@ UnaryReusableResource::~UnaryReusableResource() {}
 
 void UnaryReusableResource::require(const TaskPtr& task, double d0, double df)
 {
-  /*ReusableResource<utilities::UnarySignalType>::require(
-      task, new utilities::StepFunction());*/
+  ReusableResource<utilities::UnarySignalType>::require(task, true, d0, df);
 }
 }

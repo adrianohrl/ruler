@@ -9,7 +9,7 @@
 #include "alliance/inter_robot_communication.h"
 #include "alliance/sensory_feedback.h"
 #include <alliance_msgs/Motivation.h>
-#include <utilities/functions/continuous_sample_holder.h>
+#include <utilities/functions/sample_holder.h>
 #include <utilities/ros_message_converter.h>
 
 namespace alliance

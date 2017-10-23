@@ -9,7 +9,10 @@
 #ifndef _UTILITIES_STEP_FUNCTION_H_
 #define _UTILITIES_STEP_FUNCTION_H_
 
+#include "utilities/continuous_signal_type.h"
+#include "utilities/discrete_signal_type.h"
 #include "utilities/functions/function.h"
+#include "utilities/unary_signal_type.h"
 
 namespace utilities
 {
@@ -20,21 +23,34 @@ template <typename T> class StepFunction : public Function<T>
 public:
   typedef boost::shared_ptr<StepFunction<T> > Ptr;
   typedef boost::shared_ptr<StepFunction<T> const> ConstPtr;
-  StepFunction(double qf, bool ascending, bool negated);
-  StepFunction(double d0, double qf, bool ascending, bool negated);
-  StepFunction(const ros::Duration& d0, double qf, bool ascending, bool negated);
+  StepFunction(double qf, bool ascending = false, bool negated = false);
+  StepFunction(double d0, double qf,
+               bool ascending = false, bool negated = false);
+  StepFunction(double d0, double q0, double qf, bool ascending = false,
+               bool negated = false);
+  StepFunction(const ros::Duration& d0, double qf, bool ascending = false,
+               bool negated = false);
+  StepFunction(const ros::Duration& d0, double q0, double qf,
+               bool ascending = false, bool negated = false);
   StepFunction(const StepFunction<T>& function);
   virtual ~StepFunction();
   virtual StepFunction<T>* clone() const;
 
-protected:
-  StepFunction(double d0, double q0, double qf, bool ascending, bool negated);
-  StepFunction(const ros::Duration& d0, double q0, double qf, bool ascending,
-               bool negated);
-
 private:
   virtual double calculate(double d) const;
 };
+
+typedef StepFunction<utilities::ContinuousSignalType> ContinuousStepFunction;
+typedef boost::shared_ptr<ContinuousStepFunction> ContinuousStepFunctionPtr;
+typedef boost::shared_ptr<ContinuousStepFunction const>
+    ContinuousStepFunctionConstPtr;
+typedef StepFunction<utilities::DiscreteSignalType> DiscreteStepFunction;
+typedef boost::shared_ptr<DiscreteStepFunction> DiscreteStepFunctionPtr;
+typedef boost::shared_ptr<DiscreteStepFunction const>
+    DiscreteStepFunctionConstPtr;
+typedef StepFunction<utilities::UnarySignalType> UnaryStepFunction;
+typedef boost::shared_ptr<UnaryStepFunction> UnaryStepFunctionPtr;
+typedef boost::shared_ptr<UnaryStepFunction const> UnaryStepFunctionConstPtr;
 
 template <typename T>
 StepFunction<T>::StepFunction(double qf, bool ascending, bool negated)
@@ -50,22 +66,22 @@ StepFunction<T>::StepFunction(double d0, double qf, bool ascending,
 }
 
 template <typename T>
-StepFunction<T>::StepFunction(const ros::Duration& d0, double qf, bool ascending,
-                              bool negated)
+StepFunction<T>::StepFunction(const ros::Duration& d0, double qf,
+                              bool ascending, bool negated)
     : Function<T>::Function("Step", d0.toSec(), INFINITY, 0.0, qf, ascending,
                             negated)
 {
 }
 
 template <typename T>
-StepFunction<T>::StepFunction(double d0, double q0, double qf, bool ascending,
-                              bool negated)
+StepFunction<T>::StepFunction(double d0, double q0, double qf,
+                              bool ascending, bool negated)
     : Function<T>::Function("Step", d0, INFINITY, q0, qf, ascending, negated)
 {
 }
 
 template <typename T>
-StepFunction<T>::StepFunction(const ros::Duration &d0, double q0, double qf,
+StepFunction<T>::StepFunction(const ros::Duration& d0, double q0, double qf,
                               bool ascending, bool negated)
     : Function<T>::Function("Step", d0.toSec(), INFINITY, q0, qf, ascending,
                             negated)

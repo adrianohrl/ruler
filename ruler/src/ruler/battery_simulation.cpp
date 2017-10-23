@@ -1,6 +1,6 @@
 #include "ruler/battery_simulation.h"
 #include "ruler/consumable_resource_reservation_request.h"
-#include "utilities/functions/continuous_linear_function.h"
+#include "utilities/functions/linear_function.h"
 #include "utilities/toggle_event.h"
 
 namespace ruler

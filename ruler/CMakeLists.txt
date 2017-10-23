@@ -36,10 +36,6 @@ set(H_FILES
   include/ruler/battery_simulation.h
   include/ruler/consumable_resource.h
   include/ruler/consumable_resource_reservation_request.h
-  include/ruler/continuous_consumable_resource.h
-  include/ruler/continuous_reusable_resource.h
-  include/ruler/discrete_consumable_resource.h
-  include/ruler/discrete_reusable_resource.h
   include/ruler/event_types.h
   include/ruler/metrics_estimator.h
   include/ruler/preemptive_task.h
@@ -65,16 +61,6 @@ set(H_FILES
   include/utilities/exception.h
   include/utilities/event.h
   include/utilities/functions/buffered_function.h
-  include/utilities/functions/continuous_exponential_function.h
-  include/utilities/functions/continuous_linear_function.h
-  include/utilities/functions/continuous_pulse_function.h
-  include/utilities/functions/continuous_sample_holder.h
-  include/utilities/functions/continuous_step_function.h
-  include/utilities/functions/discrete_exponential_function.h
-  include/utilities/functions/discrete_linear_function.h
-  include/utilities/functions/discrete_pulse_function.h
-  include/utilities/functions/discrete_step_function.h
-  include/utilities/functions/discrete_sample_holder.h
   include/utilities/functions/exponential_function.h
   include/utilities/functions/function.h
   include/utilities/functions/functions.h
@@ -83,8 +69,6 @@ set(H_FILES
   include/utilities/functions/pulse_function.h
   include/utilities/functions/sample_holder.h
   include/utilities/functions/step_function.h
-  include/utilities/functions/unary_pulse_function.h
-  include/utilities/functions/unary_step_function.h
   include/utilities/functions/unary_sample_holder.h
   include/utilities/functions/value_change_event.h
   include/utilities/has_id.h
@@ -112,10 +96,6 @@ set(CPP_FILES
   src/nodes/ruler_node.cpp
   src/nodes/task_simulation_node.cpp
   src/ruler/battery_simulation.cpp
-  src/ruler/continuous_consumable_resource.cpp
-  src/ruler/continuous_reusable_resource.cpp
-  src/ruler/discrete_consumable_resource.cpp
-  src/ruler/discrete_reusable_resource.cpp
   src/ruler/event_types.cpp
   src/ruler/metrics_estimator.cpp
   src/ruler/preemptive_task.cpp
@@ -133,19 +113,7 @@ set(CPP_FILES
   src/utilities/discrete_signal_type.cpp
   src/utilities/exception.cpp
   src/utilities/event.cpp
-  src/utilities/functions/continuous_exponential_function.cpp
-  src/utilities/functions/continuous_linear_function.cpp
-  src/utilities/functions/continuous_pulse_function.cpp
-  src/utilities/functions/continuous_sample_holder.cpp
-  src/utilities/functions/continuous_step_function.cpp
-  src/utilities/functions/discrete_exponential_function.cpp
-  src/utilities/functions/discrete_linear_function.cpp
-  src/utilities/functions/discrete_sample_holder.cpp
   src/utilities/functions/probability_density_function.cpp
-  src/utilities/functions/discrete_pulse_function.cpp
-  src/utilities/functions/discrete_step_function.cpp
-  src/utilities/functions/unary_pulse_function.cpp
-  src/utilities/functions/unary_step_function.cpp
   src/utilities/functions/unary_sample_holder.cpp
   src/utilities/has_name.cpp
   src/utilities/noisy_duration.cpp

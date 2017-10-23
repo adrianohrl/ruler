@@ -3,7 +3,7 @@
 
 #include <boost/enable_shared_from_this.hpp>
 #include <ros/rate.h>
-#include "ruler/continuous_consumable_resource.h"
+#include "ruler/consumable_resource.h"
 #include "ruler/task_simulation.h"
 #include "utilities/functions/unary_sample_holder.h"
 

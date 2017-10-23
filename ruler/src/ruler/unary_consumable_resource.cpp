@@ -7,8 +7,8 @@
  */
 
 #include "ruler/unary_consumable_resource.h"
-#include "utilities/functions/unary_pulse_function.h"
-#include "utilities/functions/unary_step_function.h"
+#include "utilities/functions/pulse_function.h"
+#include "utilities/functions/step_function.h"
 
 namespace ruler
 {
@@ -38,17 +38,7 @@ UnaryConsumableResource::~UnaryConsumableResource() {}
 
 void UnaryConsumableResource::consume(const TaskPtr& task, double d0, double df)
 {
-  UnaryFunctionPtr quantity_function;
-  if (df == INFINITY)
-  {
-    quantity_function.reset(new utilities::functions::UnaryStepFunction(d0));
-  }
-  else
-  {
-    quantity_function.reset(
-        new utilities::functions::UnaryPulseFunction(d0, df));
-  }
-  consume(task, quantity_function);
+  ConsumableResource<utilities::UnarySignalType>::consume(task, true, d0, df);
 }
 
 void UnaryConsumableResource::consume(const TaskPtr& task,
@@ -60,17 +50,7 @@ void UnaryConsumableResource::consume(const TaskPtr& task,
 
 void UnaryConsumableResource::produce(const TaskPtr& task, double d0, double df)
 {
-  UnaryFunctionPtr quantity_function;
-  if (df == INFINITY)
-  {
-    quantity_function.reset(new utilities::functions::UnaryStepFunction(d0));
-  }
-  else
-  {
-    quantity_function.reset(
-        new utilities::functions::UnaryPulseFunction(d0, df));
-  }
-  produce(task, quantity_function);
+  ConsumableResource<utilities::UnarySignalType>::produce(task, true, d0, df);
 }
 
 void UnaryConsumableResource::produce(const TaskPtr& task,

@@ -18,7 +18,14 @@ protected:
 public:
   typedef boost::shared_ptr<SampleHolder<T> > Ptr;
   typedef boost::shared_ptr<SampleHolder<T> const> ConstPtr;
+  SampleHolder(const std::string& id, const T& value,
+               const ros::Duration& buffer_horizon,
+               const ros::Time& start_timestamp = ros::Time::now());
   SampleHolder(const std::string& id, const StepFunctionPtr& model,
+               const ros::Duration& buffer_horizon,
+               const ros::Time& start_timestamp = ros::Time::now());
+  SampleHolder(const std::string& id, const T& value,
+               const ros::Duration& timeout_duration,
                const ros::Duration& buffer_horizon,
                const ros::Time& start_timestamp = ros::Time::now());
   SampleHolder(const std::string& id, const StepFunctionPtr& model,
@@ -32,6 +39,25 @@ public:
   void update(const T& value, const ros::Time& timestamp);
 };
 
+typedef SampleHolder<utilities::ContinuousSignalType> ContinuousSampleHolder;
+typedef boost::shared_ptr<ContinuousSampleHolder> ContinuousSampleHolderPtr;
+typedef boost::shared_ptr<ContinuousSampleHolder const>
+    ContinuousSampleHolderConstPtr;
+typedef SampleHolder<utilities::DiscreteSignalType> DiscreteSampleHolder;
+typedef boost::shared_ptr<DiscreteSampleHolder> DiscreteSampleHolderPtr;
+typedef boost::shared_ptr<DiscreteSampleHolder const>
+    DiscreteSampleHolderConstPtr;
+
+template <typename T>
+SampleHolder<T>::SampleHolder(const std::string& id, const T& value,
+                              const ros::Duration& buffer_horizon,
+                              const ros::Time& start_timestamp)
+    : BufferedFunction<T>::BufferedFunction(
+          id, typename StepFunction<T>::Ptr(new StepFunction<T>(value, true)),
+          buffer_horizon, start_timestamp)
+{
+}
+
 template <typename T>
 SampleHolder<T>::SampleHolder(const std::string& id,
                               const StepFunctionPtr& model,
@@ -39,6 +65,17 @@ SampleHolder<T>::SampleHolder(const std::string& id,
                               const ros::Time& start_timestamp)
     : BufferedFunction<T>::BufferedFunction(id, model, buffer_horizon,
                                             start_timestamp)
+{
+}
+
+template <typename T>
+SampleHolder<T>::SampleHolder(const std::string& id, const T& value,
+                              const ros::Duration& timeout_duration,
+                              const ros::Duration& buffer_horizon,
+                              const ros::Time& start_timestamp)
+    : BufferedFunction<T>::BufferedFunction(
+          id, StepFunction<T>::Ptr(new StepFunction<T>(value, true)),
+          timeout_duration, buffer_horizon, start_timestamp)
 {
 }
 

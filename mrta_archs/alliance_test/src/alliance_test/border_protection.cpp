@@ -5,7 +5,9 @@ PLUGINLIB_EXPORT_CLASS(alliance_test::BorderProtection, alliance::Layer)
 
 namespace alliance_test
 {
-BorderProtection::BorderProtection() : align_left_(false), align_right_(false)
+BorderProtection::BorderProtection()
+    : align_left_(false), align_right_(false), x_min_(0.0), y_min_(0.0),
+      x_max_(0.0), y_max_(0.0)
 {
 }
 
@@ -14,10 +16,10 @@ BorderProtection::~BorderProtection() {}
 void BorderProtection::process()
 {
   Layer::process();
-  double vx(0.0), wz(0.0);
-  if (odometry_->getX() < 9.0 && odometry_->getX() > -7.0 &&
-      odometry_->getY() < 6.0 &&
-      odometry_->getY() > -6.0) // ler tamanho do map por parametros
+  /*double vx(0.0), wz(0.0);
+  ROS_INFO_STREAM("[BorderProtection] x: " << odometry_->getX() << ", y: " << odometry_->getY());
+  if (odometry_->getX() >= x_min_ && odometry_->getX() <= x_max_ &&
+      odometry_->getY() >= y_min_ && odometry_->getY() <= y_max_)
   {
     vx =
         GAIN * (std::max(sonars_->getDistance(2), sonars_->getDistance(3)) -
@@ -51,6 +53,22 @@ void BorderProtection::process()
                          std::max(sonars_->getDistance(7),
                                   sonars_->getDistance(0))));
   }
-  Layer::setVelocity(vx, wz);
+  else
+  {
+    align_left_ = true;
+  }
+  Layer::setVelocity(vx, wz);*/
+  Layer::setVelocity(0.0, -0.5);
+}
+
+void BorderProtection::initialize(const std::string& ns,
+                                  const std::string& name)
+{
+  Layer::initialize(ns, name);
+  ros::NodeHandle pnh("~/BorderProtection");
+  pnh.param("min_x", x_min_, 0.0);
+  pnh.param("min_y", y_min_, 0.0);
+  pnh.param("max_x", x_max_, 0.0);
+  pnh.param("max_y", y_max_, 0.0);
 }
 }

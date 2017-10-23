@@ -15,12 +15,11 @@
 
 namespace ruler
 {
-template <typename T>
-class ConsumableResource
-    : public Resource<T>
+template <typename T> class ConsumableResource : public Resource<T>
 {
 protected:
-  typedef typename boost::enable_shared_from_this<Resource<T> > enable_shared_from_this;
+  typedef typename boost::enable_shared_from_this<Resource<T> >
+      enable_shared_from_this;
   typedef typename utilities::functions::Function<T>::Ptr FunctionPtr;
   typedef typename utilities::functions::Function<T>::ConstPtr FunctionConstPtr;
   typedef typename TaskFunction<T>::Ptr TaskFunctionPtr;
@@ -46,7 +45,7 @@ public:
                        double df = INFINITY);
 };
 
-/*typedef ConsumableResource<utilities::ContinuousSignalType>
+typedef ConsumableResource<utilities::ContinuousSignalType>
     ContinuousConsumableResource;
 typedef boost::shared_ptr<ContinuousConsumableResource>
     ContinuousConsumableResourcePtr;
@@ -57,13 +56,7 @@ typedef ConsumableResource<utilities::DiscreteSignalType>
 typedef boost::shared_ptr<DiscreteConsumableResource>
     DiscreteConsumableResourcePtr;
 typedef boost::shared_ptr<DiscreteConsumableResource const>
-    DiscreteConsumableResourceConstPtr;*//*
-typedef ConsumableResource<utilities::UnarySignalType>
-    UnaryConsumableResource;
-typedef boost::shared_ptr<UnaryConsumableResource>
-    UnaryConsumableResourcePtr;
-typedef boost::shared_ptr<UnaryConsumableResource const>
-    UnaryConsumableResourceConstPtr;*/
+    DiscreteConsumableResourceConstPtr;
 
 template <typename T>
 ConsumableResource<T>::ConsumableResource(const std::string& id,
@@ -117,26 +110,27 @@ void ConsumableResource<T>::consume(const TaskPtr& task,
   }
   quantity_function->setNegated(true);
   quantity_function->setAscending(true);
-  TaskFunctionPtr task_function(
-      new TaskFunction<T>(enable_shared_from_this::shared_from_this(),
-                          task, quantity_function));
+  TaskFunctionPtr task_function(new TaskFunction<T>(
+      enable_shared_from_this::shared_from_this(), task, quantity_function));
   Resource<T>::profile_->addTaskFunction(task_function);
 }
 
 template <typename T>
-void ConsumableResource<T>::consume(const TaskPtr &task, const T &quantity, double d0, double df)
+void ConsumableResource<T>::consume(const TaskPtr& task, const T& quantity,
+                                    double d0, double df)
 {
-  /*utilities::functions::StepFunction<T>::Ptr quantity_function;
+  FunctionPtr quantity_function;
   if (df == INFINITY)
   {
-    quantity_function.reset(new utilities::functions::StepFunction(d0));
+    quantity_function.reset(
+        new utilities::functions::StepFunction<T>(d0, (double) quantity));
   }
   else
   {
     quantity_function.reset(
-        new utilities::functions::StepFunction(d0, df));
+        new utilities::functions::PulseFunction<T>(d0, df, (double) quantity));
   }
-  consume(task, quantity_function);*/
+  consume(task, quantity_function);
 }
 
 template <typename T>
@@ -158,26 +152,27 @@ void ConsumableResource<T>::produce(const TaskPtr& task,
   }
   quantity_function->setNegated(false);
   quantity_function->setAscending(true);
-  TaskFunctionPtr task_function(
-      new TaskFunction<T>(enable_shared_from_this::shared_from_this(),
-                          task, quantity_function));
+  TaskFunctionPtr task_function(new TaskFunction<T>(
+      enable_shared_from_this::shared_from_this(), task, quantity_function));
   Resource<T>::profile_->addTaskFunction(task_function);
 }
 
 template <typename T>
-void ConsumableResource<T>::produce(const TaskPtr &task, const T &quantity, double d0, double df)
+void ConsumableResource<T>::produce(const TaskPtr& task, const T& quantity,
+                                    double d0, double df)
 {
-  /*UnaryFunctionPtr quantity_function;
+  FunctionPtr quantity_function;
   if (df == INFINITY)
   {
-    quantity_function.reset(new utilities::functions::UnaryStepFunction(d0));
+    quantity_function.reset(
+        new utilities::functions::StepFunction<T>(d0, (double) quantity));
   }
   else
   {
     quantity_function.reset(
-        new utilities::functions::UnaryPulseFunction(d0, df));
+        new utilities::functions::PulseFunction<T>(d0, df, (double) quantity));
   }
-  produce(task, quantity_function);*/
+  produce(task, quantity_function);
 }
 }
 

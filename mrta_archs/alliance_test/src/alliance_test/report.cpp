@@ -9,5 +9,9 @@ Report::Report() {}
 
 Report::~Report() {}
 
-void Report::process() { Layer::process(); }
+void Report::process()
+{
+  Layer::process();
+  Layer::setVelocity(0.0, 2.0);
+}
 }

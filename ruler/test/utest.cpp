@@ -156,7 +156,7 @@ TEST(Functions, unary_pulse)
 TEST(Functions, step2pulse)
 {
   utilities::functions::DiscreteStepFunctionPtr step(
-      new utilities::functions::DiscreteStepFunction(2.0, 25, true, true));
+      new utilities::functions::DiscreteStepFunction(2.0, 25l, true, true));
   utilities::functions::DiscretePulseFunctionPtr pulse(
       new utilities::functions::DiscretePulseFunction(*step, 4.0));
   // testing step
@@ -241,7 +241,7 @@ TEST(Functions, discrete_sample_holder)
 {
   double dt(0.25);
   utilities::functions::DiscreteSampleHolderPtr dsh(
-      new utilities::functions::DiscreteSampleHolder("dsh", 2,
+      new utilities::functions::DiscreteSampleHolder("dsh", 2l,
                                                      ros::Duration(3.5 * dt)));
   ros::Time timestamp = dsh->getStartTimestamp();
   EXPECT_EQ(0, dsh->getValue(timestamp + ros::Duration(0.0 * dt)));
@@ -886,9 +886,9 @@ TEST(Profiles, unary)
 TEST(ResourceReservationRequests, consumableProduction)
 {
   ruler::ContinuousConsumableResourcePtr r1(
-      new ruler::ContinuousConsumableResource("r1", "resource 1", 10, 4));
+      new ruler::ContinuousConsumableResource("r1", "resource 1", 10.0, 4.0));
   ruler::DiscreteConsumableResourcePtr r2(
-      new ruler::DiscreteConsumableResource("r2", "resource 2", 5, 3));
+      new ruler::DiscreteConsumableResource("r2", "resource 2", 5l, 3l));
   ruler::UnaryConsumableResourcePtr r3(
       new ruler::UnaryConsumableResource("r3", "resource 3", false));
   double d(0.5);
@@ -970,9 +970,9 @@ TEST(ResourceReservationRequests, consumableProduction)
 TEST(ResourceReservationRequests, consumableConsumption)
 {
   ruler::ContinuousConsumableResourcePtr r1(
-      new ruler::ContinuousConsumableResource("r1", "resource 1", 10, 4));
+      new ruler::ContinuousConsumableResource("r1", "resource 1", 10.0, 4.0));
   ruler::DiscreteConsumableResourcePtr r2(
-      new ruler::DiscreteConsumableResource("r2", "resource 2", 5, 3));
+      new ruler::DiscreteConsumableResource("r2", "resource 2", 5l, 3l));
   ruler::UnaryConsumableResourcePtr r3(
       new ruler::UnaryConsumableResource("r3", "resource 3", true));
   double d(0.5);
@@ -1051,9 +1051,9 @@ TEST(ResourceReservationRequests, consumableConsumption)
 TEST(ResourceReservationRequests, reusable)
 {
   ruler::ContinuousReusableResourcePtr r1(
-      new ruler::ContinuousReusableResource("r1", "resource 1", 10, 4));
+      new ruler::ContinuousReusableResource("r1", "resource 1", 10.0, 4.0));
   ruler::DiscreteReusableResourcePtr r2(
-      new ruler::DiscreteReusableResource("r2", "resource 2", 5, 3));
+      new ruler::DiscreteReusableResource("r2", "resource 2", 5l, 3l));
   ruler::UnaryReusableResourcePtr r3(
       new ruler::UnaryReusableResource("r3", "resource 3", true));
   double d(0.5);
@@ -1132,7 +1132,7 @@ TEST(ResourceSharing, task1and2)
   ruler::ContinuousConsumableResourcePtr r1(
       new ruler::ContinuousConsumableResource("r1", "resource 1", 5.0, 3.0));
   ruler::DiscreteReusableResourcePtr r2(
-      new ruler::DiscreteReusableResource("r2", "resource 2", 6, 5));
+      new ruler::DiscreteReusableResource("r2", "resource 2", 6l, 5l));
   ros::Time timestamp(ros::Time::now());
   utilities::NoisyTimePtr expected_start(new utilities::NoisyTime(
       timestamp + ros::Duration(0.5 * d), timestamp + ros::Duration(1.5 * d)));

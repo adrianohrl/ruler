@@ -13,9 +13,7 @@
 #include <ros/common.h>
 #include "ruler/unary_consumable_resource.h"
 #include "ruler/resource_reservation_request.h"
-#include "utilities/continuous_signal_type.h"
-#include "utilities/discrete_signal_type.h"
-#include "utilities/functions/unary_step_function.h"
+#include "utilities/functions/step_function.h"
 
 namespace ruler
 {

@@ -36,7 +36,7 @@ protected:
   typedef typename TaskFunction<T>::ConstPtr TaskFunctionConstPtr;
 };
 
-/*typedef ReusableResource<utilities::ContinuousSignalType>
+typedef ReusableResource<utilities::ContinuousSignalType>
     ContinuousReusableResource;
 typedef boost::shared_ptr<ContinuousReusableResource>
     ContinuousReusableResourcePtr;
@@ -47,13 +47,7 @@ typedef ReusableResource<utilities::DiscreteSignalType>
 typedef boost::shared_ptr<DiscreteReusableResource>
     DiscreteReusableResourcePtr;
 typedef boost::shared_ptr<DiscreteReusableResource const>
-    DiscreteReusableResourceConstPtr;*//*
-typedef ReusableResource<utilities::UnarySignalType>
-    UnaryReusableResource;
-typedef boost::shared_ptr<UnaryReusableResource>
-    UnaryReusableResourcePtr;
-typedef boost::shared_ptr<UnaryReusableResource const>
-    UnaryReusableResourceConstPtr;*/
+    DiscreteReusableResourceConstPtr;
 
 template <typename T>
 ReusableResource<T>::ReusableResource(const ruler_msgs::Resource& msg)

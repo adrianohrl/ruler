@@ -4,7 +4,7 @@
 #include "alliance/inter_robot_communication.h"
 #include <map>
 #include <ros/time.h>
-#include <utilities/functions/continuous_sample_holder.h>
+#include <utilities/functions/sample_holder.h>
 
 namespace alliance
 {

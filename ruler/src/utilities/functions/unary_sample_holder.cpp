@@ -1,5 +1,5 @@
 #include "utilities/functions/unary_sample_holder.h"
-#include "utilities/functions/unary_step_function.h"
+#include "utilities/functions/step_function.h"
 
 namespace utilities
 {
@@ -9,7 +9,7 @@ UnarySampleHolder::UnarySampleHolder(const std::string& id,
                                      const ros::Duration& buffer_horizon,
                                      const ros::Time& start_timestamp)
     : SampleHolder<UnarySignalType>::SampleHolder(
-          id, UnaryStepFunctionPtr(new UnaryStepFunction(0.0, true)),
+          id, UnaryStepFunctionPtr(new UnaryStepFunction(1.0, true)),
           buffer_horizon, start_timestamp)
 {
 }
@@ -19,7 +19,7 @@ UnarySampleHolder::UnarySampleHolder(const std::string& id,
                                      const ros::Duration& buffer_horizon,
                                      const ros::Time& start_timestamp)
     : SampleHolder<UnarySignalType>::SampleHolder(
-          id, UnaryStepFunctionPtr(new UnaryStepFunction(0.0, true)),
+          id, UnaryStepFunctionPtr(new UnaryStepFunction(1.0, true)),
           timeout_duration, buffer_horizon, start_timestamp)
 {
 }
